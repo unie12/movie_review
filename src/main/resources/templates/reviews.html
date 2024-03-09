@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+
+    <style>
+        .center-align {
+            text-align: center;
+            white-space: nowrap;
+        }
+        .small-font {
+            font-size: 0.7em;
+        }
+        .medium-font {
+            fon-size: 0.8em;
+        }
+        .col-width-medium {
+            width: 10%;
+        }
+        .col-width-small {
+            width: 5%;
+        }
+    </style>
+
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div>
+        <form method="get" action="/reviews">
+
+            <select th:name="sortType" style="height: 40px;" required onchange="this.form.submit()">
+                <option th:selected="${sortType == '최근 등록순'}" value="최근 등록순">최신순</option>
+                <option th:selected="${sortType == '나중 등록순'}" value="나중 등록순">나중순</option>
+                <option th:selected="${sortType == '좋아요 많은순'}" value="좋아요 많은순">좋아요 많은순</option>
+                <option th:selected="${sortType == '좋아요 적은순'}" value="좋아요 적은순">좋아요 적은순</option>
+                <option th:selected="${sortType == '평점 높은순'}" value="평점 높은순">평점 높은순</option>
+                <option th:selected="${sortType == '평점 낮은순'}" value="평점 낮은순">평점 낮은순</option>
+                <option th:selected="${sortType == '조회수 많은순'}" value="조회수 많은순">조회수 많은순</option>
+                <option th:selected="${sortType == '조회수 적은순'}" value="조회수 적은순">조회수 적은순</option>
+            </select>
+
+            <select th:name="pageSize" style="height: 40px;" required onchange="this.form.submit()">
+                <option th:selected="${pageSize == 10}" value="10">10개</option>
+                <option th:selected="${pageSize == 20}" value="20">20개</option>
+                <option th:selected="${pageSize == 30}" value="30">30개</option>
+            </select>
+
+        <!--            <select th:field="*{searchForm}" style="height: 40px;">-->
+<!--                <option th:value="title">제목</option>-->
+<!--                <option th:value="nickname">작성자</option>-->
+<!--            </select>-->
+<!--            <input type="text" th:field="*{keyword}" placeholder="검색 키워드를 입력해주세요" style="height: 100%; width: 60%;">-->
+<!--            <button class="btn search-btn" type="submit">검색</button>-->
+        </form>
+
+        <table class="table table-striped">
+            <colgroup>
+                <col style="width:5%">
+                <col style="width:50%">
+                <col class="col-width-medium">
+                <col class="col-width-small">
+                <col class="col-width-small">
+                <col class="col-width-small">
+                <col class="col-width-medium">
+            </colgroup>
+            <thead>
+            <tr>
+                <th class="center-align">#</th>
+                <th class="center-align"><a th:href="@{/reviews(page=0, size=${reviews.size}, sort='title,asc')}">제목</a></th>
+                <th class="center-align"><a th:href="@{/reviews(page=0, size=${reviews.size}, sort='writer,asc')}">작성자</a></th>
+                <th class="center-align"><a th:href="@{/reviews(page=0, size=${reviews.size}, sort='heartCnt,asc')}">좋아요</a></th>
+                <th class="center-align"><a th:href="@{/reviews(page=0, size=${reviews.size}, sort='score,asc')}">평점</a></th>
+                <th class="center-align"><a th:href="@{/reviews(page=0, size=${reviews.size}, sort='viewCount,asc')}">조회수</a></th>
+                <th class="center-align"><a th:href="@{/reviews(page=0, size=${reviews.size}, sort='uploadDate,asc')}">작성일</a></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="review, stat : ${reviews}">
+<!--                <td class="center-align" th:text="${review.id}"></td>-->
+                <td class="center-align" th:text="${stat.count + (reviews.number * reviews.size)}"></td>
+                <td class="center-align"><a th:href="@{'/reviews/' + ${review.id}}" th:text="${review.title}"></a></td>
+                <td class="center-align small-font" th:text="${review.writer}"></td>
+                <td class="center-align small-font" th:text="${review.heartCnt}"></td>
+                <td class="center-align small-font" th:text="${review.score}"></td>
+                <td class="center-align small-font" th:text="${review.viewCount}"></td>
+                <td class="center-align small-font" th:text="${review.uploadDate != null ? #temporals.format(review.uploadDate, 'yyyy-MM-dd hh:mm') : ''}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav>
+            <ul class="pagination">
+<!--                <li th:class="${reviews.first ? 'disabled' : ''}">-->
+<!--                    <a th:href="@{/reviews(page=${reviews.number-1}, size=${reviews.size}, sort=${param.sort})}">이전</a>-->
+<!--                </li>-->
+                <li th:each="i : ${#numbers.sequence(0, reviews.totalPages-1)}"
+                    th:class="${i == reviews.number ? 'active' : ''}">
+                    <a th:href="@{/reviews(page=${i}, size=${reviews.size}, sort=${param.sort})}" th:text="${i + 1}"></a>
+                </li>
+<!--                <li th:class="${reviews.last ? 'disabled' : ''}">-->
+<!--                    <a th:href="@{/reviews(page=${reviews.number+1}, size=${reviews.size}, sort=${param.sort})}">다음</a>-->
+<!--                </li>-->
+            </ul>
+        </nav>
+
+        <a href="/createReview" class="btn btn-primary">글쓰기</a>
+        <!--        <button type="submit" class="btn btn-primary">글쓰기</button>-->
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>
