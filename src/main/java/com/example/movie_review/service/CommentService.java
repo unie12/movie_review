@@ -1,5 +1,7 @@
 package com.example.movie_review.service;
 
+import com.example.movie_review.domain.ENUM.ErrorCode;
+import com.example.movie_review.domain.MyException;
 import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.DTO.CommentCreateRequest;
 import com.example.movie_review.domain.review.Review;
@@ -29,8 +31,23 @@ public class CommentService {
     public void writeComment(Long reviewId, String loginId, CommentCreateRequest req) {
         Review review = reviewRepository.findById(reviewId).get();
         User user = userRepository.findByLoginId(loginId).get();
-        review.commentChange(review.getCommentCnt() + 1);
+        review.updateCommentCnt(review.getCommentCnt() + 1);
         commentRepository.save(req.toEntity(review, user));
+    }
+
+    /**
+     * 대댓글
+     */
+    public void writeReComment(Long reviewId, String loginId, Long parentId, CommentCreateRequest req) {
+        Review review = reviewRepository.findById(reviewId).get();
+        User user = userRepository.findByLoginId(loginId).get();
+        review.updateCommentCnt(review.getCommentCnt() + 1);
+
+        Comment comment = req.toEntity(review, user);
+        comment.confirmParent(commentRepository.findById(parentId).orElseThrow(() -> new MyException(ErrorCode.DATABASE_ERROR)));
+
+//        commentRepository.save(req.toEntity(review, user));
+        commentRepository.save(comment);
     }
 
     /**
@@ -69,7 +86,7 @@ public class CommentService {
         }
 
         Review review = optionComment.get().getReview();
-        review.commentChange(review.getCommentCnt()-1);
+        review.updateCommentCnt(review.getCommentCnt()-1);
 
         commentRepository.delete(optionComment.get());
         return review.getId();

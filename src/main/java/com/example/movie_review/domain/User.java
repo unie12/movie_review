@@ -10,7 +10,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.CascadeType.ALL;
 
 @Entity
 @Getter
@@ -22,46 +25,73 @@ public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long id;
+    private Long id; // primary key
 
-    @Column(name = "name_id")
-    private String name;
+    @Column(name = "name_id", length = 30)
+    private String name; // 이름
 
-    @Column(name = "login_id")
-    private String loginId;
+    @Column(name = "login_id", length = 30, unique = true)
+    private String loginId; // 아이디
 
     @Column(name = "password")
-    private String password;
-    private String passwordCheck;
+    private String password; // 비밀번호
+    private String passwordCheck; // 비밀번호 더블체크
 
-    private String nickname;
+    @Column(nullable = false, length = 30)
+    private String nickname; // 닉네임
 
     @Embedded
-    private Address address;
-
-    private UserRole role;
-
-    private Integer receivedHeartCnt;
+    private Address address; // 주소
+    private UserRole role; // 등급
+    private Integer receivedHeartCnt; // 좋아요 받은 수
 
     /**
-     * 작성한 리뷰
+     * 사용자 이용 현황
      */
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private List<Review> reviews;
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<Heart> hearts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     /**
-     * user가 누른 좋아요
+     * 추가 정보
      */
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private List<Heart> hearts;
-
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private List<Comment> comments;
-    public void heartChange(Integer receivedHeartCnt) {
-        this.receivedHeartCnt = receivedHeartCnt;
-    }
-
     private String phoneNumber;
     private String gender;
     private String birth;
+
+    /**
+     * 연관관계 메서드
+     */
+    public void addReview(Review review) {
+        reviews.add(review);
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+
+    /**
+     * 정보 수정
+     */
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateHeartCnt(Integer receivedHeartCnt) {
+        this.receivedHeartCnt = receivedHeartCnt;
+    }
+
 }

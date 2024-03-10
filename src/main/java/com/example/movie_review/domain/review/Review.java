@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Getter @Setter
@@ -18,13 +19,12 @@ public class Review {
     @Column(name = "review_id")
     private Long id;
 
-    private LocalDateTime uploadDate = LocalDateTime.now();
-    private String title;
-    private String writer;
-    private String context;
-    private Long good = 0L;
-    private Double score;
-    private Long viewCount;
+    private LocalDateTime uploadDate = LocalDateTime.now(); // 글 작성일
+    private String title; // 제목
+    private String writer; // 닉네임
+    private String context; // 내용
+    private Double score; // 평점
+    private Long viewCount; // 조회수
 
     /**
      * 사용자
@@ -43,16 +43,17 @@ public class Review {
 //     * 리뷰에 올릴 이미지
 //     */
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-//    @OrderBy("id asc")
 //    private List<ReviewImage> reviewImages;
+
     @OneToOne(fetch = FetchType.LAZY)
     private ReviewImage reviewImage;
+    private String filePath;
 
     /**
      * 댓글
      */
     @OneToMany(mappedBy = "review", orphanRemoval = true)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
     private Integer commentCnt;
 
     /**
@@ -69,11 +70,39 @@ public class Review {
         this.commentCnt = 0;
     }
 
-    public void commentChange(Integer commentCnt) {
+    /**
+     * 연관관계 메서드
+     */
+    public void confirmUser(User user) {
+        this.user = user;
+        user.addReview(this);
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+
+    /**
+     * 내용 수정
+     */
+    public void updateCommentCnt(Integer commentCnt) {
         this.commentCnt = commentCnt;
     }
 
-    public void heartChange(Integer heartCnt) {
+    public void updateHeartCnt(Integer heartCnt) {
         this.heartCnt = heartCnt;
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updateContext(String context) {
+        this.context = context;
+    }
+
+    public void updateFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
 }

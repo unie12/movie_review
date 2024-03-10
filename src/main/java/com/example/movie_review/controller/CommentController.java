@@ -25,6 +25,15 @@ public class CommentController {
         model.addAttribute("nextUrl", "/reviews/" + reviewId);
         return "printMessage";
     }
+    
+    @PostMapping("/{reviewId}/{commentId}")
+    public String addReComment(@PathVariable Long reviewId, @PathVariable Long commentId, @ModelAttribute CommentCreateRequest req, Authentication auth, Model model) {
+        commentService.writeReComment(reviewId, auth.getName(), commentId, req);
+
+        model.addAttribute("message", "대댓글이 추가되었습니다.");
+        model.addAttribute("nextUrl", "/reviews/" + reviewId);
+        return "printMessage";
+    }
 
     @PostMapping("/{commentId}/edit")
     public String editComment(@PathVariable Long commentId, @ModelAttribute CommentCreateRequest req, Authentication auth, Model model) {

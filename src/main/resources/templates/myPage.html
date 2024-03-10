@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head th:replace="fragments/header :: header" />
 <body>
 <!--<div th:replace="fragments/header.html :: header ('myPage')"/>-->
 <!--<div th:replace="fragments/myPageHeader.html :: myPageHeader"/>-->
-<br/><br/>
-<div class="row">
-    <div class="offset-2 col-1">
-        <h5>전체: [[${reviews.size}]]개</h5>
-    </div>
-</div>
-<br/>
-<div class="row">
-    <div class="offset-2 col-8">
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div class="row">
+
+<!--    <div class="offset-2 col-8">-->
+<!--        <div class="column">-->
+<!--            <div class="offset-2 col-1">-->
+<!--                <h5>전체: [[${reviews.size}]]개</h5>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <h2 style="font-size: 15px">전체: [[${reviews.size}]]개</h2>
+
         <table class="table list-table table-hover text-center">
             <thead style="background-color: #A5F1E9">
             <tr>
@@ -41,6 +45,8 @@
             </tbody>
         </table>
     </div>
+<!--</div>-->
+    <div th:replace="fragments/footer :: footer" />
 </div>
 </body>
 </html>

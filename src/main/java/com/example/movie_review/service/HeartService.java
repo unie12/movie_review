@@ -28,9 +28,9 @@ public class HeartService {
         User reviewUser = review.getUser();
 
         if(reviewUser.equals(loginUser)) {
-            reviewUser.heartChange(reviewUser.getReceivedHeartCnt() + 1);
+            reviewUser.updateHeartCnt(reviewUser.getReceivedHeartCnt() + 1);
         }
-        review.heartChange(review.getHeartCnt() + 1);
+        review.updateHeartCnt(review.getHeartCnt() + 1);
 
 
         heartRepository.save(Heart.builder()
@@ -50,9 +50,9 @@ public class HeartService {
         User reviewUser = review.getUser();
 
         if(reviewUser.equals(loginUser)) {
-            reviewUser.heartChange(reviewUser.getReceivedHeartCnt() - 1);
+            reviewUser.updateHeartCnt(reviewUser.getReceivedHeartCnt() - 1);
         }
-        review.heartChange(review.getHeartCnt() - 1);
+        review.updateHeartCnt(review.getHeartCnt() - 1);
 
         heartRepository.deleteByUserLoginIdAndReviewId(loginId, reviewId);
         System.out.println("Deleted heart for reviewId: " + reviewId + ", new heart count: " + review.getHeartCnt());

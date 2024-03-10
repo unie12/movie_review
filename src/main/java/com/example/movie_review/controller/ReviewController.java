@@ -3,17 +3,18 @@ package com.example.movie_review.controller;
 import com.example.movie_review.auth.JwtTokenUtil;
 import com.example.movie_review.domain.DTO.CommentCreateRequest;
 import com.example.movie_review.domain.DTO.ReviewCreateRequest;
-import com.example.movie_review.domain.review.Review;
 import com.example.movie_review.domain.ENUM.SortType;
 import com.example.movie_review.domain.User;
+import com.example.movie_review.domain.review.Review;
+import com.example.movie_review.domain.review.ReviewImage;
 import com.example.movie_review.repository.UserRepository;
-import com.example.movie_review.service.CommentService;
-import com.example.movie_review.service.HeartService;
-import com.example.movie_review.service.ReviewService;
-import com.example.movie_review.service.UserService;
+import com.example.movie_review.service.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,7 @@ public class ReviewController {
     private final UserRepository userRepository;
     private final HeartService heartService;
     private final CommentService commentService;
+    private final ReviewImageService reviewImageService;
 
     /**
      * 리뷰 목록들
@@ -71,7 +74,7 @@ public class ReviewController {
 
 
     @PostMapping("/createReview")
-    public String createReview(@ModelAttribute ReviewCreateRequest reviewCreateRequest, HttpServletRequest request) {
+    public String createReview(@ModelAttribute ReviewCreateRequest reviewCreateRequest, HttpServletRequest request) throws IOException {
         User user = new User();
         Cookie[] cookies = request.getCookies();
         if(cookies != null) {
@@ -88,6 +91,14 @@ public class ReviewController {
         Review review = new Review();
         review.updateReview(reviewCreateRequest, user);
         review.setUser(user);
+
+        ReviewImage reviewImage = reviewImageService.saveImage(reviewCreateRequest.getReviewImage(), review);
+        review.setReviewImage(reviewImage);
+        String savedFilename = reviewImage.getSavedFilename();
+        System.out.println("savedFilename = " + savedFilename);
+        String fullPath = reviewImageService.getFullPath(savedFilename);
+        System.out.println("fullPath = " + fullPath);
+        review.setFilePath(savedFilename);
 
         reviewService.saveReview(review);
         return "redirect:/reviews";

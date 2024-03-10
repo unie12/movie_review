@@ -33,7 +33,7 @@ public class ReviewImageService {
     /**
      * 사진 위치 찾기
      */
-    public String getFulllPath(String filename) {
+    public String getFullPath(String filename) {
         return fileDir + filename;
     }
 
@@ -71,7 +71,7 @@ public class ReviewImageService {
     @Transactional
     public void deleteImage(ReviewImage reviewImage) throws IOException {
         reviewImageRepository.delete(reviewImage);
-        Files.deleteIfExists(Paths.get(getFulllPath(reviewImage.getOriginalFilename())));
+        Files.deleteIfExists(Paths.get(getFullPath(reviewImage.getOriginalFilename())));
     }
 
     /**
@@ -93,7 +93,7 @@ public class ReviewImageService {
             return null;
         }
 
-        UrlResource urlResource = new UrlResource("file:" + getFulllPath(review.getReviewImage().getSavedFilename()));
+        UrlResource urlResource = new UrlResource("file:" + getFullPath(review.getReviewImage().getSavedFilename()));
 
         // 업로드 한 파일명이 한글인 경우 한글 꺠지지 않기 위한 작업
         String encodedUploadFileName = UriUtils.encode(review.getReviewImage().getOriginalFilename(), StandardCharsets.UTF_8);
