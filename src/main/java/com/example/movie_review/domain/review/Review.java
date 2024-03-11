@@ -1,6 +1,8 @@
 package com.example.movie_review.domain.review;
 
+import com.example.movie_review.domain.BaseEntity;
 import com.example.movie_review.domain.DTO.ReviewCreateRequest;
+import com.example.movie_review.domain.DTO.ReviewDto;
 import com.example.movie_review.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Review {
+public class Review extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
@@ -21,20 +23,18 @@ public class Review {
 
     private LocalDateTime uploadDate = LocalDateTime.now(); // 글 작성일
     private String title; // 제목
-    private String writer; // 닉네임
     private String context; // 내용
+
+    private String writer; // 닉네임
     private Double score; // 평점
     private Long viewCount; // 조회수
 
     /**
-     * 사용자
+     * 매핑 정보
      */
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    /**
-     * 좋아요
-     */
     @OneToMany(mappedBy = "review", orphanRemoval = true)
     private List<Heart> hearts;
     private Integer heartCnt;
@@ -49,12 +49,10 @@ public class Review {
     private ReviewImage reviewImage;
     private String filePath;
 
-    /**
-     * 댓글
-     */
     @OneToMany(mappedBy = "review", orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
     private Integer commentCnt;
+
 
     /**
      * 리뷰 값 생성
@@ -69,7 +67,20 @@ public class Review {
         this.viewCount = 0L;
         this.commentCnt = 0;
     }
+    public void update(ReviewDto dto) {
+        this.title = dto.getTitle();
+        this.context = dto.getContext();
+        this.score = dto.getScore();
+    }
 
+    /**
+     * 리뷰 수정
+     */
+    public void editReview(ReviewDto req) {
+        this.title = req.getTitle();
+        this.context = req.getContext();
+        this.score = req.getScore();
+    }
     /**
      * 연관관계 메서드
      */

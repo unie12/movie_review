@@ -6,20 +6,31 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
     <div>
         <div class="mt-3">
+            <form class="form-group" th:action="@{/reviews/{reviewId}/edit(reviewId=${review.id})}" th:object="${review}" method="post">
+                <input type="text" th:field="*{title}" placeholder="제목" readonly>
+                <textarea th:field="*{context}" placeholder="리뷰 내용" readonly></textarea>
+                <input type="number" th:field="*{score}" placeholder="평점" readonly>
+
+                <div id="div2" align="center" hidden>
+                    <button class="btn edit-btn" type="submit">수정 완료</button>
+                </div>
+            </form>
+
             <h1 th:text="${review.title}"></h1>
             <span class="text-muted">
-                <small>작성자: </small><small th:text="${review.writer}"></small> |
+                <small>작성자: </small><small th:text="${review.userNickname}"></small> |
                 <small>좋아요: </small><small th:text="${review.heartCnt}"></small> |
                 <small>평점: </small><small th:text="${review.score}"></small> |
                 <small>조회수: </small><small th:text="${review.viewCount}"></small> |
-                <small>작성일: </small><small th:text="${review.uploadDate != null ? #temporals.format(review.uploadDate, 'yyyy-MM-dd') : ''}"></small>
+                <small>작성일: </small><small th:text="${uploadDate != null ? #temporals.format(uploadDate, 'yyyy-MM-dd hh:mm') : ''}"></small>
+            <!--                <small>최근 수정일: </small><small th:text="${review.lastModifiedAt != null ? #temporals.format(review.lastModifiedAt, 'yyyy-MM-dd') : ''}"></small>-->
             </span>
         </div>
         <div class="mt-3">
             <p th:text="${review.context}"></p>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-3" th:if="${review.filePath != null and review.filePath != ''}">
             <img th:src="@{/review-images/{savedFilename}(savedFilename=${review.filePath})}" alt="Review Image">
         </div>
 
@@ -28,7 +39,17 @@
                 th:data-id="${review.id}" th:classappend="${heartCheck ? 'liked' : ''}">
             좋아요 <span id="heart-count-${review.id}" class="heart-count">[[${review.heartCnt}]]</span>
         </button>
+
+        <div id="div1" th:if="${loginUserLoginId == review.userLoginId}">
+<!--            <button type="button" class="btn edit-btn" style="width: fit-content"-->
+<!--                    th:onclick="|location.href='@{/reviews/{reviewId}/edit (reviewId=${review.id})}'|">수정</button>-->
+            <button class="btn edit-btn" onclick="clickEdit()">수정</button>
+            <button class="btn del-btn" onclick="clickDelete()">삭제</button>
+        </div>
+
+<!--        <button type="button" class="btn del-btn" style="width: fit-content; margin: 0px;"&ndash;&gt;-->
     </div>
+
 
     <form class="form-group" th:object="${commentCreateRequest}"  th:method="post" th:action="|@{/comments/{reviewId} (reviewId=${review.id})}|">
         <div style="text-align: right">
@@ -117,6 +138,21 @@
             });
         });
     });
+</script>
+
+<script th:inline="javascript">
+    function clickEdit() {
+        document.getElementById("div2").removeAttribute("hidden");
+        document.getElementById("title").removeAttribute("readonly");
+        document.getElementById("body").removeAttribute("readonly");
+        document.getElementById("score").removeAttribute("readonly");
+    }
+
+    function clickDelete() {
+        if(confirm("해당 글을 삭제하시겠습니다?") == true){
+            location.href = "/reviews/" + [[${review.id}]] + "/delete";
+        }
+    }
 </script>
 </body>
 </html>

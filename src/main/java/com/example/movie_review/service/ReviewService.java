@@ -2,6 +2,7 @@ package com.example.movie_review.service;
 
 import com.example.movie_review.domain.DTO.HeartRequestDto;
 import com.example.movie_review.domain.DTO.ReviewCreateRequest;
+import com.example.movie_review.domain.DTO.ReviewDto;
 import com.example.movie_review.domain.User;
 import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.review.Heart;
@@ -10,6 +11,7 @@ import com.example.movie_review.repository.CommentRepository;
 import com.example.movie_review.repository.HeartRepository;
 import com.example.movie_review.repository.ReviewRepository;
 import com.example.movie_review.repository.UserRepository;
+import jakarta.persistence.Table;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -80,12 +83,42 @@ public class ReviewService {
         return null;
     }
 
-//    @Transactional
-//    public Long writeReview(ReviewCreateRequest req, String loginId, Authentication auth) {
-//        User loginUser = userRepository.findByLoginId(loginId).get();
-//
-//        Review saveReview = reviewRepository.save(req.toEntity(loginUser));
-//
-//
-//    }
+    @Transactional
+    public Long editReview(ReviewDto req, Long reviewId) {
+        Optional<Review> optReview = reviewRepository.findById(reviewId);
+
+        if(optReview.isEmpty()) {
+            return null;
+        }
+
+        Review review = optReview.get();
+        review.editReview(req);
+
+        return review.getId();
+    }
+
+    public ReviewDto getReview(Long reviewId) {
+        Optional<Review> optReview = reviewRepository.findById(reviewId);
+
+        if(optReview.isEmpty()) {
+            return null;
+        }
+
+        return ReviewDto.of(optReview.get());
+    }
+
+    @Transactional
+    public Long deleteReview(Long reviewId) {
+        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
+
+        if(optionalReview.isEmpty()) {
+            return null;
+        }
+
+        Review review = optionalReview.get();
+        User reviewUser = review.getUser();
+        reviewUser.updateHeartCnt(reviewUser.getReceivedHeartCnt() - review.getHeartCnt());
+        reviewRepository.deleteById(reviewId);
+        return reviewId;
+    }
 }

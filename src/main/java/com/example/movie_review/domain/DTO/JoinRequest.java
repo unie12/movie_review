@@ -31,6 +31,7 @@ public class JoinRequest {
                 .password(this.password)
                 .nickname(this.nickname)
                 .role(UserRole.USER)
+                .receivedHeartCnt(0)
                 .build();
     }
 

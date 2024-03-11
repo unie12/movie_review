@@ -44,6 +44,7 @@ public class User {
     private Address address; // 주소
     private UserRole role; // 등급
     private Integer receivedHeartCnt; // 좋아요 받은 수
+//    private Integer pressHeartCnt; // 좋아요 누른 수
 
     /**
      * 사용자 이용 현황
@@ -93,5 +94,9 @@ public class User {
     public void updateHeartCnt(Integer receivedHeartCnt) {
         this.receivedHeartCnt = receivedHeartCnt;
     }
+
+//    public void updatePressHeartCnt(Integer pressHeartCnt) {
+//        this.pressHeartCnt = pressHeartCnt;
+//    }
 
 }

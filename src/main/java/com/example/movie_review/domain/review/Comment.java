@@ -1,5 +1,6 @@
 package com.example.movie_review.domain.review;
 
+import com.example.movie_review.domain.BaseEntity;
 import com.example.movie_review.domain.DTO.ReviewCreateRequest;
 import com.example.movie_review.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Getter
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -21,7 +21,7 @@ public class ReviewImage {
     private String originalFilename;
     private String savedFilename;
 
-//    @ManyToOne
-//    @JoinColumn(name = "review_id")
-//    private Review review;
+    @ManyToOne
+    @JoinColumn(name = "review_id")
+    private Review review;
 }

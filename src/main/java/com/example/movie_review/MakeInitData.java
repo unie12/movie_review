@@ -1,5 +1,6 @@
 package com.example.movie_review;
 
+import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.ReviewCreateRequest;
 import com.example.movie_review.domain.review.Review;
 import com.example.movie_review.domain.User;
@@ -36,14 +37,17 @@ public class MakeInitData {
                 .password("1234")
                 .nickname("관리자1")
                 .role(UserRole.ADMIN)
+                .receivedHeartCnt(0)
                 .build();
         userRepository.save(admin1);
 
+        JoinRequest joinRequest = new JoinRequest();
         User user1 = User.builder()
                 .loginId("user1")
                 .password("1234")
                 .nickname("User1")
                 .role(UserRole.USER)
+                .receivedHeartCnt(0)
                 .build();
         userRepository.save(user1);
 
@@ -52,6 +56,7 @@ public class MakeInitData {
                 .password("1234")
                 .nickname("User3")
                 .role(UserRole.USER)
+                .receivedHeartCnt(0)
                 .build();
         userRepository.save(user3);
 
@@ -60,6 +65,7 @@ public class MakeInitData {
                 .password(encoder.encode("1234"))
                 .nickname("관리자")
                 .role(UserRole.ADMIN)
+                .receivedHeartCnt(0)
                 .build();
         userRepository.save(admin2);
 
@@ -68,6 +74,7 @@ public class MakeInitData {
                 .password(encoder.encode("1234"))
                 .nickname("유저1")
                 .role(UserRole.USER)
+                .receivedHeartCnt(0)
                 .build();
         userRepository.save(user2);
 
@@ -130,10 +137,6 @@ public class MakeInitData {
 
 
 
-
-
-
-
 //        review1.setTitle("듄: 파트2");
 //        review1.setContext("듄 1보다 더 재밌는 개꿀잼 SF 영화");
 //        review1.setScore(4.5);
@@ -141,6 +144,7 @@ public class MakeInitData {
 //        review1.setHeartCnt(0);
 
 //        Review review2 = new Review();
+//        ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest();
 //        review2.setTitle("파묘");
 //        review2.setContext("조대희 선정 한국 오컬트 영화 베스트 10(아직 안봄)");
 //        review2.setScore(4.0);

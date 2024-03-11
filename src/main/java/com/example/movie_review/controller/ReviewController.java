@@ -3,6 +3,7 @@ package com.example.movie_review.controller;
 import com.example.movie_review.auth.JwtTokenUtil;
 import com.example.movie_review.domain.DTO.CommentCreateRequest;
 import com.example.movie_review.domain.DTO.ReviewCreateRequest;
+import com.example.movie_review.domain.DTO.ReviewDto;
 import com.example.movie_review.domain.ENUM.SortType;
 import com.example.movie_review.domain.User;
 import com.example.movie_review.domain.review.Review;
@@ -90,15 +91,20 @@ public class ReviewController {
         }
         Review review = new Review();
         review.updateReview(reviewCreateRequest, user);
-        review.setUser(user);
+//        review.setUser(user);
 
         ReviewImage reviewImage = reviewImageService.saveImage(reviewCreateRequest.getReviewImage(), review);
-        review.setReviewImage(reviewImage);
-        String savedFilename = reviewImage.getSavedFilename();
-        System.out.println("savedFilename = " + savedFilename);
-        String fullPath = reviewImageService.getFullPath(savedFilename);
-        System.out.println("fullPath = " + fullPath);
-        review.setFilePath(savedFilename);
+        if(reviewImage != null) {
+            review.setReviewImage(reviewImage);
+
+            String savedFilename = reviewImage.getSavedFilename();
+            System.out.println("savedFilename = " + savedFilename);
+
+            String fullPath = reviewImageService.getFullPath(savedFilename);
+            System.out.println("fullPath = " + fullPath);
+            review.setFilePath(savedFilename);
+        }
+
 
         reviewService.saveReview(review);
         return "redirect:/reviews";
@@ -115,15 +121,16 @@ public class ReviewController {
         }
 
         Review review = reviewService.findOne(reviewId);
+        ReviewDto reviewDto = reviewService.getReview(reviewId);
 
         if(review == null) {
             return "redirect:/reviews";
         }
 
-//        System.out.println("reviewview = " + review.getViewCount());
         review.setViewCount(review.getViewCount() + 1);
-//        System.out.println("reviewview = " + review.getViewCount());
-        model.addAttribute("review", review);
+//        model.addAttribute("review", review);
+        model.addAttribute("review", reviewDto);
+        model.addAttribute("uploadDate", review.getUploadDate());
         model.addAttribute("commentCreateRequest", new CommentCreateRequest());
         model.addAttribute("commentList", commentService.findAll(reviewId));
         reviewService.saveReview(review);
@@ -153,6 +160,25 @@ public class ReviewController {
     /**
      * 리뷰 수정
      */
+    @PostMapping("/reviews/{reviewId}/edit")
+    public String reviewEdit(@PathVariable Long reviewId, @ModelAttribute ReviewDto reviewDto, Model model) throws IOException {
+        Long editReviewId = reviewService.editReview(reviewDto, reviewId);
+        if(editReviewId == null) {
+            model.addAttribute("message", "해당 게시글이 존재하지 않습니다.");
+            model.addAttribute("nextUrl", "/reviews");
+        }
+        else {
+            model.addAttribute("message", editReviewId + "번 글이 수정되었습니다.");
+            model.addAttribute("nextUrl", "/reviews/" + reviewId);
+        }
+//        model.addAttribute("reviewDto", reviewDto);
+        return "editReview";
+    }
+
+//    @PostMapping("/reviews/{reviewId}/edit")
+//    public String editEnd(@PathVariable Long reviewId, Model model) {
+//        return "/reviews/{reviewId}";
+//    }
 
     /**
      * 페이징
@@ -165,4 +191,13 @@ public class ReviewController {
     /**
      * 삭제
      */
+    @GetMapping("/reviews/{reviewId}/delete")
+    public String reviewDelete(@PathVariable Long reviewId, Model model) throws IOException {
+        Long deleteReviewId = reviewService.deleteReview(reviewId);
+        model.addAttribute("message", deleteReviewId == null ? "해당 게시글이 존재하지 않습니다." : deleteReviewId + "번 글이 삭제되었습니다.");
+        model.addAttribute("nextUrl", "/reviews");
+
+        return "printMessage";
+    }
+
 }
