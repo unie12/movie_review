@@ -9,7 +9,6 @@ import lombok.Data;
 public class CommentCreateRequest {
 
     private String body;
-
     public Comment toEntity(Review review, User user) {
         return Comment.builder()
                 .user(user)

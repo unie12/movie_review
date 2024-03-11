@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,10 @@ public class ReviewService {
 
     public List<Review> findReviews() {
         return reviewRepository.findAll();
+    }
+
+    public Page<Review> findReviews(Specification<Review> spec, Pageable pageable) {
+        return reviewRepository.findAll(spec, pageable);
     }
 
     public Page<Review> findReviews(Pageable pageable) {
@@ -120,5 +125,9 @@ public class ReviewService {
         reviewUser.updateHeartCnt(reviewUser.getReceivedHeartCnt() - review.getHeartCnt());
         reviewRepository.deleteById(reviewId);
         return reviewId;
+    }
+
+    public Page<Review> reviewSearchList(String keyword, Pageable pageable) {
+        return reviewRepository.findByTitleContaining(keyword, pageable);
     }
 }

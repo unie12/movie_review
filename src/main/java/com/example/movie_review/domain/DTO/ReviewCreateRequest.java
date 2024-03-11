@@ -24,6 +24,7 @@ public class ReviewCreateRequest {
                 .commentCnt(0)
                 .heartCnt(0)
                 .score(score)
+                .viewCount(0L)
                 .build();
     }
 

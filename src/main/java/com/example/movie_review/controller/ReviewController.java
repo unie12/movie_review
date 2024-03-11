@@ -5,6 +5,7 @@ import com.example.movie_review.domain.DTO.CommentCreateRequest;
 import com.example.movie_review.domain.DTO.ReviewCreateRequest;
 import com.example.movie_review.domain.DTO.ReviewDto;
 import com.example.movie_review.domain.ENUM.SortType;
+import com.example.movie_review.domain.ReviewSpecifications;
 import com.example.movie_review.domain.User;
 import com.example.movie_review.domain.review.Review;
 import com.example.movie_review.domain.review.ReviewImage;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -47,14 +50,29 @@ public class ReviewController {
     @GetMapping("/reviews")
     public String review(@RequestParam(required = false, defaultValue = "최근 등록순") String sortType,
                          @RequestParam(required = false, defaultValue = "10") int pageSize,
+                         @RequestParam(required = false, defaultValue = "title") String searchType,
+                         @RequestParam(required = false, defaultValue = "") String keyword,
                          Pageable pageable, Model model) {
         Sort sort = SortType.getSort(sortType);
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageSize, sort);
-        Page<Review> reviews = reviewService.findReviews(sortedPageable);
+
+        System.out.println("searchType = " + searchType + "keyword = " + keyword);
+
+        Specification<Review> spec = ReviewSpecifications.hasKeyword(keyword, searchType);
+        System.out.println("spec = " + spec);
+
+        Page<Review> reviews = reviewService.findReviews(spec, sortedPageable);
+        System.out.println("reviews = " + reviews);
+
+
 //        List<Review> reviews = reviewService.findReviews();
+//        if(keyword != null) {
+//            reviews = reviewService.reviewSearchList(keyword, sortedPageable);
+//        }
         model.addAttribute("reviews", reviews);
         model.addAttribute("sortType", sortType);
         model.addAttribute("pageSize", pageSize);
+        model.addAttribute("searchType", searchType);
 
         return "reviews";
     }
@@ -172,7 +190,7 @@ public class ReviewController {
             model.addAttribute("nextUrl", "/reviews/" + reviewId);
         }
 //        model.addAttribute("reviewDto", reviewDto);
-        return "editReview";
+        return "printMessage";
     }
 
 //    @PostMapping("/reviews/{reviewId}/edit")
