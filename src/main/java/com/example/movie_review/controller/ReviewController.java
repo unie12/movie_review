@@ -13,10 +13,7 @@ import com.example.movie_review.repository.UserRepository;
 import com.example.movie_review.service.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,9 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -39,13 +34,14 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final HeartService heartService;
     private final CommentService commentService;
     private final ReviewImageService reviewImageService;
 
     /**
      * 리뷰 목록들
+     * sortType과 searchType, keyword에 따라 검색 기능
+     *
      */
     @GetMapping("/reviews")
     public String review(@RequestParam(required = false, defaultValue = "최근 등록순") String sortType,
@@ -55,20 +51,11 @@ public class ReviewController {
                          Pageable pageable, Model model) {
         Sort sort = SortType.getSort(sortType);
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageSize, sort);
-
-        System.out.println("searchType = " + searchType + "keyword = " + keyword);
+        System.out.println("searchType = " + searchType + " keyword = " + keyword);
 
         Specification<Review> spec = ReviewSpecifications.hasKeyword(keyword, searchType);
-        System.out.println("spec = " + spec);
-
         Page<Review> reviews = reviewService.findReviews(spec, sortedPageable);
-        System.out.println("reviews = " + reviews);
 
-
-//        List<Review> reviews = reviewService.findReviews();
-//        if(keyword != null) {
-//            reviews = reviewService.reviewSearchList(keyword, sortedPageable);
-//        }
         model.addAttribute("reviews", reviews);
         model.addAttribute("sortType", sortType);
         model.addAttribute("pageSize", pageSize);
@@ -76,11 +63,6 @@ public class ReviewController {
 
         return "reviews";
     }
-
-//    @PostMapping("/reviews")
-//    public String reviewWrite(@ModelAttribute ReviewCreateRequest req, Authentication auth, Model model) throws IOException {
-//        reviewService.writeReview(req, auth.getName(), auth)
-//    }
 
     /**
      * 새로운 리뷰 작성

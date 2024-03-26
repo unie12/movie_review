@@ -101,13 +101,13 @@
             <select th:name="searchType" style="height: 40px;" required onchange="this.form.submit()">
                 <option th:selected="${searchType == 'title'}" value="title">제목</option>
                 <option th:selected="${searchType == 'context'}" value="context">내용</option>
-                <option th:selected="${searchType == 'nickname'}" value="nickname">작성자</option>
+                <option th:selected="${searchType == 'writer'}" value="writer">작성자</option>
             </select>
 
             <input type="text" name="keyword" th:value="${param.keyword}">
             <input type="hidden" name="sortType" th:value="${param.sortType}">
             <input type="hidden" name="pageSize" th:value="${param.pageSize}">
-            <input type="hidden" name="searchType" th:value="${param.searchType}">
+<!--            <input type="hidden" name="searchType" th:value="${param.searchType}">-->
             <button type="submit">검색</button>
         </form>
 

@@ -17,6 +17,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, JpaSpecif
     List<Review> findAllByUserLoginId(String loginId);
 
     Page<Review> findByTitleContaining(String keyword, Pageable pageable);
+
 //    private final EntityManager em;
 //
 //    public void save(Review review) {

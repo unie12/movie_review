@@ -12,8 +12,8 @@ public class ReviewSpecifications {
             } else {
                 return switch (searchType) {
                     case "title" -> cb.like(root.get("title"), "%" + keyword + "%");
-                    case "content" -> cb.like(root.get("content"), "%" + keyword + "%");
-                    case "nickname" -> cb.like(root.join("user").get("nickname"), "%" + keyword + "%");
+                    case "context" -> cb.like(root.get("context"), "%" + keyword + "%");
+                    case "writer" -> cb.like(root.join("user").get("nickname"), "%" + keyword + "%");
                     default ->
                         // 검색 유형이 지원되지 않는 경우, 빈 결과를 반환
                             cb.conjunction();
