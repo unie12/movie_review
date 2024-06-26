@@ -35,6 +35,8 @@ public class JwtLoginController {
     public String home(Model model, Authentication auth) {
         model.addAttribute("loginType", "jwt-login");
         model.addAttribute("pageName", "Jwt Token 화면 로그인");
+//        model.addAttribute("userCntDto", userService.getUserCnt());
+//        model.addAttribute("reviewCntDto", reviewService.getReviewCnt());
 
         if(auth != null) {
             User loginUser = userService.getLoginUserByLoginId(auth.getName());

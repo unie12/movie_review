@@ -21,11 +21,15 @@
       <button th:onclick="|location.href='@{/{loginType}/logout (loginType=${loginType})}'|">로그아웃</button>
     </div>
 
-    <p class="lead"></p>
     <p>
       <a class="btn btn-lg btn-info" href="/notice">공지 게시판</a>
       <a class="btn btn-lg btn-info" href="/reviews">리뷰 게시판</a>
+      <a class="btn btn-lg btn-info" href="/reviews">자유 게시판</a>
+      <a class="btn btn-lg btn-info" href="/reviews">BEFORE SCENE 게시판</a>
+      <a class="btn btn-lg btn-info" href="/reviews">AFTER SCENE 게시판</a>
     </p>
+
+    <p class="lead"></p>
   </div>
   <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->

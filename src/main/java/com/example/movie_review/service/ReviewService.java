@@ -1,8 +1,11 @@
 package com.example.movie_review.service;
 
 import com.example.movie_review.domain.DTO.HeartRequestDto;
+import com.example.movie_review.domain.DTO.ReviewCntDto;
 import com.example.movie_review.domain.DTO.ReviewCreateRequest;
 import com.example.movie_review.domain.DTO.ReviewDto;
+import com.example.movie_review.domain.ENUM.ReviewCategory;
+import com.example.movie_review.domain.ENUM.UserRole;
 import com.example.movie_review.domain.User;
 import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.review.Heart;
@@ -130,4 +133,14 @@ public class ReviewService {
     public Page<Review> reviewSearchList(String keyword, Pageable pageable) {
         return reviewRepository.findByTitleContaining(keyword, pageable);
     }
+
+//    public ReviewCntDto getReviewCnt() {
+//        return ReviewCntDto.builder()
+//                .totalReviewCnt(reviewRepository.count())
+//                .totalNoticeCnt(reviewRepository.countAllByUserUserRole(UserRole.ADMIN))
+//                .totalBeforeCnt(reviewRepository.countAllByCategoryAndUserUserRoleNot(ReviewCategory.BEFORESCENE, UserRole.ADMIN))
+//                .totalAfterCnt(reviewRepository.countAllByCategoryAndUserUserRoleNot(ReviewCategory.AFTERSCENE, UserRole.ADMIN))
+//                .totalFreeCnt(reviewRepository.countAllByCategoryAndUserUserRoleNot(ReviewCategory.FREE, UserRole.ADMIN))
+//                .build();
+//    }
 }

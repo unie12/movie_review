@@ -2,6 +2,8 @@ package com.example.movie_review.service;
 
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
+import com.example.movie_review.domain.DTO.UserCntDto;
+import com.example.movie_review.domain.ENUM.UserRole;
 import com.example.movie_review.domain.User;
 import com.example.movie_review.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -96,4 +98,15 @@ public class UserService {
     public User myInfo(String loginId) {
         return userRepository.findByLoginId(loginId).get();
     }
+
+//    public UserCntDto getUserCnt() {
+//        return UserCntDto.builder()
+//                .totalUserCnt(userRepository.count())
+//                .totalAdminCnt(userRepository.countAllByUserRole(UserRole.ADMIN))
+//                .totalBronzeCnt(userRepository.countAllByUserRole(UserRole.BRONZE))
+//                .totalGoldCnt(userRepository.countAllByUserRole(UserRole.GOLD))
+//                .totalDiamondCnt(userRepository.countAllByUserRole(UserRole.DIAMOND))
+//                .totalBlacklistCnt(userRepository.countAllByUserRole(UserRole.BLACKLIST))
+//                .build();
+//    }
 }

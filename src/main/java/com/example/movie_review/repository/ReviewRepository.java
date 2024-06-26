@@ -1,5 +1,7 @@
 package com.example.movie_review.repository;
 
+import com.example.movie_review.domain.ENUM.ReviewCategory;
+import com.example.movie_review.domain.ENUM.UserRole;
 import com.example.movie_review.domain.review.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,15 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, JpaSpecif
     List<Review> findAllByUserLoginId(String loginId);
 
     Page<Review> findByTitleContaining(String keyword, Pageable pageable);
+
+//    Long countAllByUserUserRole(UserRole userRole);
+
+//    Long countAllByCategoryAndUserUserRoleNot(ReviewCategory reviewCategory, UserRole userRole);
+
+
+
+
+
 
 //    private final EntityManager em;
 //
