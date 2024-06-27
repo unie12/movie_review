@@ -1,5 +1,6 @@
-package com.example.movie_review.domain;
+package com.example.movie_review.movie;
 
+import com.example.movie_review.domain.Genres;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,17 +16,16 @@ import java.util.Set;
 @Entity @Data @Builder
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "movies")
-
 public class Movies {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "movie_id")
     private Long id;
 
-    @JoinColumn(name = "movie_title")
+    @Column(name = "movie_title")
     private String title;
 
-    @JoinColumn(name = "tmdb_id")
+    @Column(name = "tmdb_id")
     private Long tId;
 
     @ManyToMany

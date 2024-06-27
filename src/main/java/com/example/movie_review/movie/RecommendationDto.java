@@ -1,4 +1,4 @@
-package com.example.movie_review.domain;
+package com.example.movie_review.movie;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

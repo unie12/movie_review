@@ -1,5 +1,7 @@
-package com.example.movie_review.domain;
+package com.example.movie_review.movie;
 
+import com.example.movie_review.movie.MovieRepository;
+import com.example.movie_review.movie.Movies;
 import com.example.movie_review.repository.GenresRepository;
 import com.example.movie_review.service.GenreService;
 import lombok.RequiredArgsConstructor;
