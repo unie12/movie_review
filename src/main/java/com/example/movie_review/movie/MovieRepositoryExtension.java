@@ -1,6 +1,6 @@
 package com.example.movie_review.movie;
 
-import com.example.movie_review.domain.Genres;
+import com.example.movie_review.genre.Genres;
 
 import java.util.List;
 import java.util.Set;

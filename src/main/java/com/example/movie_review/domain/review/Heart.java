@@ -1,6 +1,6 @@
 package com.example.movie_review.domain.review;
 
-import com.example.movie_review.domain.User;
+import com.example.movie_review.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 

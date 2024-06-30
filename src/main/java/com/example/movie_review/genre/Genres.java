@@ -1,5 +1,6 @@
-package com.example.movie_review.domain;
+package com.example.movie_review.genre;
 
+import com.example.movie_review.movie.Movies;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,10 @@ public class Genres {
 
     @JoinColumn(name = "genre_name")
     private String name;
+
+
+//    @OneToMany(mappedBy = "genre")
+//    private Set<MovieGenres> movieGenres;
 
     public Genres(String name) {
         this.name = name;

@@ -1,10 +1,7 @@
 package com.example.movie_review.movie;
 
-import com.example.movie_review.domain.Genres;
-import com.example.movie_review.movie.MovieRepository;
-import com.example.movie_review.movie.Movies;
-import com.example.movie_review.movie.RecommendationDto;
-import com.example.movie_review.repository.GenresRepository;
+import com.example.movie_review.genre.Genres;
+import com.example.movie_review.genre.GenresRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

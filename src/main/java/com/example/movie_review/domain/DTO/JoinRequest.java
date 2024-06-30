@@ -1,7 +1,7 @@
 package com.example.movie_review.domain.DTO;
 
-import com.example.movie_review.domain.User;
-import com.example.movie_review.domain.ENUM.UserRole;
+import com.example.movie_review.user.User;
+import com.example.movie_review.user.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

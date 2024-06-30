@@ -1,7 +1,7 @@
 package com.example.movie_review.auth;
 
-import com.example.movie_review.domain.User;
-import com.example.movie_review.service.UserService;
+import com.example.movie_review.user.User;
+import com.example.movie_review.user.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

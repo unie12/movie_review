@@ -1,4 +1,4 @@
-package com.example.movie_review.domain.DTO;
+package com.example.movie_review.user;
 
 import lombok.Builder;
 import lombok.Data;

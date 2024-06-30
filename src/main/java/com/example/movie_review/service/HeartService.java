@@ -2,10 +2,10 @@ package com.example.movie_review.service;
 
 import com.example.movie_review.domain.review.Heart;
 import com.example.movie_review.domain.review.Review;
-import com.example.movie_review.domain.User;
+import com.example.movie_review.user.User;
 import com.example.movie_review.repository.HeartRepository;
 import com.example.movie_review.repository.ReviewRepository;
-import com.example.movie_review.repository.UserRepository;
+import com.example.movie_review.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

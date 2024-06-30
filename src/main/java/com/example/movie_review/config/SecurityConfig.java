@@ -1,8 +1,8 @@
 package com.example.movie_review.config;
 
 import com.example.movie_review.auth.JwtTokenFilter;
-import com.example.movie_review.domain.ENUM.UserRole;
-import com.example.movie_review.service.UserService;
+import com.example.movie_review.user.UserRole;
+import com.example.movie_review.user.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

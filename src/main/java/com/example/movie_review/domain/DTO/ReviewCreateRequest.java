@@ -1,12 +1,10 @@
 package com.example.movie_review.domain.DTO;
 
-import com.example.movie_review.domain.User;
+import com.example.movie_review.user.User;
 import com.example.movie_review.domain.review.Review;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor

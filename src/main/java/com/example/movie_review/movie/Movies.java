@@ -1,6 +1,7 @@
 package com.example.movie_review.movie;
 
-import com.example.movie_review.domain.Genres;
+import com.example.movie_review.genre.Genres;
+import com.example.movie_review.rating.Ratings;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,8 +29,14 @@ public class Movies {
     @Column(name = "tmdb_id")
     private Long tId;
 
+
     @ManyToMany
     private Set<Genres> genres;
+//    @OneToMany(mappedBy = "movie")
+//    private Set<MovieGenres> movieGenres;
+
+//    @OneToMany(mappedBy = "movies", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<Ratings> ratings;
 
     public MovieData toMovieData() {
         return MovieData.builder().movieId(this.id).tId(this.tId).rating(4.0).build();

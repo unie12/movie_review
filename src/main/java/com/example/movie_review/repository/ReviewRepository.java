@@ -1,7 +1,5 @@
 package com.example.movie_review.repository;
 
-import com.example.movie_review.domain.ENUM.ReviewCategory;
-import com.example.movie_review.domain.ENUM.UserRole;
 import com.example.movie_review.domain.review.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

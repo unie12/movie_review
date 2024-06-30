@@ -1,11 +1,7 @@
-package com.example.movie_review.service;
+package com.example.movie_review.user;
 
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
-import com.example.movie_review.domain.DTO.UserCntDto;
-import com.example.movie_review.domain.ENUM.UserRole;
-import com.example.movie_review.domain.User;
-import com.example.movie_review.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

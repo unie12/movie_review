@@ -1,7 +1,5 @@
-package com.example.movie_review.service;
+package com.example.movie_review.genre;
 
-import com.example.movie_review.domain.Genres;
-import com.example.movie_review.repository.GenresRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

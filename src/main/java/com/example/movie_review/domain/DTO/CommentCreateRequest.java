@@ -2,7 +2,7 @@ package com.example.movie_review.domain.DTO;
 
 import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.review.Review;
-import com.example.movie_review.domain.User;
+import com.example.movie_review.user.User;
 import lombok.Data;
 
 @Data

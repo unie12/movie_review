@@ -1,7 +1,7 @@
 package com.example.movie_review.movie;
 
-import com.example.movie_review.domain.Genres;
-import com.example.movie_review.domain.QGenres;
+import com.example.movie_review.genre.Genres;
+import com.example.movie_review.genre.QGenres;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;

@@ -1,26 +1,18 @@
 package com.example.movie_review.service;
 
-import com.example.movie_review.domain.DTO.HeartRequestDto;
-import com.example.movie_review.domain.DTO.ReviewCntDto;
-import com.example.movie_review.domain.DTO.ReviewCreateRequest;
 import com.example.movie_review.domain.DTO.ReviewDto;
-import com.example.movie_review.domain.ENUM.ReviewCategory;
-import com.example.movie_review.domain.ENUM.UserRole;
-import com.example.movie_review.domain.User;
+import com.example.movie_review.user.User;
 import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.review.Heart;
 import com.example.movie_review.domain.review.Review;
 import com.example.movie_review.repository.CommentRepository;
 import com.example.movie_review.repository.HeartRepository;
 import com.example.movie_review.repository.ReviewRepository;
-import com.example.movie_review.repository.UserRepository;
-import jakarta.persistence.Table;
+import com.example.movie_review.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

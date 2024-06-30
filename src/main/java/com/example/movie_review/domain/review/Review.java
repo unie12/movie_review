@@ -3,7 +3,7 @@ package com.example.movie_review.domain.review;
 import com.example.movie_review.domain.BaseEntity;
 import com.example.movie_review.domain.DTO.ReviewCreateRequest;
 import com.example.movie_review.domain.DTO.ReviewDto;
-import com.example.movie_review.domain.User;
+import com.example.movie_review.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 

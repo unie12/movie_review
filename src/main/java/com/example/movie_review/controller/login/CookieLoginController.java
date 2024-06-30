@@ -2,9 +2,9 @@ package com.example.movie_review.controller.login;
 
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
-import com.example.movie_review.domain.User;
-import com.example.movie_review.domain.ENUM.UserRole;
-import com.example.movie_review.service.UserService;
+import com.example.movie_review.user.User;
+import com.example.movie_review.user.UserRole;
+import com.example.movie_review.user.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
