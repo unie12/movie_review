@@ -1,9 +1,7 @@
 package com.example.movie_review.movie;
 
-import com.example.movie_review.movie.MovieRepository;
-import com.example.movie_review.movie.Movies;
-import com.example.movie_review.repository.GenresRepository;
-import com.example.movie_review.service.GenreService;
+import com.example.movie_review.genre.GenresRepository;
+import com.example.movie_review.genre.GenreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +22,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dummy")
-public class AddDummyData {
+public class AddMoviesData {
 
     private final GenresRepository genresRepo;
     private final GenreService genreService;
