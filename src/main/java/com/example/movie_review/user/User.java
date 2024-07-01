@@ -5,6 +5,7 @@ import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.review.Heart;
 import com.example.movie_review.domain.review.Review;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -35,14 +36,31 @@ public class User {
     private String password; // 비밀번호
     private String passwordCheck; // 비밀번호 더블체크
 
-    @Column(nullable = false, length = 30)
+    @Column(length = 30, nullable = true)
     private String nickname; // 닉네임
 
-    @Embedded
-    private Address address; // 주소
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "picture")
+    private String picture;
+
+//    @Embedded
+//    private Address address; // 주소
+    @Enumerated(EnumType.STRING)
+    @NotNull
     private UserRole role; // 등급
+
     private Integer receivedHeartCnt; // 좋아요 받은 수
 //    private Integer pressHeartCnt; // 좋아요 누른 수
+
+    @Builder
+    public User(String name, String email, String picture, UserRole role) {
+        this.name = name;
+        this.email = email;
+        this.picture = picture;
+        this.role = role;
+    }
 
 
     /**
@@ -60,9 +78,9 @@ public class User {
     /**
      * 추가 정보
      */
-    private String phoneNumber;
+//    private String phoneNumber;
     private String gender;
-    private String birth;
+//    private String birth;
 
     /**
      * 연관관계 메서드
@@ -98,4 +116,14 @@ public class User {
 //        this.pressHeartCnt = pressHeartCnt;
 //    }
 
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
+
+    public User update(String name, String picture) {
+        this.name = name;
+        this.picture = picture;
+
+        return this;
+    }
 }

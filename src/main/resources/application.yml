@@ -1,11 +1,14 @@
 spring:
   datasource:
-    url: 'jdbc:h2:tcp://localhost/~/test'
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
+    #    url: 'jdbc:h2:tcp://localhost/~/test'
+    url: jdbc:mysql://localhost:3307/movies
+    username: root
+    password: 1234
+    #    driver-class-name: org.h2.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: create-drop
     properties:
@@ -13,6 +16,14 @@ spring:
         default_batch_fetch_size: 100
         show_sql: true
         format_sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 719191297460-rjtmdqvsf26sdld6bsi6lbovebpk7th0.apps.googleusercontent.com
+            client-secret: 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
+            scope: profile, email
 
 # 화면에 에러 정보 출력
 server:
