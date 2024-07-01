@@ -35,8 +35,8 @@ public class Movies {
 //    @OneToMany(mappedBy = "movie")
 //    private Set<MovieGenres> movieGenres;
 
-//    @OneToMany(mappedBy = "movies", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private Set<Ratings> ratings;
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Ratings> ratings;
 
     public MovieData toMovieData() {
         return MovieData.builder().movieId(this.id).tId(this.tId).rating(4.0).build();

@@ -21,28 +21,28 @@ public class RatingController {
     private final RatingService ratingService;
 
     private final UserRepository userRepository;
-    private final MovieRepository movieRepository;
+        private final MovieRepository movieRepository;
 
-    /***
-     * rating 정보 보기
-     */
-    @GetMapping("/ratings")
-    public ResponseEntity retrieveRatings(@PageableDefault(size=100) Pageable pageable) {
-        return ratingService.retrieveRatings(pageable);
-    }
+        /***
+         * rating 정보 보기
+         */
+        @GetMapping("/ratings")
+        public ResponseEntity retrieveRatings(@PageableDefault(size=100) Pageable pageable) {
+            return ratingService.retrieveRatings(pageable);
+        }
 
-    /***
-     * 회원가입한 유저가 rating 할 시 저장
-     */
-    @PostMapping("/add-user-rating")
-    public ResponseEntity<?> addUserRating(@RequestParam Long userId, @RequestParam Long movieId, @RequestParam Double rating) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Movies movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Movie not found"));
+        /***
+         * 회원가입한 유저가 rating 할 시 저장
+         */
+        @PostMapping("/add-user-rating")
+        public ResponseEntity<?> addUserRating(@RequestBody RatingRequest ratingRequest) {
+            User user = userRepository.findById(ratingRequest.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+            Movies movie = movieRepository.findById(ratingRequest.getMovieId()).orElseThrow(() -> new RuntimeException("Movie not found"));
         
         Ratings userRating = Ratings.builder()
-                .userId(userId)
-                .movieId(movieId)
-                .rating(rating)
+                .userId(ratingRequest.getUserId())
+                .movieId(ratingRequest.getMovieId())
+                .rating(ratingRequest.getRating())
                 .timestamp(System.currentTimeMillis())
                 .user(user)
                 .movie(movie)

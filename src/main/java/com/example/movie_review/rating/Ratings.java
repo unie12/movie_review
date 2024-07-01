@@ -32,12 +32,12 @@ public class Ratings {
     @Column(name = "timestamp")
     private Long timestamp;
 
-    @Transient
+//    @Transient
     @ManyToOne
     @JoinColumn(name = "movie_id", insertable = false, updatable = false)
     private Movies movie;
 
-    @Transient
+//    @Transient
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
