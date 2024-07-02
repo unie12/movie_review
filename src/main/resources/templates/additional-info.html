@@ -1,58 +1,48 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>추가 정보 입력</title>
-</head>
+<head th:replace="fragments/header :: header" />
+
 
 <body>
-<h1>추가 정보 입력</h1>
-<form action="/additional-info" method="post">
-    <label for="nickname">닉네임:</label>
-    <input type="text" id="nickname" name="nickname" required><br>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
-    <label for="gender">성별:</label>
-    <input type="text" id="gender" name="gender" required><br>
+    <h1>추가 정보 입력</h1>
+    <form action="/additional-info" method="post">
+        <label for="nickname">닉네임:</label>
+        <input type="text" id="nickname" name="nickname" th:value="${user.nickname}" required><br>
 
-    <label for="age">Age:</label>
-    <input type="number" id="age" name="age" required><br>
+        <label for="gender">성별:</label>
+        <input type="text" id="gender" name="gender" th:value="${user.gender}" required><br>
 
-    <label for="mbti">MBTI:</label>
-    <select id="mbti" name="mbti" required>
-        <option value="INTJ">INTJ</option>
-        <option value="INTP">INTP</option>
-        <option value="ENTJ">ENTJ</option>
-        <option value="ENTP">ENTP</option>
-        <option value="INFJ">INFJ</option>
-        <option value="INFP">INFP</option>
-        <option value="ENFJ">ENFJ</option>
-        <option value="ENFP">ENFP</option>
-        <option value="ISTJ">ISTJ</option>
-        <option value="ISFJ">ISFJ</option>
-        <option value="ESTJ">ESTJ</option>
-        <option value="ESFJ">ESFJ</option>
-        <option value="ISTP">ISTP</option>
-        <option value="ISFP">ISFP</option>
-        <option value="ESTP">ESTP</option>
-        <option value="ESFP">ESFP</option>
-    </select><br>
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" th:value="${user.age}" required><br>
 
-<!--    <label for="preferMovies">Preferred Movies:</label>-->
-<!--    <input type="text" id="preferMovies" name="preferMovies" required><br>-->
+        <label for="mbti">MBTI:</label>
+        <select id="mbti" name="mbti" required>
+            <option value="INTJ" th:selected="${user.mbti == 'INTJ'}">INTJ</option>
+            <option value="INTP" th:selected="${user.mbti == 'INTP'}">INTP</option>
+            <option value="ENTJ" th:selected="${user.mbti == 'ENTJ'}">ENTJ</option>
+            <option value="ENTP" th:selected="${user.mbti == 'ENTP'}">ENTP</option>
+            <option value="INFJ" th:selected="${user.mbti == 'INFJ'}">INFJ</option>
+            <option value="INFP" th:selected="${user.mbti == 'INFP'}">INFP</option>
+            <option value="ENFJ" th:selected="${user.mbti == 'ENFJ'}">ENFJ</option>
+            <option value="ENFP" th:selected="${user.mbti == 'ENFP'}">ENFP</option>
+            <option value="ISTJ" th:selected="${user.mbti == 'ISTJ'}">ISTJ</option>
+            <option value="ISFJ" th:selected="${user.mbti == 'ISFJ'}">ISFJ</option>
+            <option value="ESTJ" th:selected="${user.mbti == 'ESTJ'}">ESTJ</option>
+            <option value="ESFJ" th:selected="${user.mbti == 'ESFJ'}">ESFJ</option>
+            <option value="ISTP" th:selected="${user.mbti == 'ISTP'}">ISTP</option>
+            <option value="ISFP" th:selected="${user.mbti == 'ISFP'}">ISFP</option>
+            <option value="ESTP" th:selected="${user.mbti == 'ESTP'}">ESTP</option>
+            <option value="ESFP" th:selected="${user.mbti == 'ESFP'}">ESFP</option>
+        </select><br>
 
-<!--    <label>Preferred Genres:</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Action" id="genreAction"> <label for="genreAction">Action</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Comedy" id="genreComedy"> <label for="genreComedy">Comedy</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Drama" id="genreDrama"> <label for="genreDrama">Drama</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Fantasy" id="genreFantasy"> <label for="genreFantasy">Fantasy</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Horror" id="genreHorror"> <label for="genreHorror">Horror</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Mystery" id="genreMystery"> <label for="genreMystery">Mystery</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Romance" id="genreRomance"> <label for="genreRomance">Romance</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Sci-Fi" id="genreSciFi"> <label for="genreSciFi">Sci-Fi</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Thriller" id="genreThriller"> <label for="genreThriller">Thriller</label><br>-->
-<!--    <input type="checkbox" name="preferGenres" value="Western" id="genreWestern"> <label for="genreWestern">Western</label><br>-->
+        <button type="submit">Submit</button>
+    </form>
+    <div th:replace="fragments/footer :: footer" />
 
-    <button type="submit">Submit</button>
-</form>
+</div>
 </body>
 </html>
 
