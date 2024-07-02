@@ -95,6 +95,10 @@ public class UserService {
         return userRepository.findByLoginId(loginId).get();
     }
 
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 //    public UserCntDto getUserCnt() {
 //        return UserCntDto.builder()
 //                .totalUserCnt(userRepository.count())

@@ -22,12 +22,44 @@ import static jakarta.persistence.CascadeType.ALL;
 @Setter
 public class User {
 
+    /**
+     * 구글 로그인 시 기본 데이터 저장
+     */
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id; // primary key
 
-    @Column(name = "name_id", length = 30)
     private String name; // 이름
+    private String email;
+    private String picture;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private UserRole role; // 등급
+
+    /**
+     * 추가 정보 입력
+     */
+    private String nickname; // 닉네임
+    private String gender;
+    private Long age;
+
+    private String mbti;
+
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    @CollectionTable(name = "user_prefer_genres", joinColumns = @JoinColumn(name = "user_id"))
+//    @Column(name = "genre")
+//    private List<String> preferGenres = new ArrayList<>();
+
+//    @ElementCollection
+//    @CollectionTable(name = "user_prefer_movies", joinColumns = @JoinColumn(name = "user_id"))
+//    @Column(name = "movie_title")
+//    private List<String> preferMovies = new ArrayList<>();
+
+
+//    private String preferDirector;
+//    private String preferActor;
+
 
     @Column(name = "login_id", length = 30, unique = true)
     private String loginId; // 아이디
@@ -36,29 +68,20 @@ public class User {
     private String password; // 비밀번호
     private String passwordCheck; // 비밀번호 더블체크
 
-    @Column(length = 30, nullable = true)
-    private String nickname; // 닉네임
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "picture")
-    private String picture;
-
-//    @Embedded
-//    private Address address; // 주소
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private UserRole role; // 등급
-
     private Integer receivedHeartCnt; // 좋아요 받은 수
 //    private Integer pressHeartCnt; // 좋아요 누른 수
 
     @Builder
-    public User(String name, String email, String picture, UserRole role) {
+    public User(String name, String email, String picture, String nickname, String gender, Long age, String mbti, UserRole role) {
         this.name = name;
         this.email = email;
         this.picture = picture;
+        this.nickname = nickname;
+        this.gender = gender;
+        this.age = age;
+        this.mbti = mbti;
+//        this.preferGenres = preferGenres;
+//        this.preferMovies = preferMovies;
         this.role = role;
     }
 
@@ -75,12 +98,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    /**
-     * 추가 정보
-     */
-//    private String phoneNumber;
-    private String gender;
-//    private String birth;
 
     /**
      * 연관관계 메서드
@@ -120,10 +137,15 @@ public class User {
         return this.role.getKey();
     }
 
-    public User update(String name, String picture) {
+    public User update(String name, String picture, String nickname, String gender, Long age, String mbti) {
         this.name = name;
         this.picture = picture;
-
+        this.nickname = nickname != null ? nickname : this.nickname;
+        this.gender = gender != null ? gender : this.gender;
+        this.age = age != null ? age : this.age;
+        this.mbti = mbti != null ? mbti : this.mbti;
+//        this.preferGenres = preferGenres;
+//        this.preferMovies = preferMovies;
         return this;
     }
 }

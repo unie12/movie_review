@@ -11,11 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,9 +35,9 @@ public class JwtLoginController {
 //        model.addAttribute("userCntDto", userService.getUserCnt());
 //        model.addAttribute("reviewCntDto", reviewService.getReviewCnt());
 
-        if(auth != null) {
+        if (auth != null) {
             User loginUser = userService.getLoginUserByLoginId(auth.getName());
-            if(loginUser != null) {
+            if (loginUser != null) {
                 model.addAttribute("nickname", loginUser.getNickname());
             }
         }
@@ -56,19 +59,19 @@ public class JwtLoginController {
         model.addAttribute("pageName", "Jwt Token 화면 로그인");
 
         // loginID 중복 체크
-        if(userService.checkLoginIdDuplicate(joinRequest.getLoginId())) {
+        if (userService.checkLoginIdDuplicate(joinRequest.getLoginId())) {
             bindingResult.addError(new FieldError("joinRequest", "loginId", "로그인 아이디가 중복됩니다."));
         }
         // 닉네임 중복 체크
-        if(userService.checkNicknameDuplicate(joinRequest.getNickname())) {
+        if (userService.checkNicknameDuplicate(joinRequest.getNickname())) {
             bindingResult.addError(new FieldError("joinRequest", "nickname", "닉네임이 중복됩니다."));
         }
         // password passwordCheck 동일 확인
-        if(!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())) {
+        if (!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())) {
             bindingResult.addError(new FieldError("joinRequest", "passwordCheck", "비밀번호가 일치하지 않습니다."));
         }
 
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "join";
         }
 
@@ -113,7 +116,7 @@ public class JwtLoginController {
         cookie.setMaxAge(60 * 60);
         response.addCookie(cookie);
 
-        return  "redirect:/jwt-login";
+        return "redirect:/jwt-login";
     }
 
     @GetMapping("/logout")
@@ -172,5 +175,4 @@ public class JwtLoginController {
 
         return "errorPage/authorizationFail";
     }
-
 }
