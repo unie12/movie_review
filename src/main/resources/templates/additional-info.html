@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
-
+<head th:replace="fragments/header :: header">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
 
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
+    <h2>영화 검색</h2>
+    <form id="search-form" th:action="@{/search-movies}" method="get">
+        <input type="text" id="query" name="query" placeholder="영화 검색">
+        <button type="submit" id="search-button">검색</button>
+    </form>
+
+    <h2>검색 결과</h2>
+    <ul id="search-results"></ul>
 
     <h1>추가 정보 입력</h1>
     <form action="/additional-info" method="post">
@@ -38,44 +48,88 @@
             <option value="ESFP" th:selected="${user.mbti == 'ESFP'}">ESFP</option>
         </select><br>
 
+        <h2>선호 영화 목록 (최대 5개)</h2>
+        <ul id="favorite-movies"></ul>
+
+        <input type="hidden" id="favorite-movies-input" name="favoriteMovies">
         <button type="submit">Submit</button>
     </form>
-    <div th:replace="fragments/footer :: footer" />
 
+    <script th:inline="javascript">
+        document.getElementById('search-button').addEventListener('click', function(event) {
+            event.preventDefault();
+            const query = document.getElementById('query').value;
+            if (query) {
+                fetch(`/search-movies?query=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const searchResults = document.getElementById('search-results');
+                        searchResults.innerHTML = ''; // 기존 검색 결과를 지움
+                        data.results.forEach(movie => {
+                            const li = document.createElement('li');
+                            li.textContent = movie.title;
+                            li.dataset.movieId = movie.id;
+                            li.addEventListener('click', function() {
+                                addFavoriteMovie(movie.title, movie.id);
+                            });
+                            searchResults.appendChild(li);
+                        });
+                    });
+            }
+        });
+
+        // 선호 영화 추가 함수
+        function addFavoriteMovie(movieTitle, movieId) {
+            const favoriteMovies = document.getElementById('favorite-movies');
+            const favoriteMoviesInput = document.getElementById('favorite-movies-input');
+            const currentFavorites = favoriteMoviesInput.value ? favoriteMoviesInput.value.split(',') : [];
+
+            // 선호 영화 중복 체크 및 최대 개수 제한
+            if (favoriteMovies.children.length < 5 && !currentFavorites.includes(movieId.toString())) {
+                const li = document.createElement('li');
+                li.textContent = movieTitle;
+                li.dataset.movieId = movieId;
+                favoriteMovies.appendChild(li);
+
+                currentFavorites.push(movieTitle);
+                currentFavorites.push(movieId.toString());
+                favoriteMoviesInput.value = currentFavorites.join(',');
+
+                // localStorage에 저장
+                localStorage.setItem('favoriteMovies', favoriteMoviesInput.value);
+            } else {
+                alert('최대 5개의 선호 영화를 선택할 수 있으며, 중복 선택은 불가능합니다.');
+            }
+        }
+
+        // 페이지 로드 시 데이터베이스에서 선호 영화 목록을 가져와 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/favorite-movies')
+                .then(response => response.json())
+                .then(data => {
+                    const favoriteMoviesInput = document.getElementById('favorite-movies-input');
+                    const favoriteMovies = document.getElementById('favorite-movies');
+                    favoriteMovies.innerHTML = '';
+
+                    const currentFavorites = [];
+
+                    data.forEach(movie => {
+                        const li = document.createElement('li');
+                        li.textContent = movie.movieTitle;
+                        li.dataset.movieId = movie.movieId;
+                        favoriteMovies.appendChild(li);
+
+                        currentFavorites.push(movie.movieTitle);
+                        currentFavorites.push(movie.movieId);
+                    });
+
+                    favoriteMoviesInput.value = currentFavorites.join(',');
+                    localStorage.setItem('favoriteMovies', favoriteMoviesInput.value);
+                });
+        });
+    </script>
+
+    <div th:replace="fragments/footer :: footer" />
 </div>
 </body>
 </html>
-
-<!--<script>-->
-<!--    function searchMovies() {-->
-<!--        var query = document.getElementById('movieSearch').value;-->
-<!--        fetch('/movies/search?query=' + query)-->
-<!--            .then(response => response.json())-->
-<!--            .then(data => {-->
-<!--                var movieList = document.getElementById('movieList');-->
-<!--                movieList.innerHTML = '';-->
-<!--                data.results.forEach(movie => {-->
-<!--                    var listItem = document.createElement('li');-->
-<!--                    listItem.textContent = movie.title;-->
-<!--                    listItem.onclick = function() {-->
-<!--                        addMovieToPreferred(movie.title);-->
-<!--                    };-->
-<!--                    movieList.appendChild(listItem);-->
-<!--                });-->
-<!--            });-->
-<!--    }-->
-
-<!--    function addMovieToPreferred(movieTitle) {-->
-<!--        var preferredMovies = document.getElementById('preferredMovies');-->
-<!--        var listItem = document.createElement('li');-->
-<!--        listItem.textContent = movieTitle;-->
-<!--        preferredMovies.appendChild(listItem);-->
-<!--    }-->
-<!--</script>-->
-
-<!--<input type="text" id="movieSearch" placeholder="Search for a movie">-->
-<!--<button onclick="searchMovies()">Search</button>-->
-<!--<ul id="movieList"></ul>-->
-
-<!--<h3>Preferred Movies</h3>-->
-<!--<ul id="preferredMovies"></ul>-->

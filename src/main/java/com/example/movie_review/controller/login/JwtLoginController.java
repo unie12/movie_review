@@ -51,6 +51,7 @@ public class JwtLoginController {
     public String searchMovies(@RequestParam String query, Model model) {
         String searchResults = tmdbService.searchMovies(query).block();
         model.addAttribute("movies", searchResults);
+        System.out.println("jwt searchhhh");
         return "home";
 //        return tmdbService.searchMovies(query);
 

@@ -1,6 +1,7 @@
 package com.example.movie_review.tmdb;
 
 import com.nimbusds.jose.shaded.gson.JsonObject;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,12 +26,6 @@ public class TmdbService {
                 .bodyToMono(String.class);
     }
 
-//    public Mono<String> getTrendingMovies() {
-//        return this.webClient.get()
-//                .uri("/api.themoviedb.org/3/trending/all/day?language=ko-KR)
-//                .retrieve()
-//                .bodyToMono(String.class);
-//    }
     public Mono<String> searchMovies(String query) {
         return this.webClient.get()
                 .uri("/search/movie?api_key={api_key}&query={query}&language=ko-KR", apikey, query)

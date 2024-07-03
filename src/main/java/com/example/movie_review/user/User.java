@@ -4,6 +4,9 @@ import com.example.movie_review.domain.Address;
 import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.review.Heart;
 import com.example.movie_review.domain.review.Review;
+import com.example.movie_review.genre.PreferredGenres;
+import com.example.movie_review.movie.PreferredMovies;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -43,33 +46,36 @@ public class User {
     private String nickname; // 닉네임
     private String gender;
     private Long age;
-
     private String mbti;
 
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @CollectionTable(name = "user_prefer_genres", joinColumns = @JoinColumn(name = "user_id"))
-//    @Column(name = "genre")
-//    private List<String> preferGenres = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<PreferredMovies> preferredMovies = new ArrayList<>();
 
-//    @ElementCollection
-//    @CollectionTable(name = "user_prefer_movies", joinColumns = @JoinColumn(name = "user_id"))
-//    @Column(name = "movie_title")
-//    private List<String> preferMovies = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<PreferredGenres> preferredGenres = new ArrayList<>();
 
-
-//    private String preferDirector;
-//    private String preferActor;
+    private Integer receivedHeartCnt; // 좋아요 받은 수
+//    private Integer pressHeartCnt; // 좋아요 누른 수
 
 
     @Column(name = "login_id", length = 30, unique = true)
     private String loginId; // 아이디
-
     @Column(name = "password")
     private String password; // 비밀번호
     private String passwordCheck; // 비밀번호 더블체크
 
-    private Integer receivedHeartCnt; // 좋아요 받은 수
-//    private Integer pressHeartCnt; // 좋아요 누른 수
+    /**
+     * 사용자 이용 현황
+     */
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<Heart> hearts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public User(String name, String email, String picture, String nickname, String gender, Long age, String mbti, UserRole role) {
@@ -87,19 +93,6 @@ public class User {
 
 
     /**
-     * 사용자 이용 현황
-     */
-    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
-    private List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
-    private List<Heart> hearts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
-
-
-    /**
      * 연관관계 메서드
      */
     public void addReview(Review review) {
@@ -109,6 +102,10 @@ public class User {
     public void addComment(Comment comment) {
         comments.add(comment);
     }
+
+    public void addPreferredMovie(PreferredMovies preferredMovie) { preferredMovies.add(preferredMovie); }
+
+    public void addPreferredGenre(PreferredGenres preferredGenre) { preferredGenres.add(preferredGenre); }
 
     /**
      * 정보 수정

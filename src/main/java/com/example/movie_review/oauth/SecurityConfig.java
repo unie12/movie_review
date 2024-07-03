@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .formLogin().disable() // 폼 로그인 사용 안 함
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/oauth2/**", "/jwt-login/**", "/jwt-login", "/home").permitAll() // 해당 URL은 인증 절차 수행 생략 가능
+                        .requestMatchers("/", "/oauth2/**", "/jwt-login/**", "/jwt-login", "/home", "/login-failure").permitAll() // 해당 URL은 인증 절차 수행 생략 가능
                         .anyRequest().authenticated() // 나머지 요청들은 모두 인증 절차 수행해야 함
                 )
 
@@ -31,11 +31,11 @@ public class SecurityConfig {
                     .userInfoEndpoint(userInfo -> userInfo
                         .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
                     )
-                    .failureUrl("/jwt-login/home")
+                    .failureUrl("/login-failure") // 로그인 실패 시 이동할 URL
                 )
                 .logout(
                         (logout) -> logout
-                                .logoutSuccessUrl("/jwt-login/home")
+                                .logoutSuccessUrl("/jwt-login")
                                 .deleteCookies("JSESSIONID", "jwtToken")
                 );
 
