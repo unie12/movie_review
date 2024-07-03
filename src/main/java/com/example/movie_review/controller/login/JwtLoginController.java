@@ -3,6 +3,7 @@ package com.example.movie_review.controller.login;
 import com.example.movie_review.auth.JwtTokenUtil;
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
+import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.User;
 import com.example.movie_review.service.ReviewService;
 import com.example.movie_review.user.UserService;
@@ -11,14 +12,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,6 +25,7 @@ public class JwtLoginController {
 
     private final UserService userService;
     private final ReviewService reviewService;
+    private final TmdbService tmdbService;
 
     @GetMapping({"", "/"})
     public String home(Model model, Authentication auth) {
@@ -41,7 +40,20 @@ public class JwtLoginController {
                 model.addAttribute("nickname", loginUser.getNickname());
             }
         }
+        // 동기적으로 영화 데이터를 가져와서 모델에 추가
+        String recommendedMovies = tmdbService.getPopularMovies().block();
+        System.out.println("recommendedMovies = " + recommendedMovies);
+        model.addAttribute("movies", recommendedMovies);
         return "home";
+    }
+
+    @GetMapping("/search")
+    public String searchMovies(@RequestParam String query, Model model) {
+        String searchResults = tmdbService.searchMovies(query).block();
+        model.addAttribute("movies", searchResults);
+        return "home";
+//        return tmdbService.searchMovies(query);
+
     }
 
     @GetMapping("/join")
