@@ -22,6 +22,6 @@ public class PreferredGenres {
     private User user;
 
     private String genreName;
-    private String genreId;
+    private Long genreId;
 
 }

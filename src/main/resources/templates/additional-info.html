@@ -48,11 +48,27 @@
             <option value="ESFP" th:selected="${user.mbti == 'ESFP'}">ESFP</option>
         </select><br>
 
+        <h2>선호 장르 선택 (최대 5개)</h2>
+        <div id="genre-selection">
+            <ul>
+                <li th:each="genre : ${tmdbGenres}">
+                    <input type="checkbox" name="preferredGenres" th:value="${genre.id}" th:text="${genre.name}"
+                           th:checked="${userPreferredGenreIds.contains(genre.id)}"
+                           onchange="updateFavoriteGenres(this)"/>
+                </li>
+            </ul>
+        </div>
+
         <h2>선호 영화 목록 (최대 5개)</h2>
         <ul id="favorite-movies"></ul>
-
         <input type="hidden" id="favorite-movies-input" name="favoriteMovies">
+
+        <h2>선호 장르 목록 (최대 5개)</h2>
+        <ul id="favorite-genres"></ul>
+        <input type="hidden" id="favorite-genres-input" name="favoriteGenres">
+
         <button type="submit">Submit</button>
+
     </form>
 
     <script th:inline="javascript">
@@ -126,6 +142,70 @@
                     favoriteMoviesInput.value = currentFavorites.join(',');
                     localStorage.setItem('favoriteMovies', favoriteMoviesInput.value);
                 });
+        });
+    </script>
+
+    <script th:inline="javascript">
+        const maxGenres = 5;
+        const favoriteGenres = document.getElementById('favorite-genres');
+        const favoriteGenresInput = document.getElementById('favorite-genres-input');
+
+        function updateFavoriteGenres(checkbox) {
+            const genreId = checkbox.value;
+            const genreName = checkbox.nextSibling.textContent;
+
+            if (checkbox.checked) {
+                if (favoriteGenres.children.length >= maxGenres) {
+                    alert('최대 5개의 선호 장르를 선택할 수 있습니다.');
+                    checkbox.checked = false;
+                    return;
+                }
+                addGenreToList(genreId, genreName);
+            } else {
+                removeGenreFromList(genreId);
+            }
+
+            updateHiddenInput();
+        }
+
+        function addGenreToList(genreId, genreName) {
+            const existingGenre = favoriteGenres.querySelector(`li[data-genre-id="${genreId}"]`);
+            if (!existingGenre) {
+                const li = document.createElement('li');
+                li.textContent = genreName;
+                li.dataset.genreId = genreId;
+                favoriteGenres.appendChild(li);
+            }
+        }
+
+        function removeGenreFromList(genreId) {
+            const genreToRemove = favoriteGenres.querySelector(`li[data-genre-id="${genreId}"]`);
+            if (genreToRemove) {
+                favoriteGenres.removeChild(genreToRemove);
+            }
+        }
+
+        function updateHiddenInput() {
+            const selectedGenres = Array.from(favoriteGenres.children).map(li => {
+                return `${li.textContent},${li.dataset.genreId}`;
+            });
+            favoriteGenresInput.value = selectedGenres.join('|');
+        }
+
+        // 초기 선호 장르 목록 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkedGenres = document.querySelectorAll('input[name="preferredGenres"]:checked');
+            checkedGenres.forEach(genre => {
+                addGenreToList(genre.value, genre.nextSibling.textContent);
+            });
+            updateHiddenInput();
+
+            // 페이지 로드 시 DB에서 가져온 선호 장르 목록 초기화
+            const userPreferredGenres = /*[[${userPreferredGenres}]]*/ [];
+            userPreferredGenres.forEach(genre => {
+                addGenreToList(genre.genreId, genre.genreName);
+            });
+            updateHiddenInput();
         });
     </script>
 

@@ -1,5 +1,6 @@
 package com.example.movie_review.movie;
 
+import com.example.movie_review.genre.Genres;
 import com.example.movie_review.genre.GenresRepository;
 import com.example.movie_review.genre.GenreService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,7 @@ public class AddMoviesData {
 
     private final GenresRepository genresRepo;
     private final GenreService genreService;
+    private final GenresRepository genresRepository;
 
     private final MovieRepository movieRepo;
     private final Map<Long, Long> MovieIdToTid;
@@ -64,5 +67,11 @@ public class AddMoviesData {
                     .build());
         }
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/add-genres")
+    public void addGenres() {
+        List<Genres> genres = genreService.fetchGenres();
+        genresRepository.saveAll(genres);
     }
 }

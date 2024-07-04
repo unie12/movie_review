@@ -48,11 +48,11 @@ public class User {
     private Long age;
     private String mbti;
 
-    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<PreferredMovies> preferredMovies = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PreferredGenres> preferredGenres = new ArrayList<>();
 
     private Integer receivedHeartCnt; // 좋아요 받은 수
