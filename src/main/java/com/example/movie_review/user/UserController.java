@@ -40,19 +40,21 @@ public class UserController {
     private final PreferredMoviesService preferredMoviesService;
     private final PreferredGenresService preferredGenresService;
 
+    /**
+     * 사용자 추가 정보 처리
+     */
     @GetMapping("/additional-info")
     public String additionalInfoPage(Model model) {
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
         User user = userRepository.findByEmail(sessionUser.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
-        List<Genres> allGenres = genresRepository.findAll();
-        List<Genres> tmdbGenres = allGenres.stream()
+        List<Genres> allGenres = genresRepository.findAll(); // 모든 장르 데이터 (movielens + tmdb)
+        List<Genres> tmdbGenres = allGenres.stream() // tmdb 장르 데이터만
                 .filter(genre -> genre.getName().matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*"))
                 .collect(Collectors.toList());
 
-        List<PreferredGenres> userPreferredGenres = preferredGenresService.findByUser(user);
-        System.out.println("userPreferredGenres = " + userPreferredGenres);
+        List<PreferredGenres> userPreferredGenres = preferredGenresService.findByUser(user); // 해당 사용자의 선호 장르
 
         // 사용자의 선호 장르 ID 목록을 생성
         List<Long> userPreferredGenreIds = userPreferredGenres.stream()
@@ -76,12 +78,11 @@ public class UserController {
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
         User user = userRepository.findByEmail(sessionUser.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
-        user.setGender(gender);
-        user.setNickname(nickname);
-        user.setAge(age);
-        user.setMbti(mbti);
+        if(userRepository.findByNickname(nickname) != null && !user.getNickname().equals(nickname)) {
+            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다");
+        }
+        user.update(nickname, gender, age, mbti);
 
-        System.out.println("preferredGenres = " + preferredGenres);
         // 선호 장르 저장
         for(Long preferredGenreId : preferredGenres) {
             System.out.println("preferredGenreId = " + preferredGenreId);
@@ -112,19 +113,21 @@ public class UserController {
 
             preferredMoviesList.add(preferredMovie);
         }
-
-        // 선호 영화 목록을 저장
         for (PreferredMovies preferredMovie : preferredMoviesList) {
             preferredMoviesService.savePreferredMovie(preferredMovie);
         }
 
         userRepository.save(user);
-        System.out.println("usercontrollerr = " + user.getNickname());
-
-        // 세션 정보 업데이트
-        httpSession.setAttribute("user", new SessionUser(user));
+        httpSession.setAttribute("user", new SessionUser(user)); // 세션 정보 업데이트
 
         return "redirect:/jwt-login";
+    }
+
+    @GetMapping("/check-nickname")
+    @ResponseBody
+    public String checkNickname(@RequestParam String nickname) {
+        User user = userRepository.findByNickname(nickname);
+        return user == null ? "available" : "unavailable";
     }
 
     @GetMapping("/search-movies")
@@ -134,6 +137,9 @@ public class UserController {
         return tmdbService.searchMovies(query);
     }
 
+    /**
+     * 해당 사용자의 선호 영화, 장르 가져오기
+     */
     @GetMapping("/favorite-movies")
     @ResponseBody
     public List<PreferredMovies> getFavoriteMovies() {
@@ -142,7 +148,6 @@ public class UserController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id"));
         return preferredMoviesService.findByUser(user);
     }
-
     @GetMapping("/favorite-genres")
     @ResponseBody
     public List<PreferredGenres> getFavoriteGenres() {

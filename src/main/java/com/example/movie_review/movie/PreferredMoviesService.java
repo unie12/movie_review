@@ -29,7 +29,7 @@ public class PreferredMoviesService {
         return preferredMoviesRepository.findByUser(user);
     }
 
-    public List<PreferredMovies> findByUser(User user) {
+    public List<PreferredMovies>findByUser(User user) {
         return preferredMoviesRepository.findByUser(user);
     }
 

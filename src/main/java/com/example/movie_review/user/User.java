@@ -134,15 +134,11 @@ public class User {
         return this.role.getKey();
     }
 
-    public User update(String name, String picture, String nickname, String gender, Long age, String mbti) {
-        this.name = name;
-        this.picture = picture;
+    public User update(String nickname, String gender, Long age, String mbti) {
         this.nickname = nickname != null ? nickname : this.nickname;
         this.gender = gender != null ? gender : this.gender;
         this.age = age != null ? age : this.age;
         this.mbti = mbti != null ? mbti : this.mbti;
-//        this.preferGenres = preferGenres;
-//        this.preferMovies = preferMovies;
         return this;
     }
 }

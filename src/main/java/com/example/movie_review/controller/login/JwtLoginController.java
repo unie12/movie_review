@@ -53,9 +53,31 @@ public class JwtLoginController {
         model.addAttribute("movies", searchResults);
         System.out.println("jwt searchhhh");
         return "home";
-//        return tmdbService.searchMovies(query);
-
     }
+
+    @GetMapping("/info")
+    public String userInfo(Model model, Authentication auth) {
+        model.addAttribute("loginType", "jwt-login");
+        model.addAttribute("pageName", "Jwt Token 화면 로그인");
+
+        User loginUser = userService.getLoginUserByLoginId(auth.getName());
+        model.addAttribute("user", loginUser);
+
+        return "info";
+    }
+
+    @GetMapping("/info/{category}")
+    public String myPage(@PathVariable String category, Authentication auth, Model model) {
+        model.addAttribute("reviews", reviewService.findMyReview(category, auth.getName()));
+        model.addAttribute("category", category);
+        model.addAttribute("user", userService.myInfo(auth.getName()));
+        return "myPage";
+    }
+
+
+
+
+
 
     @GetMapping("/join")
     public String joinPage(Model model) {
@@ -144,25 +166,6 @@ public class JwtLoginController {
         response.addCookie(cookie);
 
         return "redirect:/jwt-login";
-    }
-
-    @GetMapping("/info")
-    public String userInfo(Model model, Authentication auth) {
-        model.addAttribute("loginType", "jwt-login");
-        model.addAttribute("pageName", "Jwt Token 화면 로그인");
-
-        User loginUser = userService.getLoginUserByLoginId(auth.getName());
-        model.addAttribute("user", loginUser);
-
-        return "info";
-    }
-
-    @GetMapping("/info/{category}")
-    public String myPage(@PathVariable String category, Authentication auth, Model model) {
-        model.addAttribute("reviews", reviewService.findMyReview(category, auth.getName()));
-        model.addAttribute("category", category);
-        model.addAttribute("user", userService.myInfo(auth.getName()));
-        return "myPage";
     }
 
     @GetMapping("/admin")
