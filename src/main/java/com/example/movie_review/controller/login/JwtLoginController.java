@@ -26,6 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.hibernate.query.sqm.tree.SqmNode.log;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/jwt-login")
@@ -50,11 +52,14 @@ public class JwtLoginController {
             }
         }
         // 동기적으로 영화 데이터를 가져와서 모델에 추가
-        String popularMovies = tmdbService.getPopularMovies().block();
-        System.out.println("recommendedMovies = " + popularMovies);
-
-        String trendingMovies = tmdbService.getTrendingMovies().block();
-        System.out.println("trendingMovies = " + trendingMovies);
+        String popularMovies = "";
+        String trendingMovies = "";
+        try {
+            popularMovies = tmdbService.getPopularMovies().block();
+            trendingMovies = tmdbService.getTrendingMovies().block();
+        } catch (Exception e) {
+            log.error("Error fetching movie data", e);
+        }
 
         model.addAttribute("popularMovies", popularMovies);
         model.addAttribute("trendingMovies", trendingMovies);
@@ -76,19 +81,19 @@ public class JwtLoginController {
             MovieDetails movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
 
             // 배우 정렬 및 선택
-            if(movieDetails.getCredits() != null && movieDetails.getCredits().getCast() != null) {
-                List<MovieDetails.Credits.Cast> sortedCast = movieDetails.getCredits().getCast().stream()
-                        .sorted(Comparator.comparing(MovieDetails.Credits.Cast::getPopularity).reversed())
-                        .limit(10)
-                        .collect(Collectors.toList());
-                movieDetails.getCredits().setCast(sortedCast);
-            }
+//            if(movieDetails.getCredits() != null && movieDetails.getCredits().getCast() != null) {
+//                List<MovieDetails.Credits.Cast> sortedCast = movieDetails.getCredits().getCast().stream()
+//                        .sorted(Comparator.comparing(MovieDetails.Credits.Cast::getPopularity).reversed())
+//                        .limit(14)
+//                        .collect(Collectors.toList());
+//                movieDetails.getCredits().setCast(sortedCast);
+//            }
             // 감독 정보 추출
-            List<String> directors = new ArrayList<>();
+            List<MovieDetails.Credits.Crew> directors = new ArrayList<>();
             if (movieDetails.getCredits() != null && movieDetails.getCredits().getCrew() != null) {
                 directors = movieDetails.getCredits().getCrew().stream()
                         .filter(crew -> "Director".equals(crew.getJob()))
-                        .map(MovieDetails.Credits.Crew::getName)
+//                        .map(MovieDetails.Credits.Crew::getName)
                         .collect(Collectors.toList());
             }
             model.addAttribute("movieDetails", movieDetails);

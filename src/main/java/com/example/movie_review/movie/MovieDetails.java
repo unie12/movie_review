@@ -10,6 +10,7 @@ public class MovieDetails {
     private String backdrop_path;
     private Integer id;
     private String title;
+    private String original_title;
     private String name;
     private String overview;
     private String tagline;

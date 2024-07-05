@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .formLogin().disable() // 폼 로그인 사용 안 함
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/oauth2/**", "/jwt-login/**", "/jwt-login", "/home", "/login-failure").permitAll() // 해당 URL은 인증 절차 수행 생략 가능
+                        .requestMatchers("/", "/oauth2/**", "/api/movies/**", "/jwt-login/**", "/jwt-login", "/home", "/login-failure").permitAll()
                         .anyRequest().authenticated() // 나머지 요청들은 모두 인증 절차 수행해야 함
                 )
 
