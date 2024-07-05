@@ -1,7 +1,9 @@
 package com.example.movie_review.tmdb;
 
+import com.example.movie_review.kobis.KobisService;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -56,6 +58,5 @@ public class TmdbService {
                 .retrieve()
                 .bodyToMono(String.class);
     }
-
 }
 

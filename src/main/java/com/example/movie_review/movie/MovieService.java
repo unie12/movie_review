@@ -2,6 +2,8 @@ package com.example.movie_review.movie;
 
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.genre.GenresRepository;
+import com.example.movie_review.kobis.KobisService;
+import com.example.movie_review.tmdb.TmdbService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,6 +26,9 @@ public class MovieService {
 
     private final MovieRepository movieRepository;
     private final GenresRepository genresRepository;
+
+    private final TmdbService tmdbService;
+    private final KobisService kobisService;
 
     public ResponseEntity retrieveMovies(Pageable pageable) {
         Page<Movies> moviesPage = movieRepository.findAll(pageable);
@@ -67,4 +74,7 @@ public class MovieService {
 
         return selectBestInKeys;
     }
+
+
 }
+

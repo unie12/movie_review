@@ -7,11 +7,11 @@
     <style>
         .movie-list-container {
             position: relative;
-            overflow: hidden;
+<!--            overflow: hidden;-->
         }
         .movie-list {
             display: flex;
-            overflow-x: hidden;
+<!--            overflow-x: hidden;-->
             gap: 10px;
             padding: 10px 40px;
         }
@@ -72,6 +72,25 @@
             <button type="submit">검색</button>
         </form>
 
+
+        <div th:if="${dBOM}">
+            <h2 class="category-title">일별 박스오피스 순위</h2>
+            <div class="movie-list-container">
+                <button class="arrow left" onclick="scrollContainer('dBOMList', -1)">&#9664;</button>
+                <div class="movie-list" id="dBOMList"></div>
+                <button class="arrow right" onclick="scrollContainer('dBOMList', 1)">&#9654;</button>
+            </div>
+        </div>
+
+        <div th:if="${wBOM}">
+            <h2 class="category-title">주간 박스오피스 순위</h2>
+            <div class="movie-list-container">
+                <button class="arrow left" onclick="scrollContainer('wBOMList', -1)">&#9664;</button>
+                <div class="movie-list" id="wBOMList"></div>
+                <button class="arrow right" onclick="scrollContainer('wBOMList', 1)">&#9654;</button>
+            </div>
+        </div>
+
         <div th:if="${popularMovies}">
             <h2 class="category-title">인기 영화</h2>
             <div class="movie-list-container">
@@ -116,39 +135,75 @@
     <div th:replace="fragments/footer :: footer" />
 </div>
 
-<script src="/js/homeScript.js" defer></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
+    var dBOM = /*[[${dBOM}]]*/ '[]';
+    var wBOM = /*[[${wBOM}]]*/ '[]';
     var popularMovies = /*[[${popularMovies}]]*/ '[]';
     var trendingMovies = /*[[${trendingMovies}]]*/ '[]';
 
+
      document.addEventListener('DOMContentLoaded', function() {
-        initializeMovieLists(popularMovies, trendingMovies);
+        initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
     });
     /*]]>*/
 
 
-    function initializeMovieLists(popularMoviesJson, trendingMoviesJson) {
+    function initializeMovieLists(dBOMJson, wBOMJson, popularMoviesJson, trendingMoviesJson) {
         try {
+            var dBOM = JSON.parse(dBOMJson);
+            var wBOM = JSON.parse(wBOMJson);
+            console.log('Parsed dBOM:', dBOM);
+            console.log('Parsed wBOM:', wBOM);
+
             var popularMovies = JSON.parse(popularMoviesJson);
             var trendingMovies = JSON.parse(trendingMoviesJson);
 
-            if (popularMovies && popularMovies.results) {
-                createMovieList(popularMovies.results, 'popularMovieList');
-            } else {
-                console.log('No popular movies data available');
+<!--            if (dBOM && dBOM.results) { createKobisMovieList(dBOM.results, 'dBOMList'); }-->
+<!--            if (wBOM && wBOM.results) { createKobisMovieList(wBOM.results, 'wBOMList'); }-->
+            if (dBOM && dBOM.boxOfficeResult && dBOM.boxOfficeResult.dailyBoxOfficeList) {
+                createKobisMovieList(dBOM.boxOfficeResult.dailyBoxOfficeList, 'dBOMList');
             }
-            if (trendingMovies && trendingMovies.results) {
-                createMovieList(trendingMovies.results, 'trendingMovieList');
-            } else {
-                console.log('No trending movies data available');
+            if (wBOM && wBOM.boxOfficeResult && wBOM.boxOfficeResult.weeklyBoxOfficeList) {
+                createKobisMovieList(wBOM.boxOfficeResult.weeklyBoxOfficeList, 'wBOMList');
             }
+            if (popularMovies && popularMovies.results) { createTmdbMovieList(popularMovies.results, 'popularMovieList'); }
+            if (trendingMovies && trendingMovies.results) { createTmdbMovieList(trendingMovies.results, 'trendingMovieList'); }
         } catch (error) {
             console.error('Error initializing movie lists:', error);
         }
     }
 
-    function createMovieList(movies, containerId) {
+    function createKobisMovieList(movies, containerId) {
+        console.log('Creating Kobis movie list:', containerId, movies);
+
+        var movieListContainer = document.getElementById(containerId);
+
+        movies.forEach(function(movie) {
+            var li = document.createElement('li');
+            li.classList.add('movie-item');
+
+            var movieNm = document.createElement('p');
+            movieNm.textContent = movie.movieNm
+
+            var h3 = document.createElement('h3');
+            h3.textContent = movie.rank;
+
+            var audiAcc = document.createElement('p');
+            audiAcc.textContent = '누적 관객수: ' + movie.audiAcc
+
+<!--            audiAcc.addEventListener('click', function() {-->
+<!--                navigateToMovieDetails(movie.id);-->
+<!--            });-->
+
+            li.appendChild(movieNm);
+            li.appendChild(h3);
+            li.appendChild(audiAcc);
+            movieListContainer.appendChild(li);
+        });
+    }
+
+    function createTmdbMovieList(movies, containerId) {
         var movieListContainer = document.getElementById(containerId);
 
         movies.forEach(function(movie) {
@@ -171,32 +226,28 @@
                 toggleMovieInfo(infoDiv);
             });
 
-            var pRating = document.createElement('p');
-            pRating.textContent = '평균 평점: ' + movie.vote_average;
+<!--            var pRating = document.createElement('p');-->
+<!--            pRating.textContent = '평균 평점: ' + movie.vote_average;-->
 
-            var pReleaseDate = document.createElement('p');
-            pReleaseDate.textContent = '개봉일: ' + movie.release_date;
+<!--            var pReleaseDate = document.createElement('p');-->
+<!--            pReleaseDate.textContent = '개봉일: ' + movie.release_date;-->
 
-            var pOverview = document.createElement('p');
-            pOverview.textContent = movie.overview;
+<!--            var pOverview = document.createElement('p');-->
+<!--            pOverview.textContent = movie.overview;-->
 
-            infoDiv.appendChild(pRating);
-            infoDiv.appendChild(pReleaseDate);
-            infoDiv.appendChild(pOverview);
+<!--            infoDiv.appendChild(pRating);-->
+<!--            infoDiv.appendChild(pReleaseDate);-->
+<!--            infoDiv.appendChild(pOverview);-->
 
             li.appendChild(h3);
             li.appendChild(img);
-            li.appendChild(infoDiv);
+<!--            li.appendChild(infoDiv);-->
             movieListContainer.appendChild(li);
         });
     }
 
     function navigateToMovieDetails(movieId) {
         window.location.href = '/jwt-login/contents/' + movieId;
-    }
-
-    function toggleMovieInfo(infoDiv) {
-        infoDiv.style.display = infoDiv.style.display === "none" ? "block" : "none";
     }
 
     function scrollContainer(containerId, direction) {
@@ -209,5 +260,6 @@
     }
 
 </script>
+<!--<script src="/js/homeScript.js" defer></script>-->
 </body>
 </html>

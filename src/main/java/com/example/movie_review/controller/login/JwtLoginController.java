@@ -5,6 +5,7 @@ import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
 import com.example.movie_review.movie.ActorDetails;
 import com.example.movie_review.movie.MovieDetails;
+import com.example.movie_review.movie.MovieService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.User;
 import com.example.movie_review.service.ReviewService;
@@ -13,17 +14,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import com.example.movie_review.kobis.KobisService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,14 +38,14 @@ public class JwtLoginController {
     private final UserService userService;
     private final ReviewService reviewService;
     private final TmdbService tmdbService;
+    private final KobisService kobisService;
+    private final MovieService movieService;
 
     private final ObjectMapper objectMapper;
     @GetMapping({"", "/"})
     public String home(Model model, Authentication auth) {
         model.addAttribute("loginType", "jwt-login");
         model.addAttribute("pageName", "Jwt Token 화면 로그인");
-//        model.addAttribute("userCntDto", userService.getUserCnt());
-//        model.addAttribute("reviewCntDto", reviewService.getReviewCnt());
 
         if (auth != null) {
             User loginUser = userService.getLoginUserByLoginId(auth.getName());
@@ -55,15 +56,22 @@ public class JwtLoginController {
         // 동기적으로 영화 데이터를 가져와서 모델에 추가
         String popularMovies = "";
         String trendingMovies = "";
+        String dailyBoxOfficeMovies = "";
+        String weeklyBoxOfficeMovies = "";
         try {
             popularMovies = tmdbService.getPopularMovies().block();
             trendingMovies = tmdbService.getTrendingMovies().block();
+            dailyBoxOfficeMovies = kobisService.getDailyBoxOfficeMovies().block();
+            weeklyBoxOfficeMovies = kobisService.getWeeklyBoxOfficeMovies().block();
         } catch (Exception e) {
             log.error("Error fetching movie data", e);
         }
 
         model.addAttribute("popularMovies", popularMovies);
         model.addAttribute("trendingMovies", trendingMovies);
+
+        model.addAttribute("dBOM", dailyBoxOfficeMovies);
+        model.addAttribute("wBOM", weeklyBoxOfficeMovies);
         return "home";
     }
 
@@ -81,14 +89,6 @@ public class JwtLoginController {
         try {
             MovieDetails movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
 
-            // 배우 정렬 및 선택
-//            if(movieDetails.getCredits() != null && movieDetails.getCredits().getCast() != null) {
-//                List<MovieDetails.Credits.Cast> sortedCast = movieDetails.getCredits().getCast().stream()
-//                        .sorted(Comparator.comparing(MovieDetails.Credits.Cast::getPopularity).reversed())
-//                        .limit(14)
-//                        .collect(Collectors.toList());
-//                movieDetails.getCredits().setCast(sortedCast);
-//            }
             // 감독 정보 추출
             List<MovieDetails.Credits.Crew> directors = new ArrayList<>();
             if (movieDetails.getCredits() != null && movieDetails.getCredits().getCrew() != null) {
