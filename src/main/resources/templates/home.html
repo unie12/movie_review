@@ -68,18 +68,18 @@
             <button type="submit">검색</button>
         </form>
 
-        <div th:if="${movies}">
+        <div th:if="${popularMovies}">
             <h2 class="category-title">인기 영화</h2>
             <button class="arrow left" onclick="scrollContainer(-1)">&#9664;</button>
-            <div class="movie-list" id="movieList"></div>
+            <div class="movie-list" id="popularMovieList"></div>
             <button class="arrow right" onclick="scrollContainer(1)">&#9654;</button>
             <script th:inline="javascript">
                 /*<![CDATA[*/
-                var movies = /*[[${movies}]]*/ '[]';
-                var movieList = JSON.parse(movies).results;
-                var movieListContainer = document.getElementById('movieList');
+                var popularMovies = /*[[${popularMovies}]]*/ '[]';
+                var popularMovieList = JSON.parse(popularMovies).results;
+                var popularMovieListContainer = document.getElementById('popularMovieList');
 
-                movieList.forEach(function(movie) {
+                popularMovieList.forEach(function(movie) {
                   var li = document.createElement('li');
                   li.classList.add('movie-item');
 
@@ -90,8 +90,9 @@
                   img.src = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
                   img.alt = movie.title;
                   img.addEventListener('click', function() {
-                    var overview = li.querySelector('.movie-info');
-                    overview.style.display = (overview.style.display === "none" || !overview.style.display) ? "block" : "none";
+                      window.location.href = '/jwt-login/contents/' + movie.id; // 디테일 페이지로 이동
+<!--                    var overview = li.querySelector('.movie-info');-->
+<!--                    overview.style.display = (overview.style.display === "none" || !overview.style.display) ? "block" : "none";-->
                   });
 
                   var infoDiv = document.createElement('div');
@@ -116,11 +117,77 @@
                   li.appendChild(h3);
                   li.appendChild(img);
                   li.appendChild(infoDiv);
-                  movieListContainer.appendChild(li);
+                  popularMovieListContainer.appendChild(li);
                 });
 
                 function scrollContainer(direction) {
-                    const container = document.getElementById('movieList');
+                    const container = document.getElementById('popularMovieList');
+                    const scrollAmount = 170; // 포스터의 너비 + 마진
+                    container.scrollBy({
+                        left: direction * scrollAmount,
+                        behavior: 'smooth'
+                    });
+                }
+
+                /*]]>*/
+            </script>
+        </div>
+
+        <div th:if="${trendingMovies}">
+            <h2 class="category-title">트렌딩 영화</h2>
+            <button class="arrow left" onclick="scrollContainer(-1)">&#9664;</button>
+            <div class="movie-list" id="trendingMovieList"></div>
+            <button class="arrow right" onclick="scrollContainer(1)">&#9654;</button>
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                var trendingMovies = /*[[${trendingMovies}]]*/ '[]';
+                var trendingMovieList = JSON.parse(trendingMovies).results;
+                var trendingMovieListContainer = document.getElementById('trendingMovieList');
+
+                trendingMovieList.forEach(function(movie) {
+                  var li = document.createElement('li');
+                  li.classList.add('movie-item');
+
+                  var h3 = document.createElement('h3');
+                  h3.textContent = movie.title;
+
+                  var img = document.createElement('img');
+                  img.src = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
+                  img.alt = movie.title;
+                  img.addEventListener('click', function() {
+                    window.location.href = '/jwt-login/contents/' + movie.id; // 디테일 페이지로 이동
+
+<!--                    var overview = li.querySelector('.movie-info');-->
+<!--                    overview.style.display = (overview.style.display === "none" || !overview.style.display) ? "block" : "none";-->
+                  });
+
+                  var infoDiv = document.createElement('div');
+                  infoDiv.classList.add('movie-info');
+                  infoDiv.addEventListener('click', function() {
+                    infoDiv.style.display = "none";
+                  });
+
+                  var pRating = document.createElement('p');
+                  pRating.textContent = '평균 평점: ' + movie.vote_average;
+
+                  var pReleaseDate = document.createElement('p');
+                  pReleaseDate.textContent = '개봉일: ' + movie.release_date;
+
+                  var pOverview = document.createElement('p');
+                  pOverview.textContent = movie.overview;
+
+                  infoDiv.appendChild(pRating);
+                  infoDiv.appendChild(pReleaseDate);
+                  infoDiv.appendChild(pOverview);
+
+                  li.appendChild(h3);
+                  li.appendChild(img);
+                  li.appendChild(infoDiv);
+                  trendingMovieListContainer.appendChild(li);
+                });
+
+                function scrollContainer(direction) {
+                    const container = document.getElementById('trendingMovieList');
                     const scrollAmount = 170; // 포스터의 너비 + 마진
                     container.scrollBy({
                         left: direction * scrollAmount,
@@ -142,7 +209,7 @@
 <!--    <div th:unless="${nickname == null}">-->
     <div th:if="${#authentication.name != 'anonymousUser'}">
       <h3>[[${#authentication.name}]]님 환영합니다!</h3>
-      <button th:onclick="|location.href='@{/{loginType}/info (loginType=${loginType})}'|">유저 정보</button> <br/><br/>
+      <button th:onclick="|location.href='@{/info}'|">유저 정보</button> <br/><br/>
       <button th:onclick="|location.href='@{/{loginType}/admin (loginType=${loginType})}'|">관리자 페이지</button> <br/><br/>
       <button th:onclick="|location.href='@{/{loginType}/logout (loginType=${loginType})}'|">로그아웃</button>
     </div>

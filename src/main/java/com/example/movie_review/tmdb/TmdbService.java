@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.nio.channels.MembershipKey;
+
 @Service
 //@RequiredArgsConstructor
 public class TmdbService {
@@ -26,6 +28,13 @@ public class TmdbService {
                 .bodyToMono(String.class);
     }
 
+    public Mono<String> getTrendingMovies() {
+        return this.webClient.get()
+                .uri("/trending/movie/day?api_key={apiKey}&language=ko-KR", apikey)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
     public Mono<String> searchMovies(String query) {
         return this.webClient.get()
                 .uri("/search/movie?api_key={api_key}&query={query}&language=ko-KR", apikey, query)
@@ -34,4 +43,10 @@ public class TmdbService {
     }
 
 
+    public Mono<String> getMovieDetails(Long movieId) {
+        return webClient.get()
+                .uri("/movie/" + movieId + "?api_key={api_key}&language=ko-KR&append_to_response=credits", apikey)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
 }

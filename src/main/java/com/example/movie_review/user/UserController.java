@@ -11,13 +11,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Type;
@@ -156,5 +154,29 @@ public class UserController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id"));
         return preferredGenresService.findByUser(user);
     }
+
+
+    /**
+     * 사용자 활동 내역 보기
+     */
+    @GetMapping("/info")
+    public String userInfo(Model model, Authentication auth) {
+        model.addAttribute("pageName", "사용자 활동 내역");
+
+        SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
+        User user = userRepository.findByEmail(sessionUser.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        model.addAttribute("user", user);
+
+
+        return "info";
+    }
+
+//    @GetMapping("/info/{category}")
+//    public String myPage(@PathVariable String category, Authentication auth, Model model) {
+//        model.addAttribute("reviews", reviewService.findMyReview(category, auth.getName()));
+//        model.addAttribute("category", category);
+//        model.addAttribute("user", userService.myInfo(auth.getName()));
+//        return "myPage";
+//    }
 
 }
