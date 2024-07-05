@@ -17,22 +17,17 @@ public class MovieDetails {
     private String poster_path;
 
     private List<Genres> genres;
-    private List<Creator> created_by;
+//    private List<Creator> created_by;
     private String release_date;
     private String first_air_date;
     private double vote_average;
+    private Long vote_count;
 
     private Long runtime;
     private boolean adult;
     private String media_type;
 
     private Credits credits;
-
-    @Data
-    public static class Creator {
-        private String name;
-        private String profile_path;
-    }
 
     @Data
     public static class Credits {

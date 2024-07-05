@@ -49,5 +49,13 @@ public class TmdbService {
                 .retrieve()
                 .bodyToMono(String.class);
     }
+
+    public Mono<String> getActorDetails(Long actorId) {
+        return webClient.get()
+                .uri("/person/" + actorId + "/combined_credits?api_key={api_key}&language=ko-KR", apikey)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
 }
 

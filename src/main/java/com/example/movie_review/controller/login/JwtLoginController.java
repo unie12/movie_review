@@ -3,6 +3,7 @@ package com.example.movie_review.controller.login;
 import com.example.movie_review.auth.JwtTokenUtil;
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
+import com.example.movie_review.movie.ActorDetails;
 import com.example.movie_review.movie.MovieDetails;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.User;
@@ -75,7 +76,7 @@ public class JwtLoginController {
     }
 
     @GetMapping("/contents/{movieId}")
-    public String detailMovie(@PathVariable Long movieId, Model model) {
+    public String movieDetail(@PathVariable Long movieId, Model model) {
         String movieDetailsJson = tmdbService.getMovieDetails(movieId).block();
         try {
             MovieDetails movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
@@ -102,7 +103,33 @@ public class JwtLoginController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "detail";
+        return "movieDetail";
+    }
+
+    @GetMapping("/people/{actorId}")
+    public String actorDetail(@PathVariable Long actorId, Model model) {
+        String actorDetailsJson = tmdbService.getActorDetails(actorId).block();
+        System.out.println("actorDetailsJson = " + actorDetailsJson);
+
+        // popularity sort, media_type = movie만 일단
+        try {
+            if (actorDetailsJson == null || actorDetailsJson.isEmpty()) {
+                throw new Exception("Empty or null JSON data");
+            }
+            ActorDetails actorDetails = objectMapper.readValue(actorDetailsJson, ActorDetails.class);
+            System.out.println("actorDetailss = " + actorDetails);
+
+            List<ActorDetails.Cast> sortedCast = actorDetails.getCast().stream()
+                            .filter(cast -> "movie".equals(cast.getMedia_type()))
+                            .sorted((cast1, cast2) -> Double.compare(cast2.getPopularity(), cast1.getPopularity()))
+                            .collect(Collectors.toList());
+            actorDetails.setCast(sortedCast);
+            System.out.println("actorDetaisl = " + actorDetails);
+            model.addAttribute("actorDetails", actorDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "actorDetail";
     }
 
 
