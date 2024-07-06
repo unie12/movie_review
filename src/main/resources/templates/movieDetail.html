@@ -56,6 +56,8 @@
             <p><strong>개봉일:</strong> <span th:text="${movieDetails.release_date}"></span></p>
             <p><strong>장르:</strong> <span th:each="genre : ${movieDetails.genres}" th:text="'[' + ${genre.name} + ']' + ' ' "></span></p>
             <p><span th:text="${movieDetails.runtime} + '분'"></span></p>
+<!--            <p><span th:text="${audiAcc} + '명'"></span></p>-->
+
 
             <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDetails.poster_path}" th:alt="${movieDetails.title}">
             <p><strong>평균 평점:</strong> <span th:text="${movieDetails.vote_average} + ' (' + ${movieDetails.vote_count} + '표)'"></span></p>

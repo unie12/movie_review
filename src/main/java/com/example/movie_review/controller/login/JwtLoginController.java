@@ -3,13 +3,17 @@ package com.example.movie_review.controller.login;
 import com.example.movie_review.auth.JwtTokenUtil;
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
+import com.example.movie_review.kobis.KobisMovieInfo;
+import com.example.movie_review.kobis.KobisSearchResult;
 import com.example.movie_review.movie.ActorDetails;
+import com.example.movie_review.movie.BoxOfficeResult;
 import com.example.movie_review.movie.MovieDetails;
 import com.example.movie_review.movie.MovieService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.User;
 import com.example.movie_review.service.ReviewService;
 import com.example.movie_review.user.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +30,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
@@ -97,9 +102,41 @@ public class JwtLoginController {
 //                        .map(MovieDetails.Credits.Crew::getName)
                         .collect(Collectors.toList());
             }
+
+//            String kobisMovieSearch = kobisService.searchMovie(movieDetails.getTitle()).block();
+//            KobisSearchResult kobisResult = objectMapper.readValue(kobisMovieSearch, KobisSearchResult.class);
+
+//            String tmdbReleaseDate = movieDetails.getRelease_date().replace("-", "");
+
+            // 일치하는 영화 찾기
+//            Optional<KobisSearchResult.Movie> matchingMovie = kobisResult.getMovieListResult().getMovieList().stream()
+//                    .filter(movie -> movie.getMovieNm().equals(movieDetails.getTitle()) && movie.getOpenDt().equals(tmdbReleaseDate))
+//                    .findFirst();
+
+//            Optional<KobisSearchResult.Movie> matchingMovie = kobisResult.getMovieListResult().getMovieList().stream()
+//                    .filter(movie -> {
+//                        boolean titleMatch = movie.getMovieNm().equals(movieDetails.getTitle()) ||
+//                                movie.getMovieNmEn().equals(movieDetails.getOriginal_title());
+//                        boolean dateMatch = movie.getOpenDt().equals(tmdbReleaseDate) ||
+//                                movie.getPrdtYear().equals(tmdbReleaseDate.substring(0, 4));
+//                        return titleMatch && dateMatch;
+//                    })
+//                    .findFirst();
+
+//            if (matchingMovie.isPresent()) {
+//                String kobisMovieInfo = kobisService.getMovieInfo(matchingMovie.get().getMovieCd()).block();
+//                KobisMovieInfo movieInfo = objectMapper.readValue(kobisMovieInfo, KobisMovieInfo.class);
+//                String audiAcc = movieInfo.getMovieInfoResult().getMovieInfo().getAudiAcc();
+//                model.addAttribute("audiAcc", audiAcc);
+//            } else {
+//                model.addAttribute("audiAcc", "정보 없음");
+//            }
+
             model.addAttribute("movieDetails", movieDetails);
             model.addAttribute("directors", directors);
-            System.out.println("directors = " + directors);
+        } catch (JsonProcessingException e) {
+            log.error("Error parsing JSON response", e);
+            model.addAttribute("error", "영화 정보를 처리하는 중 오류가 발생했습니다.");
         } catch (Exception e) {
             e.printStackTrace();
         }

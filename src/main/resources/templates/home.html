@@ -7,11 +7,12 @@
     <style>
         .movie-list-container {
             position: relative;
-<!--            overflow: hidden;-->
+            overflow: hidden;
         }
         .movie-list {
             display: flex;
-<!--            overflow-x: hidden;-->
+            overflow-x: hidden;
+            list-style-type: none; /* <li> 기본 스타일 제거 */
             gap: 10px;
             padding: 10px 40px;
         }
@@ -159,8 +160,6 @@
             var popularMovies = JSON.parse(popularMoviesJson);
             var trendingMovies = JSON.parse(trendingMoviesJson);
 
-<!--            if (dBOM && dBOM.results) { createKobisMovieList(dBOM.results, 'dBOMList'); }-->
-<!--            if (wBOM && wBOM.results) { createKobisMovieList(wBOM.results, 'wBOMList'); }-->
             if (dBOM && dBOM.boxOfficeResult && dBOM.boxOfficeResult.dailyBoxOfficeList) {
                 createKobisMovieList(dBOM.boxOfficeResult.dailyBoxOfficeList, 'dBOMList');
             }
@@ -192,10 +191,6 @@
             var audiAcc = document.createElement('p');
             audiAcc.textContent = '누적 관객수: ' + movie.audiAcc
 
-<!--            audiAcc.addEventListener('click', function() {-->
-<!--                navigateToMovieDetails(movie.id);-->
-<!--            });-->
-
             li.appendChild(movieNm);
             li.appendChild(h3);
             li.appendChild(audiAcc);
@@ -226,22 +221,8 @@
                 toggleMovieInfo(infoDiv);
             });
 
-<!--            var pRating = document.createElement('p');-->
-<!--            pRating.textContent = '평균 평점: ' + movie.vote_average;-->
-
-<!--            var pReleaseDate = document.createElement('p');-->
-<!--            pReleaseDate.textContent = '개봉일: ' + movie.release_date;-->
-
-<!--            var pOverview = document.createElement('p');-->
-<!--            pOverview.textContent = movie.overview;-->
-
-<!--            infoDiv.appendChild(pRating);-->
-<!--            infoDiv.appendChild(pReleaseDate);-->
-<!--            infoDiv.appendChild(pOverview);-->
-
             li.appendChild(h3);
             li.appendChild(img);
-<!--            li.appendChild(infoDiv);-->
             movieListContainer.appendChild(li);
         });
     }
@@ -251,6 +232,7 @@
     }
 
     function scrollContainer(containerId, direction) {
+        console.log('scrollContainer called with:', containerId, direction); // 디버그 로그 추가
         const container = document.getElementById(containerId);
         const scrollAmount = 170;
         container.scrollBy({
