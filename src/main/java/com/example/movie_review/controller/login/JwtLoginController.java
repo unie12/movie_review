@@ -3,6 +3,7 @@ package com.example.movie_review.controller.login;
 import com.example.movie_review.auth.JwtTokenUtil;
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
+import com.example.movie_review.kobis.BoxOfficeMovieDTO;
 import com.example.movie_review.kobis.KobisMovieInfo;
 import com.example.movie_review.kobis.KobisSearchResult;
 import com.example.movie_review.movie.ActorDetails;
@@ -14,6 +15,7 @@ import com.example.movie_review.user.User;
 import com.example.movie_review.service.ReviewService;
 import com.example.movie_review.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,7 +50,7 @@ public class JwtLoginController {
 
     private final ObjectMapper objectMapper;
     @GetMapping({"", "/"})
-    public String home(Model model, Authentication auth) {
+    public String home(Model model, Authentication auth) throws JsonProcessingException {
         model.addAttribute("loginType", "jwt-login");
         model.addAttribute("pageName", "Jwt Token 화면 로그인");
 
@@ -72,12 +74,62 @@ public class JwtLoginController {
             log.error("Error fetching movie data", e);
         }
 
+        List<BoxOfficeMovieDTO> dailyBoxOfficeWithPosters = new ArrayList<>();
+        List<BoxOfficeMovieDTO> weeklyBoxOfficeWithPosters = new ArrayList<>();
+
+        try {
+            JsonNode dailyBoxOffice = objectMapper.readTree(kobisService.getDailyBoxOfficeMovies().block());
+            JsonNode weeklyBoxOffice = objectMapper.readTree(kobisService.getWeeklyBoxOfficeMovies().block());
+
+            dailyBoxOfficeWithPosters = getBoxOfficeWithPosters(dailyBoxOffice, "dailyBoxOfficeList");
+            weeklyBoxOfficeWithPosters = getBoxOfficeWithPosters(weeklyBoxOffice, "weeklyBoxOfficeList");
+        } catch (Exception e) {
+            log.error("Error fetching movie data", e);
+        }
+
         model.addAttribute("popularMovies", popularMovies);
         model.addAttribute("trendingMovies", trendingMovies);
+        System.out.println("trendingMovies = " + trendingMovies);
+        model.addAttribute("dBOM", objectMapper.writeValueAsString(dailyBoxOfficeWithPosters));
+        System.out.println("JosondailyBoxOfficeWithPosters = " + objectMapper.writeValueAsString(dailyBoxOfficeWithPosters));
+        System.out.println("dailyBoxOfficeWithPosters = " + dailyBoxOfficeWithPosters);
+        model.addAttribute("wBOM", objectMapper.writeValueAsString(weeklyBoxOfficeWithPosters));
+        System.out.println("weeklyBoxOfficeWithPosters = " + objectMapper.writeValueAsString(weeklyBoxOfficeWithPosters));
 
-        model.addAttribute("dBOM", dailyBoxOfficeMovies);
-        model.addAttribute("wBOM", weeklyBoxOfficeMovies);
+        //        model.addAttribute("wBOM", weeklyBoxOfficeWithPosters);
         return "home";
+    }
+
+    private List<BoxOfficeMovieDTO> getBoxOfficeWithPosters(JsonNode boxOffice, String listType) {
+        List<BoxOfficeMovieDTO> moviesWithPosters = new ArrayList<>();
+        JsonNode movieList = boxOffice.path("boxOfficeResult").path(listType);
+
+        for (JsonNode movie : movieList) {
+            String title = movie.path("movieNm").asText();
+            String audiAcc = movie.path("audiAcc").asText();
+
+            // TMDB에서 영화 검색
+            JsonNode tmdbMovie = tmdbService.searchJsonMovie(title).block();
+            String posterPath = null;
+            String tmdbId = null;
+            if (tmdbMovie != null && tmdbMovie.has("results") && tmdbMovie.get("results").size() > 0) {
+                JsonNode firstResult = tmdbMovie.get("results").get(0);
+                posterPath = firstResult.path("poster_path").asText();
+                tmdbId = firstResult.path("id").asText();
+            }
+
+            BoxOfficeMovieDTO movieDTO = new BoxOfficeMovieDTO(
+                    title,
+                    movie.path("rank").asText(),
+                    posterPath,
+                    tmdbId,
+                    audiAcc
+            );
+            moviesWithPosters.add(movieDTO);
+            System.out.println("movieDTO = " + movieDTO);
+        }
+
+        return moviesWithPosters;
     }
 
     @GetMapping("/search")
@@ -85,7 +137,6 @@ public class JwtLoginController {
 
         Mono<String> resultMono = tmdbService.searchMovies(query);
         String result = resultMono.block(); // Mono를 동기적으로 처리 (주의: 프로덕션 환경에서는 비동기 처리 권장)
-        System.out.println("result = " + result);
         // JSON 문자열을 모델에 추가
         model.addAttribute("searchResult", result);
         return "search";
@@ -149,7 +200,6 @@ public class JwtLoginController {
     @GetMapping("/people/{actorId}")
     public String actorDetail(@PathVariable Long actorId, Model model) {
         String actorDetailsJson = tmdbService.getActorDetails(actorId).block();
-        System.out.println("actorDetailsJson = " + actorDetailsJson);
 
         // popularity sort, media_type = movie만 일단
         try {
@@ -157,14 +207,12 @@ public class JwtLoginController {
                 throw new Exception("Empty or null JSON data");
             }
             ActorDetails actorDetails = objectMapper.readValue(actorDetailsJson, ActorDetails.class);
-            System.out.println("actorDetailss = " + actorDetails);
 
             List<ActorDetails.Cast> sortedCast = actorDetails.getCast().stream()
                             .filter(cast -> "movie".equals(cast.getMedia_type()))
                             .sorted((cast1, cast2) -> Double.compare(cast2.getPopularity(), cast1.getPopularity()))
                             .collect(Collectors.toList());
             actorDetails.setCast(sortedCast);
-            System.out.println("actorDetaisl = " + actorDetails);
             model.addAttribute("actorDetails", actorDetails);
         } catch (Exception e) {
             e.printStackTrace();

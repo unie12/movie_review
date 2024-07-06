@@ -1,6 +1,8 @@
 package com.example.movie_review.tmdb;
 
 import com.example.movie_review.kobis.KobisService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,23 @@ public class TmdbService {
                 .uri("/search/movie?api_key={api_key}&query={query}&language=ko-KR", apikey, query)
                 .retrieve()
                 .bodyToMono(String.class);
+    }
+
+    public Mono<JsonNode> searchJsonMovie(String query) {
+        return this.webClient.get()
+                .uri("/search/movie?api_key={api_key}&query={query}&language=ko-KR", apikey, query)
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(this::converToJsonNode);
+    }
+
+    private JsonNode converToJsonNode(String json) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readTree(json);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert JSON string to JsonNode", e);
+        }
     }
 
 
