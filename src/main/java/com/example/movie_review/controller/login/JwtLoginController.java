@@ -82,10 +82,13 @@ public class JwtLoginController {
 
     @GetMapping("/search")
     public String searchMovies(@RequestParam String query, Model model) {
-        String searchResults = tmdbService.searchMovies(query).block();
-        model.addAttribute("movies", searchResults);
-        System.out.println("jwt searchhhh");
-        return "home";
+
+        Mono<String> resultMono = tmdbService.searchMovies(query);
+        String result = resultMono.block(); // Mono를 동기적으로 처리 (주의: 프로덕션 환경에서는 비동기 처리 권장)
+        System.out.println("result = " + result);
+        // JSON 문자열을 모델에 추가
+        model.addAttribute("searchResult", result);
+        return "search";
     }
 
     @GetMapping("/contents/{movieId}")

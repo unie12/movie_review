@@ -69,9 +69,12 @@
 <!--        <h1><a th:href="|/${loginType}/home|">[[${pageName}]]</a></h1> <hr/>-->
 
         <form th:action="@{/jwt-login/search}" method="get">
-            <input type="text" name="query" placeholder="영화 검색">
+            <input type="text" name="query" placeholder="영화 제목을 입력하세요">
             <button type="submit">검색</button>
         </form>
+
+<!--        <h2>검색 결과</h2>-->
+<!--        <ul id="search-results"></ul>-->
 
 
         <div th:if="${dBOM}">
