@@ -83,20 +83,16 @@ public class JwtLoginController {
 
             dailyBoxOfficeWithPosters = getBoxOfficeWithPosters(dailyBoxOffice, "dailyBoxOfficeList");
             weeklyBoxOfficeWithPosters = getBoxOfficeWithPosters(weeklyBoxOffice, "weeklyBoxOfficeList");
+            System.out.println("weeklyBoxOfficeWithPosters = " + weeklyBoxOfficeWithPosters);
         } catch (Exception e) {
             log.error("Error fetching movie data", e);
         }
 
         model.addAttribute("popularMovies", popularMovies);
         model.addAttribute("trendingMovies", trendingMovies);
-        System.out.println("trendingMovies = " + trendingMovies);
         model.addAttribute("dBOM", objectMapper.writeValueAsString(dailyBoxOfficeWithPosters));
-        System.out.println("JosondailyBoxOfficeWithPosters = " + objectMapper.writeValueAsString(dailyBoxOfficeWithPosters));
-        System.out.println("dailyBoxOfficeWithPosters = " + dailyBoxOfficeWithPosters);
         model.addAttribute("wBOM", objectMapper.writeValueAsString(weeklyBoxOfficeWithPosters));
-        System.out.println("weeklyBoxOfficeWithPosters = " + objectMapper.writeValueAsString(weeklyBoxOfficeWithPosters));
-
-        //        model.addAttribute("wBOM", weeklyBoxOfficeWithPosters);
+//                model.addAttribute("wBOM", weeklyBoxOfficeWithPosters);
         return "home";
     }
 
@@ -107,15 +103,17 @@ public class JwtLoginController {
         for (JsonNode movie : movieList) {
             String title = movie.path("movieNm").asText();
             String audiAcc = movie.path("audiAcc").asText();
+            String openDt = movie.path("openDt").asText();
 
             // TMDB에서 영화 검색
-            JsonNode tmdbMovie = tmdbService.searchJsonMovie(title).block();
+            JsonNode tmdbMovie = tmdbService.searchJsonMovieWithSim(title, openDt).block();
+            System.out.println("tmdbMovieWithSim = " + tmdbMovie);
             String posterPath = null;
             String tmdbId = null;
-            if (tmdbMovie != null && tmdbMovie.has("results") && tmdbMovie.get("results").size() > 0) {
-                JsonNode firstResult = tmdbMovie.get("results").get(0);
-                posterPath = firstResult.path("poster_path").asText();
-                tmdbId = firstResult.path("id").asText();
+            if (tmdbMovie != null) {
+//                JsonNode firstResult = tmdbMovie.get("results").get(0);
+                posterPath = tmdbMovie.path("poster_path").asText();
+                tmdbId = tmdbMovie.path("id").asText();
             }
 
             BoxOfficeMovieDTO movieDTO = new BoxOfficeMovieDTO(

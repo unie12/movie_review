@@ -38,9 +38,18 @@ public class KobisService {
 
     public Mono<String> getWeeklyBoxOfficeMovies() {
         LocalDate today = LocalDate.now();
-        LocalDate lastSunday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate targetDate;
+
+        if (today.getDayOfWeek() == DayOfWeek.MONDAY) {
+            // 월요일이면 어제(일요일)의 날짜를 사용
+            targetDate = today.minusDays(1);
+        } else {
+            // 월요일이 아니면 지난 주 일요일의 날짜를 사용
+            targetDate = today.with(TemporalAdjusters.previous(DayOfWeek.SUNDAY));
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String formattedDate = lastSunday.format(formatter);
+        String formattedDate = targetDate.format(formatter);
 
         return this.webClient.get()
                 .uri(uriBuilder -> uriBuilder
