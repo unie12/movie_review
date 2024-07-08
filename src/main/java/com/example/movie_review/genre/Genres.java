@@ -1,5 +1,6 @@
 package com.example.movie_review.genre;
 
+import com.example.movie_review.movie.MovieDetails;
 import com.example.movie_review.movie.Movies;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,9 +21,10 @@ public class Genres {
     @JoinColumn(name = "genre_name")
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "movieDetails_id")
+    private MovieDetails movieDetails;
 
-//    @OneToMany(mappedBy = "genre")
-//    private Set<MovieGenres> movieGenres;
 
     public Genres(String name) {
         this.name = name;
