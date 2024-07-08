@@ -1,0 +1,51 @@
+.movie-list-container {
+    position: relative;
+    overflow: hidden;
+}
+.movie-list {
+    display: flex;
+    overflow-x: hidden;
+    gap: 10px;
+    padding: 10px 40px;
+}
+.movie-item {
+    flex: 0 0 auto;
+    width: 150px;
+    text-align: center;
+    position: relative;
+}
+.movie-item img {
+    cursor: pointer;
+    width: 100%;
+}
+.movie-info {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.movie-info p {
+    margin: 5px 0;
+}
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+}
+.arrow.left {
+    left: 0;
+}
+.arrow.right {
+    right: 0;
+}

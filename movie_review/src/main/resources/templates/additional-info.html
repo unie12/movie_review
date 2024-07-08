@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+</head>
+
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
+    <h2>영화 검색</h2>
+    <form id="search-form" th:action="@{/search-movies}" method="get">
+        <input type="text" id="query" name="query" placeholder="영화 검색">
+        <button type="submit" id="search-button">검색</button>
+    </form>
+
+    <h2>검색 결과</h2>
+    <ul id="search-results"></ul>
+
+    <h1>추가 정보 입력</h1>
+    <form action="/additional-info" method="post">
+        <label for="nickname">닉네임:</label>
+        <input type="text" id="nickname" name="nickname" th:value="${user.nickname}" required><br>
+        <button type="button" id="check-nickname">중복 확인</button>
+        <span id="nickname-result"></span><br>
+
+        <label for="gender">성별:</label>
+        <input type="text" id="gender" name="gender" th:value="${user.gender}" required><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" th:value="${user.age}" required><br>
+
+        <label for="mbti">MBTI:</label>
+        <select id="mbti" name="mbti" required>
+            <option value="INTJ" th:selected="${user.mbti == 'INTJ'}">INTJ</option>
+            <option value="INTP" th:selected="${user.mbti == 'INTP'}">INTP</option>
+            <option value="ENTJ" th:selected="${user.mbti == 'ENTJ'}">ENTJ</option>
+            <option value="ENTP" th:selected="${user.mbti == 'ENTP'}">ENTP</option>
+            <option value="INFJ" th:selected="${user.mbti == 'INFJ'}">INFJ</option>
+            <option value="INFP" th:selected="${user.mbti == 'INFP'}">INFP</option>
+            <option value="ENFJ" th:selected="${user.mbti == 'ENFJ'}">ENFJ</option>
+            <option value="ENFP" th:selected="${user.mbti == 'ENFP'}">ENFP</option>
+            <option value="ISTJ" th:selected="${user.mbti == 'ISTJ'}">ISTJ</option>
+            <option value="ISFJ" th:selected="${user.mbti == 'ISFJ'}">ISFJ</option>
+            <option value="ESTJ" th:selected="${user.mbti == 'ESTJ'}">ESTJ</option>
+            <option value="ESFJ" th:selected="${user.mbti == 'ESFJ'}">ESFJ</option>
+            <option value="ISTP" th:selected="${user.mbti == 'ISTP'}">ISTP</option>
+            <option value="ISFP" th:selected="${user.mbti == 'ISFP'}">ISFP</option>
+            <option value="ESTP" th:selected="${user.mbti == 'ESTP'}">ESTP</option>
+            <option value="ESFP" th:selected="${user.mbti == 'ESFP'}">ESFP</option>
+        </select><br>
+
+        <h2>선호 장르 선택 (최대 5개)</h2>
+        <div id="genre-selection">
+            <ul>
+                <li th:each="genre : ${tmdbGenres}">
+                    <input type="checkbox" name="preferredGenres" th:value="${genre.id}" th:text="${genre.name}"
+                           th:checked="${userPreferredGenreIds.contains(genre.id)}"
+                           onchange="updateFavoriteGenres(this)"/>
+                </li>
+            </ul>
+        </div>
+
+        <h2>선호 영화 목록 (최대 5개)</h2>
+        <ul id="favorite-movies"></ul>
+        <input type="hidden" id="favorite-movies-input" name="favoriteMovies">
+
+        <h2>선호 장르 목록 (최대 5개)</h2>
+        <lu id="favorite-genres"></lu>
+        <input type="hidden" id="favorite-genres-input" name="favoriteGenres">
+
+        <button type="submit">Submit</button>
+
+    </form>
+    <script src="/js/additional-info.js"></script>
+    <div th:replace="fragments/footer :: footer" />
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#check-nickname').click(function() {
+            var nickname = $('#nickname').val();
+            $.ajax({
+                url: '/check-nickname',
+                type: 'GET',
+                data: { nickname: nickname },
+                success: function(response) {
+                    if (response === 'available') {
+                        $('#nickname-result').text('사용 가능한 닉네임입니다.').css('color', 'green');
+                    } else {
+                        $('#nickname-result').text('이미 사용 중인 닉네임입니다.').css('color', 'red');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
