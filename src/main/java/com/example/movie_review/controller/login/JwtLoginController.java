@@ -1,18 +1,20 @@
 package com.example.movie_review.controller.login;
 
 import com.example.movie_review.auth.JwtTokenUtil;
+import com.example.movie_review.dbMovie.MovieCache;
+import com.example.movie_review.dbMovie.MovieCacheRepository;
+import com.example.movie_review.dbMovie.MovieCacheService;
+import com.example.movie_review.dbMovie.MovieType;
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
 import com.example.movie_review.kobis.BoxOfficeMovieDTO;
-import com.example.movie_review.kobis.KobisMovieInfo;
-import com.example.movie_review.kobis.KobisSearchResult;
+import com.example.movie_review.kobis.KobisService;
 import com.example.movie_review.movie.ActorDetails;
-import com.example.movie_review.movie.BoxOfficeResult;
 import com.example.movie_review.movie.MovieDetails;
 import com.example.movie_review.movie.MovieService;
+import com.example.movie_review.service.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.User;
-import com.example.movie_review.service.ReviewService;
 import com.example.movie_review.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import com.example.movie_review.kobis.KobisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -32,7 +33,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
@@ -47,10 +47,16 @@ public class JwtLoginController {
     private final TmdbService tmdbService;
     private final KobisService kobisService;
     private final MovieService movieService;
+    private final MovieCacheService movieCacheService;
+
+    private final MovieCacheRepository movieCacheRepository;
 
     private final ObjectMapper objectMapper;
     @GetMapping({"", "/"})
     public String home(Model model, Authentication auth) throws JsonProcessingException {
+//        movieCacheService.updateDailyMovieCache();
+//        movieCacheService.updateWeeklyMovieCache();
+
         model.addAttribute("loginType", "jwt-login");
         model.addAttribute("pageName", "Jwt Token 화면 로그인");
 
@@ -60,75 +66,90 @@ public class JwtLoginController {
                 model.addAttribute("nickname", loginUser.getNickname());
             }
         }
-        // 동기적으로 영화 데이터를 가져와서 모델에 추가
-        String popularMovies = "";
-        String trendingMovies = "";
-        String dailyBoxOfficeMovies = "";
-        String weeklyBoxOfficeMovies = "";
-        try {
-            popularMovies = tmdbService.getPopularMovies().block();
-            trendingMovies = tmdbService.getTrendingMovies().block();
-            dailyBoxOfficeMovies = kobisService.getDailyBoxOfficeMovies().block();
-            weeklyBoxOfficeMovies = kobisService.getWeeklyBoxOfficeMovies().block();
-        } catch (Exception e) {
-            log.error("Error fetching movie data", e);
-        }
 
-        List<BoxOfficeMovieDTO> dailyBoxOfficeWithPosters = new ArrayList<>();
-        List<BoxOfficeMovieDTO> weeklyBoxOfficeWithPosters = new ArrayList<>();
+        MovieCache dailyCache = movieCacheRepository.findByType(MovieType.DBOM)
+                .orElseThrow(() -> new RuntimeException("Daily cache not found"));
+        MovieCache weeklyCache = movieCacheRepository.findByType(MovieType.WBOM)
+                .orElseThrow(() -> new RuntimeException("Weekly cache not found"));
+        MovieCache popularCache = movieCacheRepository.findByType(MovieType.POPULAR)
+                .orElseThrow(() -> new RuntimeException("Popular cache not found"));
+        MovieCache trendingCache = movieCacheRepository.findByType(MovieType.TRENDING)
+                .orElseThrow(() -> new RuntimeException("Trending cache not found"));
 
-        try {
-            JsonNode dailyBoxOffice = objectMapper.readTree(kobisService.getDailyBoxOfficeMovies().block());
-            JsonNode weeklyBoxOffice = objectMapper.readTree(kobisService.getWeeklyBoxOfficeMovies().block());
+        model.addAttribute("popularMovies", popularCache.getMovieData());
+        model.addAttribute("trendingMovies", trendingCache.getMovieData());
+        model.addAttribute("dBOM", dailyCache.getMovieData());
+        model.addAttribute("wBOM", weeklyCache.getMovieData());
 
-            dailyBoxOfficeWithPosters = getBoxOfficeWithPosters(dailyBoxOffice, "dailyBoxOfficeList");
-            weeklyBoxOfficeWithPosters = getBoxOfficeWithPosters(weeklyBoxOffice, "weeklyBoxOfficeList");
-            System.out.println("weeklyBoxOfficeWithPosters = " + weeklyBoxOfficeWithPosters);
-        } catch (Exception e) {
-            log.error("Error fetching movie data", e);
-        }
-
-        model.addAttribute("popularMovies", popularMovies);
-        model.addAttribute("trendingMovies", trendingMovies);
-        model.addAttribute("dBOM", objectMapper.writeValueAsString(dailyBoxOfficeWithPosters));
-        model.addAttribute("wBOM", objectMapper.writeValueAsString(weeklyBoxOfficeWithPosters));
-//                model.addAttribute("wBOM", weeklyBoxOfficeWithPosters);
         return "home";
+
+
+
+
+//
+//        // 동기적으로 영화 데이터를 가져와서 모델에 추가
+//        String popularMovies = "";
+//        String trendingMovies = "";
+//
+//        try {
+//            popularMovies = tmdbService.getPopularMovies().block();
+//            trendingMovies = tmdbService.getTrendingMovies().block();
+//        } catch (Exception e) {
+//            log.error("Error fetching movie data", e);
+//        }
+//
+//        List<BoxOfficeMovieDTO> dailyBoxOfficeWithPosters = new ArrayList<>();
+//        List<BoxOfficeMovieDTO> weeklyBoxOfficeWithPosters = new ArrayList<>();
+//
+//        try {
+//            JsonNode dailyBoxOffice = objectMapper.readTree(kobisService.getDailyBoxOfficeMovies().block());
+//            JsonNode weeklyBoxOffice = objectMapper.readTree(kobisService.getWeeklyBoxOfficeMovies().block());
+//
+//            dailyBoxOfficeWithPosters = getBoxOfficeWithPosters(dailyBoxOffice, "dailyBoxOfficeList");
+//            weeklyBoxOfficeWithPosters = getBoxOfficeWithPosters(weeklyBoxOffice, "weeklyBoxOfficeList");
+//        } catch (Exception e) {
+//            log.error("Error fetching movie data", e);
+//        }
+//
+//        model.addAttribute("popularMovies", popularMovies);
+//        model.addAttribute("trendingMovies", trendingMovies);
+//        model.addAttribute("dBOM", objectMapper.writeValueAsString(dailyBoxOfficeWithPosters));
+//        model.addAttribute("wBOM", objectMapper.writeValueAsString(weeklyBoxOfficeWithPosters));
     }
 
-    private List<BoxOfficeMovieDTO> getBoxOfficeWithPosters(JsonNode boxOffice, String listType) {
-        List<BoxOfficeMovieDTO> moviesWithPosters = new ArrayList<>();
-        JsonNode movieList = boxOffice.path("boxOfficeResult").path(listType);
-
-        for (JsonNode movie : movieList) {
-            String title = movie.path("movieNm").asText();
-            String audiAcc = movie.path("audiAcc").asText();
-            String openDt = movie.path("openDt").asText();
-
-            // TMDB에서 영화 검색
-            JsonNode tmdbMovie = tmdbService.searchJsonMovieWithSim(title, openDt).block();
-            System.out.println("tmdbMovieWithSim = " + tmdbMovie);
-            String posterPath = null;
-            String tmdbId = null;
-            if (tmdbMovie != null) {
-//                JsonNode firstResult = tmdbMovie.get("results").get(0);
-                posterPath = tmdbMovie.path("poster_path").asText();
-                tmdbId = tmdbMovie.path("id").asText();
-            }
-
-            BoxOfficeMovieDTO movieDTO = new BoxOfficeMovieDTO(
-                    title,
-                    movie.path("rank").asText(),
-                    posterPath,
-                    tmdbId,
-                    audiAcc
-            );
-            moviesWithPosters.add(movieDTO);
-            System.out.println("movieDTO = " + movieDTO);
-        }
-
-        return moviesWithPosters;
-    }
+//    private List<BoxOfficeMovieDTO> getBoxOfficeWithPosters(JsonNode boxOffice, String listType) {
+//        List<BoxOfficeMovieDTO> moviesWithPosters = new ArrayList<>();
+//        JsonNode movieList = boxOffice.path("boxOfficeResult").path(listType);
+//
+//        for (JsonNode movie : movieList) {
+//            String title = movie.path("movieNm").asText();
+//            String audiAcc = movie.path("audiAcc").asText();
+//            String openDt = movie.path("openDt").asText();
+//
+//            // TMDB에서 영화 검색
+//            JsonNode tmdbMovie = tmdbService.searchJsonMovieWithSim(title, openDt).block();
+//            System.out.println("tmdbMovieWithSim = " + tmdbMovie);
+//            String posterPath = null;
+//            String tmdbId = null;
+//            if (tmdbMovie != null) {
+////                JsonNode firstResult = tmdbMovie.get("results").get(0);
+//                posterPath = tmdbMovie.path("poster_path").asText();
+//                tmdbId = tmdbMovie.path("id").asText();
+//            }
+//
+//            BoxOfficeMovieDTO movieDTO = new BoxOfficeMovieDTO(
+//                    title,
+//                    movie.path("rank").asText(),
+//                    posterPath,
+//                    tmdbId,
+//                    audiAcc
+//            );
+//            moviesWithPosters.add(movieDTO);
+//            System.out.println("movieDTO = " + movieDTO);
+//        }
+//
+//        return moviesWithPosters;
+//    }
 
     @GetMapping("/search")
     public String searchMovies(@RequestParam String query, Model model) {

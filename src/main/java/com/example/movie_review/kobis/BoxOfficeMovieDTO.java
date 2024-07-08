@@ -19,3 +19,4 @@ public class BoxOfficeMovieDTO {
         this.audiAcc = aduiAcc;
     }
 }
+
