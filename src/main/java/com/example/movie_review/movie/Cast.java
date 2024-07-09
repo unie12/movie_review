@@ -1,13 +1,11 @@
 package com.example.movie_review.movie;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+//@Data
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cast")
@@ -15,9 +13,11 @@ public class Cast {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cast_id")
+    private Long cast_id;
+
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "credits_id")
     private Credits credits;
 
@@ -29,7 +29,7 @@ public class Cast {
     private String original_name;
     private double popularity;
     private String profile_path;
-//    private Integer cast_id;
+//    private Integer cast_original_id;
     private String character_name;
     private String credit_id;
     private Integer order_number;

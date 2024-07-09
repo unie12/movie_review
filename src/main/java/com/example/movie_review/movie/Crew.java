@@ -1,13 +1,10 @@
 package com.example.movie_review.movie;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "crew")
@@ -15,9 +12,11 @@ public class Crew {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "crew_id")
+    private Long crew_id;
+
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "credits_id")
     private Credits credits;
 

@@ -3,14 +3,13 @@ package com.example.movie_review.movie;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Data
+//@Data
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "movie_detail")

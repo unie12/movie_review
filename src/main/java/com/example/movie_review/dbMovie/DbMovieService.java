@@ -2,9 +2,7 @@ package com.example.movie_review.dbMovie;
 
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.genre.GenresRepository;
-import com.example.movie_review.movie.Crew;
-import com.example.movie_review.movie.MovieDetailRepository;
-import com.example.movie_review.movie.MovieDetails;
+import com.example.movie_review.movie.*;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +44,17 @@ public class DbMovieService {
                 matchedGenres.add(matchedGenre);
             }
             movieDetails.setGenres(matchedGenres);
+
+            Credits credits = movieDetails.getCredits();
+            System.out.println("MovieDetails credits = " + credits);
+            if (credits != null) {
+                for (Cast cast : credits.getCast()) {
+                    cast.setCredits(credits);
+                }
+                for (Crew crew : credits.getCrew()) {
+                    crew.setCredits(credits);
+                }
+            }
 
             movieDetails = movieDetailRepository.save(movieDetails);
 
