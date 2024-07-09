@@ -29,6 +29,9 @@ public class MovieDetails {
     @OneToMany(mappedBy = "movieDetails")
     private List<Genres> genres;
 
+//    @OneToOne
+
+
     private String backdrop_path;
     private Integer tId;
     private String title;

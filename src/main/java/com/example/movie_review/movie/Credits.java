@@ -20,8 +20,7 @@ public class Credits {
     @Column(name = "credits_id")
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "credits")
+    @OneToOne(mappedBy = "credits")
     private MovieDetails movieDetails;
 
     @OneToMany(mappedBy = "credits", cascade = CascadeType.ALL, orphanRemoval = true)
