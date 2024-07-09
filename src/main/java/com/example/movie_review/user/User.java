@@ -1,9 +1,10 @@
 package com.example.movie_review.user;
 
-import com.example.movie_review.domain.Address;
+import com.example.movie_review.dbMovie.DbRatings;
 import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.review.Heart;
 import com.example.movie_review.domain.review.Review;
+import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.movie.PreferredMovies;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -77,6 +78,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<DbMovies> dbMovies;
+
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<DbRatings> dbRatings;
+
     @Builder
     public User(String name, String email, String picture, String nickname, String gender, Long age, String mbti, UserRole role) {
         this.name = name;
@@ -86,8 +93,6 @@ public class User {
         this.gender = gender;
         this.age = age;
         this.mbti = mbti;
-//        this.preferGenres = preferGenres;
-//        this.preferMovies = preferMovies;
         this.role = role;
     }
 

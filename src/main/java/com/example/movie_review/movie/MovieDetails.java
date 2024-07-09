@@ -1,16 +1,15 @@
 package com.example.movie_review.movie;
 
+import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
-@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,7 +28,8 @@ public class MovieDetails {
     @OneToMany(mappedBy = "movieDetails")
     private List<Genres> genres;
 
-//    @OneToOne
+    @OneToOne(mappedBy = "movieDetails")
+    private DbMovies dbMovie;
 
 
     private String backdrop_path;
