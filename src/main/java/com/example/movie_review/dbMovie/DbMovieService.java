@@ -30,6 +30,7 @@ public class DbMovieService {
             .orElseGet(() -> createMovieFromTmdb(movieId));
     }
 
+    @Transactional
     private DbMovies createMovieFromTmdb(Long movieId) {
         String movieDetailsJson = tmdbService.getMovieDetails(movieId).block();
         try {
@@ -37,16 +38,22 @@ public class DbMovieService {
             movieDetails.setTId(movieId.intValue());
 
             // 장르 매칭 로직
-            List<Genres> matchedGenres = new ArrayList<>();
-            for (Genres genre : movieDetails.getGenres()) {
-                Genres matchedGenre = genreRepository.findByName(genre.getName())
-                        .orElseGet(() -> genreRepository.save(new Genres(genre.getName())));
-                matchedGenres.add(matchedGenre);
+            if (movieDetails.getGenreDtos() != null) {
+                for (GenreDto genreDto : movieDetails.getGenreDtos()) {
+                    Genres genre = genreRepository.findById(genreDto.getId())
+                            .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
+                    movieDetails.getGenres().add(genre);
+                }
+
             }
-            movieDetails.setGenres(matchedGenres);
+//            List<Genres> matchedGenres = new ArrayList<>();
+//            for (Genres genre : movieDetails.getGenres()) {
+//                Genres matchedGenre = genreRepository.findByName(genre.getName())
+//                        .orElseGet(() -> genreRepository.save(new Genres(genre.getName())));
+//                matchedGenres.add(matchedGenre);
+//            }
 
             Credits credits = movieDetails.getCredits();
-            System.out.println("MovieDetails credits = " + credits);
             if (credits != null) {
                 for (Cast cast : credits.getCast()) {
                     cast.setCredits(credits);
@@ -54,6 +61,7 @@ public class DbMovieService {
                 for (Crew crew : credits.getCrew()) {
                     crew.setCredits(credits);
                 }
+                credits.setMovieDetails(movieDetails);
             }
 
             movieDetails = movieDetailRepository.save(movieDetails);

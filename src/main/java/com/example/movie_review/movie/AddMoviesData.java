@@ -69,13 +69,13 @@ public class AddMoviesData {
 //        return ResponseEntity.ok().build();
 //    }
 
-    @GetMapping("/add-genres")
-    public void addGenres() {
-        List<Genres> genres = genreService.fetchGenres();
-        for (Genres genre : genres) {
-            genreService.findOrCreateNew(genre.getName(), genre.getGenreId());
-            System.out.println("genre.getGenreId() = " + genre.getGenreId());
-            System.out.println("genre.getName() = " + genre.getName());
-        }
-    }
+//    @GetMapping("/add-genres")
+//    public void addGenres() {
+//        List<Genres> genres = genreService.fetchGenres();
+//        for (Genres genre : genres) {
+//            genreService.findOrCreateNew(genre.getName(), genre.getId());
+////            System.out.println("genre.getGenreId() = " + genre.getGenreId());
+////            System.out.println("genre.getName() = " + genre.getName());
+//        }
+//    }
 }

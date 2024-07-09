@@ -31,12 +31,13 @@ public class GenreService {
         return genresRepository.findAll();
     }
 
-    public Genres findOrCreateNew(String name, String genreId) {
-        System.out.println("name = " + name + "genreId = " + genreId);
-        return genresRepository.findByName(name).orElseGet(
-                () -> genresRepository.save(new Genres(name))
-        );
-    }
+//    public Genres findOrCreateNew(String name, Long genreId) {
+//        System.out.println("name = " + name + "genreId = " + genreId);
+//        return genresRepository.findByName(name).orElseGet(
+//                () -> genresRepository.save(new Genres(name, genreId))
+//        );
+//    }
+
 }
 
 class GenreResponse {

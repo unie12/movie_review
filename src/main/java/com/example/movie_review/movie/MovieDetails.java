@@ -5,7 +5,10 @@ import com.example.movie_review.genre.Genres;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.lang.invoke.CallSite;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 //@Data
@@ -24,11 +27,22 @@ public class MovieDetails {
     @JoinColumn(name = "credits_id")
     private Credits credits;
 
-    @OneToMany(mappedBy = "movieDetails", cascade = CascadeType.ALL)
-    private List<Genres> genres;
+//    @OneToMany(mappedBy = "movieDetails", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<MovieGenre> movieGenres;
+
+    @ManyToMany
+    @JoinTable(
+            name = "movie_genre",
+            joinColumns = @JoinColumn(name = "movieDetails_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private Set<Genres> genres = new HashSet<>();
 
     @OneToOne(mappedBy = "movieDetails", cascade = CascadeType.ALL)
     private DbMovies dbMovie;
+
+    @Transient
+    private List<GenreDto> genreDtos;
 
 
     private String backdrop_path;
@@ -48,4 +62,6 @@ public class MovieDetails {
     private Long runtime;
     private boolean adult;
     private String media_type;
+
+
 }

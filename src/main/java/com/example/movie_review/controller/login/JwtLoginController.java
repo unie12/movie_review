@@ -106,7 +106,7 @@ public class JwtLoginController {
             DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieId);
             MovieDetails movieDetails = dbMovie.getMovieDetails();
             List<Crew> directors = dbMovieService.getDirectors(movieDetails);
-
+            System.out.println("movieDetailss = " + movieDetails.getGenres());
             model.addAttribute("movieDetails", movieDetails);
             model.addAttribute("directors", directors);
         } catch (Exception e) {

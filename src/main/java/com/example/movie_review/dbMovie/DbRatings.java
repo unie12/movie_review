@@ -21,7 +21,7 @@ public class DbRatings {
 
     private Long timestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "DbMovies_id")
     private DbMovies dbMovies;
 
