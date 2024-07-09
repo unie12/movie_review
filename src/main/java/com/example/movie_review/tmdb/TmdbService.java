@@ -247,5 +247,14 @@ public class TmdbService {
                 .retrieve()
                 .bodyToMono(String.class);
     }
-}
 
+    /**
+     * 장르 정보 가져오기
+     */
+    public Mono<String> getGenres() {
+        return webClient.get()
+                .uri("/genre/movie/list?api_key={api_key}&language=ko-KR", apikey)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+}

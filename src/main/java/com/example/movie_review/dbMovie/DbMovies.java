@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Data
@@ -20,17 +21,19 @@ public class DbMovies {
     @Column(name = "DbMovies_id")
     private Long id;
 
-    @OneToOne
+    @Column(name = "tmdb_id", unique = true)
+    private Long tmdbId;
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "movieDetails_id")
     private MovieDetails movieDetails;
 
-    @OneToMany(mappedBy = "dbMovies")
+    @OneToMany(mappedBy = "dbMovies", cascade = CascadeType.ALL)
     private List<DbRatings> dbRatings;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @OneToMany(mappedBy = "dbMovie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserFavoriteMovie> favoritedByUsers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "dbMovies")
+    @OneToMany(mappedBy = "dbMovies", cascade = CascadeType.ALL)
     private List<Review> reviews;
 }

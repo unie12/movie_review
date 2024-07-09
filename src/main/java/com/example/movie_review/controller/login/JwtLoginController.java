@@ -1,10 +1,7 @@
 package com.example.movie_review.controller.login;
 
 import com.example.movie_review.auth.JwtTokenUtil;
-import com.example.movie_review.dbMovie.MovieCache;
-import com.example.movie_review.dbMovie.MovieCacheRepository;
-import com.example.movie_review.dbMovie.MovieCacheService;
-import com.example.movie_review.dbMovie.MovieType;
+import com.example.movie_review.dbMovie.*;
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
 import com.example.movie_review.kobis.BoxOfficeMovieDTO;
@@ -49,8 +46,10 @@ public class JwtLoginController {
     private final KobisService kobisService;
     private final MovieService movieService;
     private final MovieCacheService movieCacheService;
+    private final DbMovieService dbMovieService;
 
     private final MovieCacheRepository movieCacheRepository;
+    private final DbMovieRepository dbMovieRepository;
 
     private final ObjectMapper objectMapper;
     @GetMapping({"", "/"})
@@ -95,29 +94,26 @@ public class JwtLoginController {
         return "search";
     }
 
+    /**
+     * 영화 상세 정보 보여주기
+     * 해당 영화의 상세 정보를 가저 오면서 db에 해당 영화가 존재하는 지 확인
+     * 만약 존재하지 않으면 db에 추가
+     * 존재하면 db에 있는 거 그대로 반환
+     */
     @GetMapping("/contents/{movieId}")
     public String movieDetail(@PathVariable Long movieId, Model model) {
-        String movieDetailsJson = tmdbService.getMovieDetails(movieId).block();
         try {
-            MovieDetails movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
+            DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieId);
+            MovieDetails movieDetails = dbMovie.getMovieDetails();
+            List<Crew> directors = dbMovieService.getDirectors(movieDetails);
 
-            // 감독 정보 추출
-            List<Crew> directors = new ArrayList<>();
-            if (movieDetails.getCredits() != null && movieDetails.getCredits().getCrew() != null) {
-                directors = movieDetails.getCredits().getCrew().stream()
-                        .filter(crew -> "Director".equals(crew.getJob()))
-//                        .map(MovieDetails.Credits.Crew::getName)
-                        .collect(Collectors.toList());
-            }
             model.addAttribute("movieDetails", movieDetails);
             model.addAttribute("directors", directors);
-
-        } catch (JsonProcessingException e) {
-            log.error("Error parsing JSON response", e);
-            model.addAttribute("error", "영화 정보를 처리하는 중 오류가 발생했습니다.");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error processing movie details", e);
+            model.addAttribute("error", "영화 정보를 처리하는 중 오류가 발생했습니다.");
         }
+
         return "movieDetail";
     }
 

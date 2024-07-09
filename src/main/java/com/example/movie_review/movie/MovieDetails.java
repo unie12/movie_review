@@ -21,14 +21,14 @@ public class MovieDetails {
     @Column(name = "movieDetails_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "credits_id")
     private Credits credits;
 
-    @OneToMany(mappedBy = "movieDetails")
+    @OneToMany(mappedBy = "movieDetails", cascade = CascadeType.ALL)
     private List<Genres> genres;
 
-    @OneToOne(mappedBy = "movieDetails")
+    @OneToOne(mappedBy = "movieDetails", cascade = CascadeType.ALL)
     private DbMovies dbMovie;
 
 

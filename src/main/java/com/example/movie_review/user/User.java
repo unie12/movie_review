@@ -1,6 +1,7 @@
 package com.example.movie_review.user;
 
 import com.example.movie_review.dbMovie.DbRatings;
+import com.example.movie_review.dbMovie.UserFavoriteMovie;
 import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.review.Heart;
 import com.example.movie_review.domain.review.Review;
@@ -79,7 +80,7 @@ public class User {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
-    private List<DbMovies> dbMovies;
+    private List<UserFavoriteMovie> userFavoriteMovies = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private List<DbRatings> dbRatings;

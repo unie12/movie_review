@@ -1,7 +1,6 @@
 package com.example.movie_review.genre;
 
 import com.example.movie_review.movie.MovieDetails;
-import com.example.movie_review.movie.Movies;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +19,9 @@ public class Genres {
 
     @JoinColumn(name = "genre_name")
     private String name;
+
+    @Column(name = "genre_original_id")
+    private String genreId;
 
     @ManyToOne
     @JoinColumn(name = "movieDetails_id")

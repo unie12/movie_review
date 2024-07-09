@@ -10,6 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GenreService {
     private final GenresRepository genresRepository;
 //    private final GenreService genreService;
@@ -26,17 +27,12 @@ public class GenreService {
         return response.getGenres();
     }
 
-//    @Transactional
-//    public void updateGenres() {
-//        List<Genres> genres = genreService.fetchGenres();
-//        genresRepository.saveAll(genres);
-//    }
-
     public List<Genres> getAllGenres() {
         return genresRepository.findAll();
     }
 
-    public Genres findOrCreateNew(String name) {
+    public Genres findOrCreateNew(String name, String genreId) {
+        System.out.println("name = " + name + "genreId = " + genreId);
         return genresRepository.findByName(name).orElseGet(
                 () -> genresRepository.save(new Genres(name))
         );
