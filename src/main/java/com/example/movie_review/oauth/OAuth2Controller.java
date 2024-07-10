@@ -1,7 +1,6 @@
 package com.example.movie_review.oauth;
 
 import com.example.movie_review.auth.JwtTokenUtil;
-import com.example.movie_review.service.ReviewService;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
 import jakarta.servlet.http.Cookie;
@@ -12,8 +11,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
@@ -22,7 +19,6 @@ import java.util.Optional;
 public class OAuth2Controller {
 
     private final UserService userService;
-    private final ReviewService reviewService;
 
     @GetMapping("/oauth2-login")
     public String oauth2LoginSuccess(Authentication auth, HttpServletResponse response, Model model) {

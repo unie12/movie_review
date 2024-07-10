@@ -1,6 +1,5 @@
 package com.example.movie_review.genre;
 
-import com.example.movie_review.movie.PreferredMovies;
 import com.example.movie_review.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

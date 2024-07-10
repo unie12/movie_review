@@ -1,6 +1,5 @@
-package com.example.movie_review.domain.DTO;
+package com.example.movie_review.exception;
 
-import com.example.movie_review.domain.ENUM.ErrorCode;
 import lombok.Getter;
 
 @Getter

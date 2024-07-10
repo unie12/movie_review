@@ -1,6 +1,6 @@
 package com.example.movie_review.dbMovie;
 
-import com.example.movie_review.domain.review.Review;
+import com.example.movie_review.review.Review;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.movie.MovieDetails;
 import jakarta.persistence.*;

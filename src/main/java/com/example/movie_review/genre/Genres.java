@@ -18,19 +18,11 @@ import java.util.Set;
 public class Genres {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "genre_id")
     private Long id;
 
     @JoinColumn(name = "genre_name")
     private String name;
-
-//    @Column(name = "genre_original_id")
-//    private String genreId;
-
-//    @OneToMany
-//    @JoinColumn(name = "genres")
-//    private List<MovieGenre> movieGenres;
 
     @ManyToMany(mappedBy = "genres")
     private Set<MovieDetails> movies = new HashSet<>();

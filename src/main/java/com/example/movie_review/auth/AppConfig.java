@@ -1,4 +1,4 @@
-package com.example.movie_review.config;
+package com.example.movie_review.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

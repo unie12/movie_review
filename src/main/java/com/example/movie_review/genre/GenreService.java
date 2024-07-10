@@ -13,7 +13,6 @@ import java.util.List;
 @Transactional
 public class GenreService {
     private final GenresRepository genresRepository;
-//    private final GenreService genreService;
 
     /**
      * tmdb api
@@ -30,13 +29,6 @@ public class GenreService {
     public List<Genres> getAllGenres() {
         return genresRepository.findAll();
     }
-
-//    public Genres findOrCreateNew(String name, Long genreId) {
-//        System.out.println("name = " + name + "genreId = " + genreId);
-//        return genresRepository.findByName(name).orElseGet(
-//                () -> genresRepository.save(new Genres(name, genreId))
-//        );
-//    }
 
 }
 

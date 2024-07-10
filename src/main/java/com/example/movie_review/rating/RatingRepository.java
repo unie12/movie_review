@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RatingRepository extends JpaRepository<Ratings, Long>, RatingRepositoryExtension {
+public interface RatingRepository extends JpaRepository<Ratings, Long>{
     Page<Ratings> findAll(Pageable pageable);
 }

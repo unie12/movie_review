@@ -1,5 +1,6 @@
-package com.example.movie_review.domain.review;
+package com.example.movie_review.Heart;
 
+import com.example.movie_review.review.Review;
 import com.example.movie_review.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,5 +26,4 @@ public class Heart {
     @JoinColumn(name = "review_id")
     private Review review;
 
-//    private boolean hearCheck = false;
 }

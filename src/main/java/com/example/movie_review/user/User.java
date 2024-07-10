@@ -1,10 +1,10 @@
 package com.example.movie_review.user;
 
 import com.example.movie_review.dbMovie.DbRatings;
+import com.example.movie_review.Comment.Comment;
+import com.example.movie_review.Heart.Heart;
+import com.example.movie_review.review.Review;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
-import com.example.movie_review.domain.review.Comment;
-import com.example.movie_review.domain.review.Heart;
-import com.example.movie_review.domain.review.Review;
 import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.movie.PreferredMovies;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -56,15 +56,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PreferredGenres> preferredGenres = new ArrayList<>();
 
-    private Integer receivedHeartCnt; // 좋아요 받은 수
-//    private Integer pressHeartCnt; // 좋아요 누른 수
-
-
-    @Column(name = "login_id", length = 30, unique = true)
-    private String loginId; // 아이디
-    @Column(name = "password")
-    private String password; // 비밀번호
-    private String passwordCheck; // 비밀번호 더블체크
 
     /**
      * 사용자 이용 현황
@@ -84,19 +75,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private List<DbRatings> dbRatings;
 
-    @Builder
-    public User(String name, String email, String picture, String nickname, String gender, Long age, String mbti, UserRole role) {
-        this.name = name;
-        this.email = email;
-        this.picture = picture;
-        this.nickname = nickname;
-        this.gender = gender;
-        this.age = age;
-        this.mbti = mbti;
-        this.role = role;
-    }
-
-
     /**
      * 연관관계 메서드
      */
@@ -112,28 +90,7 @@ public class User {
 
     public void addPreferredGenre(PreferredGenres preferredGenre) { preferredGenres.add(preferredGenre); }
 
-    /**
-     * 정보 수정
-     */
-    public void updatePassword(String password) {
-        this.password = password;
-    }
 
-    public void updateName(String name) {
-        this.name = name;
-    }
-
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void updateHeartCnt(Integer receivedHeartCnt) {
-        this.receivedHeartCnt = receivedHeartCnt;
-    }
-
-//    public void updatePressHeartCnt(Integer pressHeartCnt) {
-//        this.pressHeartCnt = pressHeartCnt;
-//    }
 
     public String getRoleKey() {
         return this.role.getKey();

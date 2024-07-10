@@ -1,7 +1,5 @@
-package com.example.movie_review.controller.exception;
+package com.example.movie_review.exception;
 
-import com.example.movie_review.domain.DTO.ExceptionDto;
-import com.example.movie_review.domain.ENUM.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

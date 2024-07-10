@@ -1,17 +1,12 @@
 package com.example.movie_review.user;
 
-import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.genre.*;
 import com.example.movie_review.movie.PreferredMovies;
 import com.example.movie_review.movie.PreferredMoviesService;
 import com.example.movie_review.oauth.SessionUser;
 import com.example.movie_review.tmdb.TmdbService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import java.lang.reflect.Type;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller

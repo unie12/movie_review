@@ -20,12 +20,6 @@ public class Ratings {
     @Column(name = "rating_id")
     private Long ratingId;
 
-    @Column(name = "movie_id", nullable = false)
-    private Long movieId;
-
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
     @Column(name = "rating")
     private Double rating;
 

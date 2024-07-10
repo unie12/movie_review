@@ -1,4 +1,4 @@
-package com.example.movie_review.domain.ENUM;
+package com.example.movie_review.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

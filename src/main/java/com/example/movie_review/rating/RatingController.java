@@ -31,24 +31,4 @@ public class RatingController {
             return ratingService.retrieveRatings(pageable);
         }
 
-        /***
-         * 회원가입한 유저가 rating 할 시 저장
-         */
-        @PostMapping("/add-user-rating")
-        public ResponseEntity<?> addUserRating(@RequestBody RatingRequest ratingRequest) {
-            User user = userRepository.findById(ratingRequest.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
-            Movies movie = movieRepository.findById(ratingRequest.getMovieId()).orElseThrow(() -> new RuntimeException("Movie not found"));
-        
-        Ratings userRating = Ratings.builder()
-                .userId(ratingRequest.getUserId())
-                .movieId(ratingRequest.getMovieId())
-                .rating(ratingRequest.getRating())
-                .timestamp(System.currentTimeMillis())
-                .user(user)
-                .movie(movie)
-                .build();
-        
-        ratingRepository.save(userRating);
-        return ResponseEntity.ok().build();
-    }
 }
