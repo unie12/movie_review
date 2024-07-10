@@ -1,11 +1,10 @@
 package com.example.movie_review.user;
 
 import com.example.movie_review.dbMovie.DbRatings;
-import com.example.movie_review.dbMovie.UserFavoriteMovie;
+import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.domain.review.Comment;
 import com.example.movie_review.domain.review.Heart;
 import com.example.movie_review.domain.review.Review;
-import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.movie.PreferredMovies;
 import com.fasterxml.jackson.annotation.JsonManagedReference;

@@ -4,6 +4,8 @@ import com.example.movie_review.auth.JwtTokenUtil;
 import com.example.movie_review.dbMovie.*;
 import com.example.movie_review.domain.DTO.JoinRequest;
 import com.example.movie_review.domain.DTO.LoginRequest;
+import com.example.movie_review.favoriteMovie.UserFavoriteMovieRepository;
+import com.example.movie_review.favoriteMovie.UserFavoriteMovieService;
 import com.example.movie_review.kobis.BoxOfficeMovieDTO;
 import com.example.movie_review.kobis.KobisService;
 import com.example.movie_review.movie.ActorDetails;
@@ -22,6 +24,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,6 +51,7 @@ public class JwtLoginController {
     private final MovieService movieService;
     private final MovieCacheService movieCacheService;
     private final DbMovieService dbMovieService;
+    private final UserFavoriteMovieService userFavoriteMovieService;
 
     private final MovieCacheRepository movieCacheRepository;
     private final DbMovieRepository dbMovieRepository;
@@ -101,14 +106,24 @@ public class JwtLoginController {
      * 존재하면 db에 있는 거 그대로 반환
      */
     @GetMapping("/contents/{movieId}")
-    public String movieDetail(@PathVariable Long movieId, Model model) {
+    public String movieDetail(@PathVariable Long movieId, Model model, @AuthenticationPrincipal OAuth2User principal) {
         try {
             DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieId);
             MovieDetails movieDetails = dbMovie.getMovieDetails();
             List<Crew> directors = dbMovieService.getDirectors(movieDetails);
-            System.out.println("movieDetailss = " + movieDetails.getGenres());
+
             model.addAttribute("movieDetails", movieDetails);
             model.addAttribute("directors", directors);
+            System.out.println("dbMovie.getId() = " + dbMovie.getId());
+            System.out.println("movieDetails = " + movieDetails.getId());
+
+            // 찜 확인
+            boolean isFavorite = false;
+            if(principal != null) {
+                String email = principal.getAttribute("email");
+                isFavorite = userFavoriteMovieService.isFavorite(email, movieDetails.getId());
+            }
+            model.addAttribute("isFavorite", isFavorite);
         } catch (Exception e) {
             log.error("Error processing movie details", e);
             model.addAttribute("error", "영화 정보를 처리하는 중 오류가 발생했습니다.");

@@ -1,5 +1,6 @@
-package com.example.movie_review.dbMovie;
+package com.example.movie_review.favoriteMovie;
 
+import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.user.User;
 import jakarta.persistence.*;
 import lombok.Data;

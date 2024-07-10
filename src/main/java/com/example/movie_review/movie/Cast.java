@@ -1,5 +1,6 @@
 package com.example.movie_review.movie;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +31,7 @@ public class Cast {
     private double popularity;
     private String profile_path;
 //    private Integer cast_original_id;
+    @JsonProperty("character")
     private String character_name;
     private String credit_id;
     private Integer order_number;

@@ -46,12 +46,6 @@ public class DbMovieService {
                 }
 
             }
-//            List<Genres> matchedGenres = new ArrayList<>();
-//            for (Genres genre : movieDetails.getGenres()) {
-//                Genres matchedGenre = genreRepository.findByName(genre.getName())
-//                        .orElseGet(() -> genreRepository.save(new Genres(genre.getName())));
-//                matchedGenres.add(matchedGenre);
-//            }
 
             Credits credits = movieDetails.getCredits();
             if (credits != null) {
