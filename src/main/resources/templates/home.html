@@ -136,9 +136,8 @@
         </div>
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <h3>[[${#authentication.name}]]님 환영합니다!</h3>
-            <button th:onclick="|location.href='@{/info}'|">유저 정보</button> <br/><br/>
-<!--            <button th:onclick="|location.href='@{/{loginType}/admin (loginType=${loginType})}'|">관리자 페이지</button> <br/><br/>-->
-<!--            <button th:onclick="|location.href='@{/{loginType}/logout (loginType=${loginType})}'|">로그아웃</button>-->
+            <a th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-primary">유저 정보</a>
+<!--            <button th:onclick="|location.href='@{/info}'|">유저 정보</button> <br/><br/>-->
         </div>
 
         <!-- 네비게이션 링크 -->

@@ -1,5 +1,6 @@
 package com.example.movie_review.user;
 
+import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.genre.*;
 import com.example.movie_review.movie.PreferredMovies;
 import com.example.movie_review.movie.PreferredMoviesService;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Type;
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -159,24 +162,34 @@ public class UserController {
     /**
      * 사용자 활동 내역 보기
      */
-    @GetMapping("/info")
-    public String userInfo(Model model, Authentication auth) {
-        model.addAttribute("pageName", "사용자 활동 내역");
+    @GetMapping("/info/{userEmail}")
+    public String userInfo(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid User Id"));
+        if(!user.getEmail().equals(auth.getName())) {
+            throw new AccessDeniedException("You don't have permission to view this user");
+        }
+//        SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
+//        User user = userRepository.findByEmail(sessionUser.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
-        SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
-        User user = userRepository.findByEmail(sessionUser.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
         model.addAttribute("user", user);
-
-
+//        model.addAttribute("favoriteMovies", user.getUserFavoriteMovies());
         return "info";
     }
 
-//    @GetMapping("/info/{category}")
-//    public String myPage(@PathVariable String category, Authentication auth, Model model) {
-//        model.addAttribute("reviews", reviewService.findMyReview(category, auth.getName()));
-//        model.addAttribute("category", category);
-//        model.addAttribute("user", userService.myInfo(auth.getName()));
-//        return "myPage";
-//    }
+    @GetMapping("/info/{userEmail}/favorite")
+    public String userFavoriteMovies(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid User Id"));
+
+        if(!user.getEmail().equals(auth.getName())) {
+            throw new AccessDeniedException("You don't have permission to view this user");
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("favoriteMovies", user.getUserFavoriteMovies());
+
+        return "user-favorite-movies";
+    }
 
 }
