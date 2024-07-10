@@ -97,15 +97,13 @@ public class ReviewService {
         return review.getId();
     }
 
-    public ReviewDto getReview(Long reviewId) {
-        Optional<Review> optReview = reviewRepository.findById(reviewId);
-
-        if(optReview.isEmpty()) {
-            return null;
-        }
-
-        return ReviewDto.of(optReview.get());
-    }
+//    public Optional<Review> getReview(Long movieId, String email) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid User Email"));
+//
+//        return reviewRepository.findByDbMovies_IdAndUser(movieId, user.getId());
+//
+//    }
 
     @Transactional
     public Long deleteReview(Long reviewId) {
