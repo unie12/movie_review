@@ -23,7 +23,7 @@ import java.util.Optional;
 public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;
     private final HttpSession httpSession;
-    private static final List<String> ALLOWED_DOMAINS = Arrays.asList("ajou.ac.kr");
+//    private static final List<String> ALLOWED_DOMAINS = Arrays.asList("ajou.ac.kr");
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -38,9 +38,9 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 
         String email = attributes.getEmail();
         String domain = email.substring(email.indexOf("@") + 1);
-        if (!ALLOWED_DOMAINS.contains(domain)) {
-            throw new OAuth2AuthenticationException("Unauthorized domain" + domain);
-        }
+//        if (!ALLOWED_DOMAINS.contains(domain)) {
+//            throw new OAuth2AuthenticationException("Unauthorized domain" + domain);
+//        }
         // 데이터베이스에서 추가 정보 조회 및 반영
         System.out.println("sevice Attributes Map: " + attributes);
         Optional<User> userOptional = userRepository.findByEmail(attributes.getEmail());

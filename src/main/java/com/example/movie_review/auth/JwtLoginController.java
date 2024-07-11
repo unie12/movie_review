@@ -7,6 +7,8 @@ import com.example.movie_review.movie.ActorDetails;
 import com.example.movie_review.movie.Crew;
 import com.example.movie_review.movie.MovieDetails;
 import com.example.movie_review.movie.MovieService;
+import com.example.movie_review.review.Review;
+import com.example.movie_review.review.ReviewRepository;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,17 +45,13 @@ public class JwtLoginController {
 
     private final MovieCacheRepository movieCacheRepository;
     private final DbMovieRepository dbMovieRepository;
+    private final ReviewRepository reviewRepository;
 
     private final ObjectMapper objectMapper;
     @GetMapping({"", "/"})
     public String home(Model model, Authentication auth) throws JsonProcessingException {
 //        movieCacheService.updateDailyMovieCache();
 //        movieCacheService.updateWeeklyMovieCache();
-
-        model.addAttribute("loginType", "jwt-login");
-        model.addAttribute("pageName", "Jwt Token 화면 로그인");
-
-
 
         MovieCache dailyCache = movieCacheRepository.findByType(MovieType.DBOM)
                 .orElseThrow(() -> new RuntimeException("Daily cache not found"));
@@ -94,11 +92,12 @@ public class JwtLoginController {
             DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieId);
             MovieDetails movieDetails = dbMovie.getMovieDetails();
             List<Crew> directors = dbMovieService.getDirectors(movieDetails);
+            List<Review> reviews = reviewRepository.findReviewByDbMovies(dbMovie);
 
+            model.addAttribute("dbMovie", dbMovie);
             model.addAttribute("movieDetails", movieDetails);
             model.addAttribute("directors", directors);
-            System.out.println("dbMovie.getId() = " + dbMovie.getId());
-            System.out.println("movieDetails = " + movieDetails.getId());
+            model.addAttribute("reviews", reviews);
 
             // 찜 확인
             boolean isFavorite = false;

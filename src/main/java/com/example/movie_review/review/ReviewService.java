@@ -76,7 +76,6 @@ public class ReviewService {
 
     public List<ReviewWithMovie> getReviewsWithMovies(User user) {
         List<Review> reviews = reviewRepository.findByUser(user);
-        System.out.println("reviews = " + reviews);
 
         return reviews.stream()
                 .map(review -> new ReviewWithMovie(review, review.getDbMovies()))
