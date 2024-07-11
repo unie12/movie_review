@@ -18,6 +18,11 @@
         <a th:href="@{'/info/' + ${user.email} + '/review'}">리뷰 작성한 영화 보기</a>
     </div>
 
+    <div>
+        <h3>평점 매긴 영화</h3>
+        <a th:href="@{'/info/' + ${user.email} + '/rating'}">평점 매긴 보기</a>
+    </div>
+
 </div>
 </body>
 </html>

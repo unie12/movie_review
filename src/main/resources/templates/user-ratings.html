@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>평점 매긴 영화</title>
+</head>
+<body>
+<div>
+    <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+    <h2>평점 매긴 영화</h2>
+
+    <style>
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+            list-style-type: none;
+            padding: 20px 40px;
+        }
+        .movie-item {
+            text-align: center;
+            width: 100%;
+        }
+        .movie-item img {
+            width: 200px;
+            height: 275px;
+            object-fit: cover;
+            cursor: pointer;
+            max-width: 100%;
+        }
+        .movie-title {
+            font-size: 0.9em;
+            margin-top: 10px;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+
+    <div th:if="${dbRatings != null and !dbRatings.empty}">
+        <div class="movie-grid">
+            <div th:each="dbRating : ${dbRatings}" class="movie-item">
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${dbRating.dbMovies.movieDetails.poster_path}"
+                     th:alt="${dbRating.dbMovies.movieDetails.title}"
+                     th:onclick="'navigateToMovieDetails(' + ${dbRating.dbMovies.movieDetails.tId} + ')'">
+                <p class="movie-rating" th:text="${dbRating.score}"></p>
+            </div>
+        </div>
+    </div>
+    <div th:if="${dbRatings == null or dbRatings.empty}">
+        <p>평점 매긴 영화가 없습니다.</p>
+    </div>
+
+    <a th:href="@{'/info/' + ${user.email}}">사용자 정보로 돌아가기</a>
+</div>
+
+<script th:inline="javascript">
+    function navigateToMovieDetails(movieId) {
+        window.location.href = '/jwt-login/contents/' + movieId;
+    }
+</script>
+</body>
+</html>
