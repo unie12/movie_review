@@ -1,5 +1,6 @@
-package com.example.movie_review.dbMovie;
+package com.example.movie_review.dbRating;
 
+import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,8 @@ public class DbRatings {
     private Long id;
 
     private Long timestamp;
+
+    private Double score;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "DbMovies_id")

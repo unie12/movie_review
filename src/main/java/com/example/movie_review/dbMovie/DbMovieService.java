@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+//@Transactional
 @RequiredArgsConstructor
 public class DbMovieService {
 
@@ -83,6 +83,7 @@ public class DbMovieService {
         return new ArrayList<>();
     }
 
+//    @Transactional(readOnly = true)
     public DbMovies getDbMovieById(Long movieId) {
         return dbMovieRepository.findById(movieId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Movie ID"));

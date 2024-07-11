@@ -1,5 +1,6 @@
 package com.example.movie_review.dbMovie;
 
+import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.movie.MovieDetails;

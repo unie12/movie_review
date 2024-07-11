@@ -1,6 +1,9 @@
 package com.example.movie_review.auth;
 
 import com.example.movie_review.dbMovie.*;
+import com.example.movie_review.dbRating.DbRatingRepository;
+import com.example.movie_review.dbRating.DbRatingService;
+import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovieService;
 import com.example.movie_review.kobis.KobisService;
 import com.example.movie_review.movie.ActorDetails;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
@@ -42,10 +46,12 @@ public class JwtLoginController {
     private final MovieCacheService movieCacheService;
     private final DbMovieService dbMovieService;
     private final UserFavoriteMovieService userFavoriteMovieService;
+    private final DbRatingService dbRatingService;
 
     private final MovieCacheRepository movieCacheRepository;
     private final DbMovieRepository dbMovieRepository;
     private final ReviewRepository reviewRepository;
+    private final DbRatingRepository dbRatingRepository;
 
     private final ObjectMapper objectMapper;
     @GetMapping({"", "/"})
@@ -101,11 +107,16 @@ public class JwtLoginController {
 
             // 찜 확인
             boolean isFavorite = false;
+            DbRatings userRating = new DbRatings();
+
             if(principal != null) {
                 String email = principal.getAttribute("email");
                 isFavorite = userFavoriteMovieService.isFavorite(email, movieDetails.getId());
+                userRating = dbRatingService.getDbRating(email, movieDetails.getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid email movieid"));
             }
             model.addAttribute("isFavorite", isFavorite);
+            model.addAttribute("userRating", userRating);
         } catch (Exception e) {
             log.error("Error processing movie details", e);
             model.addAttribute("error", "영화 정보를 처리하는 중 오류가 발생했습니다.");
@@ -136,8 +147,4 @@ public class JwtLoginController {
         }
         return "actorDetail";
     }
-
-
-
-
 }
