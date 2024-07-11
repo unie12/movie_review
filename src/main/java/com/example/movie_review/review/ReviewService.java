@@ -7,10 +7,11 @@ import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserRepository;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,5 +72,15 @@ public class ReviewService {
     public Review getReviewByMovieAndUser(DbMovies dbMovie, User user) {
         return reviewRepository.findByDbMoviesAndUser(dbMovie, user)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Review"));
+    }
+
+    public List<ReviewWithMovie> getReviewsWithMovies(User user) {
+        List<Review> reviews = reviewRepository.findByUser(user);
+        System.out.println("reviews = " + reviews);
+
+        return reviews.stream()
+                .map(review -> new ReviewWithMovie(review, review.getDbMovies()))
+                .collect(Collectors.toList());
+
     }
 }

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>리뷰 남긴 영화</title>
+</head>
+<body>
+<div>
+    <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+    <h2>리뷰 남긴 영화</h2>
+
+    <style>
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 40px;
+        }
+        .review-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .review-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .review-content {
+            padding: 15px;
+        }
+        .movie-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .review-text {
+            font-size: 0.9em;
+        }
+    </style>
+
+    <div th:if="${reviewsWithMovies != null and !reviewsWithMovies.empty}">
+        <div class="review-grid">
+            <div th:each="reviewWithMovie : ${reviewsWithMovies}" class="review-card">
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${reviewWithMovie.dbMovies.movieDetails.poster_path}"
+                     th:alt="${reviewWithMovie.dbMovies.movieDetails.title}"
+                     th:onclick="'navigateToMovieDetails(' + ${reviewWithMovie.dbMovies.movieDetails.tId} + ')'">
+                <div class="review-content">
+                    <p class="movie-title" th:text="${reviewWithMovie.dbMovies.movieDetails.title}"></p>
+                    <p class="review-text" th:text="${reviewWithMovie.review.context}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${reviewsWithMovies == null or reviewsWithMovies.empty}">
+        <p>리뷰를 남긴 영화가 없습니다.</p>
+    </div>
+
+    <a th:href="@{'/info/' + ${user.email}}">사용자 정보로 돌아가기</a>
+</div>
+
+<script th:inline="javascript">
+    function navigateToMovieDetails(movieId) {
+        window.location.href = '/jwt-login/contents/' + movieId;
+    }
+</script>
+</body>
+</html>

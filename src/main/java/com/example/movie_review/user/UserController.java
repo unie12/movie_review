@@ -4,14 +4,18 @@ import com.example.movie_review.genre.*;
 import com.example.movie_review.movie.PreferredMovies;
 import com.example.movie_review.movie.PreferredMoviesService;
 import com.example.movie_review.oauth.SessionUser;
+import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.review.ReviewWithMovie;
 import com.example.movie_review.tmdb.TmdbService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.AccessDeniedException;
@@ -32,6 +36,7 @@ public class UserController {
     private final TmdbService tmdbService;
     private final PreferredMoviesService preferredMoviesService;
     private final PreferredGenresService preferredGenresService;
+    private final ReviewService reviewService;
 
     /**
      * 사용자 추가 정보 처리
@@ -158,19 +163,15 @@ public class UserController {
         if(!user.getEmail().equals(auth.getName())) {
             throw new AccessDeniedException("You don't have permission to view this user");
         }
-//        SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
-//        User user = userRepository.findByEmail(sessionUser.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-
         model.addAttribute("user", user);
-//        model.addAttribute("favoriteMovies", user.getUserFavoriteMovies());
         return "info";
     }
 
     /**
      * 찜한 영화 확인
      */
-    @GetMapping("/info/{userEmail}/favorite")
-    public String userFavoriteMovies(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
+    @GetMapping("/info/{userEmail}/{category}")
+    public String getUserInfo(@PathVariable String userEmail, @PathVariable String category, Model model, Authentication auth) throws AccessDeniedException {
         User user = userService.getUserByEmail(userEmail);
 
         if(!user.getEmail().equals(auth.getName())) {
@@ -178,18 +179,19 @@ public class UserController {
         }
 
         model.addAttribute("user", user);
-        model.addAttribute("favoriteMovies", user.getUserFavoriteMovies());
 
-        return "user-favorite-movies";
+        switch (category) {
+            case "favorite":
+                model.addAttribute("favoriteMovies", user.getUserFavoriteMovies());
+                return "user-favorite-movies";
+            case "review":
+                List<ReviewWithMovie> reviewsWithMovies = reviewService.getReviewsWithMovies(user);
+                model.addAttribute("reviewsWithMovies", reviewsWithMovies);
+                return "user-reviews";
+            default:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category");
+        }
     }
-
-    /**
-     * 리뷰 작성한 영화 확인
-     */
-//    @GetMapping("/info/{userEmail}/review")
-//    public String userReviewMovies(@PathVariable String email, Model model, Authentication auth) {
-//
-//    }
 
 
 }
