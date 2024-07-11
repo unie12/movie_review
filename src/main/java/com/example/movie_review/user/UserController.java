@@ -39,8 +39,7 @@ public class UserController {
     @GetMapping("/additional-info")
     public String additionalInfoPage(Model model) {
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
-        User user = userRepository.findByEmail(sessionUser.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        User user = userService.getUserByEmail(sessionUser.getEmail());
 
         List<Genres> allGenres = genresRepository.findAll(); // 모든 장르 데이터 (movielens + tmdb)
         List<Genres> tmdbGenres = allGenres.stream() // tmdb 장르 데이터만
@@ -137,16 +136,15 @@ public class UserController {
     @ResponseBody
     public List<PreferredMovies> getFavoriteMovies() {
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
-        User user = userRepository.findByEmail(sessionUser.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id"));
+        User user = userService.getUserByEmail(sessionUser.getEmail());
+
         return preferredMoviesService.findByUser(user);
     }
     @GetMapping("/favorite-genres")
     @ResponseBody
     public List<PreferredGenres> getFavoriteGenres() {
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
-        User user = userRepository.findByEmail(sessionUser.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id"));
+        User user = userService.getUserByEmail(sessionUser.getEmail());
         return preferredGenresService.findByUser(user);
     }
 
@@ -156,8 +154,7 @@ public class UserController {
      */
     @GetMapping("/info/{userEmail}")
     public String userInfo(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid User Id"));
+        User user = userService.getUserByEmail(userEmail);
         if(!user.getEmail().equals(auth.getName())) {
             throw new AccessDeniedException("You don't have permission to view this user");
         }
@@ -169,10 +166,12 @@ public class UserController {
         return "info";
     }
 
+    /**
+     * 찜한 영화 확인
+     */
     @GetMapping("/info/{userEmail}/favorite")
     public String userFavoriteMovies(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid User Id"));
+        User user = userService.getUserByEmail(userEmail);
 
         if(!user.getEmail().equals(auth.getName())) {
             throw new AccessDeniedException("You don't have permission to view this user");
@@ -183,5 +182,14 @@ public class UserController {
 
         return "user-favorite-movies";
     }
+
+    /**
+     * 리뷰 작성한 영화 확인
+     */
+//    @GetMapping("/info/{userEmail}/review")
+//    public String userReviewMovies(@PathVariable String email, Model model, Authentication auth) {
+//
+//    }
+
 
 }

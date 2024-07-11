@@ -82,4 +82,9 @@ public class DbMovieService {
         }
         return new ArrayList<>();
     }
+
+    public DbMovies getDbMovieById(Long movieId) {
+        return dbMovieRepository.findById(movieId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Movie ID"));
+    }
 }

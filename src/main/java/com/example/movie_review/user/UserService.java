@@ -32,9 +32,13 @@ public class UserService {
         return optionalUser.get();
     }
 
-    public Optional<User> getUserByEmail(String email) {
+    public Optional<User> getOptUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid User Email"));
+    }
 
 }
