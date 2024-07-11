@@ -116,7 +116,27 @@
                 <i class="fas fa-heart"></i>
             </button>
 <!--            리뷰 기능-->
-            <button id="reviewButton" class="btn btn-primary">리뷰 작성</button>
+<!--            <button id="reviewButton" class="btn btn-primary">리뷰 작성</button>-->
+            <!-- 리뷰 섹션 -->
+            <div id="reviewSection">
+                <h3>리뷰</h3>
+                <div id="reviewDisplay" style="display:none;">
+                    <p id="reviewDisplayText"></p>
+                    <button id="editReviewBtn" class="btn btn-secondary">수정</button>
+                    <button id="deleteReviewBtn" class="btn btn-danger">삭제</button>
+                </div>
+                <button id="writeReviewBtn" class="btn btn-primary" style="display:none;">리뷰 작성</button>
+            </div>
+
+            <!-- 리뷰 모달 -->
+            <div id="reviewModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 id="modalTitle">리뷰 작성</h2>
+                    <textarea id="reviewText" rows="4" cols="50"></textarea>
+                    <button id="saveReviewBtn" class="btn btn-primary">저장</button>
+                </div>
+            </div>
 
             <p><strong>평균 평점:</strong> <span th:text="${movieDetails.vote_average} + ' (' + ${movieDetails.vote_count} + '표)'"></span></p>
 
@@ -148,23 +168,6 @@
                 <button onclick="nextActors()">다음</button>
             </div>
 
-
-            <!-- 리뷰 모달 -->
-            <div id="reviewModal" class="modal" style="display:none;">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2>리뷰</h2>
-                    <div id="reviewContent">
-                        <textarea id="reviewText" rows="4" cols="50"></textarea>
-                        <button id="saveReview" class="btn btn-primary">저장</button>
-                    </div>
-                    <div id="reviewDisplay" style="display:none;">
-                        <p id="reviewDisplayText"></p>
-                        <button id="editReview" class="btn btn-secondary">수정</button>
-                        <button id="deleteReview" class="btn btn-danger">삭제</button>
-                    </div>
-                </div>
-            </div>
 
             <script>
                 // 영화 출연진 배우들 리스트 표시
@@ -238,19 +241,41 @@ $(document).ready(function() {
         });
     });
 
-    // 리뷰 모달 관련 코드
-    var modal = document.getElementById("reviewModal");
-    var btn = document.getElementById("reviewButton");
-    var span = document.getElementsByClassName("close")[0];
-    var saveBtn = document.getElementById("saveReview");
-    var editBtn = document.getElementById("editReview");
-    var deleteBtn = document.getElementById("deleteReview");
     var movieId = $('#favoriteButton').data('movie-id');
+    var modal = document.getElementById("reviewModal");
+    var span = document.getElementsByClassName("close")[0];
 
-    btn.onclick = function() {
-        modal.style.display = "block";
-        loadReview();
+    function loadReview() {
+        $.ajax({
+            url: '/api/review/' + movieId,
+            type: 'GET',
+            success: function(response) {
+                if (response.review) {
+                    $('#reviewDisplayText').text(response.review);
+                    $('#reviewDisplay').show();
+                    $('#writeReviewBtn').hide();
+                } else {
+                    $('#reviewDisplay').hide();
+                    $('#writeReviewBtn').show();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
     }
+
+    loadReview();  // 페이지 로드 시 리뷰 불러오기
+
+    $('#writeReviewBtn, #editReviewBtn').click(function() {
+        $('#modalTitle').text($(this).attr('id') === 'writeReviewBtn' ? '리뷰 작성' : '리뷰 수정');
+        if ($(this).attr('id') === 'editReviewBtn') {
+            $('#reviewText').val($('#reviewDisplayText').text());
+        } else {
+            $('#reviewText').val('');
+        }
+        modal.style.display = "block";
+    });
 
     span.onclick = function() {
         modal.style.display = "none";
@@ -262,27 +287,7 @@ $(document).ready(function() {
         }
     }
 
-    function loadReview() {
-        $.ajax({
-            url: '/api/review/' + movieId,
-            type: 'GET',
-            success: function(response) {
-                if (response.review) {
-                    $('#reviewDisplayText').text(response.review);
-                    $('#reviewDisplay').show();
-                    $('#reviewContent').hide();
-                } else {
-                    $('#reviewContent').show();
-                    $('#reviewDisplay').hide();
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
-
-    saveBtn.onclick = function() {
+    $('#saveReviewBtn').click(function() {
         var reviewText = $('#reviewText').val();
         $.ajax({
             url: '/api/review',
@@ -290,37 +295,28 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({ movieId: movieId, review: reviewText }),
             success: function(response) {
-                if (response.success) {
+                modal.style.display = "none";
+                loadReview();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    $('#deleteReviewBtn').click(function() {
+        if (confirm('정말로 리뷰를 삭제하시겠습니까?')) {
+            $.ajax({
+                url: '/api/review/' + movieId,
+                type: 'DELETE',
+                success: function(response) {
                     loadReview();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
-
-    editBtn.onclick = function() {
-        $('#reviewText').val($('#reviewDisplayText').text());
-        $('#reviewContent').show();
-        $('#reviewDisplay').hide();
-    }
-
-    deleteBtn.onclick = function() {
-        $.ajax({
-            url: '/api/review/' + movieId,
-            type: 'DELETE',
-            success: function(response) {
-                if (response.success) {
-                    $('#reviewContent').show();
-                    $('#reviewDisplay').hide();
-                    $('#reviewText').val('');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
+            });
+        }
+    });
 });
 </script>
