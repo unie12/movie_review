@@ -23,6 +23,11 @@
         <a th:href="@{'/info/' + ${user.email} + '/rating'}">평점 매긴 보기</a>
     </div>
 
+    <div>
+        <h3>좋아요 누른 리뷰</h3>
+        <a th:href="@{'/info/' + ${user.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
+    </div>
+
 </div>
 </body>
 </html>

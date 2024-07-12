@@ -1,11 +1,14 @@
 package com.example.movie_review.user;
 
+import com.example.movie_review.Heart.Heart;
+import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.genre.*;
 import com.example.movie_review.movie.PreferredMovies;
 import com.example.movie_review.movie.PreferredMoviesService;
 import com.example.movie_review.oauth.SessionUser;
+import com.example.movie_review.review.Review;
+import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.review.ReviewService;
-import com.example.movie_review.review.ReviewWithMovie;
 import com.example.movie_review.tmdb.TmdbService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,7 @@ public class UserController {
     private final PreferredMoviesService preferredMoviesService;
     private final PreferredGenresService preferredGenresService;
     private final ReviewService reviewService;
+    private final DbRatingService dbRatingService;
 
     /**
      * 사용자 추가 정보 처리
@@ -185,9 +189,19 @@ public class UserController {
                 model.addAttribute("favoriteMovies", user.getUserFavoriteMovies());
                 return "user-favorite-movies";
             case "review":
-                List<ReviewWithMovie> reviewsWithMovies = reviewService.getReviewsWithMovies(user);
-                model.addAttribute("reviewsWithMovies", reviewsWithMovies);
+                List<Review> reviews = user.getReviews();
+                List<ReviewDTO> reviewDTOS = reviewService.getReviewDTOs(reviews);
+                model.addAttribute("reviewDTOs", reviewDTOS);
                 return "user-reviews";
+            case "rating":
+                model.addAttribute("dbRatings", user.getDbRatings());
+                return "user-ratings";
+            case "heart":
+                List<Heart> hearts = user.getHearts();
+                List<ReviewDTO> heartReviewDTOs = reviewService.getReviewDTOs(
+                        hearts.stream().map(Heart::getReview).collect(Collectors.toList()));
+                model.addAttribute("heartReviewDTOs", heartReviewDTOs);
+                return "user-hearts";
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category");
         }

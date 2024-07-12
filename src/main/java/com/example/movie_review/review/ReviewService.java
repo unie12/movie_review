@@ -3,6 +3,8 @@ package com.example.movie_review.review;
 import com.example.movie_review.dbMovie.DbMovieRepository;
 import com.example.movie_review.dbMovie.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
+import com.example.movie_review.dbRating.DbRatingService;
+import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserRepository;
 import com.example.movie_review.user.UserService;
@@ -22,6 +24,8 @@ public class ReviewService {
 
     private final UserService userService;
     private final DbMovieService dbMovieService;
+    private final DbRatingService dbRatingService;
+
     /**
      * 해당 영화에 대한 해당 유저의 리뷰 정보 가져오기
      */
@@ -74,12 +78,23 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Review"));
     }
 
-    public List<ReviewWithMovie> getReviewsWithMovies(User user) {
-        List<Review> reviews = reviewRepository.findByUser(user);
-
-        return reviews.stream()
-                .map(review -> new ReviewWithMovie(review, review.getDbMovies()))
-                .collect(Collectors.toList());
-
+    public Review getReviewById(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Review Id"));
     }
+
+    public void saveReview(Review review) {
+        reviewRepository.save(review);
+    }
+
+    public List<ReviewDTO> getReviewDTOs(List<Review> reviews) {
+        return reviews.stream().map(review -> {
+            Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
+                    .map(DbRatings::getScore)
+                    .orElse(null);
+            return new ReviewDTO(review, userRating);
+        }).collect(Collectors.toList());
+    }
+
+
 }

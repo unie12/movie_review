@@ -153,3 +153,16 @@
     overflow: hidden;
     color: #ffd700;
 }
+
+/* 리뷰 좋아요 모양 */
+.like-button {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.like-button.active {
+    color: red;
+}

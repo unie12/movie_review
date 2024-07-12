@@ -23,9 +23,9 @@
             <p><strong>장르:</strong> <span th:each="genre : ${dbMovie.movieDetails.genres}" th:text="'[' + ${genre.name} + ']' + ' ' "></span></p>
             <p><span th:text="${dbMovie.movieDetails.runtime} + '분'"></span></p>
 
-<!--            포스터-->
+            <!-- 포스터 -->
             <img th:src="'https://image.tmdb.org/t/p/w500' + ${dbMovie.movieDetails.poster_path}" th:alt="${dbMovie.movieDetails.title}">
-<!--            찜 기능-->
+            <!-- 찜 기능 -->
             <button id="favoriteButton" th:attr="data-movie-id=${dbMovie.movieDetails.id}" th:class="${isFavorite} ? 'favorite active' : 'favorite'">
                 <i class="fas fa-heart"></i>
             </button>
@@ -97,21 +97,23 @@
             <div class="review-section">
                 <h3>영화 리뷰</h3>
                 <div class="review-grid">
-                    <div th:each="review, iterStat : ${reviews}" th:if="${iterStat.index < 10}" class="review-card">
+                    <div th:each="reviewDTO, iterStat : ${reviewDTOs}" th:if="${iterStat.index < 10}" class="review-card">
                         <div class="user-info">
-                            <img th:src="${review.user.picture}" alt="User Picture" class="user-picture">
-                            <span th:text="${review.user.nickname}" class="user-nickname"></span>
-<!--                            <span class="user-rating">평점: <span th:text="${review.score ?: '미정'}"></span></span>-->
+                            <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
+                            <span th:text="${reviewDTO.review.user.nickname}" class="user-nickname"></span>
+                            <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
                         </div>
-                        <p th:text="${review.context}" class="review-content"></p>
-<!--                        <div class="review-actions">-->
-<!--                            <button class="like-button" th:attr="data-review-id=${review.id}">-->
-<!--                                좋아요 <span th:text="${review.hearts ?: 0}" class="like-count"></span>-->
-<!--                            </button>-->
-<!--                            <button class="comment-button" th:attr="data-review-id=${review.id}">-->
-<!--                                댓글 <span th:text="${review.comments.size()}" class="comment-count"></span>-->
-<!--                            </button>-->
-<!--                        </div>-->
+                        <p th:text="${reviewDTO.review.context}" class="review-content"></p>
+
+                        <div class="review-actions">
+                            <button class="like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${userHearts.contains(reviewDTO.review.id)} ? 'active' : ''">
+                                좋아요 <span th:text="${reviewDTO.review.heartCount ?: 0}" class="like-count"></span>
+                            </button>
+                            <button class="comment-button" th:attr="data-review-id=${reviewDTO.review.id}">
+                                댓글 <span th:text="${reviewDTO.review.commentCount ?: 0}" class="comment-count"></span>
+                            </button>
+                        </div>
+
                     </div>
                 </div>
 <!--                <button id="showAllReviews" class="btn btn-secondary">전체 리뷰 보기</button>-->
@@ -349,8 +351,27 @@ $(document).ready(function() {
     // 좋아요 버튼 클릭 이벤트
     $('.like-button').click(function() {
         var reviewId = $(this).data('review-id');
-        // TODO: 서버에 좋아요 요청 보내기
-        console.log('Like clicked for review:', reviewId);
+        var $button = $(this)
+
+        $.ajax({
+            url: '/api/heart/' + reviewId,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active') }),
+            success: function(response) {
+                console.log('Full response:', response);
+                if (response.heart) {
+                    $button.addClass('active');
+                } else {
+                    $button.removeClass('active');
+                }
+                $button.find('.like-count').text(response.updateHeartCnt);
+                console.log('heartCount val:', response.updateHeartCnt);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
     });
 
     // 댓글 버튼 클릭 이벤트

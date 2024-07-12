@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <title>리뷰 남긴 영화</title>
+    <title>좋아요 남긴 리뷰</title>
 
     <style>
         .review-grid {
@@ -66,15 +66,14 @@
             margin-top: 10px;
         }
     </style>
-
 </head>
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
-    <h2>리뷰 남긴 영화</h2>
+    <h2>좋아요 남긴 리뷰</h2>
 
-    <div th:if="${reviewDTOs != null and !reviewDTOs.empty}" class="review-grid">
-        <div th:each="reviewDTO : ${reviewDTOs}" class="review-card">
+    <div th:if="${heartReviewDTOs != null and !heartReviewDTOs.empty}" class="review-grid">
+        <div th:each="reviewDTO : ${heartReviewDTOs}" class="review-card">
             <div class="poster-container">
                 <img th:src="'https://image.tmdb.org/t/p/w500' + ${reviewDTO.review.dbMovies.movieDetails.poster_path}"
                      th:alt="${reviewDTO.review.dbMovies.movieDetails.title}"
@@ -91,8 +90,8 @@
             </div>
         </div>
     </div>
-    <div th:if="${reviewDTOs == null or reviewDTOs.empty}">
-        <p>리뷰를 남긴 영화가 없습니다.</p>
+    <div th:if="${heartReviewDTOs == null or heartReviewDTOs.empty}">
+        <p>좋아요를 남긴 리뷰가 없습니다.</p>
     </div>
 
     <a th:href="@{'/info/' + ${user.email}}">사용자 정보로 돌아가기</a>

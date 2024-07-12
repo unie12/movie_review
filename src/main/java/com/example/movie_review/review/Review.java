@@ -5,6 +5,7 @@ import com.example.movie_review.Comment.Comment;
 import com.example.movie_review.Heart.Heart;
 import com.example.movie_review.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+//@Builder
 public class Review{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +26,7 @@ public class Review{
     private String context; // 내용
 
     private String writer; // 닉네임
-    private Double score; // 평점
+//    private Double score; // 평점
     private Long viewCount; // 조회수
 
     /**
@@ -35,16 +36,34 @@ public class Review{
     private User user;
 
     @OneToMany(mappedBy = "review", orphanRemoval = true)
-    private List<Heart> hearts;
-    private Integer heartCnt;
+    private List<Heart> hearts; // 리뷰 좋아요
+    private Integer heartCount = 0;
 
 
     @OneToMany(mappedBy = "review", orphanRemoval = true)
-    private List<Comment> comments;
-    private Integer commentCnt;
+    private List<Comment> comments; // 리뷰에 달린 댓글
+    private Integer commentCount = 0;
 
     @ManyToOne
     @JoinColumn(name = "DbMovies_id")
     private DbMovies dbMovies;
+
+
+
+    public void incrementHeartCnt() {
+        this.heartCount++;
+    }
+
+    public void decrementHeartCnt() {
+        this.heartCount = Math.max(0, heartCount-1);
+    }
+
+    public void incrementCommentCnt() {
+        this.commentCount++;
+    }
+
+    public void decrementCommentCnt() {
+        this.commentCount = Math.max(0, commentCount-1);
+    }
 
 }

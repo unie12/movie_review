@@ -18,12 +18,11 @@ import java.util.List;
 import static jakarta.persistence.CascadeType.ALL;
 
 @Entity
-@Getter
-@Table(name = "users")
+@Setter @Getter
 @Builder
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
 public class User {
 
     /**
