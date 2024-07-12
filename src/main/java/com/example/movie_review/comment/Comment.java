@@ -1,4 +1,4 @@
-package com.example.movie_review.Comment;
+package com.example.movie_review.comment;
 
 import com.example.movie_review.review.Review;
 import com.example.movie_review.user.User;

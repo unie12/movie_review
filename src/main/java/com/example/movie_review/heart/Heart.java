@@ -1,4 +1,4 @@
-package com.example.movie_review.Heart;
+package com.example.movie_review.heart;
 
 import com.example.movie_review.review.Review;
 import com.example.movie_review.user.User;

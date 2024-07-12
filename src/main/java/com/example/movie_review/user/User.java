@@ -1,8 +1,8 @@
 package com.example.movie_review.user;
 
 import com.example.movie_review.dbRating.DbRatings;
-import com.example.movie_review.Comment.Comment;
-import com.example.movie_review.Heart.Heart;
+import com.example.movie_review.comment.Comment;
+import com.example.movie_review.heart.Heart;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.genre.PreferredGenres;

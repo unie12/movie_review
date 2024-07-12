@@ -1,4 +1,4 @@
-package com.example.movie_review.Heart;
+package com.example.movie_review.heart;
 
 import com.example.movie_review.review.ReviewService;
 import lombok.AllArgsConstructor;

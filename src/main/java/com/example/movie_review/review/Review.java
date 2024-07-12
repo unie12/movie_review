@@ -1,11 +1,10 @@
 package com.example.movie_review.review;
 
 import com.example.movie_review.dbMovie.DbMovies;
-import com.example.movie_review.Comment.Comment;
-import com.example.movie_review.Heart.Heart;
+import com.example.movie_review.comment.Comment;
+import com.example.movie_review.heart.Heart;
 import com.example.movie_review.user.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import lombok.*;
 
 import java.time.LocalDateTime;

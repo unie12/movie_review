@@ -1,22 +1,18 @@
 package com.example.movie_review.auth;
 
-import com.example.movie_review.Heart.HeartService;
+import com.example.movie_review.heart.HeartService;
 import com.example.movie_review.dbMovie.*;
-import com.example.movie_review.dbRating.DbRatingRepository;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovieService;
-import com.example.movie_review.kobis.KobisService;
 import com.example.movie_review.movie.ActorDetails;
 import com.example.movie_review.movie.Crew;
 import com.example.movie_review.movie.MovieDetails;
-import com.example.movie_review.movie.MovieService;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.review.ReviewRepository;
 import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
-import com.example.movie_review.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;

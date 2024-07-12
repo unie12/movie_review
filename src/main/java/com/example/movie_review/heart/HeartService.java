@@ -1,4 +1,4 @@
-package com.example.movie_review.Heart;
+package com.example.movie_review.heart;
 
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.ReviewService;
@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
