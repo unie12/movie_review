@@ -5,11 +5,10 @@ import com.example.movie_review.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Builder
 @Table(name = "heart")
 public class Heart {
 

@@ -1,5 +1,6 @@
 package com.example.movie_review.auth;
 
+import com.example.movie_review.Heart.HeartService;
 import com.example.movie_review.dbMovie.*;
 import com.example.movie_review.dbRating.DbRatingRepository;
 import com.example.movie_review.dbRating.DbRatingService;
@@ -11,7 +12,9 @@ import com.example.movie_review.movie.Crew;
 import com.example.movie_review.movie.MovieDetails;
 import com.example.movie_review.movie.MovieService;
 import com.example.movie_review.review.Review;
+import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.review.ReviewRepository;
+import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,19 +44,15 @@ import static org.hibernate.query.sqm.tree.SqmNode.log;
 @RequestMapping("/jwt-login")
 public class JwtLoginController {
 
-    private final UserService userService;
     private final TmdbService tmdbService;
-    private final KobisService kobisService;
-    private final MovieService movieService;
-    private final MovieCacheService movieCacheService;
     private final DbMovieService dbMovieService;
     private final UserFavoriteMovieService userFavoriteMovieService;
     private final DbRatingService dbRatingService;
+    private final HeartService heartService;
+    private final ReviewService reviewService;
 
     private final MovieCacheRepository movieCacheRepository;
-    private final DbMovieRepository dbMovieRepository;
     private final ReviewRepository reviewRepository;
-    private final DbRatingRepository dbRatingRepository;
 
     private final ObjectMapper objectMapper;
     @GetMapping({"", "/"})
@@ -99,24 +100,26 @@ public class JwtLoginController {
             MovieDetails movieDetails = dbMovie.getMovieDetails();
             List<Crew> directors = dbMovieService.getDirectors(movieDetails);
             List<Review> reviews = reviewRepository.findReviewByDbMovies(dbMovie);
+            List<ReviewDTO> reviewDTOS = reviewService.getReviewDTOs(reviews);
 
             model.addAttribute("dbMovie", dbMovie);
             model.addAttribute("movieDetails", movieDetails);
             model.addAttribute("directors", directors);
             model.addAttribute("reviews", reviews);
+            model.addAttribute("reviewDTOs", reviewDTOS);
 
-            // 찜 확인
-            boolean isFavorite = false;
-            DbRatings userRating = new DbRatings();
 
-            if(principal != null) {
+
+            if (principal != null) {
                 String email = principal.getAttribute("email");
-                isFavorite = userFavoriteMovieService.isFavorite(email, movieDetails.getId());
-                userRating = dbRatingService.getDbRating(email, movieDetails.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid email movieid"));
+                model.addAttribute("isFavorite", userFavoriteMovieService.isFavorite(email, movieDetails.getId()));
+                model.addAttribute("userRating", dbRatingService.getDbRating(email, movieDetails.getId()).orElse(new DbRatings()));
+                model.addAttribute("userHearts", heartService.getUserHearts(email));
+            } else {
+                model.addAttribute("isFavorite", false);
+                model.addAttribute("userRating", new DbRatings());
+                model.addAttribute("userHearts", Collections.emptyList());
             }
-            model.addAttribute("isFavorite", isFavorite);
-            model.addAttribute("userRating", userRating);
         } catch (Exception e) {
             log.error("Error processing movie details", e);
             model.addAttribute("error", "영화 정보를 처리하는 중 오류가 발생했습니다.");
