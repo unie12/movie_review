@@ -14,21 +14,25 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
     <div class="jumbotron">
+        <div class="movie-detail" th:if="${movieDTO}">
 
-        <div class="movie-detail" th:if="${dbMovie.movieDetails}">
-            <h1 th:text="${dbMovie.movieDetails.title}"></h1>
-            <h3 th:text="'(' + ${dbMovie.movieDetails.original_title} + ')'"></h3>
-            <img th:src="'https://image.tmdb.org/t/p/w500' + ${dbMovie.movieDetails.backdrop_path}" th:alt="${dbMovie.movieDetails.title}">
-            <p><strong>개봉일:</strong> <span th:text="${dbMovie.movieDetails.release_date}"></span></p>
-            <p><strong>장르:</strong> <span th:each="genre : ${dbMovie.movieDetails.genres}" th:text="'[' + ${genre.name} + ']' + ' ' "></span></p>
-            <p><span th:text="${dbMovie.movieDetails.runtime} + '분'"></span></p>
-
+            <h1 th:text="${movieDTO.title}"></h1>
+            <h3 th:text="'(' + ${movieDTO.original_title} + ')'"></h3>
+            <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.backdrop_path}" th:alt="${movieDTO.title}">
+            <p><strong>개봉일:</strong> <span th:text="${movieDTO.release_date}"></span></p>
+            <p><strong>장르:</strong> <span th:each="genre : ${movieDTO.genres}" th:text="'[' + ${genre} + ']' + ' ' "></span></p>
+            <p><span th:text="${movieDTO.runtime} + '분'"></span></p>
             <!-- 포스터 -->
-            <img th:src="'https://image.tmdb.org/t/p/w500' + ${dbMovie.movieDetails.poster_path}" th:alt="${dbMovie.movieDetails.title}">
+            <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.poster_path}" th:alt="${movieDTO.title}">
+
             <!-- 찜 기능 -->
-            <button id="favoriteButton" th:attr="data-movie-id=${dbMovie.movieDetails.id}" th:class="${isFavorite} ? 'favorite active' : 'favorite'">
+            <button id="favoriteButton" th:attr="data-movie-id=${movieDTO.id}" th:class="${movieDTO.isFavorite} ? 'favorite active' : 'favorite'">
                 <i class="fas fa-heart"></i>
             </button>
+
+        </div>
+        <div class="movie-detail" th:if="${dbMovie}">
+
 
             <!-- 리뷰 섹션 -->
             <div id="reviewSection">

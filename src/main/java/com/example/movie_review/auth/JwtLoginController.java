@@ -95,7 +95,7 @@ public class JwtLoginController {
             List<Review> reviews = reviewRepository.findReviewByDbMovies(dbMovie);
             List<ReviewDTO> reviewDTOS = reviewService.getReviewDTOs(reviews);
 
-            MovieDetailDTO movieDetailDTO = movieDetailDTOService.getMovieDetailDTO(movieId);
+            MovieDetailDTO movieDetailDTO = movieDetailDTOService.getMovieDetailDTO(movieId, principal);
 
             model.addAttribute("dbMovie", dbMovie);
             model.addAttribute("movieDetails", movieDetails);
@@ -104,6 +104,8 @@ public class JwtLoginController {
             model.addAttribute("reviewDTOs", reviewDTOS);
 
             model.addAttribute("movieDTO", movieDetailDTO);
+            System.out.println("movieDetailDTO.getId() = " + movieDetailDTO.getId());
+            System.out.println("dbMovie.getId() = " + dbMovie.getId());
 
 
 
@@ -111,11 +113,11 @@ public class JwtLoginController {
 
             if (principal != null) {
                 String email = principal.getAttribute("email");
-                model.addAttribute("isFavorite", userFavoriteMovieService.isFavorite(email, movieDetails.getId()));
+//                model.addAttribute("isFavorite", userFavoriteMovieService.isFavorite(email, movieDetails.getId()));
                 model.addAttribute("userRating", dbRatingService.getDbRating(email, movieDetails.getId()).orElse(new DbRatings()));
                 model.addAttribute("userHearts", heartService.getUserHearts(email));
             } else {
-                model.addAttribute("isFavorite", false);
+//                model.addAttribute("isFavorite", false);
                 model.addAttribute("userRating", new DbRatings());
                 model.addAttribute("userHearts", Collections.emptyList());
             }
