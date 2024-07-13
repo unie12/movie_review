@@ -39,3 +39,7 @@ out/
 application.properties
 application-oauth.properties
 application.yml
+
+build
+bin
+gradle
