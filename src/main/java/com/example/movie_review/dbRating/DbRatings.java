@@ -24,7 +24,7 @@ public class DbRatings {
 
     private Double score;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DbMovies_id")
     private DbMovies dbMovies;
 
