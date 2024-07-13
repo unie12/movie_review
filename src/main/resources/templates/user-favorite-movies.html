@@ -39,9 +39,9 @@
         }
     </style>
 
-    <div th:if="${favoriteMovies != null and !favoriteMovies.empty}">
+    <div th:if="${userDTO.user.userFavoriteMovies != null and !userDTO.user.userFavoriteMovies.empty}">
         <div class="movie-grid">
-            <div th:each="movie : ${favoriteMovies}" class="movie-item">
+            <div th:each="movie : ${userDTO.user.userFavoriteMovies}" class="movie-item">
                 <img th:src="'https://image.tmdb.org/t/p/w500' + ${movie.dbMovie.movieDetails.poster_path}"
                      th:alt="${movie.dbMovie.movieDetails.title}"
                      th:onclick="'navigateToMovieDetails(' + ${movie.dbMovie.movieDetails.tId} + ')'">
@@ -49,11 +49,11 @@
             </div>
         </div>
     </div>
-    <div th:if="${favoriteMovies == null or favoriteMovies.empty}">
+    <div th:if="${userDTO.user.userFavoriteMovies == null or userDTO.user.userFavoriteMovies.empty}">
         <p>즐겨찾기한 영화가 없습니다.</p>
     </div>
 
-    <a th:href="@{'/info/' + ${user.email}}">사용자 정보로 돌아가기</a>
+    <a th:href="@{'/info/' + ${userDTO.user.email}}">사용자 정보로 돌아가기</a>
 </div>
 
 <script th:inline="javascript">

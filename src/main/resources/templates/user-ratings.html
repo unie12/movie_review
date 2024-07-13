@@ -41,7 +41,7 @@
 
     <div th:if="${dbRatings != null and !dbRatings.empty}">
         <div class="movie-grid">
-            <div th:each="dbRating : ${dbRatings}" class="movie-item">
+            <div th:each="dbRating : ${userDTO.user.dbRatings}" class="movie-item">
                 <img th:src="'https://image.tmdb.org/t/p/w500' + ${dbRating.dbMovies.movieDetails.poster_path}"
                      th:alt="${dbRating.dbMovies.movieDetails.title}"
                      th:onclick="'navigateToMovieDetails(' + ${dbRating.dbMovies.movieDetails.tId} + ')'">
@@ -53,7 +53,7 @@
         <p>평점 매긴 영화가 없습니다.</p>
     </div>
 
-    <a th:href="@{'/info/' + ${user.email}}">사용자 정보로 돌아가기</a>
+    <a th:href="@{'/info/' + ${userDTO.user.email}}">사용자 정보로 돌아가기</a>
 </div>
 
 <script th:inline="javascript">

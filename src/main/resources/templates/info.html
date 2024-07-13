@@ -9,23 +9,23 @@
     <h2>사용자 활동 내역</h2>
 
     <div>
-        <h3>즐겨찾기 영화</h3>
-        <a th:href="@{'/info/' + ${user.email} + '/favorite'}">즐겨찾기 영화 보기</a>
+        <h3 th:text="'즐겨찾기 영화 (' + ${userDTO.favoriteCnt} + '개)'"></h3>
+        <a th:href="@{'/info/' + ${userDTO.user.email} + '/favorite'}">즐겨찾기 영화 보기</a>
     </div>
 
     <div>
-        <h3>리뷰 작성한 영화</h3>
-        <a th:href="@{'/info/' + ${user.email} + '/review'}">리뷰 작성한 영화 보기</a>
+        <h3 th:text="'리뷰 작성한 영화 (' + ${userDTO.reviewCnt} + '개)'"></h3>
+        <a th:href="@{'/info/' + ${userDTO.user.email} + '/review'}">리뷰 작성한 영화 보기</a>
     </div>
 
     <div>
-        <h3>평점 매긴 영화</h3>
-        <a th:href="@{'/info/' + ${user.email} + '/rating'}">평점 매긴 보기</a>
+        <h3 th:text="'평점 매긴 영화 (' + ${userDTO.ratingCnt} + '개)'"></h3>
+        <a th:href="@{'/info/' + ${userDTO.user.email} + '/rating'}">평점 매긴 보기</a>
     </div>
 
     <div>
-        <h3>좋아요 누른 리뷰</h3>
-        <a th:href="@{'/info/' + ${user.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
+        <h3 th:text="'좋아요 누른 영화 (' + ${userDTO.ratingCnt} + '개)'"></h3>
+        <a th:href="@{'/info/' + ${userDTO.user.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
     </div>
 
 </div>

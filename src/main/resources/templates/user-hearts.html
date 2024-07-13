@@ -94,7 +94,7 @@
         <p>좋아요를 남긴 리뷰가 없습니다.</p>
     </div>
 
-    <a th:href="@{'/info/' + ${user.email}}">사용자 정보로 돌아가기</a>
+    <a th:href="@{'/info/' + ${userDTO.user.email}}">사용자 정보로 돌아가기</a>
 </div>
 
 <script th:inline="javascript">

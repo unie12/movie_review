@@ -41,6 +41,7 @@ public class UserController {
     private final PreferredGenresService preferredGenresService;
     private final ReviewService reviewService;
     private final DbRatingService dbRatingService;
+    private final UserDTOService userDTOService;
 
     /**
      * 사용자 추가 정보 처리
@@ -163,11 +164,8 @@ public class UserController {
      */
     @GetMapping("/info/{userEmail}")
     public String userInfo(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
-        User user = userService.getUserByEmail(userEmail);
-        if(!user.getEmail().equals(auth.getName())) {
-            throw new AccessDeniedException("You don't have permission to view this user");
-        }
-        model.addAttribute("user", user);
+        UserDTO userDTO = userDTOService.getuserDTO(userEmail, auth);
+        model.addAttribute("userDTO", userDTO);
         return "info";
     }
 
@@ -182,11 +180,12 @@ public class UserController {
             throw new AccessDeniedException("You don't have permission to view this user");
         }
 
-        model.addAttribute("user", user);
+        UserDTO userDTO = userDTOService.getuserDTO(userEmail, auth);
+        model.addAttribute("userDTO", userDTO);
 
         switch (category) {
             case "favorite":
-                model.addAttribute("favoriteMovies", user.getUserFavoriteMovies());
+//                model.addAttribute("favoriteMovies", user.getUserFavoriteMovies());
                 return "user-favorite-movies";
             case "review":
                 List<Review> reviews = user.getReviews();
@@ -194,7 +193,7 @@ public class UserController {
                 model.addAttribute("reviewDTOs", reviewDTOS);
                 return "user-reviews";
             case "rating":
-                model.addAttribute("dbRatings", user.getDbRatings());
+//                model.addAttribute("dbRatings", user.getDbRatings());
                 return "user-ratings";
             case "heart":
                 List<Heart> hearts = user.getHearts();

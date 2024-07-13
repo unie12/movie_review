@@ -72,7 +72,7 @@ public class User {
     private List<UserFavoriteMovie> userFavoriteMovies = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
-    private List<DbRatings> dbRatings;
+    private List<DbRatings> dbRatings = new ArrayList<>();
 
     /**
      * 연관관계 메서드
@@ -102,4 +102,21 @@ public class User {
         this.mbti = mbti != null ? mbti : this.mbti;
         return this;
     }
+
+    public int getFavoriteCount() {
+        return userFavoriteMovies.size();
+    }
+
+    public int getReviewCount() {
+        return reviews.size();
+    }
+
+    public int getRatingCount() {
+        return dbRatings.size();
+    }
+
+    public int getHeartCount() {
+        return hearts.size();
+    }
+
 }
