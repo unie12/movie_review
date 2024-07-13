@@ -37,4 +37,22 @@ public class DbMovies {
 
     @OneToMany(mappedBy = "dbMovies", cascade = CascadeType.ALL)
     private List<Review> reviews;
+
+
+    public int getReviewCount() {
+        return reviews.size();
+    }
+
+    public int getDbRatingCount() {
+        return dbRatings.size();
+    }
+
+    public double getDbRatingAvg() {
+        return dbRatings.stream()
+                .mapToDouble(DbRatings::getScore)
+                .average()
+                .orElse(0.0);
+    }
+
+
 }

@@ -5,9 +5,7 @@ import com.example.movie_review.dbMovie.*;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovieService;
-import com.example.movie_review.movie.ActorDetails;
-import com.example.movie_review.movie.Crew;
-import com.example.movie_review.movie.MovieDetails;
+import com.example.movie_review.movie.*;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.review.ReviewRepository;
@@ -44,6 +42,7 @@ public class JwtLoginController {
     private final DbRatingService dbRatingService;
     private final HeartService heartService;
     private final ReviewService reviewService;
+    private final MovieDetailDTOService movieDetailDTOService;
 
     private final MovieCacheRepository movieCacheRepository;
     private final ReviewRepository reviewRepository;
@@ -96,11 +95,17 @@ public class JwtLoginController {
             List<Review> reviews = reviewRepository.findReviewByDbMovies(dbMovie);
             List<ReviewDTO> reviewDTOS = reviewService.getReviewDTOs(reviews);
 
+            MovieDetailDTO movieDetailDTO = movieDetailDTOService.getMovieDetailDTO(movieId);
+
             model.addAttribute("dbMovie", dbMovie);
             model.addAttribute("movieDetails", movieDetails);
             model.addAttribute("directors", directors);
             model.addAttribute("reviews", reviews);
             model.addAttribute("reviewDTOs", reviewDTOS);
+
+            model.addAttribute("movieDTO", movieDetailDTO);
+
+
 
 
 

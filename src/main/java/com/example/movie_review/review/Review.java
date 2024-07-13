@@ -41,7 +41,6 @@ public class Review{
 
     @OneToMany(mappedBy = "review", orphanRemoval = true)
     private List<Comment> comments; // 리뷰에 달린 댓글
-    private Integer commentCount = 0;
 
     @ManyToOne
     @JoinColumn(name = "DbMovies_id")
@@ -57,12 +56,8 @@ public class Review{
         this.heartCount = Math.max(0, heartCount-1);
     }
 
-    public void incrementCommentCnt() {
-        this.commentCount++;
-    }
-
-    public void decrementCommentCnt() {
-        this.commentCount = Math.max(0, commentCount-1);
+    public int getHeartCount() {
+        return hearts.size();
     }
 
 }
