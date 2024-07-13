@@ -30,10 +30,6 @@
                 <i class="fas fa-heart"></i>
             </button>
 
-        </div>
-        <div class="movie-detail" th:if="${dbMovie}">
-
-
             <!-- 리뷰 섹션 -->
             <div id="reviewSection">
                 <h3>리뷰</h3>
@@ -55,8 +51,8 @@
                 </div>
             </div>
 
-            <p><strong>tmdb 기준 평균 평점:</strong> <span th:text="${dbMovie.movieDetails.vote_average} + ' (' + ${dbMovie.movieDetails.vote_count} + '표)'"></span></p>
-            <p><strong>아주대 학생 평균 평점:</strong> <span th:text="${movieDTO.ratingAvg} + ' (' + ${movieDTO.ratingCnt} + '표)'"></span></p>
+            <p><strong>tmdb 기준 평균 평점:</strong> <span th:text="${movieDTO.tmdb_ratingAvg} + ' (' + ${movieDTO.tmdb_ratingCnt} + '표)'"></span></p>
+            <p><strong>아주대 학생 평균 평점:</strong> <span th:text="${movieDTO.ajou_ratingAvg} + ' (' + ${movieDTO.ajou_ratingCnt} + '표)'"></span></p>
 
             <!-- 별점 시스템 -->
             <div id="starRating" class="star-rating">
@@ -68,13 +64,13 @@
             </div>
             <p id="selectedRating">선택한 평점: <span>0</span></p>
 
+            <p><strong><span th:text="${movieDTO.tagline}"></span></strong> </p>
+            <p><span th:text="${movieDTO.overview}"></span></p>
 
-            <p><strong><span th:text="${dbMovie.movieDetails.tagline}"></span></strong> </p>
-            <p><span th:text="${dbMovie.movieDetails.overview}"></span></p>
 
             <!-- 감독 정보 -->
             <p><strong>감독:</strong></p>
-            <div class="director" th:each="director : ${directors}">
+            <div class="director" th:each="director : ${movieDTO.directors}">
                 <img th:src="'https://image.tmdb.org/t/p/w500' + ${director.profile_path}" th:alt="${director.name}">
                 <span th:text="${director.name}"></span>
             </div>
@@ -84,7 +80,7 @@
             <div class="actor-slider">
                 <button onclick="prevActors()">이전</button>
                 <div class="actor-list" id="actorList">
-                    <div class="actor" th:each="actor : ${dbMovie.movieDetails.credits.cast}"
+                    <div class="actor" th:each="actor : ${movieDTO.actors}"
                         th:attr="onclick=|redirectToActor(${actor.id})|">
 <!--                        <a th:href="@{/jwt-login/people/{actorId}(actorId=${actor.id})}">-->
                         <img th:src="'https://image.tmdb.org/t/p/w500' + ${actor.profile_path}" th:alt="${actor.name}">
@@ -97,14 +93,13 @@
                 <button onclick="nextActors()">다음</button>
             </div>
 
-
             <!-- 리뷰 섹션 -->
             <div class="review-section">
                 <h3>영화 리뷰</h3>
                 <h3 th:text="'(총 ' + ${movieDTO.reviewCnt} + '개)'"></h3>
 
                 <div class="review-grid">
-                    <div th:each="reviewDTO, iterStat : ${reviewDTOs}" th:if="${iterStat.index < 10}" class="review-card">
+                    <div th:each="reviewDTO, iterStat : ${movieDTO.reviews}" th:if="${iterStat.index < 10}" class="review-card">
                         <div class="user-info">
                             <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
                             <span th:text="${reviewDTO.review.user.nickname}" class="user-nickname"></span>
@@ -113,7 +108,7 @@
                         <p th:text="${reviewDTO.review.context}" class="review-content"></p>
 
                         <div class="review-actions">
-                            <button class="like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${userHearts.contains(reviewDTO.review.id)} ? 'active' : ''">
+                            <button class="like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${movieDTO.userHearts.contains(reviewDTO.review.id)} ? 'active' : ''">
                                 좋아요 <span th:text="${reviewDTO.review.heartCount ?: 0}" class="like-count"></span>
                             </button>
 <!--                            <button class="comment-button" th:attr="data-review-id=${reviewDTO.review.id}">-->
@@ -171,7 +166,7 @@
                     const starRating = document.getElementById('starRating');
                     const stars = starRating.getElementsByClassName('star');
                     const selectedRating = document.querySelector('#selectedRating span');
-                    const movieId = [[${dbMovie.id}]];
+                    const movieId = [[${movieDTO.id}]];
 
                     function setRating(rating) {
                         selectedRating.textContent = rating || '0';

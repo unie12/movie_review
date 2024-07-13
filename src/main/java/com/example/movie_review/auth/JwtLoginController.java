@@ -89,38 +89,8 @@ public class JwtLoginController {
     @GetMapping("/contents/{movieId}")
     public String movieDetail(@PathVariable Long movieId, Model model, @AuthenticationPrincipal OAuth2User principal) {
         try {
-            DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieId);
-            MovieDetails movieDetails = dbMovie.getMovieDetails();
-            List<Crew> directors = dbMovieService.getDirectors(movieDetails);
-            List<Review> reviews = reviewRepository.findReviewByDbMovies(dbMovie);
-            List<ReviewDTO> reviewDTOS = reviewService.getReviewDTOs(reviews);
-
             MovieDetailDTO movieDetailDTO = movieDetailDTOService.getMovieDetailDTO(movieId, principal);
-
-            model.addAttribute("dbMovie", dbMovie);
-            model.addAttribute("movieDetails", movieDetails);
-            model.addAttribute("directors", directors);
-            model.addAttribute("reviews", reviews);
-            model.addAttribute("reviewDTOs", reviewDTOS);
-
             model.addAttribute("movieDTO", movieDetailDTO);
-            System.out.println("movieDetailDTO.getId() = " + movieDetailDTO.getId());
-            System.out.println("dbMovie.getId() = " + dbMovie.getId());
-
-
-
-
-
-            if (principal != null) {
-                String email = principal.getAttribute("email");
-//                model.addAttribute("isFavorite", userFavoriteMovieService.isFavorite(email, movieDetails.getId()));
-                model.addAttribute("userRating", dbRatingService.getDbRating(email, movieDetails.getId()).orElse(new DbRatings()));
-                model.addAttribute("userHearts", heartService.getUserHearts(email));
-            } else {
-//                model.addAttribute("isFavorite", false);
-                model.addAttribute("userRating", new DbRatings());
-                model.addAttribute("userHearts", Collections.emptyList());
-            }
         } catch (Exception e) {
             log.error("Error processing movie details", e);
             model.addAttribute("error", "영화 정보를 처리하는 중 오류가 발생했습니다.");

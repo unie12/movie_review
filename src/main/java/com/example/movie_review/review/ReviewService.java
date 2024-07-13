@@ -97,4 +97,7 @@ public class ReviewService {
     }
 
 
+    public List<Review> findReviewByDbMovies(DbMovies dbMovie) {
+        return reviewRepository.findReviewByDbMovies(dbMovie);
+    }
 }
