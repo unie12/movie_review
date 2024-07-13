@@ -30,16 +30,18 @@ public class DbMovies {
     private MovieDetails movieDetails;
 
     @OneToMany(mappedBy = "dbMovies", cascade = CascadeType.ALL)
-    private List<DbRatings> dbRatings;
+    private List<DbRatings> dbRatings = new ArrayList<>();
 
     @OneToMany(mappedBy = "dbMovie", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserFavoriteMovie> favoritedByUsers = new ArrayList<>();
 
     @OneToMany(mappedBy = "dbMovies", cascade = CascadeType.ALL)
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
 
 
     public int getReviewCount() {
+//        if(reviews == null)
+//                return 0;
         return reviews.size();
     }
 

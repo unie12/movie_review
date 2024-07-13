@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Getter @Setter
@@ -24,9 +25,6 @@ public class Review{
     private String title; // 제목
     private String context; // 내용
 
-    private String writer; // 닉네임
-//    private Double score; // 평점
-    private Long viewCount; // 조회수
 
     /**
      * 매핑 정보
@@ -35,8 +33,8 @@ public class Review{
     private User user;
 
     @OneToMany(mappedBy = "review", orphanRemoval = true)
-    private List<Heart> hearts; // 리뷰 좋아요
-    private Integer heartCount = 0;
+    private List<Heart> hearts = new ArrayList<>(); // 리뷰 좋아요
+//    private Integer heartCount = 0;
 
 
     @OneToMany(mappedBy = "review", orphanRemoval = true)
@@ -48,13 +46,13 @@ public class Review{
 
 
 
-    public void incrementHeartCnt() {
-        this.heartCount++;
-    }
-
-    public void decrementHeartCnt() {
-        this.heartCount = Math.max(0, heartCount-1);
-    }
+//    public void incrementHeartCnt() {
+//        this.heartCount++;
+//    }
+//
+//    public void decrementHeartCnt() {
+//        this.heartCount = Math.max(0, heartCount-1);
+//    }
 
     public int getHeartCount() {
         return hearts.size();

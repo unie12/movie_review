@@ -46,7 +46,7 @@ public class DbRatingController {
             String email = principal.getAttribute("email");
             Optional<DbRatings> dbRating = dbRatingService.getDbRating(email, movieId);
 
-            if(dbRating.isPresent() && dbRating.get().getScore().equals(request.getRating())) {
+            if(dbRating.isPresent() && request.getRating() == 0) {
                 dbRatingService.deleteDbRating(movieId, email);
                 return ResponseEntity.ok(new DbRatingResponse(movieId, 0.0, true));
             }

@@ -30,7 +30,7 @@ public class HeartService {
             Heart heart = new Heart();
             heart.setUser(user);
             heart.setReview(review);
-            review.incrementHeartCnt();
+//            review.incrementHeartCnt();
             heartRepository.save(heart);
             reviewService.saveReview(review);
             return true;
@@ -38,7 +38,7 @@ public class HeartService {
         }
         // 좋아요 눌려 있던 상태
         else if (!isHeart && existingHeart.isPresent()){
-            review.decrementHeartCnt();
+//            review.decrementHeartCnt();
             heartRepository.delete(existingHeart.get());
             reviewService.saveReview(review);
             return false;
