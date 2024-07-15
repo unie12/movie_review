@@ -25,6 +25,7 @@ public class UserDTOService {
                 .reviewCnt(user.getReviewCount())
                 .ratingCnt(user.getRatingCount())
                 .heartCnt(user.getHeartCount());
+//                .isFavorite(true);
 
         return userDTO.build();
     }
