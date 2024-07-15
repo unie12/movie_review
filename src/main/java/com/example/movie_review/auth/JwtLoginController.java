@@ -43,6 +43,7 @@ public class JwtLoginController {
     private final HeartService heartService;
     private final ReviewService reviewService;
     private final MovieDetailDTOService movieDetailDTOService;
+    private final MovieCacheService movieCacheService;
 
     private final MovieCacheRepository movieCacheRepository;
     private final ReviewRepository reviewRepository;

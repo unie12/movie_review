@@ -39,7 +39,7 @@
         }
     </style>
 
-    <div th:if="${dbRatings != null and !dbRatings.empty}">
+    <div th:if="${userDTO.user.dbRatings != null and !userDTO.user.dbRatings.empty}">
         <div class="movie-grid">
             <div th:each="dbRating : ${userDTO.user.dbRatings}" class="movie-item">
                 <img th:src="'https://image.tmdb.org/t/p/w500' + ${dbRating.dbMovies.movieDetails.poster_path}"
@@ -49,7 +49,7 @@
             </div>
         </div>
     </div>
-    <div th:if="${dbRatings == null or dbRatings.empty}">
+    <div th:if="${userDTO.user.dbRatings == null or userDTO.user.dbRatings.empty}">
         <p>평점 매긴 영화가 없습니다.</p>
     </div>
 
