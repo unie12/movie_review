@@ -109,7 +109,7 @@
 
                         <div class="review-actions">
                             <button class="like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${movieDTO.userHearts.contains(reviewDTO.review.id)} ? 'active' : ''">
-                                좋아요 <span th:text="${reviewDTO.review.heartCount ?: 0}" class="like-count"></span>
+                                좋아요 <span th:text="${reviewDTO.heartCnt ?: 0}" class="like-count"></span>
                             </button>
 <!--                            <button class="comment-button" th:attr="data-review-id=${reviewDTO.review.id}">-->
 <!--                                댓글 <span th:text="${reviewDTO.review.commentCount ?: 0}" class="comment-count"></span>-->

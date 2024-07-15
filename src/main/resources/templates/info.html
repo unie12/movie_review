@@ -24,7 +24,7 @@
     </div>
 
     <div>
-        <h3 th:text="'좋아요 누른 영화 (' + ${userDTO.ratingCnt} + '개)'"></h3>
+        <h3 th:text="'좋아요 누른 리뷰 (' + ${userDTO.heartCnt} + '개)'"></h3>
         <a th:href="@{'/info/' + ${userDTO.user.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
     </div>
 

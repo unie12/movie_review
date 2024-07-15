@@ -43,6 +43,7 @@
             display: flex;
             align-items: center;
             margin-bottom: 10px;
+            flex-wrap: wrap;
         }
         .user-picture {
             width: 30px;
@@ -54,9 +55,42 @@
         .user-nickname {
             font-weight: bold;
             margin-right: 10px;
+            flex-grow: 1;
+            margin-bottom: 5px;
         }
+        .user-rating, .user-heart {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+
+        .rating-value, .heart-value {
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+
         .user-rating {
             color: #f39c12;
+            border-color: #f39c12;
+        }
+
+        .user-heart {
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+        .rating-value {
+            background-color: #fdebd0;
+        }
+
+        .heart-value {
+            background-color: #fadbd8;
         }
         .review-text {
             flex: 1;
@@ -85,6 +119,7 @@
                     <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
                     <span th:text="${reviewDTO.review.user.nickname}" class="user-nickname"></span>
                     <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
+                    <span class="user-heart">좋아요 수: <span th:text="${reviewDTO.heartCnt ?: '0'}" class="heart-value"></span></span>
                 </div>
                 <p class="review-text" th:text="${reviewDTO.review.context}"></p>
             </div>

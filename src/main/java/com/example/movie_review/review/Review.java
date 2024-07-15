@@ -44,16 +44,6 @@ public class Review{
     @JoinColumn(name = "DbMovies_id")
     private DbMovies dbMovies;
 
-
-
-//    public void incrementHeartCnt() {
-//        this.heartCount++;
-//    }
-//
-//    public void decrementHeartCnt() {
-//        this.heartCount = Math.max(0, heartCount-1);
-//    }
-
     public int getHeartCount() {
         return hearts.size();
     }

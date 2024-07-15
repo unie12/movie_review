@@ -22,6 +22,7 @@ public class MovieDetailDTO {
     private Double ajou_ratingAvg;
     private int ajou_ratingCnt;
 
+
     /**
      * 영화 상세 정보
      */

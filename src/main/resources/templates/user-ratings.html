@@ -37,6 +37,27 @@
             margin-left: auto;
             margin-right: auto;
         }
+        .user-rating, .user-heart {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+
+        .rating-value, .heart-value {
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+
+        .user-rating {
+            color: #f39c12;
+            border-color: #f39c12;
+        }
     </style>
 
     <div th:if="${userDTO.user.dbRatings != null and !userDTO.user.dbRatings.empty}">
@@ -45,7 +66,10 @@
                 <img th:src="'https://image.tmdb.org/t/p/w500' + ${dbRating.dbMovies.movieDetails.poster_path}"
                      th:alt="${dbRating.dbMovies.movieDetails.title}"
                      th:onclick="'navigateToMovieDetails(' + ${dbRating.dbMovies.movieDetails.tId} + ')'">
-                <p class="movie-rating" th:text="${dbRating.score}"></p>
+<!--                <p class="movie-rating" th:text="${dbRating.score}"></p>-->
+                <span class="user-rating">평점: <span th:text="${dbRating.score ?: '미정'}" class="rating-value"></span></span>
+
+
             </div>
         </div>
     </div>
