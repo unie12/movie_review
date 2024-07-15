@@ -50,6 +50,10 @@ public class QUser extends EntityPathBase<User> {
 
     public final EnumPath<UserRole> role = createEnum("role", UserRole.class);
 
+    public final ListPath<com.example.movie_review.subscription.Subscription, com.example.movie_review.subscription.QSubscription> subscribers = this.<com.example.movie_review.subscription.Subscription, com.example.movie_review.subscription.QSubscription>createList("subscribers", com.example.movie_review.subscription.Subscription.class, com.example.movie_review.subscription.QSubscription.class, PathInits.DIRECT2);
+
+    public final ListPath<com.example.movie_review.subscription.Subscription, com.example.movie_review.subscription.QSubscription> subscriptions = this.<com.example.movie_review.subscription.Subscription, com.example.movie_review.subscription.QSubscription>createList("subscriptions", com.example.movie_review.subscription.Subscription.class, com.example.movie_review.subscription.QSubscription.class, PathInits.DIRECT2);
+
     public final ListPath<com.example.movie_review.favoriteMovie.UserFavoriteMovie, com.example.movie_review.favoriteMovie.QUserFavoriteMovie> userFavoriteMovies = this.<com.example.movie_review.favoriteMovie.UserFavoriteMovie, com.example.movie_review.favoriteMovie.QUserFavoriteMovie>createList("userFavoriteMovies", com.example.movie_review.favoriteMovie.UserFavoriteMovie.class, com.example.movie_review.favoriteMovie.QUserFavoriteMovie.class, PathInits.DIRECT2);
 
     public QUser(String variable) {

@@ -176,16 +176,16 @@ public class UserController {
     public String getUserInfo(@PathVariable String userEmail, @PathVariable String category, Model model, Authentication auth) throws AccessDeniedException {
         User user = userService.getUserByEmail(userEmail);
 
-        if(!user.getEmail().equals(auth.getName())) {
-            throw new AccessDeniedException("You don't have permission to view this user");
-        }
+        //        Info permission 부여
+//        if(!user.getEmail().equals(auth.getName())) {
+//            throw new AccessDeniedException("You don't have permission to view this user");
+//        }
 
         UserDTO userDTO = userDTOService.getuserDTO(userEmail, auth);
         model.addAttribute("userDTO", userDTO);
 
         switch (category) {
             case "favorite":
-//                model.addAttribute("favoriteMovies", user.getUserFavoriteMovies());
                 return "user-favorite-movies";
             case "review":
                 List<Review> reviews = user.getReviews();
@@ -193,7 +193,6 @@ public class UserController {
                 model.addAttribute("reviewDTOs", reviewDTOS);
                 return "user-reviews";
             case "rating":
-//                model.addAttribute("dbRatings", user.getDbRatings());
                 return "user-ratings";
             case "heart":
                 List<Heart> hearts = user.getHearts();
@@ -201,6 +200,10 @@ public class UserController {
                         hearts.stream().map(Heart::getReview).collect(Collectors.toList()));
                 model.addAttribute("heartReviewDTOs", heartReviewDTOs);
                 return "user-hearts";
+            case "subscription":
+                return "user-subscription";
+            case "subscriber":
+                return "user-subscriber";
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category");
         }

@@ -2,6 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <title>리뷰 남긴 영화</title>
 
     <style>
@@ -99,6 +101,20 @@
             overflow-y: auto;
             margin-top: 10px;
         }
+                .like-button {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .like-button.active {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .like-button.active .heart-value {
+            background-color: white;
+            color: #e74c3c;
+        }
     </style>
 
 </head>
@@ -120,7 +136,10 @@
                     <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
                     <span th:text="${reviewDTO.review.user.nickname}" class="user-nickname"></span>
                     <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}" class="rating-value"></span></span>
-                    <span class="user-heart">좋아요 수: <span th:text="${reviewDTO.heartCnt ?: '0'}" class="heart-value"></span></span>
+<!--                    <span class="user-heart">좋아요 수: <span th:text="${reviewDTO.heartCnt ?: '0'}" class="heart-value"></span></span>-->
+                    <span class="user-heart like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${userDTO.likedReviewIds.contains(reviewDTO.review.id)} ? 'active' : ''">
+                        좋아요: <span th:text="${reviewDTO.heartCnt ?: '0'}" class="heart-value like-count"></span>
+                    </span>
                 </div>
                 <p class="review-text" th:text="${reviewDTO.review.context}"></p>
             </div>
@@ -140,3 +159,36 @@
 </script>
 </body>
 </html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // 좋아요 버튼 클릭 이벤트
+        $('.like-button').click(function() {
+            var reviewId = $(this).data('review-id');
+            var $button = $(this)
+
+            $.ajax({
+                url: '/api/heart/' + reviewId,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active') }),
+                success: function(response) {
+                    console.log('Full response:', response);
+
+                    if (response.heart) {
+                        $button.addClass('active');
+                    } else {
+                        $button.removeClass('active');
+                    }
+
+                    $button.find('.like-count').text(response.updateHeartCnt);
+                    console.log('heartCount val:', response.updateHeartCnt);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+</script>

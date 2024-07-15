@@ -30,7 +30,7 @@
                 <i class="fas fa-heart"></i>
             </button>
 
-            <!-- 리뷰 섹션 -->
+            <!-- 사용자 리뷰 섹션 -->
             <div id="reviewSection">
                 <h3>리뷰</h3>
                 <div id="reviewDisplay" style="display:none;">
@@ -78,11 +78,9 @@
             <!-- 배우 정보 -->
             <p><strong>주요 출연:</strong></p>
             <div class="actor-slider">
-                <button onclick="prevActors()">이전</button>
+                <button id="prevButton">이전</button>
                 <div class="actor-list" id="actorList">
-                    <div class="actor" th:each="actor : ${movieDTO.actors}"
-                        th:attr="onclick=|redirectToActor(${actor.id})|">
-<!--                        <a th:href="@{/jwt-login/people/{actorId}(actorId=${actor.id})}">-->
+                    <div class="actor" th:each="actor : ${movieDTO.actors}" th:attr="data-actor-id=${actor.id}">
                         <img th:src="'https://image.tmdb.org/t/p/w500' + ${actor.profile_path}" th:alt="${actor.name}">
                         <div>
                             <span th:text="${actor.name}"></span>
@@ -90,79 +88,80 @@
                         </div>
                     </div>
                 </div>
-                <button onclick="nextActors()">다음</button>
+                <button id="nextButton">다음</button>
             </div>
 
-            <!-- 리뷰 섹션 -->
+            <!-- 리뷰 리스트 -->
             <div class="review-section">
-                <h3>영화 리뷰</h3>
-                <h3 th:text="'(총 ' + ${movieDTO.reviewCnt} + '개)'"></h3>
+                <h3>영화 리뷰 <span th:text="'(총 ' + ${movieDTO.reviewCnt} + '개)'"></span></h3>
 
                 <div class="review-grid">
-                    <div th:each="reviewDTO, iterStat : ${movieDTO.reviews}" th:if="${iterStat.index < 10}" class="review-card">
+                    <div th:each="reviewDTO : ${sortedReviews}" class="review-card">
+
                         <div class="user-info">
-                            <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
+                            <a th:href="@{'/info/' + ${reviewDTO.review.user.email}}">
+                                <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
+                            </a>
+
                             <span th:text="${reviewDTO.review.user.nickname}" class="user-nickname"></span>
                             <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
                         </div>
-                        <p th:text="${reviewDTO.review.context}" class="review-content"></p>
+<!--                        <p th:text="${reviewDTO.review.context}" class="review-content"></p>-->
+                        <p th:text="${#strings.abbreviate(reviewDTO.review.context, 100)}" class="review-content"></p>
 
                         <div class="review-actions">
                             <button class="like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${movieDTO.userHearts.contains(reviewDTO.review.id)} ? 'active' : ''">
                                 좋아요 <span th:text="${reviewDTO.heartCnt ?: 0}" class="like-count"></span>
                             </button>
-<!--                            <button class="comment-button" th:attr="data-review-id=${reviewDTO.review.id}">-->
-<!--                                댓글 <span th:text="${reviewDTO.review.commentCount ?: 0}" class="comment-count"></span>-->
-<!--                            </button>-->
                         </div>
-
                     </div>
                 </div>
-<!--                <button id="showAllReviews" class="btn btn-secondary">전체 리뷰 보기</button>-->
+                <button id="showAllReviews" class="btn btn-secondary">전체 리뷰 보기</button>
             </div>
-
-
-            <script>
-                // 영화 출연진 배우들 리스트 표시
-                let currentIndex = 0;
-                const actorsPerPage = 12;
-                const actors = document.querySelectorAll('.actor');
-
-                function updateActorVisibility() {
-                    actors.forEach((actor, index) => {
-                        if (index >= currentIndex && index < currentIndex + actorsPerPage) {
-                            actor.classList.remove('hidden');
-                        } else {
-                            actor.classList.add('hidden');
-                        }
-                    });
-                }
-
-                function nextActors() {
-                    if (currentIndex + actorsPerPage < actors.length) {
-                        currentIndex += 3;
-                        updateActorVisibility();
-                    }
-                }
-
-                function prevActors() {
-                    if (currentIndex - 3 >= 0) {
-                        currentIndex -= 3;
-                        updateActorVisibility();
-                    }
-                }
-                // 초기화
-                updateActorVisibility();
-
-                // 배우 클릭 시 관련 영화 리스트로 redirect
-                function redirectToActor(actorId) {
-                    window.location.href = `/jwt-login/people/${actorId}`;
-                }
-
-            </script>
 
             <script th:inline="javascript">
                 document.addEventListener('DOMContentLoaded', function() {
+                    let currentIndex = 0;
+                    const actorsPerPage = 4;
+                    const actors = document.querySelectorAll('.actor');
+                    const actorList = document.querySelector('.actor-list');
+                    const prevButton = document.getElementById('prevButton');
+                    const nextButton = document.getElementById('nextButton');
+
+                    function updateActorVisibility() {
+                        const translateX = -(currentIndex / actors.length) * 100;
+                        actorList.style.transform = `translateX(${translateX}%)`;
+                        console.log('Actor visibility updated. Current index:', currentIndex);
+                    }
+
+                    function nextActors() {
+                        if (currentIndex + actorsPerPage < actors.length) {
+                            currentIndex += actorsPerPage;
+                            updateActorVisibility();
+                        }
+                        console.log('Next actors clicked');
+                    }
+
+                    function prevActors() {
+                        if (currentIndex - actorsPerPage >= 0) {
+                            currentIndex -= actorsPerPage;
+                            updateActorVisibility();
+                        }
+                        console.log('Previous actors clicked');
+                    }
+                    // 초기화
+                    updateActorVisibility();
+                    document.getElementById('prevButton').addEventListener('click', prevActors);
+                    document.getElementById('nextButton').addEventListener('click', nextActors);
+
+                    actors.forEach(actor => {
+                        actor.addEventListener('click', function() {
+                            const actorId = this.getAttribute('data-actor-id');
+                            redirectToActor(actorId);
+                        });
+                    });
+
+
                     const starRating = document.getElementById('starRating');
                     const stars = starRating.getElementsByClassName('star');
                     const selectedRating = document.querySelector('#selectedRating span');
@@ -203,7 +202,6 @@
                             if (data.deleted) {
                                 // Rating was deleted
                                 setRating(0);
-<!--                                resetStars();-->
                             } else {
                                 // Rating was saved or updated
                                 setRating(data.rating);
@@ -213,14 +211,6 @@
                             console.error('Error:', error);
                         });
                     }
-
-
-<!--                    function resetStars() {-->
-<!--                        Array.from(stars).forEach(star => {-->
-<!--                            star.classList.remove('full', 'active');-->
-<!--                        });-->
-<!--                        selectedRating.textContent = '0';  // 선택된 별점도 초기화-->
-<!--                    }-->
 
                     loadRating();
 
@@ -237,6 +227,10 @@
                         });
                     });
                 });
+                // 배우 클릭 시 관련 영화 리스트로 redirect
+                function redirectToActor(actorId) {
+                    window.location.href = `/jwt-login/people/${actorId}`;
+                }
             </script>
         </div>
     </div>
@@ -375,12 +369,5 @@ $(document).ready(function() {
             }
         });
     });
-
-<!--    // 댓글 버튼 클릭 이벤트-->
-<!--    $('.comment-button').click(function() {-->
-<!--        var reviewId = $(this).data('review-id');-->
-<!--        // TODO: 댓글 모달 열기 또는 댓글 섹션 토글-->
-<!--        console.log('Comment clicked for review:', reviewId);-->
-<!--    });-->
 });
 </script>

@@ -91,6 +91,12 @@ public class JwtLoginController {
     public String movieDetail(@PathVariable Long movieId, Model model, @AuthenticationPrincipal OAuth2User principal) {
         try {
             MovieDetailDTO movieDetailDTO = movieDetailDTOService.getMovieDetailDTO(movieId, principal);
+            List<ReviewDTO> sortedReviews = movieDetailDTO.getReviews().stream()
+                    .sorted((r1, r2) -> Integer.compare(r2.getHeartCnt(), r1.getHeartCnt()))
+                    .limit(6)
+                    .collect(Collectors.toList());
+
+            model.addAttribute("sortedReviews", sortedReviews);
             model.addAttribute("movieDTO", movieDetailDTO);
         } catch (Exception e) {
             log.error("Error processing movie details", e);

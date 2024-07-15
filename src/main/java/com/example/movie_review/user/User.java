@@ -7,13 +7,16 @@ import com.example.movie_review.review.Review;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.movie.PreferredMovies;
+import com.example.movie_review.subscription.Subscription;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static jakarta.persistence.CascadeType.ALL;
 
@@ -74,6 +77,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private List<DbRatings> dbRatings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "subscriber", cascade = ALL, orphanRemoval = true)
+    private List<Subscription> subscriptions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "subscribed", cascade = ALL, orphanRemoval = true)
+    private List<Subscription> subscribers = new ArrayList<>();
+
+
     /**
      * 연관관계 메서드
      */
@@ -89,6 +99,25 @@ public class User {
 
     public void addPreferredGenre(PreferredGenres preferredGenre) { preferredGenres.add(preferredGenre); }
 
+    public void addSubscription(User userToSubscribe) {
+        Subscription subscription = new Subscription();
+        subscription.setSubscriber(this);
+        subscription.setSubscribed(userToSubscribe);
+        subscription.setSubscriptionDate(LocalDateTime.now());
+        this.subscriptions.add(subscription);
+        userToSubscribe.getSubscribers().add(subscription);
+    }
+
+    public void removeSubscription(User userToUnsubscribe) {
+        Subscription subscription = this.subscriptions.stream()
+                .filter(s -> s.getSubscribed().equals(userToUnsubscribe))
+                .findFirst()
+                .orElse(null);
+        if(subscription != null) {
+            this.subscriptions.remove(subscription);
+            userToUnsubscribe.getSubscribers().remove(subscription);
+        }
+    }
 
 
     public String getRoleKey() {
@@ -117,6 +146,26 @@ public class User {
 
     public int getHeartCount() {
         return hearts.size();
+    }
+
+    public int getSubscriptionCount() {
+        return subscriptions.size();
+    }
+
+    public int getSubscriberCount() {
+        return subscribers.size();
+    }
+
+    public List<User> getSubscribedUsers() {
+        return subscriptions.stream()
+                .map(Subscription::getSubscribed)
+                .collect(Collectors.toList());
+    }
+
+    public List<User> getSubscriberUsers() {
+        return subscribers.stream()
+                .map(Subscription::getSubscriber)
+                .collect(Collectors.toList());
     }
 
 }

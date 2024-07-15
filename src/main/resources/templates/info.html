@@ -1,33 +1,103 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header">
+<head>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <title>사용자 활동 내역</title>
 </head>
 <body>
 <div>
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+
+    <img th:src="${userDTO.user.picture}" alt="User Picture" class="user-picture">
+    <span th:text="${userDTO.user.nickname}" class="user-nickname"></span>
+    <button id="subscription" class="btn btn-secondary">구독</button>
+
+    <br>
+    <div>
+        <a th:href="@{'/info/' + ${userDTO.user.email} + '/subscription'}">
+            <span th:text="'내가 구독한 사용자 ' +${userDTO.subscriptionCnt}"></span>
+        </a>
+        <a th:href="@{'/info/' + ${userDTO.user.email} + '/subscriber'}">
+            <span th:text="'나를 구독한 사용자 ' + ${userDTO.subscriberCnt}"></span>
+        </a>
+    </div>
+    <br>
+
     <h2>사용자 활동 내역</h2>
 
     <div>
         <h3 th:text="'즐겨찾기 영화 (' + ${userDTO.favoriteCnt} + '개)'"></h3>
         <a th:href="@{'/info/' + ${userDTO.user.email} + '/favorite'}">즐겨찾기 영화 보기</a>
     </div>
+    <br>
 
     <div>
         <h3 th:text="'리뷰 작성한 영화 (' + ${userDTO.reviewCnt} + '개)'"></h3>
         <a th:href="@{'/info/' + ${userDTO.user.email} + '/review'}">리뷰 작성한 영화 보기</a>
     </div>
+    <br>
 
     <div>
         <h3 th:text="'평점 매긴 영화 (' + ${userDTO.ratingCnt} + '개)'"></h3>
         <a th:href="@{'/info/' + ${userDTO.user.email} + '/rating'}">평점 매긴 보기</a>
     </div>
+    <br>
 
     <div>
         <h3 th:text="'좋아요 누른 리뷰 (' + ${userDTO.heartCnt} + '개)'"></h3>
         <a th:href="@{'/info/' + ${userDTO.user.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
     </div>
+    <br>
 
 </div>
 </body>
 </html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    const subscriptionBtn = $('#subscription');
+    const userEmail = '[[$(userDTO.user.email}]]';
+    const currentUserEmail = '[[${#authentication.name}]';
+
+    checkSubscriptionStatus();
+
+    subscriptionBtn.click(function() {
+        if (subscriptionBtn.text() === '구독') {
+            subscribe();
+        } else {
+            unsubscribe();
+        }
+    });
+
+    function checkSubscriptionStatus() {
+        $.get(`/api/subscription/check/${userEmail}`, function(isSubscribed) {
+            updateButtonState(isSubscribed);
+        });
+    }
+
+    function subscribe() {
+        $.post(`/api/subscription/subscribe/${userEmail}`, function(success) {
+            if (success) {
+                updateButtonState(true);
+            }
+        });
+    }
+
+    function unsubscribe() {
+        $.post(`/api/subscription/unsubscribe/${userEmail}`, function(success) {
+            if (success) {
+                updateButtonState(false);
+            }
+        });
+    }
+
+    function updateButtonState(isSubscribed) {
+        if(isSubscribed) {
+            subscriptionBtn.text('구독 취소').removeClass('btn-secondary').addClass('btn-danger');
+        } else {
+            subscriptionBtn.text('구독').removeClass('btn-danger').addCLass('btn-secondary');
+});
+</script>

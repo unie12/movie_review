@@ -1,8 +1,9 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="|${pageName}|"></title>
+<!--    <title th:text="|${pageName}|"></title>-->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <style>
         .movie-list-container {
@@ -131,8 +132,6 @@
         <!-- 로그인 상태에 따른 UI -->
         <div th:if="${#authentication.name == 'anonymousUser'}">
             <h3>로그인 되어있지 않습니다!</h3>
-<!--            <button th:onclick="|location.href='@{/{loginType}/join (loginType=${loginType})}'|">회원 가입</button> <br/><br/>-->
-<!--            <button th:onclick="|location.href='@{/{loginType}/login (loginType=${loginType})}'|">로그인</button>-->
         </div>
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <h3>[[${#authentication.name}]]님 환영합니다!</h3>

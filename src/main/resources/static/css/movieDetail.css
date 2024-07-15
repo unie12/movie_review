@@ -2,7 +2,7 @@
 .movie-detail {
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 11px;
 }
 .movie-detail img {
     max-width: 100%;
@@ -29,14 +29,19 @@
 .favorite.active {
     color: red;
 }
+.actor-slider {
+    position: relative;
+    overflow: hidden;
+}
 .actor-list {
     display: flex;
-    overflow: hidden;
-    width: 100%;
+    transition: transform 0.3s ease;
+    width: 300%; /* 전체 배우 수에 따라 조정 */
 }
 .actor {
-    flex: 0 0 25%;
+    flex: 0 0 8.33%; /* 100% / 12 */
     box-sizing: border-box;
+    padding: 0 10px;
 }
 .hidden {
     display: none;
@@ -84,15 +89,31 @@
 }
 .review-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
     margin-bottom: 20px;
-    padding: 20px 40px;
 }
 .review-card {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 250px; /* 고정 높이 설정 */
+    overflow: hidden; /* 내용이 넘치면 숨김 */
+}
+.review-content {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* 최대 5줄까지 표시 */
+    -webkit-box-orient: vertical;
+    word-wrap: break-word; /* 긴 단어 줄바꿈 */
+}
+.review-actions {
+    display: flex;
+    justify-content: space-between;
 }
 .user-info {
     display: flex;
@@ -111,17 +132,6 @@
 }
 .user-rating {
     color: #f39c12;
-}
-.review-content {
-    margin-top: 15px;
-    border-top: 1px solid #eee;
-    padding-top: 15px;
-    font-size: 1.1em;
-    line-height: 1.6;
-}
-.review-actions {
-    display: flex;
-    justify-content: space-between;
 }
 .like-button, .comment-button {
     background: none;
