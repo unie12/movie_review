@@ -167,7 +167,9 @@ public class UserController {
     @GetMapping("/info/{userEmail}")
     public String userInfo(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
         UserDTO userDTO = userDTOService.getuserDTO(userEmail, auth);
+        boolean isSubscribed = subscriptionService.isSubscribed(auth.getName(), userEmail);
         model.addAttribute("userDTO", userDTO);
+        model.addAttribute("isSubscribed", isSubscribed);
         return "info";
     }
 
