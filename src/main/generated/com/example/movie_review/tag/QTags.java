@@ -24,7 +24,7 @@ public class QTags extends EntityPathBase<Tags> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final com.example.movie_review.movie.QMovies movie;
+    public final com.example.movie_review.movieLens.QMovies movie;
 
     public final NumberPath<Long> movieId = createNumber("movieId", Long.class);
 
@@ -54,7 +54,7 @@ public class QTags extends EntityPathBase<Tags> {
 
     public QTags(Class<? extends Tags> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.movie = inits.isInitialized("movie") ? new com.example.movie_review.movie.QMovies(forProperty("movie")) : null;
+        this.movie = inits.isInitialized("movie") ? new com.example.movie_review.movieLens.QMovies(forProperty("movie")) : null;
         this.user = inits.isInitialized("user") ? new com.example.movie_review.user.QUser(forProperty("user")) : null;
     }
 

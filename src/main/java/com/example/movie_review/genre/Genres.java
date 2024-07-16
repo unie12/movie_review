@@ -1,14 +1,12 @@
 package com.example.movie_review.genre;
 
-import com.example.movie_review.movie.MovieDetails;
-import com.example.movie_review.movie.MovieGenre;
+import com.example.movie_review.movieDetail.MovieDetails;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data

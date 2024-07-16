@@ -1,8 +1,6 @@
 package com.example.movie_review.rating;
 
-import com.example.movie_review.movie.MovieRepository;
-import com.example.movie_review.movie.Movies;
-import com.example.movie_review.user.User;
+import com.example.movie_review.movieLens.MovieRepository;
 import com.example.movie_review.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

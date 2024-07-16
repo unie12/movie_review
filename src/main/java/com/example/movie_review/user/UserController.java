@@ -3,8 +3,6 @@ package com.example.movie_review.user;
 import com.example.movie_review.heart.Heart;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.genre.*;
-import com.example.movie_review.movie.PreferredMovies;
-import com.example.movie_review.movie.PreferredMoviesService;
 import com.example.movie_review.oauth.SessionUser;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.ReviewDTO;

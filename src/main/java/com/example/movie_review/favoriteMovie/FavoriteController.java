@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/favorite")
 public class FavoriteController {
     private final UserFavoriteMovieService userFavoriteMovieService;
 
-    @PostMapping("/favorite")
+    @PostMapping("")
     public ResponseEntity<?> toggleFavorite(@RequestBody FavoriteRequest request, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new FavoriteResponse(false, "User not authenticated", false));

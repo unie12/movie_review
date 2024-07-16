@@ -1,15 +1,10 @@
 package com.example.movie_review.auth;
 
-import com.example.movie_review.heart.HeartService;
 import com.example.movie_review.dbMovie.*;
-import com.example.movie_review.dbRating.DbRatingService;
-import com.example.movie_review.dbRating.DbRatings;
-import com.example.movie_review.favoriteMovie.UserFavoriteMovieService;
-import com.example.movie_review.movie.*;
-import com.example.movie_review.review.Review;
+import com.example.movie_review.movieDetail.ActorDetails;
+import com.example.movie_review.movieDetail.MovieDetailDTO;
+import com.example.movie_review.movieDetail.MovieDetailDTOService;
 import com.example.movie_review.review.ReviewDTO;
-import com.example.movie_review.review.ReviewRepository;
-import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,16 +31,10 @@ import static org.hibernate.query.sqm.tree.SqmNode.log;
 public class JwtLoginController {
 
     private final TmdbService tmdbService;
-    private final DbMovieService dbMovieService;
-    private final UserFavoriteMovieService userFavoriteMovieService;
-    private final DbRatingService dbRatingService;
-    private final HeartService heartService;
-    private final ReviewService reviewService;
     private final MovieDetailDTOService movieDetailDTOService;
     private final MovieCacheService movieCacheService;
 
     private final MovieCacheRepository movieCacheRepository;
-    private final ReviewRepository reviewRepository;
 
     private final ObjectMapper objectMapper;
     @GetMapping({"", "/"})

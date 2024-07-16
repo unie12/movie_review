@@ -44,7 +44,7 @@ public class QUser extends EntityPathBase<User> {
 
     public final ListPath<com.example.movie_review.genre.PreferredGenres, com.example.movie_review.genre.QPreferredGenres> preferredGenres = this.<com.example.movie_review.genre.PreferredGenres, com.example.movie_review.genre.QPreferredGenres>createList("preferredGenres", com.example.movie_review.genre.PreferredGenres.class, com.example.movie_review.genre.QPreferredGenres.class, PathInits.DIRECT2);
 
-    public final ListPath<com.example.movie_review.movie.PreferredMovies, com.example.movie_review.movie.QPreferredMovies> preferredMovies = this.<com.example.movie_review.movie.PreferredMovies, com.example.movie_review.movie.QPreferredMovies>createList("preferredMovies", com.example.movie_review.movie.PreferredMovies.class, com.example.movie_review.movie.QPreferredMovies.class, PathInits.DIRECT2);
+    public final ListPath<PreferredMovies, QPreferredMovies> preferredMovies = this.<PreferredMovies, QPreferredMovies>createList("preferredMovies", PreferredMovies.class, QPreferredMovies.class, PathInits.DIRECT2);
 
     public final ListPath<com.example.movie_review.review.Review, com.example.movie_review.review.QReview> reviews = this.<com.example.movie_review.review.Review, com.example.movie_review.review.QReview>createList("reviews", com.example.movie_review.review.Review.class, com.example.movie_review.review.QReview.class, PathInits.DIRECT2);
 

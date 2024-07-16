@@ -6,7 +6,6 @@ import com.example.movie_review.heart.Heart;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.genre.PreferredGenres;
-import com.example.movie_review.movie.PreferredMovies;
 import com.example.movie_review.subscription.Subscription;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

@@ -1,6 +1,6 @@
 package com.example.movie_review.rating;
 
-import com.example.movie_review.movie.Movies;
+import com.example.movie_review.movieLens.Movies;
 import com.example.movie_review.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

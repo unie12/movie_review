@@ -2,7 +2,7 @@ package com.example.movie_review.dbMovie;
 
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.genre.GenresRepository;
-import com.example.movie_review.movie.*;
+import com.example.movie_review.movieDetail.*;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -22,7 +22,7 @@ public class QRatings extends EntityPathBase<Ratings> {
 
     public static final QRatings ratings = new QRatings("ratings");
 
-    public final com.example.movie_review.movie.QMovies movie;
+    public final com.example.movie_review.movieLens.QMovies movie;
 
     public final NumberPath<Double> rating = createNumber("rating", Double.class);
 
@@ -50,7 +50,7 @@ public class QRatings extends EntityPathBase<Ratings> {
 
     public QRatings(Class<? extends Ratings> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.movie = inits.isInitialized("movie") ? new com.example.movie_review.movie.QMovies(forProperty("movie")) : null;
+        this.movie = inits.isInitialized("movie") ? new com.example.movie_review.movieLens.QMovies(forProperty("movie")) : null;
         this.user = inits.isInitialized("user") ? new com.example.movie_review.user.QUser(forProperty("user")) : null;
     }
 

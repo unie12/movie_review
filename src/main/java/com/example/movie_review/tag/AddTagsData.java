@@ -1,9 +1,8 @@
 package com.example.movie_review.tag;
 
-import com.example.movie_review.movie.MovieRepository;
-import com.example.movie_review.movie.Movies;
+import com.example.movie_review.movieLens.MovieRepository;
+import com.example.movie_review.movieLens.Movies;
 import com.example.movie_review.rating.RatingRepository;
-import com.example.movie_review.rating.Ratings;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserRepository;
 import lombok.RequiredArgsConstructor;

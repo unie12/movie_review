@@ -28,7 +28,7 @@ public class QDbMovies extends EntityPathBase<DbMovies> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final com.example.movie_review.movie.QMovieDetails movieDetails;
+    public final com.example.movie_review.movieDetail.QMovieDetails movieDetails;
 
     public final ListPath<com.example.movie_review.review.Review, com.example.movie_review.review.QReview> reviews = this.<com.example.movie_review.review.Review, com.example.movie_review.review.QReview>createList("reviews", com.example.movie_review.review.Review.class, com.example.movie_review.review.QReview.class, PathInits.DIRECT2);
 
@@ -52,7 +52,7 @@ public class QDbMovies extends EntityPathBase<DbMovies> {
 
     public QDbMovies(Class<? extends DbMovies> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.movieDetails = inits.isInitialized("movieDetails") ? new com.example.movie_review.movie.QMovieDetails(forProperty("movieDetails"), inits.get("movieDetails")) : null;
+        this.movieDetails = inits.isInitialized("movieDetails") ? new com.example.movie_review.movieDetail.QMovieDetails(forProperty("movieDetails"), inits.get("movieDetails")) : null;
     }
 
 }

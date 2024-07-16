@@ -22,7 +22,7 @@ public class QGenres extends EntityPathBase<Genres> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final SetPath<com.example.movie_review.movie.MovieDetails, com.example.movie_review.movie.QMovieDetails> movies = this.<com.example.movie_review.movie.MovieDetails, com.example.movie_review.movie.QMovieDetails>createSet("movies", com.example.movie_review.movie.MovieDetails.class, com.example.movie_review.movie.QMovieDetails.class, PathInits.DIRECT2);
+    public final SetPath<com.example.movie_review.movieDetail.MovieDetails, com.example.movie_review.movieDetail.QMovieDetails> movies = this.<com.example.movie_review.movieDetail.MovieDetails, com.example.movie_review.movieDetail.QMovieDetails>createSet("movies", com.example.movie_review.movieDetail.MovieDetails.class, com.example.movie_review.movieDetail.QMovieDetails.class, PathInits.DIRECT2);
 
     public final StringPath name = createString("name");
 

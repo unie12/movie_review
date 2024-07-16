@@ -180,12 +180,6 @@
             console.log('Parsed popularMovies:', popularMovies);
             console.log('Parsed trendingMovies:', trendingMovies);
 
-<!--            if (dBOM && dBOM.boxOfficeResult && dBOM.boxOfficeResult.dailyBoxOfficeList) { createKobisMovieList(dBOM.boxOfficeResult.dailyBoxOfficeList, 'dBOMList'); }-->
-<!--            else { console.log('dBOM 조건문 통과 실패:', dBOM); }-->
-
-<!--            if (wBOM && wBOM.boxOfficeResult && wBOM.boxOfficeResult.weeklyBoxOfficeList) {-->
-<!--                createKobisMovieList(wBOM.boxOfficeResult.weeklyBoxOfficeList, 'wBOMList');-->
-<!--            }-->
             // dBOM 조건문 수정
             if (Array.isArray(dBOM) && dBOM.length > 0) {
 <!--                console.log('dBOM 조건문 통과:', dBOM);-->
