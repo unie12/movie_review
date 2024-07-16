@@ -164,7 +164,7 @@ public class UserController {
      */
     @GetMapping("/info/{userEmail}")
     public String userInfo(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
-        UserDTO userDTO = userDTOService.getuserDTO(userEmail, auth);
+        UserDTO userDTO = userDTOService.getuserDTO(userEmail);
         boolean isSubscribed = subscriptionService.isSubscribed(auth.getName(), userEmail);
         model.addAttribute("userDTO", userDTO);
         model.addAttribute("isSubscribed", isSubscribed);
@@ -183,7 +183,7 @@ public class UserController {
 //            throw new AccessDeniedException("You don't have permission to view this user");
 //        }
 
-        UserDTO userDTO = userDTOService.getuserDTO(userEmail, auth);
+        UserDTO userDTO = userDTOService.getuserDTO(userEmail);
         model.addAttribute("userDTO", userDTO);
 
         switch (category) {
@@ -210,6 +210,5 @@ public class UserController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category");
         }
     }
-
 
 }

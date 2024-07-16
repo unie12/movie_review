@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <title>구독자</title>
+</head>
+
+
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+    <h2>구독자 리스트</h2>
+
+    <div class="subscription-container">
+        <ul>
+            <li class="li-container>">
+                <div th:each="subscription : ${userDTO.user.subscriptions}" class="user-info">
+                    <a th:href="@{'/info/' + ${subscription.subscribed.email}}">
+                        <img th:src="${subscription.subscribed.picture}" alt="User Picture" class="user-picture">
+                    </a>
+
+                    <div th:text="${subscription.subscribed.nickname}">닉네임</div>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+
+
+</div>
+</body>
+</html>

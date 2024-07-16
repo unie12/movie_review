@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 public class UserDTOService {
     private final UserService userService;
 
-    public UserDTO getuserDTO(String userEmail, Authentication auth) throws AccessDeniedException {
+    public UserDTO getuserDTO(String userEmail) throws AccessDeniedException {
         User user = userService.getUserByEmail(userEmail);
 
 //        다른 사용자가 다른 사용자의 info url 접속
@@ -39,4 +40,31 @@ public class UserDTOService {
         return userDTO.build();
     }
 
+    public List<UserDTO> getSubscribers(String userEmail) {
+        User user = userService.getUserByEmail(userEmail);
+        return user.getSubscribers().stream()
+                .map(subscription -> {
+                    try {
+                        return getuserDTO(subscription.getSubscriber().getEmail());
+                    } catch (AccessDeniedException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    public List<UserDTO> getSubscriptions(String userEmail) {
+        User user = userService.getUserByEmail(userEmail);
+
+        return user.getSubscriptions().stream()
+                .map(subscription -> {
+                    try {
+                        return getuserDTO(subscription.getSubscribed().getEmail());
+                    } catch (AccessDeniedException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
 }

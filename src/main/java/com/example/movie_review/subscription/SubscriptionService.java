@@ -1,13 +1,13 @@
 package com.example.movie_review.subscription;
 
-import com.example.movie_review.user.User;
-import com.example.movie_review.user.UserRepository;
-import com.example.movie_review.user.UserService;
+import com.example.movie_review.user.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +17,9 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
 
     private final UserService userService;
+    private final UserDTOService userDTOService;
+//    private final SubscriptionService subscriptionService;
+
     public boolean isSubscribed(String subscriberEmail, String subscribedEmail) {
         User subscriber = userService.getUserByEmail(subscriberEmail);
         User subscribed = userService.getUserByEmail(subscribedEmail);
@@ -44,4 +47,5 @@ public class SubscriptionService {
             return false;
         }
     }
+
 }
