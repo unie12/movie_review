@@ -2,6 +2,7 @@ package com.example.movie_review.subscription;
 
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserRepository;
+import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,19 +15,23 @@ public class SubscriptionService {
 
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
+
+    private final UserService userService;
     public boolean isSubscribed(String subscriberEmail, String subscribedEmail) {
-        User subscriber= userRepository.findUserByEmail(subscriberEmail);
-        User subscribed = userRepository.findUserByEmail(subscribedEmail);
+        User subscriber = userService.getUserByEmail(subscriberEmail);
+        User subscribed = userService.getUserByEmail(subscribedEmail);
 
         return subscriptionRepository.existsBySubscriberAndSubscribed(subscriber, subscribed);
     }
 
     @Transactional
-    public boolean subscribe(String subscriberEmail, String subscribedEmail) {
-        User subscriber= userRepository.findUserByEmail(subscriberEmail);
-        User subscribed = userRepository.findUserByEmail(subscribedEmail);
+    public boolean toggleSubscription(String subscriberEmail, String subscribedEmail) {
+        User subscriber= userService.getUserByEmail(subscriberEmail);
+        User subscribed = userService.getUserByEmail(subscribedEmail);
 
-        if (!isSubscribed(subscriberEmail, subscribedEmail)) {
+        Subscription savedSubscription = subscriptionRepository.findBySubscriberAndSubscribed(subscriber, subscribed);
+
+        if (savedSubscription == null) {
             Subscription subscription = new Subscription();
             subscription.setSubscriber(subscriber);
             subscription.setSubscribed(subscribed);
@@ -34,20 +39,9 @@ public class SubscriptionService {
             subscriptionRepository.save(subscription);
             return true;
         }
-        return false;
-    }
-
-    @Transactional
-    public boolean unsubscribe(String subscriberEmail, String subscribedEmail) {
-        User subscriber= userRepository.findUserByEmail(subscriberEmail);
-        User subscribed = userRepository.findUserByEmail(subscribedEmail);
-
-        Subscription subscription = subscriptionRepository.findBySubscriberAndSubscribed(subscriber, subscribed);
-
-        if (subscription != null) {
-            subscriptionRepository.delete(subscription);
-            return true;
+        else {
+            subscriptionRepository.delete(savedSubscription);
+            return false;
         }
-        return false;
     }
 }

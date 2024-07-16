@@ -67,29 +67,34 @@
             checkSubscriptionStatus();
 
             subscriptionBtn.click(function() {
-                if (subscriptionBtn.text() === '구독') {
-                    subscribe();
-                } else {
-                    unsubscribe();
-                }
+                toggleSubscription();
             });
         }
 
         function checkSubscriptionStatus() {
-            $.get(`/api/subscription/check/${userEmail}`, function(isSubscribed) {
-                updateButtonState(isSubscribed);
+            $.ajax({
+                url: `/api/subscription/${userEmail}`,
+                type: 'GET',
+                success: function(response) {
+                    updateButtonState(response.subscribed);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error checking subscription status:', error);
+                }
             });
         }
 
-        function subscribe() {
-            $.post(`/api/subscription/subscribe/${userEmail}`, function(isSubscribed) {
-                updateButtonState(isSubscribed);
-            });
-        }
-
-        function unsubscribe() {
-            $.post(`/api/subscription/unsubscribe/${userEmail}`, function(isSubscribed) {
-                updateButtonState(isSubscribed);
+        function toggleSubscription() {
+            $.ajax({
+                url: `/api/subscription/${userEmail}`,
+                type: 'PUT',
+                contentType: 'application/json',
+                success: function(response) {
+                    updateButtonState(response.subscribed);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error toggling subscription:', error);
+                }
             });
         }
 
@@ -97,7 +102,7 @@
             if(isSubscribed) {
                 subscriptionBtn.text('구독 취소').removeClass('btn-secondary').addClass('btn-danger');
             } else {
-                subscriptionBtn.text('구독').removeClass('btn-danger').addCLass('btn-secondary');
+                subscriptionBtn.text('구독').removeClass('btn-danger').addClass('btn-secondary');
             }
         }
     });
