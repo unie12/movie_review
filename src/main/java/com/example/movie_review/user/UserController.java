@@ -46,7 +46,7 @@ public class UserController {
     /**
      * 사용자 추가 정보 처리
      */
-    @GetMapping("/additional-info")
+    @GetMapping("/{userEmail}/additional-info")
     public String additionalInfoPage(Model model) {
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
         User user = userService.getUserByEmail(sessionUser.getEmail());
@@ -70,7 +70,7 @@ public class UserController {
     }
 
     @Transactional
-    @PostMapping("/additional-info")
+    @PostMapping("/{userEmail}/additional-info")
     public String saveAdditionalInfo(@RequestParam String gender,
                                      @RequestParam String nickname,
                                      @RequestParam Long age,

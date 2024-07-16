@@ -1,10 +1,11 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<!--    <title th:text="|${pageName}|"></title>-->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/homeStyle.css">
+
     <style>
         .movie-list-container {
             position: relative;
@@ -82,15 +83,10 @@
     <div class="jumbotron">
         <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary me-2 active" role="button">Google Login</a>
 
-<!--        <h1><a th:href="|/${loginType}/home|">[[${pageName}]]</a></h1> <hr/>-->
-
         <form th:action="@{/jwt-login/search}" method="get">
             <input type="text" name="query" placeholder="영화 제목을 입력하세요">
             <button type="submit">검색</button>
         </form>
-
-<!--        <h2>검색 결과</h2>-->
-<!--        <ul id="search-results"></ul>-->
 
 
         <div th:if="${dBOM}">
@@ -136,7 +132,6 @@
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <h3>[[${#authentication.name}]]님 환영합니다!</h3>
             <a th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-primary">유저 정보</a>
-<!--            <button th:onclick="|location.href='@{/info}'|">유저 정보</button> <br/><br/>-->
         </div>
 
         <!-- 네비게이션 링크 -->
@@ -146,7 +141,8 @@
             <a class="btn btn-lg btn-info" href="/free">자유 게시판</a>
             <a class="btn btn-lg btn-info" href="/before-scene">BEFORE SCENE 게시판</a>
             <a class="btn btn-lg btn-info" href="/after-scene">AFTER SCENE 게시판</a>
-            <a class="btn btn-lg btn-info" href="/additional-info">개인 정보</a>
+            <a th:href="@{'/' + ${#authentication.name} + '/additional-info'}" class="btn btn-lg btn-info">개인 정보</a>
+
         </p>
     </div>
     <div th:replace="fragments/footer :: footer" />
@@ -158,9 +154,6 @@
     var wBOM = /*[[${wBOM}]]*/ '[]';
     var popularMovies = /*[[${popularMovies}]]*/ '[]';
     var trendingMovies = /*[[${trendingMovies}]]*/ '[]';
-
-<!--    console.log('dBOM:', dBOM);-->
-<!--    console.log('wBOM:', wBOM);-->
 
      document.addEventListener('DOMContentLoaded', function() {
         initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
@@ -271,7 +264,7 @@
     }
 
     function navigateToMovieDetails(movieId) {
-        window.location.href = '/jwt-login/contents/' + movieId;
+        window.location.href = '/contents/' + movieId;
     }
 
     function scrollContainer(containerId, direction) {
@@ -285,6 +278,5 @@
     }
 
 </script>
-<!--<script src="/js/homeScript.js" defer></script>-->
 </body>
 </html>
