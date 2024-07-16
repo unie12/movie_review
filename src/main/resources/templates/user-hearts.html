@@ -131,7 +131,12 @@
             </div>
             <div class="review-content">
                 <div class="user-info">
-                    <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
+<!--                    <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">-->
+
+                    <a th:href="@{'/info/' + ${reviewDTO.review.user.email}}">
+                        <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
+                    </a>
+
                     <span th:text="${reviewDTO.review.user.nickname}" class="user-nickname"></span>
                     <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
                     <span class="user-heart like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="'active'">

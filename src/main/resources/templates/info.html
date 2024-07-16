@@ -12,7 +12,8 @@
 
     <img th:src="${userDTO.user.picture}" alt="User Picture" class="user-picture">
     <span th:text="${userDTO.user.nickname}" class="user-nickname"></span>
-    <button id="subscription" class="btn btn-secondary">구독</button>
+    <button th:if="${#authentication.name != userDTO.user.email}"
+            id="subscription" class="btn btn-secondary">구독</button>
 
     <br>
     <div>
@@ -57,47 +58,47 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function() {
-    const subscriptionBtn = $('#subscription');
-    const userEmail = '[[$(userDTO.user.email}]]';
-    const currentUserEmail = '[[${#authentication.name}]';
+    $(document).ready(function() {
+        const subscriptionBtn = $('#subscription');
+        const userEmail = '[[${userDTO.user.email}]]';
+        const currentUserEmail = '[[${#authentication.name}]]';
 
-    checkSubscriptionStatus();
+        if( userEmail !== currentUserEmail) {
+            checkSubscriptionStatus();
 
-    subscriptionBtn.click(function() {
-        if (subscriptionBtn.text() === '구독') {
-            subscribe();
-        } else {
-            unsubscribe();
+            subscriptionBtn.click(function() {
+                if (subscriptionBtn.text() === '구독') {
+                    subscribe();
+                } else {
+                    unsubscribe();
+                }
+            });
+        }
+
+        function checkSubscriptionStatus() {
+            $.get(`/api/subscription/check/${userEmail}`, function(isSubscribed) {
+                updateButtonState(isSubscribed);
+            });
+        }
+
+        function subscribe() {
+            $.post(`/api/subscription/subscribe/${userEmail}`, function(isSubscribed) {
+                updateButtonState(isSubscribed);
+            });
+        }
+
+        function unsubscribe() {
+            $.post(`/api/subscription/unsubscribe/${userEmail}`, function(isSubscribed) {
+                updateButtonState(isSubscribed);
+            });
+        }
+
+        function updateButtonState(isSubscribed) {
+            if(isSubscribed) {
+                subscriptionBtn.text('구독 취소').removeClass('btn-secondary').addClass('btn-danger');
+            } else {
+                subscriptionBtn.text('구독').removeClass('btn-danger').addCLass('btn-secondary');
+            }
         }
     });
-
-    function checkSubscriptionStatus() {
-        $.get(`/api/subscription/check/${userEmail}`, function(isSubscribed) {
-            updateButtonState(isSubscribed);
-        });
-    }
-
-    function subscribe() {
-        $.post(`/api/subscription/subscribe/${userEmail}`, function(success) {
-            if (success) {
-                updateButtonState(true);
-            }
-        });
-    }
-
-    function unsubscribe() {
-        $.post(`/api/subscription/unsubscribe/${userEmail}`, function(success) {
-            if (success) {
-                updateButtonState(false);
-            }
-        });
-    }
-
-    function updateButtonState(isSubscribed) {
-        if(isSubscribed) {
-            subscriptionBtn.text('구독 취소').removeClass('btn-secondary').addClass('btn-danger');
-        } else {
-            subscriptionBtn.text('구독').removeClass('btn-danger').addCLass('btn-secondary');
-});
 </script>

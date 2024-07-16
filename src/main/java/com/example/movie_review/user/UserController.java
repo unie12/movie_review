@@ -9,6 +9,7 @@ import com.example.movie_review.oauth.SessionUser;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.subscription.SubscriptionService;
 import com.example.movie_review.tmdb.TmdbService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class UserController {
     private final ReviewService reviewService;
     private final DbRatingService dbRatingService;
     private final UserDTOService userDTOService;
+    private final SubscriptionService subscriptionService;
 
     /**
      * 사용자 추가 정보 처리
@@ -165,6 +167,7 @@ public class UserController {
     @GetMapping("/info/{userEmail}")
     public String userInfo(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
         UserDTO userDTO = userDTOService.getuserDTO(userEmail, auth);
+        boolean isSubscribed = subscriptionService.isSubscribed(auth.getName(), userEmail);
         model.addAttribute("userDTO", userDTO);
         return "info";
     }
