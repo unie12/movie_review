@@ -122,29 +122,37 @@
             <script th:inline="javascript">
                 document.addEventListener('DOMContentLoaded', function() {
                     let currentIndex = 0;
-                    const actorsPerPage = 4;
+                    const actorsPerPage = 8;
                     const actors = document.querySelectorAll('.actor');
                     const actorList = document.querySelector('.actor-list');
                     const prevButton = document.getElementById('prevButton');
                     const nextButton = document.getElementById('nextButton');
 
                     function updateActorVisibility() {
-                        const translateX = -(currentIndex / actors.length) * 100;
-                        actorList.style.transform = `translateX(${translateX}%)`;
+                        actors.forEach((actor, index) => {
+                            if(index >= currentIndex * actorsPerPage && index < (currentIndex + 1) * actorsPerPage) {
+                                actor.style.display = 'block';
+                            } else {
+                                actor.style.display = 'none';
+                            }
+                            });
+<!--                        const translateX = -(currentIndex / actors.length) * 100;-->
+<!--                        actorList.style.transform = `translateX(${translateX}%)`;-->
                         console.log('Actor visibility updated. Current index:', currentIndex);
                     }
 
                     function nextActors() {
-                        if (currentIndex + actorsPerPage < actors.length) {
-                            currentIndex += actorsPerPage;
+                        if ((currentIndex + 1) * actorsPerPage < actors.length) {
+<!--                            currentIndex += actorsPerPage;-->
+                            currentIndex++;
                             updateActorVisibility();
                         }
                         console.log('Next actors clicked');
                     }
 
                     function prevActors() {
-                        if (currentIndex - actorsPerPage >= 0) {
-                            currentIndex -= actorsPerPage;
+                        if (currentIndex > 0) {
+                            currentIndex--;
                             updateActorVisibility();
                         }
                         console.log('Previous actors clicked');

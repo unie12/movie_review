@@ -83,6 +83,20 @@
     <div class="jumbotron">
         <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary me-2 active" role="button">Google Login</a>
 
+        <!-- 로그인 상태에 따른 UI -->
+        <div th:if="${#authentication.name == 'anonymousUser'}">
+            <h3>로그인 되어있지 않습니다!</h3>
+        </div>
+        <div th:if="${#authentication.name != 'anonymousUser'}">
+            <h3>[[${#authentication.name}]]님 환영합니다!</h3>
+            <a th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-primary">유저 정보</a>
+        </div>
+
+        <!-- 네비게이션 링크 -->
+        <p>
+            <a th:href="@{'/' + ${#authentication.name} + '/additional-info'}" class="btn btn-lg btn-info">추가 정보 입력</a>
+        </p>
+
         <form th:action="@{/jwt-login/search}" method="get">
             <input type="text" name="query" placeholder="영화 제목을 입력하세요">
             <button type="submit">검색</button>
@@ -125,15 +139,6 @@
             </div>
         </div>
 
-        <!-- 로그인 상태에 따른 UI -->
-        <div th:if="${#authentication.name == 'anonymousUser'}">
-            <h3>로그인 되어있지 않습니다!</h3>
-        </div>
-        <div th:if="${#authentication.name != 'anonymousUser'}">
-            <h3>[[${#authentication.name}]]님 환영합니다!</h3>
-            <a th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-primary">유저 정보</a>
-        </div>
-
         <!-- 네비게이션 링크 -->
         <p>
             <a class="btn btn-lg btn-info" href="/notice">공지 게시판</a>
@@ -141,8 +146,6 @@
             <a class="btn btn-lg btn-info" href="/free">자유 게시판</a>
             <a class="btn btn-lg btn-info" href="/before-scene">BEFORE SCENE 게시판</a>
             <a class="btn btn-lg btn-info" href="/after-scene">AFTER SCENE 게시판</a>
-            <a th:href="@{'/' + ${#authentication.name} + '/additional-info'}" class="btn btn-lg btn-info">개인 정보</a>
-
         </p>
     </div>
     <div th:replace="fragments/footer :: footer" />

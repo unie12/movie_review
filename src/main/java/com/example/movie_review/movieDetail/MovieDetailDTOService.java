@@ -47,7 +47,7 @@ public class MovieDetailDTOService {
                 .overview(movieDetails.getOverview())
                 .directors(directors.stream().map(crew -> new DirectorDTO(crew.getId(), crew.getName(), crew.getProfile_path())).collect(Collectors.toList()))
                 .actors(movieDetails.getCredits().getCast().stream()
-                        .limit(12)
+                        .limit(24)
                         .map(cast -> new ActorDTO(cast.getId(), cast.getName(), cast.getProfile_path(), cast.getCharacter_name())).collect(Collectors.toList()))
                 .reviews(reviewService.getReviewDTOs(reviews))
                 .userHearts(heartService.getUserHearts(principal.getName()));

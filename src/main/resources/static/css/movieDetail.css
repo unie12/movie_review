@@ -34,12 +34,14 @@
     overflow: hidden;
 }
 .actor-list {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 10px;
     transition: transform 0.3s ease;
-    width: 300%; /* 전체 배우 수에 따라 조정 */
 }
 .actor {
-    flex: 0 0 8.33%; /* 100% / 12 */
+    width: 100%;
     box-sizing: border-box;
     padding: 0 10px;
 }
