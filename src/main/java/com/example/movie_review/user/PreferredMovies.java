@@ -25,5 +25,4 @@ public class PreferredMovies {
 
     private String movieTitle;
     private String movieId;
-
 }

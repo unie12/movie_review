@@ -50,23 +50,10 @@ public class OAuthAttributes {
     }
 
     public static OAuthAttributes of(String userNameAttributeName, Map<String, Object> attributes) {
-        System.out.println("Attributes Map in of method: " + attributes);
         return ofGoogle(userNameAttributeName, attributes);
     }
 
     private static OAuthAttributes ofGoogle(String usernameAttributeName, Map<String, Object> attributes) {
-//        List<String> preferGenres = (List<String>) attributes.get("preferGenres");
-        System.out.println("Attributes Map in ofGoogle method: " + attributes);
-
-        // 각 속성 값을 출력합니다.
-        System.out.println("name: " + attributes.get("name"));
-        System.out.println("email: " + attributes.get("email"));
-        System.out.println("picture: " + attributes.get("picture"));
-        System.out.println("nickname: " + attributes.get("nickname"));
-        System.out.println("gender: " + attributes.get("gender"));
-        System.out.println("age: " + attributes.get("age"));
-        System.out.println("mbti: " + attributes.get("mbti"));
-
         return OAuthAttributes.builder()
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))

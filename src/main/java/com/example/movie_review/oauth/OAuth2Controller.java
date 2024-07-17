@@ -31,7 +31,6 @@ public class OAuth2Controller {
         Optional<User> userOptional = userService.getOptUserByEmail(email);
 
         if (userOptional.isEmpty()) {
-                System.out.println("User not found for email: " + email);
             // 사용자가 데이터베이스에 존재하지 않는 경우
             // 로그인 실패 처리 또는 에러 페이지로 리다이렉트
             return "redirect:/login-failure";

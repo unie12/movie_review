@@ -30,11 +30,7 @@ public class PreferredGenresService {
         Long genreId = preferredGenres.getGenreId();
 
         if(!preferredGenresRepository.existsByUserAndGenreId(user, genreId)) {
-            System.out.println("Saving preferredGenres = " + preferredGenres);
             preferredGenresRepository.save(preferredGenres);
-        }
-        else {
-            System.out.println("Already exists genre in list: " + preferredGenres);
         }
     }
 
@@ -48,16 +44,16 @@ public class PreferredGenresService {
 
 
     public void updatePreferredGenres(User user, List<Long> newGenreIds) {
-        // 기존 선호 장르 제거
-        user.getPreferredGenres().clear();
+        Set<Long> existingGenreIds = user.getPreferredGenres().stream()
+                .map(PreferredGenres::getGenreId)
+                .collect(Collectors.toSet());
 
-//        user.getPreferredGenres().removeIf(genre -> !newGenreIds.contains(genre.getGenreId()));
+        // 삭제해야 할 장르 처리
+        user.getPreferredGenres().removeIf(pg -> !newGenreIds.contains(pg.getGenreId()));
 
-        // 새로운 장르 추가 또는 기존 장르 업데이트
-
-        // 새로운 선호 장르 추가
-        if (newGenreIds != null) {
-            for (Long genreId : newGenreIds) {
+        // 새로 추가해야 할 장르 처리
+        for (Long genreId : newGenreIds) {
+            if (!existingGenreIds.contains(genreId)) {
                 Genres genre = genresRepository.findById(genreId)
                         .orElseThrow(() -> new IllegalArgumentException("Invalid genre ID: " + genreId));
                 PreferredGenres preferredGenre = new PreferredGenres(user, genre);

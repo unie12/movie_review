@@ -1,5 +1,6 @@
 package com.example.movie_review.genre;
 
+import com.example.movie_review.user.User;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,11 @@ public class GenreService {
 
     public List<Genres> getAllGenres() {
         return genresRepository.findAll();
+    }
+
+    public Genres getGenreById(Long genreId) {
+        return genresRepository.findById(genreId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid User Email"));
     }
 
 }

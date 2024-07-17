@@ -1,6 +1,8 @@
-package com.example.movie_review.user;
+package com.example.movie_review.user.DTO;
 
 import com.example.movie_review.user.DTO.UserDTO;
+import com.example.movie_review.user.User;
+import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

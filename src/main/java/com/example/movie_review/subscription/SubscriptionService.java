@@ -1,13 +1,12 @@
 package com.example.movie_review.subscription;
 
 import com.example.movie_review.user.*;
+import com.example.movie_review.user.DTO.UserDTOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

@@ -21,11 +21,7 @@ public class PreferredMoviesService {
         String movieId = preferredMovie.getMovieId();
 
         if(!preferredMoviesRepository.existsByUserAndMovieId(user, movieId)) {
-            System.out.println("Saving preferred movie: " + preferredMovie);
             preferredMoviesRepository.save(preferredMovie);
-        }
-        else {
-            System.out.println("Already exists in list: " + preferredMovie);
         }
     }
 

@@ -42,7 +42,6 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 //            throw new OAuth2AuthenticationException("Unauthorized domain" + domain);
 //        }
         // 데이터베이스에서 추가 정보 조회 및 반영
-        System.out.println("sevice Attributes Map: " + attributes);
         Optional<User> userOptional = userRepository.findByEmail(attributes.getEmail());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -54,7 +53,6 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
         }
 
         User user = saveOrUpdate(attributes);
-        System.out.println("loaddd user = " + user.getNickname());
 
         httpSession.setAttribute("user", new SessionUser(user));
 
@@ -68,22 +66,17 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
         User user = userRepository.findByEmail(attributes.getEmail())
                 .map(entity -> updateUser(entity, attributes))
                 .orElse(attributes.toEntity());
-        System.out.println("Saving user: " + user);
 
         return userRepository.save(user);
     }
 
     private User updateUser(User user, OAuthAttributes attributes) {
-        System.out.println("att val = " + attributes.getNickname());
-        System.out.println("user val = " + user.getNickname());
         user.setName(attributes.getName());
         user.setPicture(attributes.getPicture());
         user.setNickname(attributes.getNickname() != null ? attributes.getNickname() : "기본 닉네임");
         user.setGender(attributes.getGender() != null ? attributes.getGender() : "미정");
         user.setAge(attributes.getAge() != null ? attributes.getAge() : 0L);
         user.setMbti(attributes.getMbti() != null ? attributes.getMbti() : "Pretty");
-        // 필요한 경우 preferGenres와 preferMovies도 업데이트
-        System.out.println("Updated user: " + user);
 
         return user;
     }

@@ -7,7 +7,7 @@ import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.subscription.SubscriptionService;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.DTO.UserDTO;
-import com.example.movie_review.user.UserDTOService;
+import com.example.movie_review.user.DTO.UserDTOService;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

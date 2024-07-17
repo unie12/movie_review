@@ -68,8 +68,6 @@ public class UserProfileDTOService {
 
         preferredGenresService.updatePreferredGenres(user, updateRequest.getPreferredGenreIds());
         preferredMoviesService.updatePreferredMovies(user, updateRequest.getFavoriteMovies());
-        System.out.println("user.getPreferredGenres() = " + user.getPreferredGenres());
-        System.out.println("user.getPreferredMovies() = " + user.getPreferredMovies());
 
         userRepository.save(user);
 

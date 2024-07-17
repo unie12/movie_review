@@ -107,7 +107,6 @@ public class MovieCacheService {
 
             // TMDB에서 영화 검색
             JsonNode tmdbMovie = tmdbService.searchJsonMovieWithSim(title, openDt).block();
-            System.out.println("tmdbMovieWithSim = " + tmdbMovie);
             String posterPath = null;
             String tmdbId = null;
             if (tmdbMovie != null) {
@@ -123,7 +122,6 @@ public class MovieCacheService {
                     audiAcc
             );
             moviesWithPosters.add(movieDTO);
-            System.out.println("movieDTO = " + movieDTO);
         }
 
         return moviesWithPosters;
