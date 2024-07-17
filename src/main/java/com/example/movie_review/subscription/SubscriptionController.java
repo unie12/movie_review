@@ -1,14 +1,12 @@
 package com.example.movie_review.subscription;
 
-import com.example.movie_review.user.User;
-import com.example.movie_review.user.UserDTO;
+import com.example.movie_review.user.DTO.UserDTO;
 import com.example.movie_review.user.UserDTOService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

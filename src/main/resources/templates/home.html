@@ -94,7 +94,7 @@
 
         <!-- 네비게이션 링크 -->
         <p>
-            <a th:href="@{'/' + ${#authentication.name} + '/additional-info'}" class="btn btn-lg btn-info">추가 정보 입력</a>
+            <a th:href="@{'/additional-info' + '/' + ${#authentication.name}}" class="btn btn-lg btn-info">추가 정보 입력</a>
         </p>
 
         <form th:action="@{/jwt-login/search}" method="get">

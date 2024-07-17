@@ -1,7 +1,7 @@
 package com.example.movie_review.user;
 
+import com.example.movie_review.user.DTO.UserDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;

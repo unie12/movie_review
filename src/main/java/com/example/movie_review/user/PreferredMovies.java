@@ -13,7 +13,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "preferred_movies")
 public class PreferredMovies {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "preferred_movie_id")
     private Long id;
 
@@ -24,4 +25,5 @@ public class PreferredMovies {
 
     private String movieTitle;
     private String movieId;
+
 }

@@ -1,6 +1,8 @@
 package com.example.movie_review.genre;
 
 import com.example.movie_review.user.User;
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,9 +21,15 @@ public class PreferredGenres {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     private String genreName;
     private Long genreId;
 
+    public PreferredGenres(User user, Genres genre) {
+        this.user = user;
+        this.genreId = genre.getId();
+        this.genreName = genre.getName();
+    }
 }

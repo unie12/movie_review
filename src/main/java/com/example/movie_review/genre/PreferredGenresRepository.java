@@ -12,4 +12,6 @@ public interface PreferredGenresRepository extends JpaRepository<PreferredGenres
     List<PreferredGenres> findByUser(User user);
 
     boolean existsByUserAndGenreId(User user, Long genreId);
+
+    void deleteByUser(User user);
 }

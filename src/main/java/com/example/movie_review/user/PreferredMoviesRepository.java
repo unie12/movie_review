@@ -10,4 +10,6 @@ public interface PreferredMoviesRepository extends JpaRepository<PreferredMovies
     List<PreferredMovies> findByUser(User user);
 
     boolean existsByUserAndMovieId(User user, String movieId);
+
+    void deleteByUser(User user);
 }

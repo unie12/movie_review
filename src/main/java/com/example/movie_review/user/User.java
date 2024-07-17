@@ -55,6 +55,7 @@ public class User {
     private List<PreferredMovies> preferredMovies = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<PreferredGenres> preferredGenres = new ArrayList<>();
 
 

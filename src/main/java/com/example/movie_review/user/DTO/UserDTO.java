@@ -1,5 +1,6 @@
-package com.example.movie_review.user;
+package com.example.movie_review.user.DTO;
 
+import com.example.movie_review.user.User;
 import lombok.Builder;
 import lombok.Data;
 
