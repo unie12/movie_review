@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,18 +38,27 @@ public class PreferredMoviesService {
     }
 
     public void updatePreferredMovies(User user, List<MovieDTO> newFavoriteMovies) {
-        // 기존 선호 영화 제거
-        user.getPreferredMovies().clear();
+        Set<String> newMovieIds = newFavoriteMovies.stream()
+                .map(MovieDTO::getId)
+                .collect(Collectors.toSet());
 
-        // 새로운 선호 영화 추가
-        if (newFavoriteMovies != null) {
-            for (MovieDTO movieDTO : newFavoriteMovies) {
-                PreferredMovies preferredMovie = new PreferredMovies();
-                preferredMovie.setUser(user);
-                preferredMovie.setMovieId(movieDTO.getId());
-                preferredMovie.setMovieTitle(movieDTO.getTitle());
-                user.addPreferredMovie(preferredMovie);
-            }
+        // 제거해야 할 영화 삭제
+        user.getPreferredMovies().removeIf(movie -> !newMovieIds.contains(movie.getMovieId()));
+
+        // 새로운 영화 추가 또는 기존 영화 업데이트
+        for (MovieDTO movieDTO : newFavoriteMovies) {
+            PreferredMovies preferredMovie = user.getPreferredMovies().stream()
+                    .filter(movie -> movie.getMovieId().equals(movieDTO.getId()))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        PreferredMovies newMovie = new PreferredMovies();
+                        newMovie.setMovieId(movieDTO.getId());
+                        newMovie.setUser(user);
+                        user.addPreferredMovie(newMovie);
+                        return newMovie;
+                    });
+
+            preferredMovie.setMovieTitle(movieDTO.getTitle());
         }
     }
 }

@@ -30,7 +30,9 @@ public class UserProfileController {
 
     @GetMapping
     public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable String userEmail) {
-        return ResponseEntity.ok(userProfileDTOService.getUserProfileDTO(userEmail));
+        ResponseEntity<UserProfileDTO> ok = ResponseEntity.ok(userProfileDTOService.getUserProfileDTO(userEmail));
+        System.out.println("ok = " + ok);
+        return ok;
     }
 
     @PutMapping
@@ -57,7 +59,9 @@ public class UserProfileController {
 
     @GetMapping("/favorite-genres")
     public ResponseEntity<List<PreferredGenres>> getFavoriteGenres(@PathVariable String userEmail) {
-        return ResponseEntity.ok(userProfileDTOService.getFavoriteGenres(userEmail));
+        ResponseEntity<List<PreferredGenres>> ok = ResponseEntity.ok(userProfileDTOService.getFavoriteGenres(userEmail));
+        System.out.println("PreferGenre ok = " + ok);
+        return ok;
     }
 
 

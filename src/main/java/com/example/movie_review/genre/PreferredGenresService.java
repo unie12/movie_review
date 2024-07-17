@@ -1,6 +1,9 @@
 package com.example.movie_review.genre;
 
+import com.example.movie_review.movieDetail.GenreDto;
+import com.example.movie_review.movieDetail.MovieDTO;
 import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
+import com.example.movie_review.user.PreferredMovies;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserRepository;
 import com.example.movie_review.user.UserService;
@@ -48,12 +51,17 @@ public class PreferredGenresService {
         // 기존 선호 장르 제거
         user.getPreferredGenres().clear();
 
+//        user.getPreferredGenres().removeIf(genre -> !newGenreIds.contains(genre.getGenreId()));
+
+        // 새로운 장르 추가 또는 기존 장르 업데이트
+
         // 새로운 선호 장르 추가
         if (newGenreIds != null) {
             for (Long genreId : newGenreIds) {
                 Genres genre = genresRepository.findById(genreId)
                         .orElseThrow(() -> new IllegalArgumentException("Invalid genre ID: " + genreId));
-                user.addPreferredGenre(new PreferredGenres(user, genre));
+                PreferredGenres preferredGenre = new PreferredGenres(user, genre);
+                user.addPreferredGenre(preferredGenre);
             }
         }
     }

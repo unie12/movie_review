@@ -25,6 +25,8 @@ public class PreferredGenres {
     private User user;
 
     private String genreName;
+
+    @Column(name = "genre_id")
     private Long genreId;
 
     public PreferredGenres(User user, Genres genre) {

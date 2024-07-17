@@ -43,6 +43,12 @@
         }
     </style>
 
+    <select id="sorting" name="sorting" required>
+        <option value="release_data">개봉일순</option>
+        <option value="dbRating">평균 별점 순</option>
+        <option value="favorite_data">찜 담은 순</option>
+    </select>
+
     <div th:if="${userDTO.user.userFavoriteMovies != null and !userDTO.user.userFavoriteMovies.empty}">
         <div class="movie-grid">
             <div th:each="movie : ${userDTO.user.userFavoriteMovies}" class="movie-item">
@@ -50,11 +56,6 @@
                      th:alt="${movie.dbMovie.movieDetails.title}"
                      th:onclick="'navigateToMovieDetails(' + ${movie.dbMovie.movieDetails.tId} + ')'">
                 <p class="movie-title" th:text="${movie.dbMovie.movieDetails.title}"></p>
-
-                <!-- 찜 기능 -->
-<!--                <button id="favoriteButton" th:attr="data-movie-id=${movie.id}" th:class="${??} ? 'favorite active' : 'favorite'">-->
-<!--                    <i class="fas fa-heart"></i>-->
-<!--                </button>-->
 
                 <button th:id="'favoriteButton-' + ${movie.dbMovie.id}"
                         th:attr="data-movie-id=${movie.dbMovie.id}"
