@@ -43,10 +43,17 @@
         }
     </style>
 
-    <select id="sorting" name="sorting" required>
-        <option value="release_data">개봉일순</option>
-        <option value="dbRating">평균 별점 순</option>
-        <option value="favorite_data">찜 담은 순</option>
+    <select id="sorting" name="sorting" onchange="sortMovies()">
+        <option value="favorite_date_desc">찜 최근에 담은순</option>
+        <option value="favorite_date_asc">찜 과거에 담은순</option>
+        <option value="release_date_desc">개봉일 최신순</option>
+        <option value="release_date_asc">개봉일 과거순</option>
+        <option value="title_asc">가나다 순</option>
+        <option value="title_desc">가나다 역순</option>
+        <option value="runtime_asc">상영시간 짧은순</option>
+        <option value="runtime_desc">상영시간 긴순</option>
+        <option value="rating_asc">별점 낮은순</option>
+        <option value="rating_desc">별점 높은순</option>
     </select>
 
     <div th:if="${userDTO.user.userFavoriteMovies != null and !userDTO.user.userFavoriteMovies.empty}">
@@ -90,7 +97,7 @@
             var isFavorite = $(this).hasClass('active');
 
             $.ajax({
-                url: '/api/favorite',
+                url: '/api/movie/favorite',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ movieId: movieId, favorite: !isFavorite }),
@@ -118,5 +125,48 @@
                 }
             });
         });
+
+        function sortMovies() {
+            var sortOption = $("#sorting").val();
+            var userEmail = /*[[${userDTO.user.email}]]*/ '';
+
+            $.ajax({
+                url: `/api/user/${userEmail}/favorite-movies`,
+                type: 'GET',
+                data: { sort: sortOption },
+                dataType: 'json',
+                success: function(movies) {
+                    updateMovieList(movies);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+        function updateMovieList(movies) {
+            var container = document.querySelector('.movie-grid');
+            container.innerHTML = ''; // 기존 목록 비우기
+
+            movies.forEach(movie => {
+                var movieElement = document.createElement('div');
+                movieElement.className = 'movie-item';
+                movieElement.innerHTML = `
+                    <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
+                         alt="${movie.title}"
+                         onclick="navigateToMovieDetails(${movie.tId})">
+                    <p class="movie-title">${movie.title}</p>
+                    <button id="favoriteButton-${movie.id}"
+                            data-movie-id="${movie.id}"
+                            class="favorite active">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                `;
+                container.appendChild(movieElement);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', sortMovies);
+        document.getElementById('sorting').addEventListener('change', sortMovies);
     });
 </script>

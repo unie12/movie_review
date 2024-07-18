@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/subscription/{userEmail}")
+@RequestMapping("/api/user/subscription/{userEmail}")
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;

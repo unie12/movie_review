@@ -171,7 +171,7 @@ $(document).ready(function() {
         var $button = $(this)
 
         $.ajax({
-            url: '/api/heart/' + reviewId,
+            url: '/api/review/heart/' + reviewId,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active') }),

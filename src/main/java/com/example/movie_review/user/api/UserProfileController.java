@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/additional-info/{userEmail}")
+@RequestMapping("/api/user/additional-info/{userEmail}")
 public class UserProfileController {
     private final TmdbService tmdbService;
     private final UserProfileDTOService userProfileDTOService;

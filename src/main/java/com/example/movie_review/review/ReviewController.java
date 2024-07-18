@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/review")
+@RequestMapping("/api/movie/review")
 public class ReviewController {
     private final ReviewService reviewService;
 
@@ -44,7 +44,7 @@ public class ReviewController {
     /**
      * 리뷰를 새로 작성하거나 기존의 작성 리뷰 수정
      */
-    @PostMapping("")
+    @PostMapping("/{movieId}")
     public ResponseEntity<?> saveReview(@RequestBody ReviewRequest request, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");

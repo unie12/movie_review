@@ -106,7 +106,6 @@
                             <span th:text="${reviewDTO.review.user.nickname}" class="user-nickname"></span>
                             <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
                         </div>
-<!--                        <p th:text="${reviewDTO.review.context}" class="review-content"></p>-->
                         <p th:text="${#strings.abbreviate(reviewDTO.review.context, 100)}" class="review-content"></p>
 
                         <div class="review-actions">
@@ -187,7 +186,7 @@
                     }
 
                     function loadRating() {
-                        fetch(`/api/rating/${movieId}`)
+                        fetch(`/api/movie/rating/${movieId}`)
                             .then(response => response.json())
                             .then(data => {
                                 setRating(data.rating);
@@ -198,7 +197,7 @@
                     }
 
                     function saveOrDeleteRating(rating) {
-                        fetch(`/api/rating/${movieId}`, {
+                        fetch(`/api/movie/rating/${movieId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -255,7 +254,7 @@ $(document).ready(function() {
         var isFavorite = $(this).hasClass('active');
 
         $.ajax({
-            url: '/api/favorite',
+            url: '/api/movie/favorite',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ movieId: movieId, favorite: !isFavorite }),
@@ -280,7 +279,7 @@ $(document).ready(function() {
 
     function loadReview() {
         $.ajax({
-            url: '/api/review/' + movieId,
+            url: '/api/movie/review/' + movieId,
             type: 'GET',
             success: function(response) {
                 if (response.review) {
@@ -323,7 +322,7 @@ $(document).ready(function() {
     $('#saveReviewBtn').click(function() {
         var reviewText = $('#reviewText').val();
         $.ajax({
-            url: '/api/review',
+            url: '/api/movie/review' + movieId,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ movieId: movieId, review: reviewText }),
@@ -340,7 +339,7 @@ $(document).ready(function() {
     $('#deleteReviewBtn').click(function() {
         if (confirm('정말로 리뷰를 삭제하시겠습니까?')) {
             $.ajax({
-                url: '/api/review/' + movieId,
+                url: '/api/movie/review/' + movieId,
                 type: 'DELETE',
                 success: function(response) {
                     loadReview();
@@ -358,7 +357,7 @@ $(document).ready(function() {
         var $button = $(this)
 
         $.ajax({
-            url: '/api/heart/' + reviewId,
+            url: '/api/review/heart/' + reviewId,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active') }),

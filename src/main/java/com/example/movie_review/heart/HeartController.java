@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/heart")
+@RequestMapping("/api/review/heart")
 public class HeartController {
     private final HeartService heartService;
     private final ReviewService reviewService;

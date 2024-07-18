@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/info/{userEmail}")
 @RequiredArgsConstructor
-public class UserViewController {
+public class UserActivityViewController {
 
     private final UserDTOService userDTOService;
     private final SubscriptionService subscriptionService;

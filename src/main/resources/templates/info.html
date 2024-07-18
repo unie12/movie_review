@@ -75,7 +75,7 @@
 
         function checkSubscriptionStatus() {
             $.ajax({
-                url: `/api/subscription/${userEmail}`,
+                url: `/api/user/subscription/${userEmail}`,
                 type: 'GET',
                 success: function(response) {
                     updateButtonState(response.subscribed);
@@ -88,7 +88,7 @@
 
         function toggleSubscription() {
             $.ajax({
-                url: `/api/subscription/${userEmail}`,
+                url: `/api/user/subscription/${userEmail}`,
                 type: 'PUT',
                 contentType: 'application/json',
                 success: function(response) {

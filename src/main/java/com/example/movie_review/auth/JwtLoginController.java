@@ -1,29 +1,19 @@
 package com.example.movie_review.auth;
 
-import com.example.movie_review.dbMovie.*;
-import com.example.movie_review.movieDetail.ActorDetails;
-import com.example.movie_review.movieDetail.MovieDetailDTO;
-import com.example.movie_review.movieDetail.MovieDetailDTOService;
-import com.example.movie_review.review.ReviewDTO;
+import com.example.movie_review.dbMovie.MovieCache;
+import com.example.movie_review.dbMovie.MovieCacheRepository;
+import com.example.movie_review.dbMovie.MovieCacheService;
+import com.example.movie_review.dbMovie.MovieType;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Controller
 @RequiredArgsConstructor

@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/rating")
+@RequestMapping("/api/movie/rating")
 public class DbRatingController {
     private final DbRatingService dbRatingService;
 

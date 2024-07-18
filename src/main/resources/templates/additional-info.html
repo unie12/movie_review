@@ -113,7 +113,7 @@ $(document).ready(function() {
 
 <!--    사용자 데이터 가져오기-->
     $.ajax({
-        url: '/api/additional-info/' + userEmail,
+        url: '/api/user/additional-info/' + userEmail,
         type: 'GET',
         success: function(response) {
             $('#nickname').val(response.nickname);
@@ -129,7 +129,7 @@ $(document).ready(function() {
     $('#check-nickname').click(function() {
         var nickname = $('#nickname').val();
         $.ajax({
-            url: '/api/additional-info/' + userEmail + '/check-nickname',
+            url: '/api/user/additional-info/' + userEmail + '/check-nickname',
             type: 'GET',
             data: { nickname: nickname },
             success: function(response) {
@@ -146,7 +146,7 @@ $(document).ready(function() {
     $('#search-button').click(function(e) {
         var query = $('#query').val();
         $.ajax({
-            url: '/api/additional-info/' + userEmail + '/search-movies',
+            url: '/api/user/additional-info/' + userEmail + '/search-movies',
             type: 'GET',
             data: {query: query},
             dataType: 'json',
@@ -232,7 +232,7 @@ $(document).ready(function() {
 
 
         $.ajax({
-            url: '/api/additional-info/' + userEmail,
+            url: '/api/user/additional-info/' + userEmail,
             type: 'PUT',
             data: JSON.stringify(formData),
             contentType: 'application/json',
@@ -248,7 +248,7 @@ $(document).ready(function() {
 
 <!--사용자 선호 영화 리스트 가져오기-->
     $.ajax({
-        url: '/api/additional-info/' + userEmail + '/favorite-movies',
+        url: '/api/user/additional-info/' + userEmail + '/favorite-movies',
         type: 'GET',
         success: function(response) {
             var movieList = $('#favorite-movies');
@@ -262,7 +262,7 @@ $(document).ready(function() {
 
 <!--사용자 선호 장르 리스트 가져오기-->
     $.ajax({
-        url: '/api/additional-info/' + userEmail + '/favorite-genres',
+        url: '/api/user/additional-info/' + userEmail + '/favorite-genres',
         type: 'GET',
         success: function(response) {
             var genreList = $('#favorite-genres');
