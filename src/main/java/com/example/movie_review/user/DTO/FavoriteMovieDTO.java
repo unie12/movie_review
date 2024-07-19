@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -19,7 +21,10 @@ public class FavoriteMovieDTO implements UserActivityDTO{
     }
 
     @Override
-    public List<MovieCommonDTO> getMovies() {
-        return favoriteMovies;
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userCommonDTO", userCommonDTO);
+        map.put("favoriteMovies", favoriteMovies);
+        return map;
     }
 }

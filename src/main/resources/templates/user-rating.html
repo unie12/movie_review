@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <title>평점 매긴 영화</title>
+</head>
+<body>
+<div>
+    <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+    <h2>평점 매긴 영화</h2>
+
+    <style>
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+            list-style-type: none;
+            padding: 20px 40px;
+        }
+        .movie-item {
+            text-align: center;
+            width: 100%;
+        }
+        .movie-item img {
+            width: 200px;
+            height: 275px;
+            object-fit: cover;
+            cursor: pointer;
+            max-width: 100%;
+        }
+        .movie-title {
+            font-size: 0.9em;
+            margin-top: 10px;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .user-rating, .user-heart {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+
+        .rating-value, .heart-value {
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+
+        .user-rating {
+            color: #f39c12;
+            border-color: #f39c12;
+        }
+    </style>
+
+    <select id="sorting" name="sorting">
+        <!-- 정렬 옵션은 JavaScript로 동적 생성 -->
+    </select>
+
+    <div id="movie-container">
+        <div class="movie-grid">
+            <!-- 영화 목록은 JavaScript로 동적 생성 -->
+        </div>
+    </div>
+
+<!--    <div th:if="${ratingsDTO.ratings != null and !ratingsDTO.ratings.empty}">-->
+<!--        <div class="movie-grid">-->
+<!--            <div th:each="rating : ${ratingsDTO.ratings}" class="movie-item">-->
+<!--                <img th:src="'https://image.tmdb.org/t/p/w500' + ${rating.movie.poster_path}"-->
+<!--                     th:alt="${rating.movie.title}"-->
+<!--                     th:onclick="'navigateToMovieDetails(' + ${rating.movie.tId} + ')'">-->
+<!--                <span class="user-rating">평점: <span th:text="${rating.score ?: '미정'}" class="rating-value"></span></span>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div id="empty-message" style="display: none;">
+        <p>평점 매긴 영화가 없습니다.</p>
+    </div>
+
+    <a th:href="@{'/info/' + ${userEmail}}">사용자 정보로 돌아가기</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    var userEmail = /*[[${userEmail}]]*/ '';
+    var category = 'favorite'; // 현재 페이지 카테고리
+
+    function navigateToMovieDetails(movieId) {
+        console.log('navigate movie info: ', movieId);
+
+        window.location.href = '/contents/' + movieId;
+    }
+
+    $(document).ready(function() {
+        loadSortOptions();
+        loadMovies();
+
+        $('#sorting').change(function() {
+            loadMovies();
+        });
+    });
+
+    function loadSortOptions() {
+        $.ajax({
+            url: `/api/user/${userEmail}/sort-options`,
+            type: 'GET',
+            success: function(options) {
+                var select = $('#sorting');
+                select.empty();
+                options[category].forEach(function(option) {
+                    select.append($('<option>', {
+                        value: option.key,
+                        text: option.description
+                    }));
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading sort options:', error);
+            }
+        });
+    }
+
+    function loadMovies() {
+        var sortOption = $("#sorting").val();
+        $.ajax({
+            url: `/api/user/${userEmail}/activities`,
+            type: 'GET',
+            data: {
+                category: category,
+                sort: sortOption,
+                page: 0,
+                size: 20
+            },
+            success: function(response) {
+                updateMovieList(response.activityItems);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function updateMovieList(activities) {
+        var movies = activities.movies;
+        var container = $('.movie-grid');
+        container.empty();
+
+        if (movies && movies.length > 0) {
+            $('#movie-container').show();
+            $('#empty-message').hide();
+
+            movies.forEach(function(movie) {
+            console.log('movie info: ', movie);
+
+                var movieElement = $('<div>').addClass('movie-item');
+                movieElement.html(`
+                    <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
+                         alt="${movie.title}"
+                         onclick="navigateToMovieDetails(${movie.tid})">
+                    <p class="movie-title">${movie.title}</p>
+                    <button id="favoriteButton-${movie.id}"
+                            data-movie-id="${movie.id}"
+                            class="favorite active">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                `);
+                container.append(movieElement);
+            });
+
+            // 찜하기 버튼 이벤트 리스너 다시 설정
+            setFavoriteButtonListeners();
+        } else {
+            $('#movie-container').hide();
+            $('#empty-message').show();
+        }
+    }
+</script>
+</body>
+</html>

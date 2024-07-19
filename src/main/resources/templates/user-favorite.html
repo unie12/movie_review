@@ -11,25 +11,25 @@
     <h2>즐겨찾기 영화</h2>
 
     <style>
-        .movie-grid {
+        .activity-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 10px;
             list-style-type: none;
             padding: 20px 40px;
         }
-        .movie-item {
+        .activity-item {
             text-align: center;
             width: 100%;
         }
-        .movie-item img {
+        .activity-item img {
             width: 200px;
             height: 275px;
             object-fit: cover;
             cursor: pointer;
             max-width: 100%;
         }
-        .movie-title {
+        .activity-title {
             font-size: 0.9em;
             margin-top: 10px;
             max-width: 200px;
@@ -45,8 +45,8 @@
         <!-- 정렬 옵션은 JavaScript로 동적 생성 -->
     </select>
 
-    <div id="movie-container">
-        <div class="movie-grid">
+    <div id="activity-container">
+        <div class="activity-grid">
             <!-- 영화 목록은 JavaScript로 동적 생성 -->
         </div>
     </div>
@@ -71,10 +71,10 @@
 
     $(document).ready(function() {
         loadSortOptions();
-        loadMovies();
+        loadActivities();
 
         $('#sorting').change(function() {
-            loadMovies();
+            loadActivities();
         });
     });
 
@@ -98,7 +98,7 @@
         });
     }
 
-    function loadMovies() {
+    function loadActivities() {
         var sortOption = $("#sorting").val();
         $.ajax({
             url: `/api/user/${userEmail}/activities`,
@@ -110,7 +110,7 @@
                 size: 20
             },
             success: function(response) {
-                updateMovieList(response.activityItems);
+                updateActivityList(response);
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
@@ -118,45 +118,83 @@
         });
     }
 
-    function updateMovieList(movies) {
-        var container = $('.movie-grid');
+    function updateActivityList(response) {
+        var container = $('.activity-grid');
         container.empty();
 
-        if (movies && movies.length > 0) {
-            $('#movie-container').show();
+        var items;
+        switch(response.category) {
+            case 'favorite':
+                items = response.favoriteMovies;
+                break;
+<!--            case 'rating':-->
+<!--                items = response.ratings;-->
+<!--                break;-->
+<!--            case 'subscription':-->
+<!--                items = response.subscriptions;-->
+<!--                break;-->
+            // 다른 카테고리에 대한 처리 추가
+            default:
+                items = [];
+        }
+
+        if (items && items.length > 0) {
+            $('#activity-container').show();
             $('#empty-message').hide();
 
-            movies.forEach(function(movie) {
-            console.log('movie info: ', movie);
+            items.forEach(function(item) {
+                var element = createActivityElement(response.category, item);
+                container.append(element);
+            });
 
-                var movieElement = $('<div>').addClass('movie-item');
-                movieElement.html(`
-                    <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
-                         alt="${movie.title}"
-                         onclick="navigateToMovieDetails(${movie.tid})">
-                    <p class="movie-title">${movie.title}</p>
-                    <button id="favoriteButton-${movie.id}"
-                            data-movie-id="${movie.id}"
+            // 필요한 경우 추가 이벤트 리스너 설정
+            setFavoriteButtonListeners();
+
+        } else {
+            $('#activity-container').hide();
+            $('#empty-message').show();
+        }
+    }
+
+    function createActivityElement(category, item) {
+        var element = $('<div>').addClass('activity-item');
+        switch(category) {
+            case 'favorite':
+            case 'rating':
+
+                console.log('favorite item: ', item);
+
+                element.html(`
+                    <img src="https://image.tmdb.org/t/p/w500${item.poster_path}"
+                         alt="${item.title}"
+                         onclick="navigateToMovieDetails(${item.tid})">
+                    <p class="activity-title">${item.title}</p>
+                    ${category === 'rating' ? `<p class="rating">평점: ${item.score}</p>` : ''}
+                    <button id="favoriteButton-${item.id}"
+                            data-activity-id="${item.id}"
                             class="favorite active">
                         <i class="fas fa-heart"></i>
                     </button>
                 `);
-                container.append(movieElement);
-            });
 
-            // 찜하기 버튼 이벤트 리스너 다시 설정
-            setFavoriteButtonListeners();
-        } else {
-            $('#movie-container').hide();
-            $('#empty-message').show();
+                break;
+<!--            case 'subscription':-->
+<!--                element.html(`-->
+<!--                    <img src="${item.profileImage}" alt="${item.nickname}">-->
+<!--                    <p class="user-name">${item.nickname}</p>-->
+<!--                `);-->
+<!--                break;-->
+            // 다른 카테고리에 대한 처리 추가
         }
+        return element;
     }
 
     function setFavoriteButtonListeners() {
         $('.favorite').click(function() {
             var $button = $(this);
-            var movieId = $(this).data('movie-id');
+            var movieId = $(this).data('activity-id');
             var isFavorite = $(this).hasClass('active');
+            console.log('movieId, isFavorite', movieId, isFavorite);
 
             $.ajax({
                 url: '/api/movie/favorite',
@@ -166,10 +204,10 @@
                 success: function(response) {
                     if (response.success) {
                         if (!response.isFavorite) {
-                            $button.closest('.movie-item').fadeOut(function() {
+                            $button.closest('.activity-item').fadeOut(function() {
                                 $(this).remove();
-                                if ($('.movie-item').length === 0) {
-                                    $('#movie-container').hide();
+                                if ($('.activity-item').length === 0) {
+                                    $('#activity-container').hide();
                                     $('#empty-message').show();
                                 }
                             });

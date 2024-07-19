@@ -3,37 +3,30 @@ package com.example.movie_review.user.DTO;
 import com.example.movie_review.dbMovie.MovieCommonDTO;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserActivityDTOAdapter implements UserActivityDTO {
-    private final Object originalDTO;
-    public UserActivityDTOAdapter(Object dto) {
+    private final UserActivityDTO originalDTO;
+
+    public UserActivityDTOAdapter(UserActivityDTO dto) {
         this.originalDTO = dto;
     }
 
     @Override
     public UserCommonDTO getUserCommonDTO() {
-        if (originalDTO instanceof FavoriteMovieDTO) {
-            return ((FavoriteMovieDTO) originalDTO).getUserCommonDTO();
-        } else if (originalDTO instanceof RatingDTO) {
-            return ((RatingDTO) originalDTO).getUserCommonDTO();
-        }
-        throw new IllegalArgumentException("Unsupported DTO type");
+        return originalDTO.getUserCommonDTO();
     }
 
     @Override
     public List<?> getActivityItems() {
-        if (originalDTO instanceof FavoriteMovieDTO) {
-            return ((FavoriteMovieDTO) originalDTO).getFavoriteMovies();
-        } else if (originalDTO instanceof RatingDTO) {
-            return ((RatingDTO) originalDTO).getRatings();
-        }
-        throw new IllegalArgumentException("Unsupported DTO type");
+        return originalDTO.getActivityItems();
     }
 
     @Override
-    public List<MovieCommonDTO> getMovies() {
-        return null;
+    public Map<String, Object> toMap() {
+        return originalDTO.toMap();
     }
 
     public Object getOriginalDTO() {

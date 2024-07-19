@@ -36,7 +36,10 @@ public class UserActivityController {
 
         UserActivityDTO activities = service.getUserActivity(userEmail, sort, page, size);
 
-        return ResponseEntity.ok(activities);
+        Map<String, Object> response = activities.toMap();
+        response.put("category", category);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{userEmail}/sort-options")
