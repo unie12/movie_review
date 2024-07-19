@@ -99,7 +99,7 @@
         posterImg.src = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
         posterImg.alt = movie.title;
         posterImg.onclick = function() {
-            window.location.href = '/jwt-login/contents/' + movie.id;
+            window.location.href = '/contents/' + movie.id;
         };
         posterCell.appendChild(posterImg);
 
