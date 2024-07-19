@@ -12,25 +12,25 @@
     <h2>평점 매긴 영화</h2>
 
     <style>
-        .movie-grid {
+        .activity-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 10px;
             list-style-type: none;
             padding: 20px 40px;
         }
-        .movie-item {
+        .activity-item {
             text-align: center;
             width: 100%;
         }
-        .movie-item img {
+        .activity-item img {
             width: 200px;
             height: 275px;
             object-fit: cover;
             cursor: pointer;
             max-width: 100%;
         }
-        .movie-title {
+        .activity-title {
             font-size: 0.9em;
             margin-top: 10px;
             max-width: 200px;
@@ -67,22 +67,12 @@
         <!-- 정렬 옵션은 JavaScript로 동적 생성 -->
     </select>
 
-    <div id="movie-container">
-        <div class="movie-grid">
+    <div id="activity-container">
+        <div class="activity-grid">
             <!-- 영화 목록은 JavaScript로 동적 생성 -->
         </div>
     </div>
 
-<!--    <div th:if="${ratingsDTO.ratings != null and !ratingsDTO.ratings.empty}">-->
-<!--        <div class="movie-grid">-->
-<!--            <div th:each="rating : ${ratingsDTO.ratings}" class="movie-item">-->
-<!--                <img th:src="'https://image.tmdb.org/t/p/w500' + ${rating.movie.poster_path}"-->
-<!--                     th:alt="${rating.movie.title}"-->
-<!--                     th:onclick="'navigateToMovieDetails(' + ${rating.movie.tId} + ')'">-->
-<!--                <span class="user-rating">평점: <span th:text="${rating.score ?: '미정'}" class="rating-value"></span></span>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
     <div id="empty-message" style="display: none;">
         <p>평점 매긴 영화가 없습니다.</p>
     </div>
@@ -93,7 +83,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
     var userEmail = /*[[${userEmail}]]*/ '';
-    var category = 'favorite'; // 현재 페이지 카테고리
+    var category = 'rating'; // 현재 페이지 카테고리
 
     function navigateToMovieDetails(movieId) {
         console.log('navigate movie info: ', movieId);
@@ -103,10 +93,10 @@
 
     $(document).ready(function() {
         loadSortOptions();
-        loadMovies();
+        loadActivities();
 
         $('#sorting').change(function() {
-            loadMovies();
+            loadActivities();
         });
     });
 
@@ -130,7 +120,7 @@
         });
     }
 
-    function loadMovies() {
+    function loadActivities() {
         var sortOption = $("#sorting").val();
         $.ajax({
             url: `/api/user/${userEmail}/activities`,
@@ -142,7 +132,7 @@
                 size: 20
             },
             success: function(response) {
-                updateMovieList(response.activityItems);
+                updateActivityList(response);
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
@@ -150,39 +140,54 @@
         });
     }
 
-    function updateMovieList(activities) {
-        var movies = activities.movies;
-        var container = $('.movie-grid');
+    function updateActivityList(response) {
+        var container = $('.activity-grid');
         container.empty();
 
-        if (movies && movies.length > 0) {
-            $('#movie-container').show();
+        var items;
+        switch(response.category) {
+            case 'rating':
+                items = response.ratings;
+                break;
+            default:
+                items = [];
+        }
+
+        if (items && items.length > 0) {
+            $('#activity-container').show();
             $('#empty-message').hide();
 
-            movies.forEach(function(movie) {
-            console.log('movie info: ', movie);
-
-                var movieElement = $('<div>').addClass('movie-item');
-                movieElement.html(`
-                    <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
-                         alt="${movie.title}"
-                         onclick="navigateToMovieDetails(${movie.tid})">
-                    <p class="movie-title">${movie.title}</p>
-                    <button id="favoriteButton-${movie.id}"
-                            data-movie-id="${movie.id}"
-                            class="favorite active">
-                        <i class="fas fa-heart"></i>
-                    </button>
-                `);
-                container.append(movieElement);
+            items.forEach(function(item) {
+                var element = createActivityElement(response.category, item);
+                container.append(element);
             });
 
-            // 찜하기 버튼 이벤트 리스너 다시 설정
-            setFavoriteButtonListeners();
+            // 필요한 경우 추가 이벤트 리스너 설정
         } else {
-            $('#movie-container').hide();
+            $('#activity-container').hide();
             $('#empty-message').show();
         }
+    }
+
+    function createActivityElement(category, item) {
+        var element = $('<div>').addClass('activity-item');
+        switch(category) {
+            case 'rating':
+                console.log('rating item: ', item);
+
+                var scoreText = item.score !== null ? item.score : '미정';
+
+                element.html(`
+                    <img src="https://image.tmdb.org/t/p/w500${item.movie.poster_path}"
+                         alt="${item.title}"
+                         onclick="navigateToMovieDetails(${item.movie.tid})">
+                    <p class="activity-title">${item.movie.title}</p>
+                    <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
+                `);
+
+                break;
+        }
+        return element;
     }
 </script>
 </body>
