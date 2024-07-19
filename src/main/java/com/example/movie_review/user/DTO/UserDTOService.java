@@ -140,11 +140,12 @@ public class UserDTOService {
                         .poster_path(favorite.getDbMovie().getMovieDetails().getPoster_path())
                         .build())
                 .collect(Collectors.toList());
+        System.out.println("favoriteMovies.get(0).getTId() = " + favoriteMovies.get(0).getTId());
 
         FavoriteMovieDTO.FavoriteMovieDTOBuilder favoriteMovieDTOBuilder = FavoriteMovieDTO.builder()
                 .userCommonDTO(userCommonDTO)
                 .favoriteMovies(favoriteMovies);
-
+        
         return favoriteMovieDTOBuilder.build();
     }
 

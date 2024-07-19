@@ -9,7 +9,17 @@ import java.util.List;
 
 @Data
 @Builder
-public class FavoriteMovieDTO {
+public class FavoriteMovieDTO implements UserActivityDTO{
     private UserCommonDTO userCommonDTO;
     private List<MovieCommonDTO> favoriteMovies;
+
+    @Override
+    public List<?> getActivityItems() {
+        return favoriteMovies;
+    }
+
+    @Override
+    public List<MovieCommonDTO> getMovies() {
+        return favoriteMovies;
+    }
 }
