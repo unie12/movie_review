@@ -15,12 +15,12 @@
     <div class="subscription-container">
         <ul>
             <li class="li-container>">
-                <div th:each="subscription : ${userDTO.user.subscriptions}" class="user-info">
-                    <a th:href="@{'/info/' + ${subscription.subscribed.email}}">
-                        <img th:src="${subscription.subscribed.picture}" alt="User Picture" class="user-picture">
+                <div th:each="subscription : ${subscriptions.subscriptionDTOs}" class="user-info">
+                    <a th:href="@{'/info/' + ${subscription.email}}">
+                        <img th:src="${subscription.picture}" alt="User Picture" class="user-picture">
                     </a>
 
-                    <div th:text="${subscription.subscribed.nickname}">닉네임</div>
+                    <div th:text="${subscription.nickname}">닉네임</div>
                 </div>
             </li>
         </ul>

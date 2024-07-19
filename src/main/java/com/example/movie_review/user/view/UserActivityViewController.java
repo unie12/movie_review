@@ -8,9 +8,8 @@ import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.review.ReviewMovieDTO;
 import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.subscription.SubscriptionService;
+import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.User;
-import com.example.movie_review.user.DTO.UserDTO;
-import com.example.movie_review.user.DTO.UserDTOService;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -60,29 +59,43 @@ public class UserActivityViewController {
 //            throw new AccessDeniedException("You don't have permission to view this user");
 //        }
 
-        UserDTO userDTO = userDTOService.getuserDTO(userEmail);
-        model.addAttribute("userDTO", userDTO);
-
         switch (category) {
             case "favorite":
+                FavoriteMovieDTO favoriteMovieDTO = userDTOService.getUserFavoriteMoviesDTO(userEmail);
+                model.addAttribute("favoriteMoviesDTO", favoriteMovieDTO);
                 return "user-favorite-movies";
+
+            case "rating":
+                RatingDTO ratingsDTO = userDTOService.getRatingsDTO(userEmail);
+                model.addAttribute("ratingsDTO", ratingsDTO);
+                return "user-ratings";
+
             case "review":
                 List<ReviewMovieDTO> reviewMovieDTOs = reviewService.getReviewMovieDTOs(user.getReviews());
                 model.addAttribute("reviewMovieDTOs", reviewMovieDTOs);
+                model.addAttribute("userEmail", userEmail);
+
                 return "user-reviews";
-            case "rating":
-                return "user-ratings";
+
             case "heart":
                 List<Review> likedReviews = user.getHearts().stream()
                         .map(Heart::getReview)
                         .collect(Collectors.toList());
                 List<ReviewMovieDTO> heartMovieDTOs = reviewService.getReviewMovieDTOs(likedReviews);
                 model.addAttribute("heartMovieDTOs", heartMovieDTOs);
+                model.addAttribute("userEmail", userEmail);
                 return "user-hearts";
+
             case "subscription":
+                SubscriptionDTO subscriptionDTO = userDTOService.getUserSubscriptionsDTO(userEmail);
+                model.addAttribute("subscriptions", subscriptionDTO);
                 return "user-subscription";
+
             case "subscriber":
+                SubscriptionDTO subscriberDTO = userDTOService.getUserSubscribersDTO(userEmail);
+                model.addAttribute("subscribers", subscriberDTO);
                 return "user-subscriber";
+
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category");
         }

@@ -1,11 +1,10 @@
 package com.example.movie_review.user.DTO;
 
-import com.example.movie_review.user.DTO.UserDTO;
+import com.example.movie_review.dbMovie.MovieCommonDTO;
+import com.example.movie_review.dbRating.DbRatingDTO;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
@@ -18,16 +17,56 @@ import java.util.stream.Collectors;
 public class UserDTOService {
     private final UserService userService;
 
-    public UserCommonDTO getUserCommonDTO(Authentication auth) {
-        String email = auth.getName();
+    public UserCommonDTO getUserCommonDTO(String email) {
         User user = userService.getUserByEmail(email);
 
         UserCommonDTO.UserCommonDTOBuilder userCommonDTo = UserCommonDTO.builder()
+                .id(user.getId())
                 .email(email)
                 .nickname(user.getNickname())
                 .picture(user.getPicture());
 
         return userCommonDTo.build();
+    }
+
+    public SubscriptionDTO getUserSubscribersDTO(String email) {
+        User user = userService.getUserByEmail(email);
+        UserCommonDTO userCommonDTO = getUserCommonDTO(email);
+
+        List<UserCommonDTO> subscribers = user.getSubscribers().stream()
+                .map(sub -> UserCommonDTO.builder()
+                        .id(sub.getSubscriber().getId())
+                        .email(sub.getSubscriber().getEmail())
+                        .nickname(sub.getSubscriber().getNickname())
+                        .picture(sub.getSubscriber().getPicture())
+                        .build())
+                .collect(Collectors.toList());
+
+        SubscriptionDTO.SubscriptionDTOBuilder subscriptionDTOBuilder = SubscriptionDTO.builder()
+                .userCommonDTO(userCommonDTO)
+                .subscriptionDTOs(subscribers);
+
+        return subscriptionDTOBuilder.build();
+    }
+
+    public SubscriptionDTO getUserSubscriptionsDTO(String email) {
+        User user = userService.getUserByEmail(email);
+        UserCommonDTO userCommonDTO = getUserCommonDTO(email);
+
+        List<UserCommonDTO> subscriptions = user.getSubscriptions().stream()
+                .map(sub -> UserCommonDTO.builder()
+                        .id(sub.getSubscribed().getId())
+                        .email(sub.getSubscribed().getEmail())
+                        .nickname(sub.getSubscribed().getNickname())
+                        .picture(sub.getSubscribed().getPicture())
+                        .build())
+                .collect(Collectors.toList());
+
+        SubscriptionDTO.SubscriptionDTOBuilder subscriptionDTOBuilder = SubscriptionDTO.builder()
+                .userCommonDTO(userCommonDTO)
+                .subscriptionDTOs(subscriptions);
+
+        return subscriptionDTOBuilder.build();
     }
 
     public UserDTO getuserDTO(String userEmail) throws AccessDeniedException {
@@ -42,45 +81,94 @@ public class UserDTOService {
                 .map(heart -> heart.getReview().getId())
                 .collect(Collectors.toSet());
 
+        UserCommonDTO userCommonDTO = UserCommonDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .picture(user.getPicture())
+                .build();
+
+        List<MovieCommonDTO> favoriteMovies = user.getUserFavoriteMovies().stream()
+                .map(favorite -> MovieCommonDTO.builder()
+                        .id(favorite.getDbMovie().getId())
+                        .tId(favorite.getDbMovie().getMovieDetails().getTId())
+                        .title(favorite.getDbMovie().getMovieDetails().getTitle())
+                        .poster_path(favorite.getDbMovie().getMovieDetails().getPoster_path())
+                        .build())
+                .collect(Collectors.toList());
+
+        List<DbRatingDTO> ratings = user.getDbRatings().stream()
+                .map(dbRating -> DbRatingDTO.builder()
+                        .id(dbRating.getId())
+                        .movie(MovieCommonDTO.builder()
+                                .id(dbRating.getDbMovies().getId())
+                                .tId(dbRating.getDbMovies().getMovieDetails().getTId())
+                                .title(dbRating.getDbMovies().getMovieDetails().getTitle())
+                                .poster_path(dbRating.getDbMovies().getMovieDetails().getPoster_path())
+                                .build())
+                        .score(dbRating.getScore())
+                        .build())
+                .collect(Collectors.toList());
+
         UserDTO.UserDTOBuilder userDTO = UserDTO.builder()
                 .id(user.getId())
-                .user(user)
+//                .user(user)
                 .favoriteCnt(user.getFavoriteCount())
                 .reviewCnt(user.getReviewCount())
                 .ratingCnt(user.getRatingCount())
                 .heartCnt(user.getHeartCount())
                 .likedReviewIds(likedReviewIds)
                 .subscriptionCnt(user.getSubscriptionCount())
-                .subscriberCnt(user.getSubscriberCount());
+                .subscriberCnt(user.getSubscriberCount())
+                .userCommonDTO(userCommonDTO)
+                .favoriteMovies(favoriteMovies)
+                .ratings(ratings);
 
         return userDTO.build();
     }
 
-    public List<UserDTO> getSubscribers(String userEmail) {
-        User user = userService.getUserByEmail(userEmail);
-        return user.getSubscribers().stream()
-                .map(subscription -> {
-                    try {
-                        return getuserDTO(subscription.getSubscriber().getEmail());
-                    } catch (AccessDeniedException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+
+    public FavoriteMovieDTO getUserFavoriteMoviesDTO(String email) {
+        User user = userService.getUserByEmail(email);
+        UserCommonDTO userCommonDTO = getUserCommonDTO(email);
+
+        List<MovieCommonDTO> favoriteMovies = user.getUserFavoriteMovies().stream()
+                .map(favorite -> MovieCommonDTO.builder()
+                        .id(favorite.getDbMovie().getId())
+                        .tId(favorite.getDbMovie().getMovieDetails().getTId())
+                        .title(favorite.getDbMovie().getMovieDetails().getTitle())
+                        .poster_path(favorite.getDbMovie().getMovieDetails().getPoster_path())
+                        .build())
                 .collect(Collectors.toList());
+
+        FavoriteMovieDTO.FavoriteMovieDTOBuilder favoriteMovieDTOBuilder = FavoriteMovieDTO.builder()
+                .userCommonDTO(userCommonDTO)
+                .favoriteMovies(favoriteMovies);
+
+        return favoriteMovieDTOBuilder.build();
     }
 
+    public RatingDTO getRatingsDTO(String email) {
+        User user = userService.getUserByEmail(email);
+        UserCommonDTO userCommonDTO = getUserCommonDTO(email);
 
-    public List<UserDTO> getSubscriptions(String userEmail) {
-        User user = userService.getUserByEmail(userEmail);
-
-        return user.getSubscriptions().stream()
-                .map(subscription -> {
-                    try {
-                        return getuserDTO(subscription.getSubscribed().getEmail());
-                    } catch (AccessDeniedException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+        List<DbRatingDTO> ratings = user.getDbRatings().stream()
+                .map(rating -> DbRatingDTO.builder()
+                        .id(rating.getId())
+                        .movie(MovieCommonDTO.builder()
+                                .id(rating.getDbMovies().getId())
+                                .tId(rating.getDbMovies().getMovieDetails().getTId())
+                                .title(rating.getDbMovies().getMovieDetails().getTitle())
+                                .poster_path(rating.getDbMovies().getMovieDetails().getPoster_path())
+                                .build())
+                        .score(rating.getScore())
+                        .build())
                 .collect(Collectors.toList());
+
+        RatingDTO.RatingDTOBuilder ratingDTOBuilder = RatingDTO.builder()
+                .userCommonDTO(userCommonDTO)
+                .ratings(ratings);
+
+        return ratingDTOBuilder.build();
     }
 }

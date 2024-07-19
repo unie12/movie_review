@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class MovieCommonDTO {
     private Long id;
-    private Long tId;
+    private Integer tId;
     private String title;
     private String poster_path;
 }

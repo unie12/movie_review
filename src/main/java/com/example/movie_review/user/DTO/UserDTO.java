@@ -1,11 +1,13 @@
 package com.example.movie_review.user.DTO;
 
+import com.example.movie_review.dbMovie.MovieCommonDTO;
+import com.example.movie_review.dbRating.DbRatingDTO;
 import com.example.movie_review.user.User;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -24,6 +26,10 @@ public class UserDTO {
     private int subscriptionCnt;
     private int subscriberCnt;
 
-    private User user;
+    private UserCommonDTO userCommonDTO;
+    private List<MovieCommonDTO> favoriteMovies;
+    private List<DbRatingDTO> ratings;
+
+//    private User user;
 
 }

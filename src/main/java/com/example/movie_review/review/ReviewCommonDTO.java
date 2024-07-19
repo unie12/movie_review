@@ -1,6 +1,5 @@
 package com.example.movie_review.review;
 
-import com.example.movie_review.dbMovie.MovieCommonDTO;
 import lombok.Builder;
 import lombok.Data;
 

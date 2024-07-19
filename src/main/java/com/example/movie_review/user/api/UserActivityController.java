@@ -19,7 +19,6 @@ public class UserActivityController {
 //            @PathVariable String userEmail,
 //            @RequestParam(defaultValue = "favorite_date_desc") String sort) {
 //
-//        List<FavoriteMovieDTO> sortedMovies = userService.getSortedFavoriteMovies(userEmail, sort);
-//        return ResponseEntity.ok(sortedMovies);
+//
 //    }
 }

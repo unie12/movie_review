@@ -56,16 +56,16 @@
         <option value="rating_desc">별점 높은순</option>
     </select>
 
-    <div th:if="${userDTO.user.userFavoriteMovies != null and !userDTO.user.userFavoriteMovies.empty}">
+    <div th:if="${favoriteMoviesDTO.favoriteMovies != null and !favoriteMoviesDTO.favoriteMovies.empty}">
         <div class="movie-grid">
-            <div th:each="movie : ${userDTO.user.userFavoriteMovies}" class="movie-item">
-                <img th:src="'https://image.tmdb.org/t/p/w500' + ${movie.dbMovie.movieDetails.poster_path}"
-                     th:alt="${movie.dbMovie.movieDetails.title}"
-                     th:onclick="'navigateToMovieDetails(' + ${movie.dbMovie.movieDetails.tId} + ')'">
-                <p class="movie-title" th:text="${movie.dbMovie.movieDetails.title}"></p>
+            <div th:each="movie : ${favoriteMoviesDTO.favoriteMovies}" class="movie-item">
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${movie.poster_path}"
+                     th:alt="${movie.title}"
+                     th:onclick="'navigateToMovieDetails(' + ${movie.tId} + ')'">
+                <p class="movie-title" th:text="${movie.title}"></p>
 
-                <button th:id="'favoriteButton-' + ${movie.dbMovie.id}"
-                        th:attr="data-movie-id=${movie.dbMovie.id}"
+                <button th:id="'favoriteButton-' + ${movie.id}"
+                        th:attr="data-movie-id=${movie.id}"
                         class="favorite active">
                     <i class="fas fa-heart"></i>
                 </button>
@@ -73,16 +73,16 @@
             </div>
         </div>
     </div>
-    <div th:if="${userDTO.user.userFavoriteMovies == null or userDTO.user.userFavoriteMovies.empty}">
+    <div th:if="${favoriteMoviesDTO.favoriteMovies  == null or favoriteMoviesDTO.favoriteMovies.empty}">
         <p>즐겨찾기한 영화가 없습니다.</p>
     </div>
 
-    <a th:href="@{'/info/' + ${userDTO.user.email}}">사용자 정보로 돌아가기</a>
+    <a th:href="@{'/info/' + ${favoriteMoviesDTO.userCommonDTO.email}}">사용자 정보로 돌아가기</a>
 </div>
 
 <script th:inline="javascript">
     function navigateToMovieDetails(movieId) {
-        window.location.href = '/jwt-login/contents/' + movieId;
+        window.location.href = '/contents/' + movieId;
     }
 </script>
 </body>
@@ -128,7 +128,7 @@
 
         function sortMovies() {
             var sortOption = $("#sorting").val();
-            var userEmail = /*[[${userDTO.user.email}]]*/ '';
+            var userEmail = /*[[${favoriteMoviesDTO.userCommonDTO.email}]]*/ '';
 
             $.ajax({
                 url: `/api/user/${userEmail}/favorite-movies`,

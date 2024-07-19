@@ -130,6 +130,8 @@ public class ReviewService {
                     .title(movieDetails.getTitle())
                     .poster_path(movieDetails.getPoster_path())
                     .original_title(movieDetails.getOriginal_title())
+                    .isLikedByCurrentUser(review.getHearts().stream()
+                            .anyMatch(heart -> heart.getUser().getEmail().equals(user.getEmail())))
                     .build();
         }).collect(Collectors.toList());
     }

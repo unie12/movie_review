@@ -10,19 +10,19 @@
 <div>
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 
-    <img th:src="${userDTO.user.picture}" alt="User Picture" class="user-picture">
-    <span th:text="${userDTO.user.nickname}" class="user-nickname"></span>
-    <button th:if="${#authentication.name != userDTO.user.email}"
+    <img th:src="${userDTO.userCommonDTO.picture}" alt="User Picture" class="user-picture">
+    <span th:text="${userDTO.userCommonDTO.nickname}" class="user-nickname"></span>
+    <button th:if="${#authentication.name != userDTO.userCommonDTO.email}"
             id="subscription"
             th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"
             th:text="${isSubscribed ? '구독 취소' : '구독'}"></button>
 
     <br>
     <div>
-        <a th:href="@{'/info/' + ${userDTO.user.email} + '/subscription'}">
+        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscription'}">
             <span th:text="'내가 구독한 사용자 ' +${userDTO.subscriptionCnt}"></span>
         </a>
-        <a th:href="@{'/info/' + ${userDTO.user.email} + '/subscriber'}">
+        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscriber'}">
             <span th:text="'나를 구독한 사용자 ' + ${userDTO.subscriberCnt}"></span>
         </a>
     </div>
@@ -32,25 +32,25 @@
 
     <div>
         <h3 th:text="'즐겨찾기 영화 (' + ${userDTO.favoriteCnt} + '개)'"></h3>
-        <a th:href="@{'/info/' + ${userDTO.user.email} + '/favorite'}">즐겨찾기 영화 보기</a>
+        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/favorite'}">즐겨찾기 영화 보기</a>
     </div>
     <br>
 
     <div>
         <h3 th:text="'리뷰 작성한 영화 (' + ${userDTO.reviewCnt} + '개)'"></h3>
-        <a th:href="@{'/info/' + ${userDTO.user.email} + '/review'}">리뷰 작성한 영화 보기</a>
+        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/review'}">리뷰 작성한 영화 보기</a>
     </div>
     <br>
 
     <div>
         <h3 th:text="'평점 매긴 영화 (' + ${userDTO.ratingCnt} + '개)'"></h3>
-        <a th:href="@{'/info/' + ${userDTO.user.email} + '/rating'}">평점 매긴 보기</a>
+        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/rating'}">평점 매긴 보기</a>
     </div>
     <br>
 
     <div>
         <h3 th:text="'좋아요 누른 리뷰 (' + ${userDTO.heartCnt} + '개)'"></h3>
-        <a th:href="@{'/info/' + ${userDTO.user.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
+        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
     </div>
     <br>
 
@@ -62,7 +62,7 @@
 <script>
     $(document).ready(function() {
         const subscriptionBtn = $('#subscription');
-        const userEmail = '[[${userDTO.user.email}]]';
+        const userEmail = '[[${userDTO.userCommonDTO.email}]]';
         const currentUserEmail = '[[${#authentication.name}]]';
 
         if( userEmail !== currentUserEmail) {

@@ -37,6 +37,7 @@ public class MovieDetailDTOService {
                 .map(review -> {
                     User user = review.getUser();
                     UserCommonDTO userCommonDTO = UserCommonDTO.builder()
+                            .id(user.getId())
                             .email(user.getEmail())
                             .nickname(user.getNickname())
                             .picture(user.getPicture())

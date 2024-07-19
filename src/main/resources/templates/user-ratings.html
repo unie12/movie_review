@@ -63,29 +63,26 @@
         }
     </style>
 
-    <div th:if="${userDTO.user.dbRatings != null and !userDTO.user.dbRatings.empty}">
+    <div th:if="${ratingsDTO.ratings != null and !ratingsDTO.ratings.empty}">
         <div class="movie-grid">
-            <div th:each="dbRating : ${userDTO.user.dbRatings}" class="movie-item">
-                <img th:src="'https://image.tmdb.org/t/p/w500' + ${dbRating.dbMovies.movieDetails.poster_path}"
-                     th:alt="${dbRating.dbMovies.movieDetails.title}"
-                     th:onclick="'navigateToMovieDetails(' + ${dbRating.dbMovies.movieDetails.tId} + ')'">
-<!--                <p class="movie-rating" th:text="${dbRating.score}"></p>-->
-                <span class="user-rating">평점: <span th:text="${dbRating.score ?: '미정'}" class="rating-value"></span></span>
-
-
+            <div th:each="rating : ${ratingsDTO.ratings}" class="movie-item">
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${rating.movie.poster_path}"
+                     th:alt="${rating.movie.title}"
+                     th:onclick="'navigateToMovieDetails(' + ${rating.movie.tId} + ')'">
+                <span class="user-rating">평점: <span th:text="${rating.score ?: '미정'}" class="rating-value"></span></span>
             </div>
         </div>
     </div>
-    <div th:if="${userDTO.user.dbRatings == null or userDTO.user.dbRatings.empty}">
+    <div th:if="${ratingsDTO.ratings == null or ratingsDTO.ratings.empty}">
         <p>평점 매긴 영화가 없습니다.</p>
     </div>
 
-    <a th:href="@{'/info/' + ${userDTO.user.email}}">사용자 정보로 돌아가기</a>
+    <a th:href="@{'/info/' + ${ratingsDTO.userCommonDTO.email}}">사용자 정보로 돌아가기</a>
 </div>
 
 <script th:inline="javascript">
     function navigateToMovieDetails(movieId) {
-        window.location.href = '/jwt-login/contents/' + movieId;
+        window.location.href = '/contents/' + movieId;
     }
 </script>
 </body>
