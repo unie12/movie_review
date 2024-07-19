@@ -1,8 +1,11 @@
 package com.example.movie_review.user.view;
 
+import com.example.movie_review.dbMovie.MovieCommonDTO;
 import com.example.movie_review.heart.Heart;
+import com.example.movie_review.movieDetail.MovieDetailDTO;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.ReviewDTO;
+import com.example.movie_review.review.ReviewMovieDTO;
 import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.subscription.SubscriptionService;
 import com.example.movie_review.user.User;
@@ -64,17 +67,17 @@ public class UserActivityViewController {
             case "favorite":
                 return "user-favorite-movies";
             case "review":
-                List<Review> reviews = user.getReviews();
-                List<ReviewDTO> reviewDTOS = reviewService.getReviewDTOs(reviews);
-                model.addAttribute("reviewDTOs", reviewDTOS);
+                List<ReviewMovieDTO> reviewMovieDTOs = reviewService.getReviewMovieDTOs(user.getReviews());
+                model.addAttribute("reviewMovieDTOs", reviewMovieDTOs);
                 return "user-reviews";
             case "rating":
                 return "user-ratings";
             case "heart":
-                List<Heart> hearts = user.getHearts();
-                List<ReviewDTO> heartReviewDTOs = reviewService.getReviewDTOs(
-                        hearts.stream().map(Heart::getReview).collect(Collectors.toList()));
-                model.addAttribute("heartReviewDTOs", heartReviewDTOs);
+                List<Review> likedReviews = user.getHearts().stream()
+                        .map(Heart::getReview)
+                        .collect(Collectors.toList());
+                List<ReviewMovieDTO> heartMovieDTOs = reviewService.getReviewMovieDTOs(likedReviews);
+                model.addAttribute("heartMovieDTOs", heartMovieDTOs);
                 return "user-hearts";
             case "subscription":
                 return "user-subscription";

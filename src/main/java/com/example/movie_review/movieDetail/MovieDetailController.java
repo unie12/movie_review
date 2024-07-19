@@ -2,8 +2,11 @@ package com.example.movie_review.movieDetail;
 
 import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.tmdb.TmdbService;
+import com.example.movie_review.user.DTO.UserCommonDTO;
+import com.example.movie_review.user.DTO.UserDTOService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -22,6 +25,7 @@ public class MovieDetailController {
 
     private final MovieDetailDTOService movieDetailDTOService;
     private final TmdbService tmdbService;
+    private final UserDTOService userDTOService;
 
     private final ObjectMapper objectMapper;
     /**
@@ -31,7 +35,7 @@ public class MovieDetailController {
      * 존재하면 db에 있는 거 그대로 반환
      */
     @GetMapping("/contents/{movieId}")
-    public String movieDetail(@PathVariable Long movieId, Model model, @AuthenticationPrincipal OAuth2User principal) {
+    public String movieDetail(@PathVariable Long movieId, Model model, Authentication principal) {
         try {
             MovieDetailDTO movieDetailDTO = movieDetailDTOService.getMovieDetailDTO(movieId, principal);
             List<ReviewDTO> sortedReviews = movieDetailDTO.getReviews().stream()

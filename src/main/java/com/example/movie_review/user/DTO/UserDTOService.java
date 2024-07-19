@@ -4,6 +4,8 @@ import com.example.movie_review.user.DTO.UserDTO;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
@@ -15,6 +17,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserDTOService {
     private final UserService userService;
+
+    public UserCommonDTO getUserCommonDTO(Authentication auth) {
+        String email = auth.getName();
+        User user = userService.getUserByEmail(email);
+
+        UserCommonDTO.UserCommonDTOBuilder userCommonDTo = UserCommonDTO.builder()
+                .email(email)
+                .nickname(user.getNickname())
+                .picture(user.getPicture());
+
+        return userCommonDTo.build();
+    }
 
     public UserDTO getuserDTO(String userEmail) throws AccessDeniedException {
         User user = userService.getUserByEmail(userEmail);

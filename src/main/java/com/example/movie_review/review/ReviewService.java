@@ -5,6 +5,8 @@ import com.example.movie_review.dbMovie.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.dbRating.DbRatings;
+import com.example.movie_review.movieDetail.MovieDetails;
+import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserRepository;
 import com.example.movie_review.user.UserService;
@@ -92,7 +94,43 @@ public class ReviewService {
             Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
                     .map(DbRatings::getScore)
                     .orElse(null);
-            return new ReviewDTO(review, userRating);
+            UserCommonDTO userCommonDTO = UserCommonDTO.builder()
+                    .email(review.getUser().getEmail())
+                    .nickname(review.getUser().getNickname())
+                    .picture(review.getUser().getPicture())
+                    .build();
+            ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
+                    .id(review.getId())
+                    .text(review.getContext())
+                    .build();
+            return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO);
+        }).collect(Collectors.toList());
+    }
+
+    public List<ReviewMovieDTO> getReviewMovieDTOs(List<Review> reviews) {
+        return reviews.stream().map(review -> {
+            User user = review.getUser();
+            DbMovies dbMovie = review.getDbMovies();
+            MovieDetails movieDetails = dbMovie.getMovieDetails();
+
+            Double userRating = dbRatingService.getDbRating(user.getEmail(), movieDetails.getId())
+                    .map(DbRatings::getScore)
+                    .orElse(null);
+
+            return ReviewMovieDTO.builder()
+                    .id(review.getId())
+                    .context(review.getContext())
+                    .userRating(userRating)
+                    .heartCount(review.getHeartCount())
+                    .email(user.getEmail())
+                    .nickname(user.getNickname())
+                    .userPicture(user.getPicture())
+                    .movieId(dbMovie.getId())
+                    .tId(movieDetails.getTId())
+                    .title(movieDetails.getTitle())
+                    .poster_path(movieDetails.getPoster_path())
+                    .original_title(movieDetails.getOriginal_title())
+                    .build();
         }).collect(Collectors.toList());
     }
 

@@ -99,14 +99,14 @@
                     <div th:each="reviewDTO : ${sortedReviews}" class="review-card">
 
                         <div class="user-info">
-                            <a th:href="@{'/info/' + ${reviewDTO.review.user.email}}">
-                                <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
+                            <a th:href="@{'/info/' + ${reviewDTO.user.email}}">
+                                <img th:src="${reviewDTO.user.picture}" alt="User Picture" class="user-picture">
                             </a>
 
-                            <span th:text="${reviewDTO.review.user.nickname}" class="user-nickname"></span>
+                            <span th:text="${reviewDTO.user.nickname}" class="user-nickname"></span>
                             <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
                         </div>
-                        <p th:text="${#strings.abbreviate(reviewDTO.review.context, 100)}" class="review-content"></p>
+                        <p th:text="${#strings.abbreviate(reviewDTO.review.text, 100)}" class="review-content"></p>
 
                         <div class="review-actions">
                             <button class="like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${movieDTO.userHearts.contains(reviewDTO.review.id)} ? 'active' : ''">

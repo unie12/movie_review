@@ -1,17 +1,22 @@
 package com.example.movie_review.review;
 
+import com.example.movie_review.user.DTO.UserCommonDTO;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
+@Builder
 public class ReviewDTO {
-    private Review review;
     private Double userRating;
     private int heartCnt;
+    private UserCommonDTO user;
+    private ReviewCommonDTO review;
 
-    public ReviewDTO(Review review, Double userRating) {
-        this.review = review;
+    public ReviewDTO(Double userRating, int heartCnt, UserCommonDTO user, ReviewCommonDTO review) {
         this.userRating = userRating;
-        this.heartCnt = review.getHeartCount();
+        this.heartCnt = heartCnt;
+        this.user = user;
+        this.review = review;
     }
 }

@@ -123,29 +123,29 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
     <h2>리뷰 남긴 영화</h2>
 
-    <div th:if="${reviewDTOs != null and !reviewDTOs.empty}" class="review-grid">
-        <div th:each="reviewDTO : ${reviewDTOs}" class="review-card">
+    <div th:if="${reviewMovieDTOs != null and !reviewMovieDTOs.empty}" class="review-grid">
+        <div th:each="reviewDTO : ${reviewMovieDTOs}" class="review-card">
             <div class="poster-container">
-                <img th:src="'https://image.tmdb.org/t/p/w500' + ${reviewDTO.review.dbMovies.movieDetails.poster_path}"
-                     th:alt="${reviewDTO.review.dbMovies.movieDetails.title}"
-                     th:onclick="'navigateToMovieDetails(' + ${reviewDTO.review.dbMovies.movieDetails.tId} + ')'">
-                <p class="movie-title" th:text="${reviewDTO.review.dbMovies.movieDetails.title}"></p>
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${reviewDTO.poster_path}"
+                     th:alt="${reviewDTO.title}"
+                     th:onclick="'navigateToMovieDetails(' + ${reviewDTO.tId} + ')'">
+                <p class="movie-title" th:text="${reviewDTO.title}"></p>
             </div>
             <div class="review-content">
                 <div class="user-info">
-                    <img th:src="${reviewDTO.review.user.picture}" alt="User Picture" class="user-picture">
-                    <span th:text="${reviewDTO.review.user.nickname}" class="user-nickname"></span>
+                    <img th:src="${reviewDTO.userPicture}" alt="User Picture" class="user-picture">
+                    <span th:text="${reviewDTO.nickname}" class="user-nickname"></span>
                     <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}" class="rating-value"></span></span>
 <!--                    <span class="user-heart">좋아요 수: <span th:text="${reviewDTO.heartCnt ?: '0'}" class="heart-value"></span></span>-->
-                    <span class="user-heart like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${userDTO.likedReviewIds.contains(reviewDTO.review.id)} ? 'active' : ''">
-                        좋아요: <span th:text="${reviewDTO.heartCnt ?: '0'}" class="heart-value like-count"></span>
+                    <span class="user-heart like-button" th:attr="data-review-id=${reviewDTO.id}" th:classappend="${userDTO.likedReviewIds.contains(reviewDTO.id)} ? 'active' : ''">
+                        좋아요: <span th:text="${reviewDTO.heartCount ?: '0'}" class="heart-value like-count"></span>
                     </span>
                 </div>
-                <p class="review-text" th:text="${reviewDTO.review.context}"></p>
+                <p class="review-text" th:text="${reviewDTO.context}"></p>
             </div>
         </div>
     </div>
-    <div th:if="${reviewDTOs == null or reviewDTOs.empty}">
+    <div th:if="${reviewMovieDTOs == null or reviewMovieDTOs.empty}">
         <p>리뷰를 남긴 영화가 없습니다.</p>
     </div>
 

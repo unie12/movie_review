@@ -1,16 +1,10 @@
 package com.example.movie_review.user.api;
 
-import com.example.movie_review.movieDetail.MovieDTO;
-import com.example.movie_review.movieDetail.MovieDetailDTO;
 import com.example.movie_review.movieDetail.MovieDetailDTOService;
-import com.example.movie_review.user.DTO.FavoriteMovieDTO;
 import com.example.movie_review.user.UserService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
