@@ -4,30 +4,130 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <title>구독자</title>
+
+    <style>
+        .subscription-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .user-info {
+            text-align: center;
+            width: 120px;
+        }
+        .user-picture {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
 </head>
 
 
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
-    <h2>구독자 리스트</h2>
+    <h2>나를 구독한 사람 리스트</h2>
 
-    <div class="subscription-container">
-        <ul>
-            <li class="li-container>">
-                <div th:each="subscription : ${subscribers.subscriptionDTOs}" class="user-info">
-                    <a th:href="@{'/info/' + ${subscription.email}}">
-                        <img th:src="${subscription.picture}" alt="User Picture" class="user-picture">
-                    </a>
-
-                    <div th:text="${subscription.nickname}">닉네임</div>
-                </div>
-            </li>
-        </ul>
-
+    <div id="sorting-container">
+        <select id="sorting"></select>
     </div>
 
+    <div id="subscription-container" class="subscription-container">
+        <!-- 여기에 구독자 리스트가 동적으로 추가됩니다 -->
+    </div>
 
+    <div id="empty-message" style="display: none;">나를 구독한 사람이 없습니다.</div>
+
+
+    <a th:href="@{'/info/' + ${userEmail}}">사용자 정보로 돌아가기</a>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    var userEmail = /*[[${userEmail}]]*/ '';
+    var category = 'subscriber'; // 현재 페이지 카테고리
+
+    $(document).ready(function() {
+        loadSortOptions();
+        loadActivities();
+
+        $('#sorting').change(function() {
+            loadActivities();
+        });
+    });
+
+    function loadSortOptions() {
+        $.ajax({
+            url: `/api/user/${userEmail}/sort-options`,
+            type: 'GET',
+            success: function(options) {
+                var select = $('#sorting');
+                select.empty();
+                options[category].forEach(function(option) {
+                    select.append($('<option>', {
+                        value: option.key,
+                        text: option.description
+                    }));
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading sort options:', error);
+            }
+        });
+    }
+
+    function loadActivities() {
+        var sortOption = $("#sorting").val();
+        $.ajax({
+            url: `/api/user/${userEmail}/activities`,
+            type: 'GET',
+            data: {
+                category: category,
+                sort: sortOption,
+                page: 0,
+                size: 20
+            },
+            success: function(response) {
+                updateActivityList(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function updateActivityList(response) {
+        var container = $('#subscription-container');
+        container.empty();
+
+        var items = response.subscriptionDTOs || [];
+
+        if (items && items.length > 0) {
+            $('#subscription-container').show();
+            $('#empty-message').hide();
+
+            items.forEach(function(item) {
+                var element = createActivityElement(item);
+                container.append(element);
+            });
+
+        } else {
+            $('#subscription-container').hide();
+            $('#empty-message').show();
+        }
+    }
+
+    function createActivityElement(item) {
+        return $('<div>').addClass('user-info').html(`
+            <a href="/info/${item.email}">
+                <img src="${item.picture}" alt="${item.nickname}" class="user-picture">
+            </a>
+            <p class="user-name">${item.nickname}</p>
+        `);
+    }
+</script>
+
 </body>
 </html>
