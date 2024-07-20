@@ -14,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("review")
 @RequiredArgsConstructor
@@ -29,21 +31,40 @@ public class ReviewService implements UserActivityService {
         List<ReviewMovieDTO> reviewMovieDTOS = reviewService.getReviewMovieDTOs(user.getReviews());
         UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
 
+        List<ReviewMovieDTO> sortedReviews = sortReview(reviewMovieDTOS, sort);
+
         ReviewListDTO dto = ReviewListDTO.builder()
                 .userCommonDTO(userCommonDTO)
-                .reviews(reviewMovieDTOS)
+                .reviews(sortedReviews)
                 .build();
 
+
         return new UserActivityDTOAdapter(dto);
+    }
+
+    private List<ReviewMovieDTO> sortReview(List<ReviewMovieDTO> reviewMovieDTOS, String sort) {
+        switch (sort) {
+            case "release_date_desc":
+                return reviewMovieDTOS.stream()
+                        .sorted((a, b) -> b.getMovieCommonDTO().getRelease_date().compareTo(a.getMovieCommonDTO().getRelease_date()))
+                        .collect(Collectors.toList());
+            case "release_date_asc":
+                return reviewMovieDTOS.stream()
+                        .sorted(Comparator.comparing(r -> r.getMovieCommonDTO().getRelease_date()))
+                        .collect(Collectors.toList());
+            default:
+                return reviewMovieDTOS;
+        }
     }
 
     @Override
     public List<SortOption> getSortOptions() {
         return Arrays.asList(
-                new SortOption("review_date_desc", "리뷰 최근 작성순"),
-                new SortOption("review_date_asc", "리뷰 과거 작성순"),
                 new SortOption("release_date_desc", "개봉일 최신순"),
-                new SortOption("release_date_asc", "개봉일 과거순")
+                new SortOption("release_date_asc", "개봉일 과거순"),
+                new SortOption("review_date_desc", "리뷰 최근 작성순"),
+                new SortOption("review_date_asc", "리뷰 과거 작성순")
+
         );
     }
 }

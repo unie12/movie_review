@@ -15,8 +15,8 @@ import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +38,8 @@ public class HeartService implements UserActivityService {
         List<ReviewMovieDTO> reviewMovieDTOS = reviewService.getReviewMovieDTOs(likedReviews);
         UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
 
-        List<ReviewMovieDTO> sortedReviews = (List<ReviewMovieDTO>) sortActivityItems(reviewMovieDTOS, sort);
+        // 정렬 type에 맞춰서 정렬
+        List<ReviewMovieDTO> sortedReviews = sortHeart(reviewMovieDTOS, sort);
 
         ReviewListDTO dto = ReviewListDTO.builder()
                 .userCommonDTO(userCommonDTO)
@@ -48,15 +49,36 @@ public class HeartService implements UserActivityService {
         return new UserActivityDTOAdapter(dto);
     }
 
+    private List<ReviewMovieDTO> sortHeart(List<ReviewMovieDTO> reviewMovieDTOS, String sort) {
+        switch (sort) {
+            case "release_date_desc":
+                return reviewMovieDTOS.stream()
+                        .sorted((a, b) -> b.getMovieCommonDTO().getRelease_date().compareTo(a.getMovieCommonDTO().getRelease_date()))
+                        .collect(Collectors.toList());
+            case "release_date_asc":
+                return reviewMovieDTOS.stream()
+                        .sorted(Comparator.comparing(r -> r.getMovieCommonDTO().getRelease_date()))
+                        .collect(Collectors.toList());
+//            case "favorite_date_desc":
+//                return reviewMovieDTOS.stream()
+//                        .sorted((a, b) -> b.getReviewDTO().getCreatedAt().compareTo(a.getReviewDTO().getCreatedAt()))
+//                        .collect(Collectors.toList());
+//            case "favorite_date_asc":
+//                return reviewMovieDTOS.stream()
+//                        .sorted(Comparator.comparing(r -> r.getReviewDTO().getCreatedAt()))
+//                        .collect(Collectors.toList());
+            default:
+                return reviewMovieDTOS;
+        }
+    }
+
     @Override
     public List<SortOption> getSortOptions() {
-        List<SortOption> options = new ArrayList<>(getCommonSortOptions());
-        options.addAll(Arrays.asList(
-                new SortOption("heart_date_desc", "리뷰 좋아요 최근"),
-                new SortOption("heart_date_asc", "리뷰 좋아요 과거")
-        ));
-
-        return options;
-    }
+        return Arrays.asList(
+                new SortOption("release_date_desc", "개봉 최근"),
+                new SortOption("release_date_asc", "개봉 과거"),
+                new SortOption("favorite_date_desc", "리뷰 좋아요 최근"),
+                new SortOption("favorite_date_asc", "리뷰 좋아요 과거")
+        );    }
 }
 
