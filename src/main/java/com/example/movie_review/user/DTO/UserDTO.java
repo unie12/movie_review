@@ -22,14 +22,11 @@ public class UserDTO {
     private int reviewCnt;
     private int ratingCnt;
     private int heartCnt;
-
     private int subscriptionCnt;
     private int subscriberCnt;
 
     private UserCommonDTO userCommonDTO;
     private List<MovieCommonDTO> favoriteMovies;
     private List<DbRatingDTO> ratings;
-
-//    private User user;
 
 }

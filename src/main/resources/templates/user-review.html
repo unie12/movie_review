@@ -127,26 +127,6 @@
         <!-- 정렬 옵션은 JavaScript로 동적 생성 -->
     </select>
 
-<!--    <div th:each="reviewDTO : ${reviewMovieDTOs}" class="review-card">-->
-<!--        <div class="poster-container">-->
-<!--            <img th:src="'https://image.tmdb.org/t/p/w500' + ${reviewDTO.poster_path}"-->
-<!--                 th:alt="${reviewDTO.title}"-->
-<!--                 th:onclick="'navigateToMovieDetails(' + ${reviewDTO.tId} + ')'">-->
-<!--            <p class="movie-title" th:text="${reviewDTO.title}"></p>-->
-<!--        </div>-->
-<!--        <div class="review-content">-->
-<!--            <div class="user-info">-->
-<!--                <img th:src="${reviewDTO.userPicture}" alt="User Picture" class="user-picture">-->
-<!--                <span th:text="${reviewDTO.nickname}" class="user-nickname"></span>-->
-<!--                <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}" class="rating-value"></span></span>-->
-<!--                <span class="user-heart like-button" th:attr="data-review-id=${reviewDTO.id}" th:classappend="${reviewDTO.isLikedByCurrentUser} ? 'active' : ''">-->
-<!--                    좋아요: <span th:text="${reviewDTO.heartCount ?: '0'}" class="heart-value like-count"></span>-->
-<!--                </span>-->
-<!--            </div>-->
-<!--            <p class="review-text" th:text="${reviewDTO.context}"></p>-->
-<!--        </div>-->
-<!--    </div>-->
-
     <div id="activity-container">
         <div id="review-list" class="review-grid">
             <!-- 리뷰 목록은 JavaScript로 동적 생성 -->
