@@ -33,18 +33,21 @@ public class UserDTOService {
         User user = userService.getUserByEmail(email);
         UserCommonDTO userCommonDTO = getUserCommonDTO(email);
 
-        List<UserCommonDTO> subscribers = user.getSubscribers().stream()
-                .map(sub -> UserCommonDTO.builder()
-                        .id(sub.getSubscriber().getId())
-                        .email(sub.getSubscriber().getEmail())
-                        .nickname(sub.getSubscriber().getNickname())
-                        .picture(sub.getSubscriber().getPicture())
+        List<SubscriptionInfo> subscriptionInfos = user.getSubscribers().stream()
+                .map(sub -> SubscriptionInfo.builder()
+                        .userCommonDTO(UserCommonDTO.builder()
+                                .id(sub.getSubscriber().getId())
+                                .email(sub.getSubscriber().getEmail())
+                                .nickname(sub.getSubscriber().getNickname())
+                                .picture(sub.getSubscriber().getPicture())
+                                .build())
+                        .subscriptionDate(sub.getSubscriptionDate())
                         .build())
                 .collect(Collectors.toList());
 
         SubscriptionDTO.SubscriptionDTOBuilder subscriptionDTOBuilder = SubscriptionDTO.builder()
                 .userCommonDTO(userCommonDTO)
-                .subscriptionDTOs(subscribers);
+                .subscriptionDTOs(subscriptionInfos);
 
         return subscriptionDTOBuilder.build();
     }
@@ -53,18 +56,21 @@ public class UserDTOService {
         User user = userService.getUserByEmail(email);
         UserCommonDTO userCommonDTO = getUserCommonDTO(email);
 
-        List<UserCommonDTO> subscriptions = user.getSubscriptions().stream()
-                .map(sub -> UserCommonDTO.builder()
-                        .id(sub.getSubscribed().getId())
-                        .email(sub.getSubscribed().getEmail())
-                        .nickname(sub.getSubscribed().getNickname())
-                        .picture(sub.getSubscribed().getPicture())
+        List<SubscriptionInfo> subscriptionInfos = user.getSubscriptions().stream()
+                .map(sub -> SubscriptionInfo.builder()
+                        .userCommonDTO(UserCommonDTO.builder()
+                                .id(sub.getSubscribed().getId())
+                                .email(sub.getSubscribed().getEmail())
+                                .nickname(sub.getSubscribed().getNickname())
+                                .picture(sub.getSubscribed().getPicture())
+                                .build())
+                        .subscriptionDate(sub.getSubscriptionDate())
                         .build())
                 .collect(Collectors.toList());
 
         SubscriptionDTO.SubscriptionDTOBuilder subscriptionDTOBuilder = SubscriptionDTO.builder()
                 .userCommonDTO(userCommonDTO)
-                .subscriptionDTOs(subscriptions);
+                .subscriptionDTOs(subscriptionInfos);
 
         return subscriptionDTOBuilder.build();
     }

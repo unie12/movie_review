@@ -11,7 +11,7 @@ import java.util.Map;
 @Builder
 public class SubscriptionDTO implements UserActivityDTO{
     private UserCommonDTO userCommonDTO;
-    private List<UserCommonDTO> subscriptionDTOs;
+    private List<SubscriptionInfo> subscriptionDTOs;
 
     @Override
     public List<?> getActivityItems() {
