@@ -136,34 +136,6 @@
     </div>
 
 
-<!--    <div th:if="${heartMovieDTOs != null and !heartMovieDTOs.empty}" class="review-grid">-->
-<!--        <div th:each="review : ${heartMovieDTOs}" class="review-card">-->
-<!--            <div class="poster-container">-->
-<!--                <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.poster_path}"-->
-<!--                     th:alt="${review.title}"-->
-<!--                     th:onclick="'navigateToMovieDetails(' + ${review.tId} + ')'">-->
-<!--                <p class="movie-title" th:text="${review.title}"></p>-->
-<!--            </div>-->
-<!--            <div class="review-content">-->
-<!--                <div class="user-info">-->
-<!--                    <a th:href="@{'/info/' + ${review.email}}">-->
-<!--                        <img th:src="${review.userPicture}" alt="User Picture" class="user-picture">-->
-<!--                    </a>-->
-
-<!--                    <span th:text="${review.nickname}" class="user-nickname"></span>-->
-<!--                    <span class="user-rating">평점: <span th:text="${review.userRating ?: '미정'}"></span></span>-->
-<!--                    <span class="user-heart like-button" th:attr="data-review-id=${review.id}" th:classappend="'active'">-->
-<!--                        좋아요: <span th:text="${review.heartCount ?: '0'}" class="heart-value like-count"></span>-->
-<!--                    </span>-->
-<!--                </div>-->
-<!--                <p class="review-text" th:text="${review.context}"></p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div th:if="${heartMovieDTOs == null or heartMovieDTOs.empty}">-->
-<!--        <p>좋아요를 남긴 리뷰가 없습니다.</p>-->
-<!--    </div>-->
-
     <a th:href="@{'/info/' + ${userEmail}}">사용자 정보로 돌아가기</a>
 </div>
 

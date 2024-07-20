@@ -27,8 +27,6 @@ public class SubscriptionService implements UserActivityService {
     public List<SortOption> getSortOptions() {
         return Arrays.asList(
                 new SortOption("favorite_date_desc", "구독 최근"),
-                new SortOption("favorite_date_asc", "구독 과거"),
-                new SortOption("release_date_desc", "개봉일 최신순"),
-                new SortOption("release_date_asc", "개봉일 과거순")
+                new SortOption("favorite_date_asc", "구독 과거")
         );    }
 }

@@ -41,8 +41,4 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid User Email"));
     }
 
-//    public List<FavoriteMovieDTO> getSortedFavoriteMovies(String userEmail, String sort) {
-//
-//
-//    }
 }

@@ -127,6 +127,9 @@ public class ReviewService {
                     .tId(movieDetails.getTId())
                     .title(movieDetails.getTitle())
                     .poster_path(movieDetails.getPoster_path())
+                    .release_date(movieDetails.getRelease_date())
+                    .runtime(movieDetails.getRuntime())
+                    .ajou_rating(dbMovie.getDbRatingAvg())
                     .build();
 
             ReviewDTO reviewDTO = ReviewDTO.builder()

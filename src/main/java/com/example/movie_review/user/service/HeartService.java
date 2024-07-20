@@ -15,6 +15,7 @@ import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,9 +38,11 @@ public class HeartService implements UserActivityService {
         List<ReviewMovieDTO> reviewMovieDTOS = reviewService.getReviewMovieDTOs(likedReviews);
         UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
 
+        List<ReviewMovieDTO> sortedReviews = (List<ReviewMovieDTO>) sortActivityItems(reviewMovieDTOS, sort);
+
         ReviewListDTO dto = ReviewListDTO.builder()
                 .userCommonDTO(userCommonDTO)
-                .reviews(reviewMovieDTOS)
+                .reviews(sortedReviews)
                 .build();
 
         return new UserActivityDTOAdapter(dto);
@@ -47,10 +50,13 @@ public class HeartService implements UserActivityService {
 
     @Override
     public List<SortOption> getSortOptions() {
-        return Arrays.asList(
+        List<SortOption> options = new ArrayList<>(getCommonSortOptions());
+        options.addAll(Arrays.asList(
                 new SortOption("heart_date_desc", "리뷰 좋아요 최근"),
-                new SortOption("heart_date_asc", "리뷰 좋아요 과거"),
-                new SortOption("release_date_desc", "개봉일 최신순"),
-                new SortOption("release_date_asc", "개봉일 과거순")
-        );
-    }}
+                new SortOption("heart_date_asc", "리뷰 좋아요 과거")
+        ));
+
+        return options;
+    }
+}
+

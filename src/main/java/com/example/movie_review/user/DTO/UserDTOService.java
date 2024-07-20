@@ -94,6 +94,9 @@ public class UserDTOService {
                         .tId(favorite.getDbMovie().getMovieDetails().getTId())
                         .title(favorite.getDbMovie().getMovieDetails().getTitle())
                         .poster_path(favorite.getDbMovie().getMovieDetails().getPoster_path())
+                        .release_date(favorite.getDbMovie().getMovieDetails().getRelease_date())
+                        .runtime(favorite.getDbMovie().getMovieDetails().getRuntime())
+                        .ajou_rating(favorite.getDbMovie().getDbRatingAvg())
                         .build())
                 .collect(Collectors.toList());
 
@@ -105,6 +108,9 @@ public class UserDTOService {
                                 .tId(dbRating.getDbMovies().getMovieDetails().getTId())
                                 .title(dbRating.getDbMovies().getMovieDetails().getTitle())
                                 .poster_path(dbRating.getDbMovies().getMovieDetails().getPoster_path())
+                                .release_date(dbRating.getDbMovies().getMovieDetails().getRelease_date())
+                                .runtime(dbRating.getDbMovies().getMovieDetails().getRuntime())
+                                .ajou_rating(dbRating.getDbMovies().getDbRatingAvg())
                                 .build())
                         .score(dbRating.getScore())
                         .build())
@@ -138,6 +144,9 @@ public class UserDTOService {
                         .tId(favorite.getDbMovie().getMovieDetails().getTId())
                         .title(favorite.getDbMovie().getMovieDetails().getTitle())
                         .poster_path(favorite.getDbMovie().getMovieDetails().getPoster_path())
+                        .release_date(favorite.getDbMovie().getMovieDetails().getRelease_date())
+                        .runtime(favorite.getDbMovie().getMovieDetails().getRuntime())
+                        .ajou_rating(favorite.getDbMovie().getDbRatingAvg())
                         .build())
                 .collect(Collectors.toList());
         System.out.println("favoriteMovies.get(0).getTId() = " + favoriteMovies.get(0).getTId());
@@ -161,6 +170,9 @@ public class UserDTOService {
                                 .tId(rating.getDbMovies().getMovieDetails().getTId())
                                 .title(rating.getDbMovies().getMovieDetails().getTitle())
                                 .poster_path(rating.getDbMovies().getMovieDetails().getPoster_path())
+                                .release_date(rating.getDbMovies().getMovieDetails().getRelease_date())
+                                .runtime(rating.getDbMovies().getMovieDetails().getRuntime())
+                                .ajou_rating(rating.getDbMovies().getDbRatingAvg())
                                 .build())
                         .score(rating.getScore())
                         .build())

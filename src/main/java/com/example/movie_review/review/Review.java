@@ -34,8 +34,6 @@ public class Review{
 
     @OneToMany(mappedBy = "review", orphanRemoval = true)
     private List<Heart> hearts = new ArrayList<>(); // 리뷰 좋아요
-//    private Integer heartCount = 0;
-
 
     @OneToMany(mappedBy = "review", orphanRemoval = true)
     private List<Comment> comments; // 리뷰에 달린 댓글

@@ -45,4 +45,5 @@ public class ReviewService implements UserActivityService {
                 new SortOption("release_date_desc", "개봉일 최신순"),
                 new SortOption("release_date_asc", "개봉일 과거순")
         );
-    }}
+    }
+}

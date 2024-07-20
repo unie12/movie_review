@@ -1,9 +1,7 @@
 package com.example.movie_review.user.service;
 
-import com.example.movie_review.user.DTO.FavoriteMovieDTO;
-import com.example.movie_review.user.DTO.UserActivityDTO;
-import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
-import com.example.movie_review.user.DTO.UserDTOService;
+import com.example.movie_review.dbMovie.MovieCommonDTO;
+import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.SortOption;
 import com.example.movie_review.user.UserActivityService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +17,7 @@ public class FavoriteService implements UserActivityService {
     @Override
     public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
         FavoriteMovieDTO dto = userDTOService.getUserFavoriteMoviesDTO(userEmail);
+
         return new UserActivityDTOAdapter(dto);
     }
 

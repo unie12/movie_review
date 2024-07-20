@@ -10,4 +10,8 @@ public class MovieCommonDTO {
     private Integer tId;
     private String title;
     private String poster_path;
+
+    private String release_date;
+    private Long runtime;
+    private Double ajou_rating;
 }
