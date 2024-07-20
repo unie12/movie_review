@@ -1,15 +1,11 @@
 package com.example.movie_review.user.view;
 
-import com.example.movie_review.dbMovie.MovieCommonDTO;
-import com.example.movie_review.heart.Heart;
-import com.example.movie_review.movieDetail.MovieDetailDTO;
-import com.example.movie_review.review.Review;
-import com.example.movie_review.review.ReviewDTO;
-import com.example.movie_review.review.ReviewMovieDTO;
 import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.subscription.SubscriptionService;
-import com.example.movie_review.user.DTO.*;
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.DTO.UserActivityDTO;
+import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
+import com.example.movie_review.user.DTO.UserDTO;
+import com.example.movie_review.user.DTO.UserDTOService;
 import com.example.movie_review.user.UserActivityService;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.AccessDeniedException;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/info/{userEmail}")
@@ -56,7 +50,6 @@ public class UserActivityViewController {
      */
     @GetMapping("/{category}")
     public String getUserInfo(@PathVariable String userEmail, @PathVariable String category, Model model, Authentication auth) throws AccessDeniedException {
-//        User user = userService.getUserByEmail(userEmail);
 
         //        Info permission 부여
 //        if(!user.getEmail().equals(auth.getName())) {
@@ -89,8 +82,6 @@ public class UserActivityViewController {
 //            case "review":
 //                List<ReviewMovieDTO> reviewMovieDTOs = reviewService.getReviewMovieDTOs(user.getReviews());
 //                model.addAttribute("reviewMovieDTOs", reviewMovieDTOs);
-//                model.addAttribute("userEmail", userEmail);
-//
 //                return "user-reviews";
 //
 //            case "heart":
@@ -99,7 +90,6 @@ public class UserActivityViewController {
 //                        .collect(Collectors.toList());
 //                List<ReviewMovieDTO> heartMovieDTOs = reviewService.getReviewMovieDTOs(likedReviews);
 //                model.addAttribute("heartMovieDTOs", heartMovieDTOs);
-//                model.addAttribute("userEmail", userEmail);
 //                return "user-hearts";
 //
 //            case "subscription":

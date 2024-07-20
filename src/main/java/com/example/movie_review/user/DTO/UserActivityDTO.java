@@ -8,6 +8,5 @@ import java.util.Map;
 public interface UserActivityDTO {
     UserCommonDTO getUserCommonDTO();
     List<?> getActivityItems();
-//    List<MovieCommonDTO> getMovies();
     Map<String, Object> toMap();
 }

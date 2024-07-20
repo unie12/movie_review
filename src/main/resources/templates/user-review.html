@@ -123,72 +123,179 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
     <h2>리뷰 남긴 영화</h2>
 
-    <div th:if="${reviewMovieDTOs != null and !reviewMovieDTOs.empty}" class="review-grid">
-        <div th:each="reviewDTO : ${reviewMovieDTOs}" class="review-card">
-            <div class="poster-container">
-                <img th:src="'https://image.tmdb.org/t/p/w500' + ${reviewDTO.poster_path}"
-                     th:alt="${reviewDTO.title}"
-                     th:onclick="'navigateToMovieDetails(' + ${reviewDTO.tId} + ')'">
-                <p class="movie-title" th:text="${reviewDTO.title}"></p>
-            </div>
-            <div class="review-content">
-                <div class="user-info">
-                    <img th:src="${reviewDTO.userPicture}" alt="User Picture" class="user-picture">
-                    <span th:text="${reviewDTO.nickname}" class="user-nickname"></span>
-                    <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}" class="rating-value"></span></span>
-<!--                    <span class="user-heart">좋아요 수: <span th:text="${reviewDTO.heartCnt ?: '0'}" class="heart-value"></span></span>-->
-                    <span class="user-heart like-button" th:attr="data-review-id=${reviewDTO.id}" th:classappend="${reviewDTO.isLikedByCurrentUser} ? 'active' : ''">
-                        좋아요: <span th:text="${reviewDTO.heartCount ?: '0'}" class="heart-value like-count"></span>
-                    </span>
-                </div>
-                <p class="review-text" th:text="${reviewDTO.context}"></p>
-            </div>
+    <select id="sorting" name="sorting">
+        <!-- 정렬 옵션은 JavaScript로 동적 생성 -->
+    </select>
+
+<!--    <div th:each="reviewDTO : ${reviewMovieDTOs}" class="review-card">-->
+<!--        <div class="poster-container">-->
+<!--            <img th:src="'https://image.tmdb.org/t/p/w500' + ${reviewDTO.poster_path}"-->
+<!--                 th:alt="${reviewDTO.title}"-->
+<!--                 th:onclick="'navigateToMovieDetails(' + ${reviewDTO.tId} + ')'">-->
+<!--            <p class="movie-title" th:text="${reviewDTO.title}"></p>-->
+<!--        </div>-->
+<!--        <div class="review-content">-->
+<!--            <div class="user-info">-->
+<!--                <img th:src="${reviewDTO.userPicture}" alt="User Picture" class="user-picture">-->
+<!--                <span th:text="${reviewDTO.nickname}" class="user-nickname"></span>-->
+<!--                <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}" class="rating-value"></span></span>-->
+<!--                <span class="user-heart like-button" th:attr="data-review-id=${reviewDTO.id}" th:classappend="${reviewDTO.isLikedByCurrentUser} ? 'active' : ''">-->
+<!--                    좋아요: <span th:text="${reviewDTO.heartCount ?: '0'}" class="heart-value like-count"></span>-->
+<!--                </span>-->
+<!--            </div>-->
+<!--            <p class="review-text" th:text="${reviewDTO.context}"></p>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div id="activity-container">
+        <div id="review-list" class="review-grid">
+            <!-- 리뷰 목록은 JavaScript로 동적 생성 -->
         </div>
     </div>
-    <div th:if="${reviewMovieDTOs == null or reviewMovieDTOs.empty}">
+
+    <div id="empty-message" style="display: none;">
         <p>리뷰를 남긴 영화가 없습니다.</p>
     </div>
 
     <a th:href="@{'/info/' + ${userEmail}}">사용자 정보로 돌아가기</a>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
+    var userEmail = /*[[${userEmail}]]*/ '';
+    var category = 'review'; // 현재 페이지 카테고리
+
     function navigateToMovieDetails(movieId) {
         window.location.href = '/contents/' + movieId;
     }
-</script>
-</body>
-</html>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
     $(document).ready(function() {
-        // 좋아요 버튼 클릭 이벤트
+        loadSortOptions();
+        loadActivities();
+
+        $('#sorting').change(function() {
+            loadActivities();
+        });
+    });
+
+    function loadSortOptions() {
+        $.ajax({
+            url: `/api/user/${userEmail}/sort-options`,
+            type: 'GET',
+            success: function(options) {
+                var select = $('#sorting');
+                select.empty();
+                options[category].forEach(function(option) {
+                    select.append($('<option>', {
+                        value: option.key,
+                        text: option.description
+                    }));
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading sort options:', error);
+            }
+        });
+    }
+
+    function loadActivities() {
+        var sortOption = $("#sorting").val();
+        $.ajax({
+            url: `/api/user/${userEmail}/activities`,
+            type: 'GET',
+            data: {
+                category: category,
+                sort: sortOption,
+                page: 0,
+                size: 20
+            },
+            success: function(response) {
+                updateActivityList(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function updateActivityList(response) {
+        var container = $('#review-list');
+        container.empty();
+
+        var reviews = response.reviews;
+
+        if (reviews && reviews.length > 0) {
+            $('#activity-container').show();
+            $('#empty-message').hide();
+
+            reviews.forEach(function(review) {
+                var element = createReviewElement(review);
+                container.append(element);
+            });
+
+            // 좋아요 버튼 이벤트 리스너 설정
+            setupLikeButtons();
+        } else {
+            $('#activity-container').hide();
+            $('#empty-message').show();
+        }
+    }
+
+    function createReviewElement(review) {
+        var element = $('<div>').addClass('review-card');
+        var scoreText = review.reviewDTO.userRating !== null ? review.reviewDTO.userRating : '미정';
+        var likedClass = review.likedByCurrentUser ? 'active' : '';
+
+        console.log('review detail', review);
+        console.log('isLikedByCurrentUser:', review.likedByCurrentUser); // 특정 속성 로깅
+
+        element.html(`
+            <div class="poster-container">
+                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
+                     alt="${review.movieCommonDTO.title}"
+                     onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
+                <p class="movie-title">${review.movieCommonDTO.title}</p>
+            </div>
+            <div class="review-content">
+                <div class="user-info">
+                    <img src="${review.reviewDTO.user.picture}" alt="User Picture" class="user-picture">
+                    <span class="user-nickname">${review.reviewDTO.user.nickname}</span>
+                    <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
+                    <span class="user-heart like-button ${likedClass}" data-review-id="${review.reviewDTO.review.id}"
+                          data-liked="${review.likedByCurrentUser}">
+                        좋아요: <span class="heart-value like-count">${review.reviewDTO.heartCnt}</span>
+                    </span>
+                </div>
+                <p class="review-text">${review.reviewDTO.review.text}</p>
+            </div>
+        `);
+
+        return element;
+    }
+
+    function setupLikeButtons() {
         $('.like-button').click(function() {
             var reviewId = $(this).data('review-id');
-            var $button = $(this)
+            var $button = $(this);
+            var isLiked = $button.hasClass('active');
 
             $.ajax({
                 url: '/api/review/heart/' + reviewId,
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active') }),
+                data: JSON.stringify({reviewId: reviewId, heart: !isLiked}),
                 success: function(response) {
-                    console.log('Full response:', response);
-
-                    if (response.heart) {
-                        $button.addClass('active');
-                    } else {
-                        $button.removeClass('active');
-                    }
-
+                    $button.toggleClass('active', response.heart);
                     $button.find('.like-count').text(response.updateHeartCnt);
-                    console.log('heartCount val:', response.updateHeartCnt);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
                 }
             });
         });
-    });
+    }
 </script>
+
+
+</body>
+</html>

@@ -1,14 +1,13 @@
 package com.example.movie_review.review;
 
-import com.example.movie_review.dbMovie.DbMovieRepository;
 import com.example.movie_review.dbMovie.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
+import com.example.movie_review.dbMovie.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.movieDetail.MovieDetails;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.User;
-import com.example.movie_review.user.UserRepository;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,9 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
-    private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
-    private final DbMovieRepository dbMovieRepository;
 
     private final UserService userService;
     private final DbMovieService dbMovieService;
@@ -118,22 +115,38 @@ public class ReviewService {
                     .map(DbRatings::getScore)
                     .orElse(null);
 
-            return ReviewMovieDTO.builder()
-                    .id(review.getId())
-                    .context(review.getContext())
-                    .userRating(userRating)
-                    .heartCount(review.getHeartCount())
+            UserCommonDTO userCommonDTO = UserCommonDTO.builder()
+                    .id(user.getId())
                     .email(user.getEmail())
                     .nickname(user.getNickname())
-                    .userPicture(user.getPicture())
-                    .movieId(dbMovie.getId())
+                    .picture(user.getPicture())
+                    .build();
+
+            MovieCommonDTO movieCommonDTO = MovieCommonDTO.builder()
+                    .id(dbMovie.getId())
                     .tId(movieDetails.getTId())
                     .title(movieDetails.getTitle())
                     .poster_path(movieDetails.getPoster_path())
-                    .original_title(movieDetails.getOriginal_title())
+                    .build();
+
+            ReviewDTO reviewDTO = ReviewDTO.builder()
+                    .userRating(userRating)
+                    .heartCnt(review.getHeartCount())
+                    .user(userCommonDTO)
+                    .review(ReviewCommonDTO.builder()
+                            .id(review.getId())
+                            .text(review.getContext())
+                            .build())
+                    .build();
+
+            return ReviewMovieDTO.builder()
+                    .movieCommonDTO(movieCommonDTO)
+                    .reviewDTO(reviewDTO)
                     .isLikedByCurrentUser(review.getHearts().stream()
                             .anyMatch(heart -> heart.getUser().getEmail().equals(user.getEmail())))
+                    .original_title(movieDetails.getOriginal_title())
                     .build();
+
         }).collect(Collectors.toList());
     }
 
