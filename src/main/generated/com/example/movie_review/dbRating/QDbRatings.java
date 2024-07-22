@@ -28,7 +28,7 @@ public class QDbRatings extends EntityPathBase<DbRatings> {
 
     public final NumberPath<Double> score = createNumber("score", Double.class);
 
-    public final NumberPath<Long> timestamp = createNumber("timestamp", Long.class);
+    public final DateTimePath<java.time.LocalDateTime> uploadRating = createDateTime("uploadRating", java.time.LocalDateTime.class);
 
     public final com.example.movie_review.user.QUser user;
 

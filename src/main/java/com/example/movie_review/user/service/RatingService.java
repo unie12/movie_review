@@ -1,10 +1,7 @@
 package com.example.movie_review.user.service;
 
 import com.example.movie_review.dbRating.DbRatingDTO;
-import com.example.movie_review.user.DTO.RatingDTO;
-import com.example.movie_review.user.DTO.UserActivityDTO;
-import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
-import com.example.movie_review.user.DTO.UserDTOService;
+import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.SortOption;
 import com.example.movie_review.user.UserActivityService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +28,15 @@ public class RatingService implements UserActivityService {
 
     private List<DbRatingDTO> sortRating(List<DbRatingDTO> ratings, String sort) {
         switch (sort) {
+            default:
+            case "rating_date_desc":
+                return ratings.stream()
+                        .sorted((a, b) -> b.getRatingDate().compareTo(a.getRatingDate()))
+                        .collect(Collectors.toList());
+            case "rating_date_asc":
+                return ratings.stream()
+                        .sorted(Comparator.comparing(DbRatingDTO::getRatingDate))
+                        .collect(Collectors.toList());
             case "release_date_desc":
                 return ratings.stream()
                         .sorted((a, b) -> b.getMovie().getRelease_date().compareTo(a.getMovie().getRelease_date()))
@@ -39,9 +45,24 @@ public class RatingService implements UserActivityService {
                 return ratings.stream()
                         .sorted(Comparator.comparing(r -> r.getMovie().getRelease_date()))
                         .collect(Collectors.toList());
-            default:
-                return ratings;
-        }    }
+            case "runtime_desc":
+                return ratings.stream()
+                        .sorted((a, b) -> b.getMovie().getRuntime().compareTo(a.getMovie().getRuntime()))
+                        .collect(Collectors.toList());
+            case "runtime_asc":
+                return ratings.stream()
+                        .sorted(Comparator.comparing(r -> r.getMovie().getRuntime()))
+                        .collect(Collectors.toList());
+            case "ajou_rating_desc":
+                return ratings.stream()
+                        .sorted((a, b) -> b.getMovie().getAjou_rating().compareTo(a.getMovie().getAjou_rating()))
+                        .collect(Collectors.toList());
+            case "ajou_rating_asc":
+                return ratings.stream()
+                        .sorted(Comparator.comparing(r -> r.getMovie().getAjou_rating()))
+                        .collect(Collectors.toList());
+        }
+    }
 
     @Override
     public List<SortOption> getSortOptions() {

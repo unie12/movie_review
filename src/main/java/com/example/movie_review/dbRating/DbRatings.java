@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -20,8 +22,7 @@ public class DbRatings {
     @Column(name = "DbRatings_id")
     private Long id;
 
-    private Long timestamp;
-
+    private LocalDateTime uploadRating = LocalDateTime.now();
     private Double score;
 
     @ManyToOne(fetch = FetchType.LAZY)

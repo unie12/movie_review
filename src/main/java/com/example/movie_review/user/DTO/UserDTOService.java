@@ -121,6 +121,7 @@ public class UserDTOService {
                                 .ajou_rating_cnt(dbRating.getDbMovies().getDbRatingCount())
                                 .build())
                         .score(dbRating.getScore())
+                        .ratingDate(dbRating.getUploadRating())
                         .build())
                 .collect(Collectors.toList());
 
@@ -187,6 +188,7 @@ public class UserDTOService {
                                 .ajou_rating_cnt(rating.getDbMovies().getDbRatingCount())
                                 .build())
                         .score(rating.getScore())
+                        .ratingDate(rating.getUploadRating())
                         .build())
                 .collect(Collectors.toList());
 

@@ -170,6 +170,10 @@
     }
 
     function createActivityElement(category, item) {
+        var ajouRatingAvg = item.movie.ajou_rating;
+        var ajouRatingCnt = item.movie.ajou_rating_cnt;
+        var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
+
         var element = $('<div>').addClass('activity-item');
         switch(category) {
             case 'rating':
@@ -183,6 +187,8 @@
                          onclick="navigateToMovieDetails(${item.movie.tid})">
                     <p class="activity-title">${item.movie.title}</p>
                     <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
+                    <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
+
                 `);
 
                 break;

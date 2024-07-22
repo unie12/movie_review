@@ -229,12 +229,18 @@
         var scoreText = review.reviewDTO.userRating !== null ? review.reviewDTO.userRating : '미정';
         var likedClass = 'active';
 
+        var ajouRatingAvg = review.movieCommonDTO.ajou_rating;
+        var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
+        var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
+
         element.html(`
             <div class="poster-container">
                 <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
                      alt="${review.movieCommonDTO.title}"
                      onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
                 <p class="movie-title">${review.movieCommonDTO.title}</p>
+                <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
+
             </div>
             <div class="review-content">
                 <div class="user-info">
@@ -244,8 +250,7 @@
                         class="user-picture">
                     <span class="user-nickname">${review.reviewDTO.user.nickname}</span>
                     <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
-                    <span class="user-heart like-button ${likedClass}" data-review-id="${review.reviewDTO.review.id}"
-                          >
+                    <span class="user-heart like-button ${likedClass}" data-review-id="${review.reviewDTO.review.id}">
                         좋아요: <span class="heart-value like-count">${review.reviewDTO.heartCnt}</span>
                     </span>
                 </div>
