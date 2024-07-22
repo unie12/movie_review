@@ -121,7 +121,8 @@
     }
 
     function loadActivities() {
-        var sortOption = $("#sorting").val();
+        var sortOption = $("#sorting").val() || 'rating_date_desc'; // 기본값 설정
+
         $.ajax({
             url: `/api/user/${userEmail}/activities`,
             type: 'GET',

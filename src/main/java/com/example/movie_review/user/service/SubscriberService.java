@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service("subscriber")
-@RequiredArgsConstructor
-public class SubscriberService implements UserActivityService {
-    private final UserDTOService userDTOService;
+public class SubscriberService extends AbstractUserActivityService {
+    public SubscriberService(UserDTOService userDTOService) {
+        super(userDTOService);
+    }
 
     @Override
     public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
@@ -54,5 +55,7 @@ public class SubscriberService implements UserActivityService {
                 new SortOption("subscriber_date_asc", "구독자 과거"),
                 new SortOption("subscriber_count_desc", "구독자 많은순"),
                 new SortOption("subscriber_count_asc", "구독자 적은순")
-        );    }
+        );
+    }
+
 }

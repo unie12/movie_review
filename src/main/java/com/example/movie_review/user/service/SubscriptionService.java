@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service("subscription")
-@RequiredArgsConstructor
-public class SubscriptionService implements UserActivityService {
-    private final UserDTOService userDTOService;
+public class SubscriptionService extends AbstractUserActivityService {
+    public SubscriptionService(UserDTOService userDTOService) {
+        super(userDTOService);
+    }
 
     @Override
     public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {

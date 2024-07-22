@@ -182,7 +182,8 @@
     }
 
     function loadActivities() {
-        var sortOption = $("#sorting").val();
+        var sortOption = $("#sorting").val() || 'heart_date_desc'; // 기본값 설정
+
         $.ajax({
             url: `/api/user/${userEmail}/activities`,
             type: 'GET',
@@ -232,6 +233,8 @@
         var ajouRatingAvg = review.movieCommonDTO.ajou_rating;
         var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
         var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
+
+        console.log('rating item: ', review);
 
         element.html(`
             <div class="poster-container">

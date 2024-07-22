@@ -61,6 +61,9 @@ public class UserActivityViewController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category");
         }
 
+//        String defaultSort = service.getDefaultSortOption();
+//        System.out.println("defaultSort = " + defaultSort);
+
         UserActivityDTO activityDTO = service.getUserActivity(userEmail, "default", 0, 20);
         model.addAttribute("activities", ((UserActivityDTOAdapter) activityDTO).getOriginalDTO());
         model.addAttribute("category", category);
