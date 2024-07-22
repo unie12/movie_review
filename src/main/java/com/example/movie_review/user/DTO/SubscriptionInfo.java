@@ -10,4 +10,5 @@ import java.time.LocalDateTime;
 public class SubscriptionInfo {
     private UserCommonDTO userCommonDTO;
     private LocalDateTime subscriptionDate;
+    private int subscriptionCnt;
 }

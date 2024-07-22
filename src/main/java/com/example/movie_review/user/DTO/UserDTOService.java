@@ -42,6 +42,8 @@ public class UserDTOService {
                                 .picture(sub.getSubscriber().getPicture())
                                 .build())
                         .subscriptionDate(sub.getSubscriptionDate())
+                        .subscriptionCnt(sub.getSubscriber().getSubscriberCount())
+
                         .build())
                 .collect(Collectors.toList());
 
@@ -65,6 +67,8 @@ public class UserDTOService {
                                 .picture(sub.getSubscribed().getPicture())
                                 .build())
                         .subscriptionDate(sub.getSubscriptionDate())
+                        .subscriptionCnt(sub.getSubscribed().getSubscriberCount())
+
                         .build())
                 .collect(Collectors.toList());
 

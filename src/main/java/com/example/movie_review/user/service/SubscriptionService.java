@@ -27,6 +27,7 @@ public class SubscriptionService implements UserActivityService {
 
     private List<SubscriptionInfo> sortSubscriptions(List<SubscriptionInfo> subscriptions, String sort) {
         switch (sort) {
+            default:
             case "subscription_date_desc":
                 return subscriptions.stream()
                         .sorted((a, b) -> b.getSubscriptionDate().compareTo(a.getSubscriptionDate()))
@@ -35,8 +36,14 @@ public class SubscriptionService implements UserActivityService {
                 return subscriptions.stream()
                         .sorted(Comparator.comparing(SubscriptionInfo::getSubscriptionDate))
                         .collect(Collectors.toList());
-            default:
-                return subscriptions;
+            case "subscriber_count_desc":
+                return subscriptions.stream()
+                        .sorted(Comparator.comparingInt(SubscriptionInfo::getSubscriptionCnt).reversed())
+                        .collect(Collectors.toList());
+            case "subscriber_count_asc":
+                return subscriptions.stream()
+                        .sorted(Comparator.comparingInt(SubscriptionInfo::getSubscriptionCnt))
+                        .collect(Collectors.toList());
         }
     }
 

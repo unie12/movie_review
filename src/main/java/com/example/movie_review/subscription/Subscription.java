@@ -31,4 +31,5 @@ public class Subscription {
 
     @Column(name = "subscription_date")
     private LocalDateTime subscriptionDate;
+
 }

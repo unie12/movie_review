@@ -120,6 +120,8 @@
     }
 
     function createActivityElement(item) {
+        console.log('Subscription: ', item);
+
         return $('<div>').addClass('user-info').html(`
             <a href="/info/${item.userCommonDTO.email}">
                 <img src="${item.userCommonDTO.picture}" alt="${item.userCommonDTO.nickname}" class="user-picture">
