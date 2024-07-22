@@ -152,15 +152,18 @@
         var element = $('<div>').addClass('activity-item');
         switch(category) {
             case 'favorite':
-            case 'rating':
-
                 console.log('favorite item: ', item);
+                var ajouRatingAvg = item.movieCommonDTO.ajou_rating;
+                var ajouRatingCnt = item.movieCommonDTO.ajou_rating_cnt;
+                var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
 
                 element.html(`
                     <img src="https://image.tmdb.org/t/p/w500${item.movieCommonDTO.poster_path}"
                          alt="${item.movieCommonDTO.title}"
                          onclick="navigateToMovieDetails(${item.movieCommonDTO.tid})">
                     <p class="activity-title">${item.movieCommonDTO.title}</p>
+                    <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
+
                     ${category === 'rating' ? `<p class="rating">평점: ${item.movieCommonDTO.score}</p>` : ''}
                     <button id="favoriteButton-${item.movieCommonDTO.id}"
                             data-activity-id="${item.movieCommonDTO.id}"

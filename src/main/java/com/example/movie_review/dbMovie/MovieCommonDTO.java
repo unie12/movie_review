@@ -14,4 +14,5 @@ public class MovieCommonDTO {
     private String release_date;
     private Long runtime;
     private Double ajou_rating;
+    private int ajou_rating_cnt;
 }

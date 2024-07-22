@@ -130,6 +130,7 @@ public class ReviewService {
                     .release_date(movieDetails.getRelease_date())
                     .runtime(movieDetails.getRuntime())
                     .ajou_rating(dbMovie.getDbRatingAvg())
+                    .ajou_rating_cnt(dbMovie.getDbRatingCount())
                     .build();
 
             ReviewDTO reviewDTO = ReviewDTO.builder()
@@ -148,6 +149,7 @@ public class ReviewService {
                     .isLikedByCurrentUser(review.getHearts().stream()
                             .anyMatch(heart -> heart.getUser().getEmail().equals(user.getEmail())))
                     .original_title(movieDetails.getOriginal_title())
+                    .reviewDate(review.getUploadDate())
                     .build();
 
         }).collect(Collectors.toList());

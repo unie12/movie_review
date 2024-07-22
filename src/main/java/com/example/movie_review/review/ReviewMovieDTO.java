@@ -7,6 +7,7 @@ import com.example.movie_review.user.User;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ public class ReviewMovieDTO{
     private ReviewDTO reviewDTO;
     private boolean isLikedByCurrentUser;
     private String original_title;
+    private LocalDateTime reviewDate;
 
 
 

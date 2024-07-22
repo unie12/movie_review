@@ -103,6 +103,7 @@ public class UserDTOService {
                         .release_date(favorite.getDbMovie().getMovieDetails().getRelease_date())
                         .runtime(favorite.getDbMovie().getMovieDetails().getRuntime())
                         .ajou_rating(favorite.getDbMovie().getDbRatingAvg())
+                        .ajou_rating_cnt(favorite.getDbMovie().getDbRatingCount())
                         .build())
                 .collect(Collectors.toList());
 
@@ -117,6 +118,7 @@ public class UserDTOService {
                                 .release_date(dbRating.getDbMovies().getMovieDetails().getRelease_date())
                                 .runtime(dbRating.getDbMovies().getMovieDetails().getRuntime())
                                 .ajou_rating(dbRating.getDbMovies().getDbRatingAvg())
+                                .ajou_rating_cnt(dbRating.getDbMovies().getDbRatingCount())
                                 .build())
                         .score(dbRating.getScore())
                         .build())
@@ -154,6 +156,7 @@ public class UserDTOService {
                                 .release_date(favorite.getDbMovie().getMovieDetails().getRelease_date())
                                 .runtime(favorite.getDbMovie().getMovieDetails().getRuntime())
                                 .ajou_rating(favorite.getDbMovie().getDbRatingAvg())
+                                .ajou_rating_cnt(favorite.getDbMovie().getDbRatingCount())
                                 .build())
                         .favoriteDate(favorite.getFavoriteDate())
                         .build())
@@ -181,6 +184,7 @@ public class UserDTOService {
                                 .release_date(rating.getDbMovies().getMovieDetails().getRelease_date())
                                 .runtime(rating.getDbMovies().getMovieDetails().getRuntime())
                                 .ajou_rating(rating.getDbMovies().getDbRatingAvg())
+                                .ajou_rating_cnt(rating.getDbMovies().getDbRatingCount())
                                 .build())
                         .score(rating.getScore())
                         .build())

@@ -226,6 +226,10 @@
         var scoreText = review.reviewDTO.userRating !== null ? review.reviewDTO.userRating : '미정';
         var likedClass = review.likedByCurrentUser ? 'active' : '';
 
+        var ajouRatingAvg = review.movieCommonDTO.ajou_rating;
+        var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
+        var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
+
         console.log('review detail', review);
         console.log('isLikedByCurrentUser:', review.likedByCurrentUser); // 특정 속성 로깅
 
@@ -235,6 +239,7 @@
                      alt="${review.movieCommonDTO.title}"
                      onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
                 <p class="movie-title">${review.movieCommonDTO.title}</p>
+                <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
             </div>
             <div class="review-content">
                 <div class="user-info">
