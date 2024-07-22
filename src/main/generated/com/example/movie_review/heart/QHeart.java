@@ -22,6 +22,8 @@ public class QHeart extends EntityPathBase<Heart> {
 
     public static final QHeart heart = new QHeart("heart");
 
+    public final DateTimePath<java.time.LocalDateTime> heartTime = createDateTime("heartTime", java.time.LocalDateTime.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final com.example.movie_review.review.QReview review;

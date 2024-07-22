@@ -12,6 +12,7 @@ import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ public class ReviewService {
         if(byDbMoviesAndUser.isPresent()) {
             Review review = byDbMoviesAndUser.get();
             review.setContext(reviewContext);
+            review.setUploadDate(LocalDateTime.now());
             return reviewRepository.save(review);
         }
         else {

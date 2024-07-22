@@ -9,6 +9,7 @@ import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.example.movie_review.dbRating.QDbRatings.dbRatings;
@@ -32,6 +33,7 @@ public class DbRatingService {
         if(byDbMoviesAndUser.isPresent()) {
             DbRatings dbRatings = byDbMoviesAndUser.get();
             dbRatings.setScore(rating);
+            dbRatings.setUploadRating(LocalDateTime.now());
             return dbRatingRepository.save(dbRatings);
         }
         else {

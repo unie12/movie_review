@@ -322,7 +322,7 @@ $(document).ready(function() {
     $('#saveReviewBtn').click(function() {
         var reviewText = $('#reviewText').val();
         $.ajax({
-            url: '/api/movie/review' + movieId,
+            url: '/api/movie/review/' + movieId,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ movieId: movieId, review: reviewText }),

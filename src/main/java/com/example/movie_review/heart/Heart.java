@@ -5,6 +5,8 @@ import com.example.movie_review.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,5 +26,7 @@ public class Heart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
+
+    private LocalDateTime heartTime = LocalDateTime.now();
 
 }
