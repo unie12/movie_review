@@ -22,7 +22,7 @@ public class ReviewController {
      * 해당 유저의 해당 영화에 대한 리뷰 보여주기
      */
     @GetMapping("/{movieId}")
-    public ResponseEntity<?> loadReview(@PathVariable Long movieId, Model model, @AuthenticationPrincipal OAuth2User principal) {
+        public ResponseEntity<?> loadReview(@PathVariable Long movieId, Model model, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }

@@ -63,7 +63,11 @@ public class ReviewService implements UserActivityService {
                 new SortOption("release_date_desc", "개봉일 최신순"),
                 new SortOption("release_date_asc", "개봉일 과거순"),
                 new SortOption("review_date_desc", "리뷰 최근 작성순"),
-                new SortOption("review_date_asc", "리뷰 과거 작성순")
+                new SortOption("review_date_asc", "리뷰 과거 작성순"),
+                new SortOption("runtime_desc", "상영 시간 긴순"),
+                new SortOption("runtime_asc", "상영 시간 짧은순"),
+                new SortOption("ajou-rating_desc", "아주대 평점 높은순"),
+                new SortOption("ajou-rating_asc", "아주대 평점 낮은순")
 
         );
     }

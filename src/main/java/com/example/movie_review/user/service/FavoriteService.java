@@ -48,8 +48,11 @@ public class FavoriteService implements UserActivityService {
                 new SortOption("release_date_desc", "개봉일 최신순"),
                 new SortOption("release_date_asc", "개봉일 과거순"),
                 new SortOption("favorite_date_desc", "찜 최근에 담은순"),
-                new SortOption("favorite_date_asc", "찜 과거에 담은순")
-
+                new SortOption("favorite_date_asc", "찜 과거에 담은순"),
+                new SortOption("runtime_desc", "상영 시간 긴순"),
+                new SortOption("runtime_asc", "상영 시간 짧은순"),
+                new SortOption("ajou-rating_desc", "아주대 평점 높은순"),
+                new SortOption("ajou-rating_asc", "아주대 평점 낮은순")
         );
     }
 }

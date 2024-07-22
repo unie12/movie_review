@@ -44,6 +44,8 @@ public class SubscriptionService implements UserActivityService {
     public List<SortOption> getSortOptions() {
         return Arrays.asList(
                 new SortOption("subscription_date_desc", "구독 최근"),
-                new SortOption("subscription_date_asc", "구독 과거")
+                new SortOption("subscription_date_asc", "구독 과거"),
+                new SortOption("subscriber_count_desc", "구독자 많은순"),
+                new SortOption("subscriber_count_asc", "구독자 적은순")
         );    }
 }

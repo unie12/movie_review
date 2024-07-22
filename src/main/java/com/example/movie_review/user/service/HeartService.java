@@ -59,14 +59,6 @@ public class HeartService implements UserActivityService {
                 return reviewMovieDTOS.stream()
                         .sorted(Comparator.comparing(r -> r.getMovieCommonDTO().getRelease_date()))
                         .collect(Collectors.toList());
-//            case "favorite_date_desc":
-//                return reviewMovieDTOS.stream()
-//                        .sorted((a, b) -> b.getReviewDTO().getCreatedAt().compareTo(a.getReviewDTO().getCreatedAt()))
-//                        .collect(Collectors.toList());
-//            case "favorite_date_asc":
-//                return reviewMovieDTOS.stream()
-//                        .sorted(Comparator.comparing(r -> r.getReviewDTO().getCreatedAt()))
-//                        .collect(Collectors.toList());
             default:
                 return reviewMovieDTOS;
         }
@@ -77,8 +69,14 @@ public class HeartService implements UserActivityService {
         return Arrays.asList(
                 new SortOption("release_date_desc", "개봉 최근"),
                 new SortOption("release_date_asc", "개봉 과거"),
-                new SortOption("favorite_date_desc", "리뷰 좋아요 최근"),
-                new SortOption("favorite_date_asc", "리뷰 좋아요 과거")
+                new SortOption("heart_date_desc", "리뷰 좋아요 최근"),
+                new SortOption("heart_date_asc", "리뷰 좋아요 과거"),
+                new SortOption("heart_count_desc", "좋아요 많은순"),
+                new SortOption("heart-count_asc", "좋아요 적은순"),
+                new SortOption("runtime_desc", "상영 시간 긴순"),
+                new SortOption("runtime_asc", "상영 시간 짧은순"),
+                new SortOption("ajou-rating_desc", "아주대 평점 높은순"),
+                new SortOption("ajou-rating_asc", "아주대 평점 낮은순")
         );    }
 }
 
