@@ -13,7 +13,7 @@ import java.util.Map;
 @Builder
 public class FavoriteMovieDTO implements UserActivityDTO{
     private UserCommonDTO userCommonDTO;
-    private List<MovieCommonDTO> favoriteMovies;
+    private List<FavoriteMovieItem> favoriteMovies;
 
     @Override
     public List<?> getActivityItems() {

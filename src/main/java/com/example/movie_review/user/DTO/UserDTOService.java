@@ -144,23 +144,25 @@ public class UserDTOService {
         User user = userService.getUserByEmail(email);
         UserCommonDTO userCommonDTO = getUserCommonDTO(email);
 
-        List<MovieCommonDTO> favoriteMovies = user.getUserFavoriteMovies().stream()
-                .map(favorite -> MovieCommonDTO.builder()
-                        .id(favorite.getDbMovie().getId())
-                        .tId(favorite.getDbMovie().getMovieDetails().getTId())
-                        .title(favorite.getDbMovie().getMovieDetails().getTitle())
-                        .poster_path(favorite.getDbMovie().getMovieDetails().getPoster_path())
-                        .release_date(favorite.getDbMovie().getMovieDetails().getRelease_date())
-                        .runtime(favorite.getDbMovie().getMovieDetails().getRuntime())
-                        .ajou_rating(favorite.getDbMovie().getDbRatingAvg())
+        List<FavoriteMovieItem> favoriteMovies = user.getUserFavoriteMovies().stream()
+                .map(favorite -> FavoriteMovieItem.builder()
+                        .movieCommonDTO(MovieCommonDTO.builder()
+                                .id(favorite.getDbMovie().getId())
+                                .tId(favorite.getDbMovie().getMovieDetails().getTId())
+                                .title(favorite.getDbMovie().getMovieDetails().getTitle())
+                                .poster_path(favorite.getDbMovie().getMovieDetails().getPoster_path())
+                                .release_date(favorite.getDbMovie().getMovieDetails().getRelease_date())
+                                .runtime(favorite.getDbMovie().getMovieDetails().getRuntime())
+                                .ajou_rating(favorite.getDbMovie().getDbRatingAvg())
+                                .build())
+                        .favoriteDate(favorite.getFavoriteDate())
                         .build())
                 .collect(Collectors.toList());
-        System.out.println("favoriteMovies.get(0).getTId() = " + favoriteMovies.get(0).getTId());
 
         FavoriteMovieDTO.FavoriteMovieDTOBuilder favoriteMovieDTOBuilder = FavoriteMovieDTO.builder()
                 .userCommonDTO(userCommonDTO)
                 .favoriteMovies(favoriteMovies);
-        
+
         return favoriteMovieDTOBuilder.build();
     }
 

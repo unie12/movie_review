@@ -125,12 +125,6 @@
             case 'favorite':
                 items = response.favoriteMovies;
                 break;
-<!--            case 'rating':-->
-<!--                items = response.ratings;-->
-<!--                break;-->
-<!--            case 'subscription':-->
-<!--                items = response.subscriptions;-->
-<!--                break;-->
             // 다른 카테고리에 대한 처리 추가
             default:
                 items = [];
@@ -163,25 +157,19 @@
                 console.log('favorite item: ', item);
 
                 element.html(`
-                    <img src="https://image.tmdb.org/t/p/w500${item.poster_path}"
-                         alt="${item.title}"
-                         onclick="navigateToMovieDetails(${item.tid})">
-                    <p class="activity-title">${item.title}</p>
-                    ${category === 'rating' ? `<p class="rating">평점: ${item.score}</p>` : ''}
-                    <button id="favoriteButton-${item.id}"
-                            data-activity-id="${item.id}"
+                    <img src="https://image.tmdb.org/t/p/w500${item.movieCommonDTO.poster_path}"
+                         alt="${item.movieCommonDTO.title}"
+                         onclick="navigateToMovieDetails(${item.movieCommonDTO.tid})">
+                    <p class="activity-title">${item.movieCommonDTO.title}</p>
+                    ${category === 'rating' ? `<p class="rating">평점: ${item.movieCommonDTO.score}</p>` : ''}
+                    <button id="favoriteButton-${item.movieCommonDTO.id}"
+                            data-activity-id="${item.movieCommonDTO.id}"
                             class="favorite active">
                         <i class="fas fa-heart"></i>
                     </button>
                 `);
 
                 break;
-<!--            case 'subscription':-->
-<!--                element.html(`-->
-<!--                    <img src="${item.profileImage}" alt="${item.nickname}">-->
-<!--                    <p class="user-name">${item.nickname}</p>-->
-<!--                `);-->
-<!--                break;-->
             // 다른 카테고리에 대한 처리 추가
         }
         return element;

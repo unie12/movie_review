@@ -46,7 +46,7 @@ public class UserActivityViewController {
     }
 
     /**
-     * 찜한 영화 확인
+     * 사용자 활동 내역 리스트
      */
     @GetMapping("/{category}")
     public String getUserInfo(@PathVariable String userEmail, @PathVariable String category, Model model, Authentication auth) throws AccessDeniedException {
