@@ -1,17 +1,10 @@
 package com.example.movie_review.review;
 
 import com.example.movie_review.dbMovie.MovieCommonDTO;
-import com.example.movie_review.user.DTO.UserActivityDTO;
-import com.example.movie_review.user.DTO.UserCommonDTO;
-import com.example.movie_review.user.User;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Data
 @Builder
@@ -19,9 +12,14 @@ public class ReviewMovieDTO{
 
     private MovieCommonDTO movieCommonDTO;
     private ReviewDTO reviewDTO;
+
     private boolean isLikedByCurrentUser;
     private String original_title;
+
     private LocalDateTime reviewDate;
+    private int heartCnt;
+
+    private LocalDateTime heartDate;
 
 
 

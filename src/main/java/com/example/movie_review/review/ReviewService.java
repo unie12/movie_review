@@ -5,6 +5,7 @@ import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.dbMovie.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.dbRating.DbRatings;
+import com.example.movie_review.heart.Heart;
 import com.example.movie_review.movieDetail.MovieDetails;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.User;
@@ -107,7 +108,7 @@ public class ReviewService {
         }).collect(Collectors.toList());
     }
 
-    public List<ReviewMovieDTO> getReviewMovieDTOs(List<Review> reviews) {
+    public List<ReviewMovieDTO> getReviewMovieDTOs(List<Review> reviews, String userEmail) {
         return reviews.stream().map(review -> {
             User user = review.getUser();
             DbMovies dbMovie = review.getDbMovies();
@@ -152,6 +153,12 @@ public class ReviewService {
                             .anyMatch(heart -> heart.getUser().getEmail().equals(user.getEmail())))
                     .original_title(movieDetails.getOriginal_title())
                     .reviewDate(review.getUploadDate())
+                    .heartCnt(review.getHeartCount())
+                    .heartDate(review.getHearts().stream()
+                            .filter(heart -> heart.getUser().getEmail().equals(userEmail))  // userEmail을 파라미터로 받아야 함
+                            .map(Heart::getHeartTime)
+                            .findFirst()
+                            .orElse(null))
                     .build();
 
         }).collect(Collectors.toList());

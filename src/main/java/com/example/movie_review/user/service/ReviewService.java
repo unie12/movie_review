@@ -28,7 +28,7 @@ public class ReviewService implements UserActivityService {
     @Override
     public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
         User user = userService.getUserByEmail(userEmail);
-        List<ReviewMovieDTO> reviewMovieDTOS = reviewService.getReviewMovieDTOs(user.getReviews());
+        List<ReviewMovieDTO> reviewMovieDTOS = reviewService.getReviewMovieDTOs(user.getReviews(), userEmail);
         UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
 
         List<ReviewMovieDTO> sortedReviews = sortReview(reviewMovieDTOS, sort);
@@ -52,6 +52,14 @@ public class ReviewService implements UserActivityService {
             case "review_date_asc":
                 return reviewMovieDTOS.stream()
                         .sorted(Comparator.comparing(ReviewMovieDTO::getReviewDate))
+                        .collect(Collectors.toList());
+            case "heart_count_desc":
+                return reviewMovieDTOS.stream()
+                        .sorted(Comparator.comparingInt(ReviewMovieDTO::getHeartCnt).reversed())
+                        .collect(Collectors.toList());
+            case "heart_count_asc":
+                return reviewMovieDTOS.stream()
+                        .sorted(Comparator.comparingInt(ReviewMovieDTO::getHeartCnt))
                         .collect(Collectors.toList());
             case "release_date_desc":
                 return reviewMovieDTOS.stream()
@@ -85,6 +93,8 @@ public class ReviewService implements UserActivityService {
         return Arrays.asList(
                 new SortOption("review_date_desc", "리뷰 최근 작성순"),
                 new SortOption("review_date_asc", "리뷰 과거 작성순"),
+                new SortOption("heart_count_desc", "좋아요 많은순"),
+                new SortOption("heart_count_asc", "좋아요 적은순"),
                 new SortOption("release_date_desc", "개봉일 최신순"),
                 new SortOption("release_date_asc", "개봉일 과거순"),
                 new SortOption("runtime_desc", "상영 시간 긴순"),
