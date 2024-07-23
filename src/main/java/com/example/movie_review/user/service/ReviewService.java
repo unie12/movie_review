@@ -5,7 +5,6 @@ import com.example.movie_review.review.ReviewMovieDTO;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
 import com.example.movie_review.user.DTO.UserCommonDTO;
-import com.example.movie_review.user.DTO.UserDTOService;
 import com.example.movie_review.user.SortOption;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/activity.css">
+    <title th:text="${pageTitle}">사용자 활동</title>
+</head>
+<body>
+
+
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+    <h2 th:text="${pageTitle}">사용자 활동</h2>
+
+    <select id="sorting" name="sorting">
+        <!-- 정렬 옵션은 JavaScript로 동적 생성 -->
+    </select>
+
+    <div id="activity-container">
+        <div id="activity-list" class="activity-grid">
+            <!-- 활동 목록은 JavaScript로 동적 생성 -->
+        </div>
+    </div>
+
+    <div id="empty-message" style="display: none;">
+        <p th:text="${emptyMessage}">활동이 없습니다.</p>
+    </div>
+
+    <a th:href="@{'/info/' + ${userEmail}}">사용자 정보로 돌아가기</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/user-activity/common-activity.js"></script>
+<script th:inline="javascript">
+    var userEmail = /*[[${userEmail}]]*/ '';
+    var category = /*[[${category}]]*/ '';
+    var defaultSort = /*[[${defaultSort}]]*/ '';
+</script>
+<script th:src="@{'/js/user-activity/' + ${category} + '-activity.js'}"></script>
+</body>
+</html>

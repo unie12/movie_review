@@ -1,10 +1,7 @@
 package com.example.movie_review.user.service;
 
-import com.example.movie_review.review.ReviewMovieDTO;
 import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.SortOption;
-import com.example.movie_review.user.UserActivityService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

@@ -1,6 +1,6 @@
 package com.example.movie_review.subscription;
 
-import com.example.movie_review.user.DTO.UserDTOService;
+import com.example.movie_review.user.service.UserDTOService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

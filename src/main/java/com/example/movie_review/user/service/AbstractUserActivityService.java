@@ -2,7 +2,6 @@ package com.example.movie_review.user.service;
 
 import com.example.movie_review.dbMovie.MovieCommonDTO;
 import com.example.movie_review.user.DTO.UserActivityDTO;
-import com.example.movie_review.user.DTO.UserDTOService;
 import com.example.movie_review.user.SortOption;
 import com.example.movie_review.user.UserActivityService;
 import lombok.RequiredArgsConstructor;

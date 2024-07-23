@@ -1,7 +1,7 @@
 package com.example.movie_review.user.view;
 
 import com.example.movie_review.user.DTO.UserProfileDTO;
-import com.example.movie_review.user.DTO.UserProfileDTOService;
+import com.example.movie_review.user.service.UserProfileDTOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

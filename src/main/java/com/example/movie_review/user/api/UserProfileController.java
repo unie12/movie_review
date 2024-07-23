@@ -3,7 +3,7 @@ package com.example.movie_review.user.api;
 import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserProfileDTO;
-import com.example.movie_review.user.DTO.UserProfileDTOService;
+import com.example.movie_review.user.service.UserProfileDTOService;
 import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
 import com.example.movie_review.user.PreferredMovies;
 import lombok.RequiredArgsConstructor;

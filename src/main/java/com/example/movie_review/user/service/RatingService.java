@@ -1,11 +1,10 @@
 package com.example.movie_review.user.service;
 
 import com.example.movie_review.dbRating.DbRatingDTO;
-import com.example.movie_review.review.ReviewMovieDTO;
-import com.example.movie_review.user.DTO.*;
+import com.example.movie_review.user.DTO.RatingDTO;
+import com.example.movie_review.user.DTO.UserActivityDTO;
+import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
 import com.example.movie_review.user.SortOption;
-import com.example.movie_review.user.UserActivityService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

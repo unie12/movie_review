@@ -1,4 +1,4 @@
-package com.example.movie_review.user.DTO;
+package com.example.movie_review.user.service;
 
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.genre.GenresRepository;
@@ -7,6 +7,8 @@ import com.example.movie_review.genre.PreferredGenresService;
 import com.example.movie_review.movieDetail.GenreDto;
 import com.example.movie_review.movieDetail.MovieDTO;
 import com.example.movie_review.user.*;
+import com.example.movie_review.user.DTO.UserProfileDTO;
+import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
