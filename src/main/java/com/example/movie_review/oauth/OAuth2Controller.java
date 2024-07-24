@@ -22,11 +22,9 @@ public class OAuth2Controller {
 
     @GetMapping("/oauth2-login")
     public String oauth2LoginSuccess(Authentication auth, HttpServletResponse response, Model model) {
-        model.addAttribute("loginType", "jwt-login");
-        model.addAttribute("pageName", "Jwt Token 화면 로그인");
-
         OAuth2User oAuth2User = (OAuth2User) auth.getPrincipal();
         String email = oAuth2User.getAttribute("email"); // 구글의 기본 식별자는 이메일입니다.
+        System.out.println("Email from OAuth2User: " + email);
 
         Optional<User> userOptional = userService.getOptUserByEmail(email);
 
@@ -49,7 +47,12 @@ public class OAuth2Controller {
         Cookie cookie = new Cookie("jwtToken", jwtToken);
         cookie.setPath("/");
         cookie.setMaxAge(60 * 60);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         response.addCookie(cookie);
+
+        System.out.println("JWT Token generated: " + jwtToken);
+        System.out.println("Cookie set: " + cookie);
 
         return "redirect:/jwt-login";
     }
