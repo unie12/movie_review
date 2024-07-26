@@ -42,12 +42,8 @@ public class Review{
     @JoinColumn(name = "DbMovies_id")
     private DbMovies dbMovies;
 
-    @Column(name = "heart_count")
-    private int heartCount;
     public int getHeartCount() {
         return hearts.size();
     }
-
-    public void updateHeartCount() { this.heartCount = this.hearts.size(); }
 
 }

@@ -22,6 +22,7 @@ public class HeartService {
     public boolean toggleHeart(String email, Long reviewId, boolean isHeart) {
         User user = userService.getUserByEmail(email);
         Review review = reviewService.getReviewById(reviewId);
+//        review.updateHeartCount();
 
         Optional<Heart> existingHeart = heartRepository.findByUserAndReview(user, review);
 
@@ -30,7 +31,6 @@ public class HeartService {
             Heart heart = new Heart();
             heart.setUser(user);
             heart.setReview(review);
-//            review.incrementHeartCnt();
             heartRepository.save(heart);
             reviewService.saveReview(review);
             return true;
@@ -43,7 +43,6 @@ public class HeartService {
             reviewService.saveReview(review);
             return false;
         }
-        review.updateHeartCount();
         return existingHeart.isPresent();
     }
 

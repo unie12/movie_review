@@ -4,7 +4,10 @@ import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +21,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findReviewByDbMovies(DbMovies dbMovies);
 
-    Page<Review> findByDbMovies_MovieDetails_Id(Long movieId, PageRequest pageRequest);
+    @Query("SELECT new com.example.movie_review.review.ReviewWithHeartCount(r, SIZE(r.hearts)) " +
+            "FROM Review r " +
+            "WHERE r.dbMovies.movieDetails.id = :movieId " +
+            "ORDER BY SIZE(r.hearts) DESC")
+    Page<ReviewWithHeartCount> findByDbMovies_MovieDetails_IdWithHeartCount(@Param("movieId") Long movieId, Pageable pageable);
 
 }

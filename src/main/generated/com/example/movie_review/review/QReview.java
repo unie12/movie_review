@@ -28,8 +28,6 @@ public class QReview extends EntityPathBase<Review> {
 
     public final com.example.movie_review.dbMovie.QDbMovies dbMovies;
 
-    public final NumberPath<Integer> heartCount = createNumber("heartCount", Integer.class);
-
     public final ListPath<com.example.movie_review.heart.Heart, com.example.movie_review.heart.QHeart> hearts = this.<com.example.movie_review.heart.Heart, com.example.movie_review.heart.QHeart>createList("hearts", com.example.movie_review.heart.Heart.class, com.example.movie_review.heart.QHeart.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);

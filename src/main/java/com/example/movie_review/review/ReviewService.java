@@ -98,13 +98,24 @@ public class ReviewService {
     }
 
     public Page<ReviewDTO> getMovieReviews(Long movieTId, int page, int size, String sortBy, String email) {
-        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        PageRequest pageRequest;
+        if ("heartCount".equals(sortBy)) {
+            // heartCount로 정렬할 경우 정렬 없이 PageRequest 생성
+            pageRequest = PageRequest.of(page, size);
+        } else {
+            // 다른 필드로 정렬할 경우
+            Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+            pageRequest = PageRequest.of(page, size, sort);
+        }
 
-        Page<Review> reviewPage = reviewRepository.findByDbMovies_MovieDetails_Id(
-                dbMovieRepository.findByTmdbId(movieTId).orElseThrow().getId(), pageRequest);
+        Long movieId = dbMovieRepository.findByTmdbId(movieTId)
+                .orElseThrow(() -> new RuntimeException("Movie not found"))
+                .getId();
 
-        return reviewPage.map(review -> {
+        Page<ReviewWithHeartCount> reviewPage = reviewRepository.findByDbMovies_MovieDetails_IdWithHeartCount(movieId, pageRequest);
+
+        return reviewPage.map(reviewWithHeartCount  -> {
+            Review review = reviewWithHeartCount.getReview();
             Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
                     .map(DbRatings::getScore)
                     .orElse(null);
@@ -118,8 +129,8 @@ public class ReviewService {
                     .text(review.getContext())
                     .build();
             boolean isLikedByCurrentUser = isLikedByCurrentUser(review, email);
-            System.out.println("isLikedByCurrentUser = " + isLikedByCurrentUser);
-            return new ReviewDTO(userRating, review.getHeartCount(), userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
+
+            return new ReviewDTO(userRating, reviewWithHeartCount.getHeartCount(), userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
         });
     }
 
