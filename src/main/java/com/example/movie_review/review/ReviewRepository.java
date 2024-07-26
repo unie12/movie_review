@@ -2,6 +2,8 @@ package com.example.movie_review.review;
 
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +17,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByUser(User user);
 
     List<Review> findReviewByDbMovies(DbMovies dbMovies);
+
+    Page<Review> findByDbMovies_MovieDetails_Id(Long movieId, PageRequest pageRequest);
+
 }

@@ -13,7 +13,6 @@ import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,12 +45,14 @@ public class MovieDetailDTOService {
                             .id(review.getId())
                             .text(review.getContext())
                             .build();
-                    return new ReviewDTO(review.getDbMovies().getDbRatingAvg(), review.getHeartCount(),userCommonDTO, reviewCommonDTO);
+                    boolean isLikedByCurrentUser = reviewService.isLikedByCurrentUser(review, principal.getName());
+                    return new ReviewDTO(review.getDbMovies().getDbRatingAvg(), review.getHeartCount(),userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
                 })
                 .collect(Collectors.toList());
 
         MovieDetailDTO.MovieDetailDTOBuilder movieDetailDTO = MovieDetailDTO.builder()
                 .id(dbMovie.getId())
+                .tId(dbMovie.getTmdbId())
                 .reviewCnt(dbMovie.getReviewCount())
                 .title(movieDetails.getTitle())
                 .original_title(movieDetails.getOriginal_title())

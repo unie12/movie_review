@@ -43,6 +43,7 @@ public class HeartService {
             reviewService.saveReview(review);
             return false;
         }
+        review.updateHeartCount();
         return existingHeart.isPresent();
     }
 

@@ -1,16 +1,21 @@
 package com.example.movie_review.review;
 
+import com.example.movie_review.dbMovie.DbMovieRepository;
 import com.example.movie_review.dbMovie.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.dbMovie.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.heart.Heart;
+import com.example.movie_review.heart.HeartRepository;
 import com.example.movie_review.movieDetail.MovieDetails;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +27,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final DbMovieRepository dbMovieRepository;
+    private final HeartRepository heartRepository;
 
     private final UserService userService;
     private final DbMovieService dbMovieService;
@@ -90,6 +97,36 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
+    public Page<ReviewDTO> getMovieReviews(Long movieTId, int page, int size, String sortBy, String email) {
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+
+        Page<Review> reviewPage = reviewRepository.findByDbMovies_MovieDetails_Id(
+                dbMovieRepository.findByTmdbId(movieTId).orElseThrow().getId(), pageRequest);
+
+        return reviewPage.map(review -> {
+            Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
+                    .map(DbRatings::getScore)
+                    .orElse(null);
+            UserCommonDTO userCommonDTO = UserCommonDTO.builder()
+                    .email(review.getUser().getEmail())
+                    .nickname(review.getUser().getNickname())
+                    .picture(review.getUser().getPicture())
+                    .build();
+            ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
+                    .id(review.getId())
+                    .text(review.getContext())
+                    .build();
+            boolean isLikedByCurrentUser = isLikedByCurrentUser(review, email);
+            System.out.println("isLikedByCurrentUser = " + isLikedByCurrentUser);
+            return new ReviewDTO(userRating, review.getHeartCount(), userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
+        });
+    }
+
+    public boolean isLikedByCurrentUser(Review review, String email) {
+        return heartRepository.existsByUserAndReview(userService.getUserByEmail(email), review);
+    }
+
     public List<ReviewDTO> getReviewDTOs(List<Review> reviews) {
         return reviews.stream().map(review -> {
             Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
@@ -104,7 +141,7 @@ public class ReviewService {
                     .id(review.getId())
                     .text(review.getContext())
                     .build();
-            return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO);
+            return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO, false);
         }).collect(Collectors.toList());
     }
 

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <meta charset="UTF-8">
+    <style>
+        .user-picture {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .star-rating {
+            color: gold;
+        }
+        .like-button {
+            cursor: pointer;
+        }
+        .like-button.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .user-rating, .user-heart {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        .rating-value, .heart-value {
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+        .user-rating {
+            color: #f39c12;
+            border-color: #f39c12;
+        }
+        .user-heart {
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+        .rating-value {
+            background-color: #fdebd0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <h1 class="my-4">영화 리뷰</h1>
+    <div id="reviewList"></div>
+    <button id="loadMore" class="btn btn-primary mt-3">더 보기</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    const movieTId = [[${movieTId}]];
+    let currentPage = 0;
+
+    function loadReviews() {
+        fetch(`/api/movie/${movieTId}/reviews?page=${currentPage}`)
+            .then(response => response.json())
+            .then(data => {
+                const reviewList = document.getElementById('reviewList');
+
+                data.content.forEach(review => {
+                    const rating = review.userRating ? review.userRating.toFixed(1) : '평가 없음';
+                    const isActive = review.likedByCurrentUser ? 'active' : '';
+                    console.log('review val:' ,review);
+
+                    reviewList.innerHTML += `
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <a href="/info/${review.user.email}">
+                                        <img src="${review.user.picture}" alt="${review.user.nickname}" class="user-picture mr-3">
+                                    </a>
+                                    <div>
+                                        <h5 class="mb-0">${review.user.nickname}</h5>
+                                        <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <p class="card-text">${review.review.text}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">좋아요: <span class="like-count">${review.heartCnt}</span></small>
+                                </p>
+                                <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.review.id}">
+                                    <i class="fas fa-heart"></i> 좋아요
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                currentPage++;
+                if (data.last) {
+                    document.getElementById('loadMore').style.display = 'none';
+                }
+                attachLikeEvents();
+            });
+    }
+
+    function attachLikeEvents() {
+        $('.like-button').off('click').on('click', function() {
+            var reviewId = $(this).data('review-id');
+            var $button = $(this);
+
+            $.ajax({
+                url: '/api/review/heart/' + reviewId,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active')}),
+                success: function(response) {
+                    console.log('Full response:', response);
+                    if (response.heart) {
+                        $button.addClass('active');
+                    } else {
+                        $button.removeClass('active');
+                    }
+                    $button.closest('.card-body').find('.like-count').text(response.updateHeartCnt);
+                    console.log('heartCount val:', response.updateHeartCnt);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    }
+
+    document.getElementById('loadMore').addEventListener('click', loadReviews);
+
+    // 초기 로드
+    loadReviews();
+</script>
+</body>
+</html>

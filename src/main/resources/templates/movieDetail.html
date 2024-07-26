@@ -115,7 +115,9 @@
                         </div>
                     </div>
                 </div>
-                <button id="showAllReviews" class="btn btn-secondary">전체 리뷰 보기</button>
+                <p>
+                    <a th:href="@{'/contents/' + ${movieDTO.tId} + '/reviews'}" class="btn btn-lg btn-info">전체 리뷰 보기</a>
+                </p>
             </div>
 
             <script th:inline="javascript">
@@ -279,7 +281,7 @@ $(document).ready(function() {
 
     function loadReview() {
         $.ajax({
-            url: '/api/movie/review/' + movieId,
+            url: '/api/movie/' + movieId + '/review',
             type: 'GET',
             success: function(response) {
                 if (response.review) {
@@ -322,7 +324,7 @@ $(document).ready(function() {
     $('#saveReviewBtn').click(function() {
         var reviewText = $('#reviewText').val();
         $.ajax({
-            url: '/api/movie/review/' + movieId,
+            url: '/api/movie/' + movieId + '/review',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ movieId: movieId, review: reviewText }),
@@ -339,7 +341,7 @@ $(document).ready(function() {
     $('#deleteReviewBtn').click(function() {
         if (confirm('정말로 리뷰를 삭제하시겠습니까?')) {
             $.ajax({
-                url: '/api/movie/review/' + movieId,
+                url: '/api/movie/' + movieId + '/review',
                 type: 'DELETE',
                 success: function(response) {
                     loadReview();

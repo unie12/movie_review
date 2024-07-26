@@ -11,6 +11,7 @@ import java.util.List;
 public class MovieDetailDTO {
 
     private Long id;
+    private Long tId;
 
     /**
      * 연산 변수들

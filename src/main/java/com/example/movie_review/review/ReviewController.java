@@ -3,8 +3,10 @@ package com.example.movie_review.review;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.ui.Model;
@@ -14,14 +16,14 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/movie/review")
+@RequestMapping("/api/movie")
 public class ReviewController {
     private final ReviewService reviewService;
 
     /**
      * 해당 유저의 해당 영화에 대한 리뷰 보여주기
      */
-    @GetMapping("/{movieId}")
+    @GetMapping("/{movieId}/review")
         public ResponseEntity<?> loadReview(@PathVariable Long movieId, Model model, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
@@ -44,7 +46,7 @@ public class ReviewController {
     /**
      * 리뷰를 새로 작성하거나 기존의 작성 리뷰 수정
      */
-    @PostMapping("/{movieId}")
+    @PostMapping("/{movieId}/review")
     public ResponseEntity<?> saveReview(@RequestBody ReviewRequest request, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
@@ -63,7 +65,7 @@ public class ReviewController {
     /**
      * 리뷰 삭제
      */
-    @DeleteMapping("/{movieId}")
+    @DeleteMapping("/{movieId}/review")
     public ResponseEntity<?> deleteReview(@PathVariable Long movieId, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
@@ -77,6 +79,23 @@ public class ReviewController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    /**
+     * 해당 영화에 대한 리뷰 전체 리스트
+     * movieId == tId
+     */
+    @GetMapping("/{movieTId}/reviews")
+    public Page<ReviewDTO> getMovieReviews(
+            @PathVariable Long movieTId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "heartCount") String sort,
+            Authentication principal) {
+        System.out.println("reviewcontroller movieId = " + movieTId);
+
+        return reviewService.getMovieReviews(movieTId, page, size, sort, principal.getName());
+    }
+
 }
 
 @Data

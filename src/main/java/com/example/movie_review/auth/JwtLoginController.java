@@ -28,16 +28,17 @@ public class JwtLoginController {
 
     private final MovieCacheRepository movieCacheRepository;
 
-    //        movieCacheService.updateDailyMovieCache();
-//        movieCacheService.updateWeeklyMovieCache();
+
 
     @GetMapping({"", "/"})
     public String home(@CookieValue(name = "jwtToken", required = false) String token, Model model, HttpServletResponse response) throws JsonProcessingException {
+//        movieCacheService.updateDailyMovieCache();
+//        movieCacheService.updateWeeklyMovieCache();
         System.out.println("home token = " + token);
 
-        if (token != null && !JwtTokenUtil.isExpired(token, "my-secret-key-123123")) {
-            try {
-                String email = JwtTokenUtil.getLoginId(token, "my-secret-key-123123");
+//        if (token != null && !JwtTokenUtil.isExpired(token, "my-secret-key-123123")) {
+//            try {
+//                String email = JwtTokenUtil.getLoginId(token, "my-secret-key-123123");
 
                 // 영화 데이터 로딩
                 MovieCache dailyCache = movieCacheRepository.findByType(MovieType.DBOM)
@@ -55,15 +56,15 @@ public class JwtLoginController {
                 model.addAttribute("wBOM", weeklyCache.getMovieData());
 
                 return "home";
-            } catch (Exception e) {
+//            } catch (Exception e) {
                 // JWT 파싱 중 예외 발생 시
-                System.out.println("Error parsing JWT token: " + e.getMessage());
-                return "redirect:/login";
-            }
-        } else {
-            // 토큰이 없거나 만료된 경우
-            return "redirect:/login";
-        }
+//                System.out.println("Error parsing JWT token: " + e.getMessage());
+//                return "redirect:/jwt-login";
+//            }
+//        } else {
+//             토큰이 없거나 만료된 경우
+//            return "redirect:/jwt-login";
+//        }
     }
 
     @GetMapping("/search")

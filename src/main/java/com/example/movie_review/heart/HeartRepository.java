@@ -13,4 +13,6 @@ public interface HeartRepository extends JpaRepository<Heart, Long> {
     Optional<Heart> findByUserAndReview(User user, Review review);
 
     List<Heart> findByUser(User user);
+
+    boolean existsByUserAndReview(User user, Review review);
 }

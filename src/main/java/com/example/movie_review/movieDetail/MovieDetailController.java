@@ -6,6 +6,7 @@ import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +51,20 @@ public class MovieDetailController {
         return "movieDetail";
     }
 
+    /**
+     * @param movieTId
+     * @param model
+     * @return
+     */
+    @GetMapping("/contents/{movieTId}/reviews")
+    public String movieReviews(@PathVariable Long movieTId, Model model) {
+        model.addAttribute("movieTId", movieTId);
+        return "movieReviews";
+    }
+
+    /**
+     * 영화 배우 클릭 관련.. 향후 수정 필요
+     */
     @GetMapping("/people/{actorId}")
     public String actorDetail(@PathVariable Long actorId, Model model) {
         String actorDetailsJson = tmdbService.getActorDetails(actorId).block();
