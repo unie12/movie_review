@@ -53,6 +53,7 @@
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <a th:href="@{'/contents/' + ${movieTId}}">뒤로 가기</a>
     <h1 class="my-4">영화 리뷰</h1>
     <div id="reviewList"></div>
     <button id="loadMore" class="btn btn-primary mt-3">더 보기</button>
