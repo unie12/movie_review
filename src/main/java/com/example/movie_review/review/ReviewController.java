@@ -91,8 +91,6 @@ public class ReviewController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "heartCount") String sort,
             Authentication principal) {
-        System.out.println("reviewcontroller movieId = " + movieTId);
-
         return reviewService.getMovieReviews(movieTId, page, size, sort, principal.getName());
     }
 

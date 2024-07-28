@@ -18,7 +18,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable() // CSRF 보안 설정 사용 안 함
-//                .logout().disable() // 로그아웃 사용 안 함
                 .formLogin().disable() // 폼 로그인 사용 안 함
 
                 .authorizeHttpRequests(authorize -> authorize

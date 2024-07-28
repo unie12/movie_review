@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface DbRatingRepository extends JpaRepository<DbRatings, Long> {
     Optional<DbRatings> findByDbMoviesAndUser(DbMovies dbMovies, User user);
+
+    Optional<DbRatings> findByUserIdAndDbMoviesId(Long userId, Long movieId);
 }

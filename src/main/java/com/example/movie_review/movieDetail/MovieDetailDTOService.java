@@ -2,6 +2,7 @@ package com.example.movie_review.movieDetail;
 
 import com.example.movie_review.dbMovie.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
+import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovieService;
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.heart.HeartService;
@@ -25,6 +26,7 @@ public class MovieDetailDTOService {
     private final UserFavoriteMovieService userFavoriteMovieService;
     private final ReviewService reviewService;
     private final HeartService heartService;
+    private final DbRatingService dbRatingService;
 
     public MovieDetailDTO getMovieDetailDTO(Long movieTId, Authentication principal) {
         DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
@@ -46,7 +48,8 @@ public class MovieDetailDTOService {
                             .text(review.getContext())
                             .build();
                     boolean isLikedByCurrentUser = reviewService.isLikedByCurrentUser(review, principal.getName());
-                    return new ReviewDTO(review.getDbMovies().getDbRatingAvg(), review.getHeartCount(),userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
+                    Double userRating = dbRatingService.getUserRatingForMovie(user.getId(), dbMovie.getId());
+                    return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
                 })
                 .collect(Collectors.toList());
 

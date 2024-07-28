@@ -60,5 +60,12 @@ public class DbRatingService {
 
         dbRatingRepository.delete(dbRatings);
     }
+
+
+    public Double getUserRatingForMovie(Long userId, Long movieId) {
+        return dbRatingRepository.findByUserIdAndDbMoviesId(userId, movieId)
+                .map(DbRatings::getScore)
+                .orElse(null);
+    }
 }
 
