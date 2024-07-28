@@ -17,14 +17,14 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/movie")
+@RequestMapping("/api")
 public class ReviewController {
     private final ReviewService reviewService;
 
     /**
      * 해당 유저의 해당 영화에 대한 리뷰 보여주기
      */
-    @GetMapping("/{movieId}/review")
+    @GetMapping("/movie/{movieId}/review")
         public ResponseEntity<?> loadReview(@PathVariable Long movieId, Model model, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
@@ -47,7 +47,7 @@ public class ReviewController {
     /**
      * 리뷰를 새로 작성하거나 기존의 작성 리뷰 수정
      */
-    @PostMapping("/{movieId}/review")
+    @PostMapping("/movie/{movieId}/review")
     public ResponseEntity<?> saveReview(@RequestBody ReviewRequest request, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
@@ -66,7 +66,7 @@ public class ReviewController {
     /**
      * 리뷰 삭제
      */
-    @DeleteMapping("/{movieId}/review")
+    @DeleteMapping("/movie/{movieId}/review")
     public ResponseEntity<?> deleteReview(@PathVariable Long movieId, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
@@ -85,7 +85,7 @@ public class ReviewController {
      * 해당 영화에 대한 리뷰 전체 리스트
      * movieId == tId
      */
-    @GetMapping("/{movieTId}/reviews")
+    @GetMapping("/movie/{movieTId}/reviews")
     public Page<ReviewDTO> getMovieReviews(
             @PathVariable Long movieTId,
             @RequestParam(defaultValue = "0") int page,
@@ -98,9 +98,8 @@ public class ReviewController {
     /**
      * 홈 화면에서 보여줄 인기 리뷰 리스트
      */
-    @GetMapping("/popular-reviews")
+    @GetMapping("/reviews/popular-reviews")
     public List<ReviewMovieDTO> getPopularReviews() {
-//        return reviewService.getRandomPopularReviews(6);
         return reviewService.getRandomPopularReviews(6);
     }
 

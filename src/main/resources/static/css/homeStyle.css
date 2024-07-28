@@ -1,6 +1,13 @@
+.container {
+    position: relative; /* container 요소에 position: relative; 추가 */
+}
+
+.d-flex.position-relative {
+    position: relative; /* 화살표 버튼이 포함된 부모 요소에 position: relative; 추가 */
+}
 .movie-list-container {
-            position: relative;
-            overflow: hidden;
+    position: relative;
+    overflow: hidden;
 }
 .movie-list {
     display: flex;
@@ -64,4 +71,67 @@
 }
 .arrow.right {
     right: 0;
+}
+
+#popularReviews {
+    display: flex;
+    overflow-x: hidden;
+    scroll-snap-type: x mandatory;
+    gap: 20px;
+}
+.review-card {
+    flex: 0 0 calc(33.333% - 14px);
+    scroll-snap-align: start;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    height: 300px; /* 카드의 전체 높이를 조정 */
+    display: flex;
+    flex-direction: column;
+}
+.review-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+}
+.user-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+}
+.user-info h5 {
+    margin: 0 10px 0 0;
+}
+.review-content {
+    padding: 15px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+.movie-poster {
+    width: 120px;
+    height: 180px;
+    object-fit: cover;
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 10px;
+}
+.review-text {
+    margin-top: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.review-footer {
+    padding: 10px;
+    background-color: #f8f9fa;
+    text-align: right;
 }

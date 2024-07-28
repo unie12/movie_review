@@ -106,6 +106,10 @@ public class ReviewService {
         return reviewRepository.findReviewByDbMovies(dbMovie);
     }
 
+    /**
+     * @param count: 총 몇개의 리뷰를 보여줄건지
+     * @return
+     */
     public List<ReviewMovieDTO> getRandomPopularReviews(int count) {
         List<Review> popularReviews = reviewRepository.findPopularReviews(0);
         Collections.shuffle(popularReviews);

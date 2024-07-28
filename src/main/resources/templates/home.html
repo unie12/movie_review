@@ -3,105 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="/css/homeStyle.css">
 
-    <style>
-        .container {
-            position: relative; /* container 요소에 position: relative; 추가 */
-        }
-
-        .d-flex.position-relative {
-            position: relative; /* 화살표 버튼이 포함된 부모 요소에 position: relative; 추가 */
-        }
-        .movie-list-container {
-            position: relative;
-            overflow: hidden;
-        }
-        .movie-list {
-            display: flex;
-            overflow-x: hidden;
-            list-style-type: none; /* <li> 기본 스타일 제거 */
-            gap: 20px;
-            padding: 10px 40px;
-        }
-        .movie-item {
-            flex: 0 0 auto;
-            width: 200px;
-            text-align: center;
-            position: relative;
-        }
-        .movie-item img {
-            cursor: pointer;
-            width: 100%;
-            height: 300px; /* 원하는 높이로 설정 */
-            object-fit: cover; /* 이미지가 칸을 꽉 채우면서 비율 유지 */
-        }
-        .rank {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 2px 5px;
-            font-size: 14px;
-            border-radius: 3px;
-        }
-        .audiAcc {
-            margin-top: 5px;
-        }
-        .movie-info {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .movie-info p {
-            margin: 5px 0;
-        }
-        .arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            z-index: 10;
-        }
-        .arrow.left {
-            left: 0;
-        }
-        .arrow.right {
-            right: 0;
-        }
-        #popularReviews {
-           display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-        }
-        .review-item {
-            flex: 0 0 33%;
-            margin-right: 5px;
-            scroll-snap-align: start;
-        }
-        .user-picture {
-            width: 10%;
-            height: auto;
-            object-fit: cover;
-        }
-        .movie-picture {
-            width: 40%;
-            height: auto;
-            object-fit: cover;
-        }
-    </style>
 </head>
 
 <body>
@@ -130,11 +34,11 @@
         </form>
 
         <div class="container mt-5">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2>인기 리뷰</h2>
                 <button class="btn btn-primary" id="viewAllBtn">전체 보기</button>
             </div>
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="position-relative">
                 <button class="arrow left" onclick="scrollContainer('popularReviews', -1)">&#9664;</button>
                 <div id="popularReviews" class="d-flex overflow-hidden">
                     <!-- 리뷰 카드들이 여기에 추가될 예정 -->
@@ -191,47 +95,54 @@
     var popularMovies = /*[[${popularMovies}]]*/ '[]';
     var trendingMovies = /*[[${trendingMovies}]]*/ '[]';
 
-     document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
 
-        fetch('/api/movie/popular-reviews')
+        fetch('/api/reviews/popular-reviews')
             .then(response => response.json())
             .then(reviews => {
-                console.log('popular review list:', reviews);
-
                 const container = document.getElementById('popularReviews');
                 reviews.forEach(review => {
-                    const reviewElement = document.createElement('div');
-                    reviewElement.className = 'review-item';
-                    const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
-
-                    reviewElement.innerHTML = `
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="${review.reviewDTO.user.picture}" alt="${review.reviewDTO.user.nickname}" class="user-picture mr-3">
-                                <div>
-                                    <h5 class="mb-0">${review.reviewDTO.user.nickname}</h5>
-                                    <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
-                                </div>
-                            </div>
-                            <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="movie-picture mr-3">
-                            <hr>
-                            <p class="card-text"><strong>${review.movieCommonDTO.title}</strong></p>
-                            <p class="card-text">${review.reviewDTO.review.text}</p>
-                            <p class="card-text">
-                                <small class="text-muted">좋아요: <span class="like-count">${review.reviewDTO.heartCnt}</span></small>
-                            </p>
-                        </div>
-                    </div>
-                    `;
-                container.appendChild(reviewElement);
+                    const reviewElement = createReviewCard(review);
+                    container.appendChild(reviewElement);
+                });
             });
-        });
+
         document.getElementById('viewAllBtn').addEventListener('click', function() {
             window.location.href = '/popular-reviews';
         });
     });
+
+     function createReviewCard(review) {
+        const reviewElement = document.createElement('div');
+        reviewElement.className = 'review-card';
+        const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
+
+        reviewElement.innerHTML = `
+            <div class="review-header">
+                <img src="${review.reviewDTO.user.picture}" alt="${review.reviewDTO.user.nickname}" class="user-picture">
+                <div class="user-info">
+                    <h5>${review.reviewDTO.user.nickname}</h5>
+                    <span class="user-rating">평점: ${rating}</span>
+                </div>
+            </div>
+            <div class="review-content">
+                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="movie-poster">
+                <h4>${review.movieCommonDTO.title}</h4>
+                <p class="review-text">${review.reviewDTO.review.text}</p>
+            </div>
+            <div class="review-footer">
+                <small>좋아요: ${review.reviewDTO.heartCnt}</small>
+            </div>
+        `;
+
+        reviewElement.addEventListener('click', function() {
+            window.location.href = `/review/all`;
+        });
+
+        return reviewElement;
+    }
+
 
     function initializeMovieLists(dBOMJson, wBOMJson, popularMoviesJson, trendingMoviesJson) {
         try {
@@ -340,9 +251,8 @@
     }
 
     function scrollContainer(containerId, direction) {
-        console.log('scrollContainer called with:', containerId, direction); // 디버그 로그 추가
         const container = document.getElementById(containerId);
-        const scrollAmount = 170;
+        const scrollAmount = container.clientWidth;
         container.scrollBy({
             left: direction * scrollAmount,
             behavior: 'smooth'
