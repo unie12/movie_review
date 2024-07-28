@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>전체 리뷰</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
+    <div>
+        <a th:href="@{/reviews(filter='popular')}" th:class="${currentFilter == 'popular' ? 'active' : ''}">인기순</a>
+        <a th:href="@{/reviews(filter='recently')}" th:class="${currentFilter == 'recently' ? 'active' : ''}">최신순</a>
+    </div>
+
+    <div id="reviewList">
+        <div th:each="review : ${reviews}" class="review-card">
+            <div class="review-header">
+                <img th:src="${review.reviewDTO.user.picture}" th:alt="${review.reviewDTO.user.nickname}" class="user-picture">
+                <div class="user-info">
+                    <h5 th:text="${review.reviewDTO.user.nickname}"></h5>
+                    <span class="user-rating" th:text="'평점: ' + ${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span>
+                </div>
+            </div>
+            <div class="review-content">
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
+                <h4 th:text="${review.movieCommonDTO.title}"></h4>
+                <p class="review-text" th:text="${review.reviewDTO.review.text}"></p>
+            </div>
+            <div class="review-footer">
+                <small th:text="'좋아요: ' + ${review.heartCnt}"></small>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" style="display: none;">Loading...</div>
+</div>
+
+<script th:inline="javascript">
+    var currentPage = /*[[${currentPage}]]*/ 0;
+    var totalPages = /*[[${totalPages}]]*/ 1;
+    var currentFilter = /*[[${currentFilter}]]*/ 'popular';
+    var loading = false;
+
+    function loadMoreReviews() {
+        if (loading || currentPage >= totalPages - 1) return;
+
+        loading = true;
+        $('#loading').show();
+
+        $.get(/*[[${'/api/reviews?filter=' + currentFilter + '&page=' + (currentPage + 1)}]]*/)
+            .done(function(data) {
+                currentPage = data.number;
+                totalPages = data.totalPages;
+
+                data.content.forEach(function(review) {
+                    $('#reviewList').append(createReviewCard(review));
+                });
+
+                loading = false;
+                $('#loading').hide();
+            });
+    }
+
+     function createReviewCard(review) {
+        const reviewElement = document.createElement('div');
+        reviewElement.className = 'review-card';
+        const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
+
+        reviewElement.innerHTML = `
+            <div class="review-header">
+                <img src="${review.reviewDTO.user.picture}" alt="${review.reviewDTO.user.nickname}" class="user-picture">
+                <div class="user-info">
+                    <h5>${review.reviewDTO.user.nickname}</h5>
+                    <span class="user-rating">평점: ${rating}</span>
+                </div>
+            </div>
+            <div class="review-content">
+                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="movie-poster">
+                <h4>${review.movieCommonDTO.title}</h4>
+                <p class="review-text">${review.reviewDTO.review.text}</p>
+            </div>
+            <div class="review-footer">
+                <small>좋아요: ${review.reviewDTO.heartCnt}</small>
+            </div>
+        `;
+
+        return reviewElement;
+    }
+
+    $(window).scroll(function() {
+        if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+            loadMoreReviews();
+        }
+    });
+
+</script>
+</body>
+</html>

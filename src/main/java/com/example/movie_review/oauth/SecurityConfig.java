@@ -21,9 +21,8 @@ public class SecurityConfig {
                 .formLogin().disable() // 폼 로그인 사용 안 함
 
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/", "/oauth2/**", "/api/movies/**", "/jwt-login/**", "/jwt-login", "/home", "/login-failure", "/api/**").permitAll()
-                            .requestMatchers("/jwt-login", "/oauth2-login").permitAll()
-                            .anyRequest().authenticated() // 나머지 요청들은 모두 인증 절차 수행해야 함
+                        .requestMatchers("/jwt-login", "/oauth2/**", "/api/**", "/css/**", "/js/**", "/images/**").permitAll()
+                        .anyRequest().authenticated() // 나머지 요청들은 모두 인증 절차 수행해야 함
                 )
 
                 .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용

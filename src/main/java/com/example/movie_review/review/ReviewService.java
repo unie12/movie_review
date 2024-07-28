@@ -15,6 +15,7 @@ import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -117,6 +118,16 @@ public class ReviewService {
                 .limit(count)
                 .map(this::getReviewMovieDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Page<ReviewMovieDTO> getRecentReviews(Pageable pageable) {
+        Page<Review> recentReviews = reviewRepository.findRecentReviews(pageable);
+        return recentReviews.map(this::getReviewMovieDTO);
+    }
+
+    public Page<ReviewMovieDTO> getPopularReviews(Pageable pageable) {
+        Page<Review> popularReviews = reviewRepository.findPopularReviewsWithPagination(pageable);
+        return popularReviews.map(this::getReviewMovieDTO);
     }
 
 
@@ -281,5 +292,4 @@ public class ReviewService {
                 .build();
         return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO, false);
     }
-
 }

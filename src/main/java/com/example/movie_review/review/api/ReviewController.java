@@ -1,9 +1,14 @@
-package com.example.movie_review.review;
+package com.example.movie_review.review.api;
 
+import com.example.movie_review.review.Review;
+import com.example.movie_review.review.ReviewDTO;
+import com.example.movie_review.review.ReviewMovieDTO;
+import com.example.movie_review.review.ReviewService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -101,6 +106,18 @@ public class ReviewController {
     @GetMapping("/reviews/popular-reviews")
     public List<ReviewMovieDTO> getPopularReviews() {
         return reviewService.getRandomPopularReviews(6);
+    }
+
+    @GetMapping("/reviews")
+    @ResponseBody
+    public Page<ReviewMovieDTO> getReviews(@RequestParam(defaultValue = "popular") String filter,
+                                           @RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
+        if ("recently".equals(filter)) {
+            return reviewService.getRecentReviews(PageRequest.of(page, size));
+        } else {
+            return reviewService.getPopularReviews(PageRequest.of(page, size));
+        }
     }
 
 }

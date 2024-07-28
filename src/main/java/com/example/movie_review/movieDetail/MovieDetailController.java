@@ -52,17 +52,6 @@ public class MovieDetailController {
     }
 
     /**
-     * @param movieTId
-     * @param model
-     * @return
-     */
-    @GetMapping("/contents/{movieTId}/reviews")
-    public String movieReviews(@PathVariable Long movieTId, Model model) {
-        model.addAttribute("movieTId", movieTId);
-        return "movieReviews";
-    }
-
-    /**
      * 영화 배우 클릭 관련.. 향후 수정 필요
      */
     @GetMapping("/people/{actorId}")

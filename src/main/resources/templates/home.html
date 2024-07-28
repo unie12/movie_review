@@ -109,7 +109,7 @@
             });
 
         document.getElementById('viewAllBtn').addEventListener('click', function() {
-            window.location.href = '/popular-reviews';
+            window.location.href = '/reviews?filter=popular';
         });
     });
 
@@ -137,7 +137,7 @@
         `;
 
         reviewElement.addEventListener('click', function() {
-            window.location.href = `/review/all`;
+            window.location.href = `/reviews?filter=popular`;
         });
 
         return reviewElement;
