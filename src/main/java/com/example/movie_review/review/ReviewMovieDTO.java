@@ -18,7 +18,6 @@ public class ReviewMovieDTO{
 
     private LocalDateTime reviewDate;
     private int heartCnt;
-
     private LocalDateTime heartDate;
 
 

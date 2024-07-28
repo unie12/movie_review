@@ -27,4 +27,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "ORDER BY SIZE(r.hearts) DESC")
     Page<ReviewWithHeartCount> findByDbMovies_MovieDetails_IdWithHeartCount(@Param("movieId") Long movieId, Pageable pageable);
 
+    @Query("SELECT r FROM Review r WHERE SIZE(r.hearts) > :heartCount ORDER BY SIZE(r.hearts) DESC")
+    List<Review> findPopularReviews(@Param("heartCount") int heartCount);
 }

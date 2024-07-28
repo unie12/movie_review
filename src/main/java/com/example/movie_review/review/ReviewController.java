@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -92,6 +93,15 @@ public class ReviewController {
             @RequestParam(defaultValue = "heartCount") String sort,
             Authentication principal) {
         return reviewService.getMovieReviews(movieTId, page, size, sort, principal.getName());
+    }
+
+    /**
+     * 홈 화면에서 보여줄 인기 리뷰 리스트
+     */
+    @GetMapping("/popular-reviews")
+    public List<ReviewMovieDTO> getPopularReviews() {
+//        return reviewService.getRandomPopularReviews(6);
+        return reviewService.getRandomPopularReviews(6);
     }
 
 }

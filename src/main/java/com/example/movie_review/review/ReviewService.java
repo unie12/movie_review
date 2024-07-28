@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,7 +69,6 @@ public class ReviewService {
             review.setDbMovies(dbMovie);
             return reviewRepository.save(review);
         }
-
     }
 
     /**
@@ -96,6 +96,26 @@ public class ReviewService {
     public void saveReview(Review review) {
         reviewRepository.save(review);
     }
+
+    public boolean isLikedByCurrentUser(Review review, String email) {
+        return heartRepository.existsByUserAndReview(userService.getUserByEmail(email), review);
+    }
+
+
+    public List<Review> findReviewByDbMovies(DbMovies dbMovie) {
+        return reviewRepository.findReviewByDbMovies(dbMovie);
+    }
+
+    public List<ReviewMovieDTO> getRandomPopularReviews(int count) {
+        List<Review> popularReviews = reviewRepository.findPopularReviews(0);
+        Collections.shuffle(popularReviews);
+        return popularReviews.stream()
+                .limit(count)
+                .map(this::getReviewMovieDTO)
+                .collect(Collectors.toList());
+    }
+
+
 
     public Page<ReviewDTO> getMovieReviews(Long movieTId, int page, int size, String sortBy, String email) {
         PageRequest pageRequest;
@@ -132,28 +152,6 @@ public class ReviewService {
 
             return new ReviewDTO(userRating, reviewWithHeartCount.getHeartCount(), userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
         });
-    }
-
-    public boolean isLikedByCurrentUser(Review review, String email) {
-        return heartRepository.existsByUserAndReview(userService.getUserByEmail(email), review);
-    }
-
-    public List<ReviewDTO> getReviewDTOs(List<Review> reviews) {
-        return reviews.stream().map(review -> {
-            Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
-                    .map(DbRatings::getScore)
-                    .orElse(null);
-            UserCommonDTO userCommonDTO = UserCommonDTO.builder()
-                    .email(review.getUser().getEmail())
-                    .nickname(review.getUser().getNickname())
-                    .picture(review.getUser().getPicture())
-                    .build();
-            ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
-                    .id(review.getId())
-                    .text(review.getContext())
-                    .build();
-            return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO, false);
-        }).collect(Collectors.toList());
     }
 
     public List<ReviewMovieDTO> getReviewMovieDTOs(List<Review> reviews, String userEmail) {
@@ -212,8 +210,72 @@ public class ReviewService {
         }).collect(Collectors.toList());
     }
 
+    public ReviewMovieDTO getReviewMovieDTO(Review review) {
+        User user = review.getUser();
+        DbMovies dbMovie = review.getDbMovies();
+        MovieDetails movieDetails = dbMovie.getMovieDetails();
 
-    public List<Review> findReviewByDbMovies(DbMovies dbMovie) {
-        return reviewRepository.findReviewByDbMovies(dbMovie);
+        Double userRating = dbRatingService.getDbRating(user.getEmail(), movieDetails.getId())
+                .map(DbRatings::getScore)
+                .orElse(null);
+
+        UserCommonDTO userCommonDTO = UserCommonDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .picture(user.getPicture())
+                .build();
+
+        MovieCommonDTO movieCommonDTO = MovieCommonDTO.builder()
+                .id(dbMovie.getId())
+                .tId(movieDetails.getTId())
+                .title(movieDetails.getTitle())
+                .poster_path(movieDetails.getPoster_path())
+                .release_date(movieDetails.getRelease_date())
+                .runtime(movieDetails.getRuntime())
+                .ajou_rating(dbMovie.getDbRatingAvg())
+                .ajou_rating_cnt(dbMovie.getDbRatingCount())
+                .build();
+
+        ReviewDTO reviewDTO = ReviewDTO.builder()
+                .userRating(userRating)
+                .heartCnt(review.getHeartCount())
+                .user(userCommonDTO)
+                .review(ReviewCommonDTO.builder()
+                        .id(review.getId())
+                        .text(review.getContext())
+                        .build())
+                .build();
+
+        return ReviewMovieDTO.builder()
+                .movieCommonDTO(movieCommonDTO)
+                .reviewDTO(reviewDTO)
+                .isLikedByCurrentUser(review.getHearts().stream()
+                        .anyMatch(heart -> heart.getUser().getEmail().equals(user.getEmail())))
+                .original_title(movieDetails.getOriginal_title())
+                .reviewDate(review.getUploadDate())
+                .heartCnt(review.getHeartCount())
+                .heartDate(review.getHearts().stream()
+//                        .filter(heart -> heart.getUser().getEmail().equals(userEmail))  // userEmail을 파라미터로 받아야 함
+                        .map(Heart::getHeartTime)
+                        .findFirst()
+                        .orElse(null))
+                .build();
     }
+    public ReviewDTO getReviewDTO(Review review) {
+        Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
+                .map(DbRatings::getScore)
+                .orElse(null);
+        UserCommonDTO userCommonDTO = UserCommonDTO.builder()
+                .email(review.getUser().getEmail())
+                .nickname(review.getUser().getNickname())
+                .picture(review.getUser().getPicture())
+                .build();
+        ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
+                .id(review.getId())
+                .text(review.getContext())
+                .build();
+        return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO, false);
+    }
+
 }

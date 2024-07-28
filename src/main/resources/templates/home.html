@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="/css/homeStyle.css">
 
     <style>
+        .container {
+            position: relative; /* container 요소에 position: relative; 추가 */
+        }
+
+        .d-flex.position-relative {
+            position: relative; /* 화살표 버튼이 포함된 부모 요소에 position: relative; 추가 */
+        }
         .movie-list-container {
             position: relative;
             overflow: hidden;
@@ -74,6 +81,26 @@
         .arrow.right {
             right: 0;
         }
+        #popularReviews {
+           display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+        }
+        .review-item {
+            flex: 0 0 33%;
+            margin-right: 5px;
+            scroll-snap-align: start;
+        }
+        .user-picture {
+            width: 10%;
+            height: auto;
+            object-fit: cover;
+        }
+        .movie-picture {
+            width: 40%;
+            height: auto;
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -101,6 +128,20 @@
             <input type="text" name="query" placeholder="영화 제목을 입력하세요">
             <button type="submit">검색</button>
         </form>
+
+        <div class="container mt-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>인기 리뷰</h2>
+                <button class="btn btn-primary" id="viewAllBtn">전체 보기</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <button class="arrow left" onclick="scrollContainer('popularReviews', -1)">&#9664;</button>
+                <div id="popularReviews" class="d-flex overflow-hidden">
+                    <!-- 리뷰 카드들이 여기에 추가될 예정 -->
+                </div>
+                <button class="arrow right" onclick="scrollContainer('popularReviews', 1)">&#9654;</button>
+            </div>
+        </div>
 
 
         <div th:if="${dBOM}">
@@ -152,9 +193,45 @@
 
      document.addEventListener('DOMContentLoaded', function() {
         initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
-    });
-    /*]]>*/
 
+        fetch('/api/movie/popular-reviews')
+            .then(response => response.json())
+            .then(reviews => {
+                console.log('popular review list:', reviews);
+
+                const container = document.getElementById('popularReviews');
+                reviews.forEach(review => {
+                    const reviewElement = document.createElement('div');
+                    reviewElement.className = 'review-item';
+                    const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
+
+                    reviewElement.innerHTML = `
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="${review.reviewDTO.user.picture}" alt="${review.reviewDTO.user.nickname}" class="user-picture mr-3">
+                                <div>
+                                    <h5 class="mb-0">${review.reviewDTO.user.nickname}</h5>
+                                    <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
+                                </div>
+                            </div>
+                            <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="movie-picture mr-3">
+                            <hr>
+                            <p class="card-text"><strong>${review.movieCommonDTO.title}</strong></p>
+                            <p class="card-text">${review.reviewDTO.review.text}</p>
+                            <p class="card-text">
+                                <small class="text-muted">좋아요: <span class="like-count">${review.reviewDTO.heartCnt}</span></small>
+                            </p>
+                        </div>
+                    </div>
+                    `;
+                container.appendChild(reviewElement);
+            });
+        });
+        document.getElementById('viewAllBtn').addEventListener('click', function() {
+            window.location.href = '/popular-reviews';
+        });
+    });
 
     function initializeMovieLists(dBOMJson, wBOMJson, popularMoviesJson, trendingMoviesJson) {
         try {
