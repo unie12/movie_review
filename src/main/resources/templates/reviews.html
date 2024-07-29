@@ -82,7 +82,9 @@
     <div id="reviewList">
         <div th:each="review : ${reviews}" th:id="'review-' + ${review.reviewDTO.review.id}" class="review-card" th:classappend="${review.reviewDTO.review.id == highlightReviewId} ? 'highlighted' : ''">
             <div class="review-header">
-                <img th:src="${review.reviewDTO.user.picture}" th:alt="${review.reviewDTO.user.nickname}" class="user-picture">
+                <a th:href="@{'/info/' + ${review.reviewDTO.user.email}}">
+                    <img th:src="${review.reviewDTO.user.picture}" th:alt="${review.reviewDTO.user.nickname}" class="user-picture">
+                </a>
                 <div class="user-info">
                     <h5 th:text="${review.reviewDTO.user.nickname}"></h5>
                     <span class="user-rating" th:text="'평점: ' + ${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span>
@@ -90,7 +92,9 @@
             </div>
             <div class="review-divider"></div>
             <div class="review-content">
-                <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
+                <a th:href="@{'/contents/' + ${review.movieCommonDTO.tId}}">
+                    <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
+                </a>
                 <div class="review-text-content">
                     <h4 th:text="${review.movieCommonDTO.title}"></h4>
                     <p class="review-text" th:text="${review.reviewDTO.review.text}"></p>
@@ -125,7 +129,7 @@
         loading = true;
         $('#loading').show();
 
-        $.get(/*[[${'/api/reviews?filter=' + currentFilter + '&page=' + (currentPage + 1)}]]*/)
+        $.get(`/api/reviews?filter=${currentFilter}&page=${currentPage + 1}`)
             .done(function(data) {
                 currentPage = data.number;
                 totalPages = data.totalPages;
@@ -146,7 +150,10 @@
 
         reviewElement.innerHTML = `
             <div class="review-header">
-                <img src="${review.reviewDTO.user.picture}" alt="${review.reviewDTO.user.nickname}" class="user-picture">
+                <img src="${review.reviewDTO.user.picture}"
+                    alt="${review.reviewDTO.user.nickname}"
+                    onclick="navigateToUser('${review.reviewDTO.user.email}')"
+                    class="user-picture">
                 <div class="user-info">
                     <h5>${review.reviewDTO.user.nickname}</h5>
                     <span class="user-rating">평점: ${rating}</span>
@@ -154,7 +161,9 @@
             </div>
             <div class="review-divider"></div>
             <div class="review-content">
-                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="movie-poster">
+                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
+                    alt="${review.movieCommonDTO.title}" class="movie-poster"
+                    onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
                 <div class="review-text-content">
                     <h4>${review.movieCommonDTO.title}</h4>
                     <p class="review-text">${review.reviewDTO.review.text}</p>
@@ -173,6 +182,14 @@
             loadMoreReviews();
         }
     });
+
+    function navigateToMovieDetails(movieId) {
+       window.location.href = '/contents/' + movieId;
+    }
+
+    function navigateToUser(email) {
+        window.location.href = '/info/' + email;
+    }
 
 </script>
 </body>

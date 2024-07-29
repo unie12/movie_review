@@ -102,8 +102,8 @@
             .then(response => response.json())
             .then(reviews => {
                 const container = document.getElementById('popularReviews');
-                reviews.forEach(review => {
-                    const reviewElement = createReviewCard(review);
+                reviews.forEach((review, index) => {
+                    const reviewElement = createReviewCard(review, index);
                     container.appendChild(reviewElement);
                 });
             });
@@ -113,10 +113,11 @@
         });
     });
 
-     function createReviewCard(review) {
+     function createReviewCard(review, index) {
         const reviewElement = document.createElement('div');
         reviewElement.className = 'review-card';
         reviewElement.setAttribute('data-review-id', review.reviewDTO.review.id);
+        reviewElement.setAttribute('data-review-index', index);
         const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
 
         reviewElement.innerHTML = `
@@ -142,7 +143,9 @@
 
         reviewElement.addEventListener('click', function() {
             const reviewId = this.getAttribute('data-review-id');
-            goToReview(reviewId);
+            const reviewIndex = parseInt(this.getAttribute('data-review-index'));
+            const filter = reviewIndex < 10 ? 'popular' : 'recently';
+            goToReview(reviewId, filter);
         });
 
         return reviewElement;
@@ -264,8 +267,8 @@
         });
     }
 
-    function goToReview(reviewId) {
-        window.location.href = `/reviews?highlight=${reviewId}#review-${reviewId}`;
+    function goToReview(reviewId, filter) {
+        window.location.href = `/reviews?filter=${filter}&highlight=${reviewId}#review-${reviewId}`;
     }
 
 </script>

@@ -34,6 +34,9 @@ public class ReviewService {
     private final DbMovieService dbMovieService;
     private final DbRatingService dbRatingService;
 
+    private List<ReviewMovieDTO> cachedPopularReviews;
+    private List<ReviewMovieDTO> cachedRecentReviews;
+
 
     /**
      * 해당 영화에 대한 해당 유저의 리뷰 정보 가져오기
@@ -118,6 +121,11 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
+    public void updateReviewCache() {
+        this.cachedPopularReviews = getPopularReviews(PageRequest.of(0, 10)).getContent();
+        this.cachedRecentReviews = getRecentReviews(PageRequest.of(0, 10)).getContent();
+    }
+
     public Page<ReviewMovieDTO> getRecentReviews(Pageable pageable) {
         Page<Review> recentReviews = reviewRepository.findRecentReviewsWithPagination(pageable);
         return recentReviews.map(this::getReviewMovieDTO);
@@ -142,19 +150,27 @@ public class ReviewService {
     }
 
     public List<ReviewMovieDTO> getMixedHomeReviews(int count) {
-        List<Review> popularReviews = reviewRepository.findPopularReviews(1);
-        List<Review> recentReviews = reviewRepository.findRecentReviews(10);
+//        List<Review> popularReviews = reviewRepository.findPopularReviews(1);
+//        List<Review> recentReviews = reviewRepository.findRecentReviews(10);
 
-        List<Review> mixedReviews = new ArrayList<>();
-        mixedReviews.addAll(popularReviews);
-        mixedReviews.addAll(recentReviews);
+//        List<Review> mixedReviews = new ArrayList<>();
+//        mixedReviews.addAll(popularReviews);
+//        mixedReviews.addAll(recentReviews);
+
+//        if (cachedPopularReviews == null || cachedRecentReviews == null) {
+            updateReviewCache();
+//        }
+
+        List<ReviewMovieDTO> mixedReviews = new ArrayList<>();
+        mixedReviews.addAll(cachedPopularReviews);
+        mixedReviews.addAll(cachedRecentReviews);
 
         Collections.shuffle(mixedReviews);
 
         return mixedReviews.stream()
                 .distinct()
                 .limit(count)
-                .map(this::getReviewMovieDTO)
+//                .map(this::getReviewMovieDTO)
                 .collect(Collectors.toList());
     }
 
