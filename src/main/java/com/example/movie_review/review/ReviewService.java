@@ -338,4 +338,8 @@ public class ReviewService {
                 .build();
         return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO, false);
     }
+
+    public Long getTotalReviews() {
+        return reviewRepository.getTotalReviews();
+    }
 }

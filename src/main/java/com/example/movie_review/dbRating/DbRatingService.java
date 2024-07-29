@@ -67,5 +67,9 @@ public class DbRatingService {
                 .map(DbRatings::getScore)
                 .orElse(null);
     }
+
+    public Long getTotalRatings() {
+        return dbRatingRepository.getTotalRatings();
+    }
 }
 

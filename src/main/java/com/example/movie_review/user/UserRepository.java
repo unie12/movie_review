@@ -1,6 +1,7 @@
 package com.example.movie_review.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -14,4 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByNickname(String nickname);
 
     User findUserByEmail(String emaile);
+
+    @Query("SELECT COUNT(u) FROM User u")
+    Long getAllUserCount();
 }

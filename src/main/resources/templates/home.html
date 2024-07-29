@@ -14,14 +14,62 @@
     <div class="jumbotron">
         <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary me-2 active" role="button">Google Login</a>
 
-        <!-- 로그인 상태에 따른 UI -->
         <div th:if="${#authentication.name == 'anonymousUser'}">
             <h3>로그인 되어있지 않습니다!</h3>
         </div>
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <h3>[[${#authentication.name}]]님 환영합니다!</h3>
-            <a th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-primary">유저 정보</a>
+<!--            <a th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-primary">유저 정보</a>-->
         </div>
+
+        <div class="sections">
+            <div class="section">
+            <h3>이번 주 평가왕</h3>
+                <ul>
+                    <li th:each="user : ${ratingKings}">
+                        <div>
+                            <a th:href="@{'/info/' + ${user.userCommonDTO.email}}">
+                                <img th:src="${user.userCommonDTO.picture}" alt="User Picture" class="user-picture">
+                            </a>
+                            <strong th:text="${user.userCommonDTO.nickname}"></strong>
+        <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
+                        </div>
+                        <div>
+                            <span th:text="'평가 수: ' + ${user.weeklyRatingCount}"></span>
+        <!--                    <span th:text="'리뷰 수: ' + ${user.weeklyReviewCount}"></span>-->
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>이번 주 리뷰왕</h3>
+                <ul>
+                    <li th:each="user : ${reviewKings}">
+                        <div>
+                            <a th:href="@{'/info/' + ${user.userCommonDTO.email}}">
+                                <img th:src="${user.userCommonDTO.picture}" alt="User Picture" class="user-picture">
+                            </a>
+                            <strong th:text="${user.userCommonDTO.nickname}"></strong>
+        <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
+                        </div>
+                        <div>
+        <!--                    <span th:text="'평가 수: ' + ${user.weeklyRatingCount}"></span>-->
+                            <span th:text="'리뷰 수: ' + ${user.weeklyReviewCount}"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <div>
+                    <p>유저 수: <span id="userCount"></span></p>
+                    <p>총 평점 수: <span id="totalRatings"></span></p>
+                    <p>총 리뷰 수: <span id="totalReviews"></span></p>
+                </div>
+            </div>
+        </div>
+
 
         <!-- 네비게이션 링크 -->
         <p>
@@ -88,7 +136,14 @@
     <div th:replace="fragments/footer :: footer" />
 </div>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
+    $(document).ready(function() {
+        getRealTimeData();
+        setInterval(getRealTimeData, 60000); // 1분마다 갱신.. 이건 나중에 고려
+    });
+
     /*<![CDATA[*/
     var dBOM = /*[[${dBOM}]]*/ '[]';
     var wBOM = /*[[${wBOM}]]*/ '[]';
@@ -269,6 +324,19 @@
 
     function goToReview(reviewId, filter) {
         window.location.href = `/reviews?filter=${filter}&highlight=${reviewId}#review-${reviewId}`;
+    }
+
+    function getRealTimeData() {
+        $.ajax({
+            url: '/api/home/realtime-data',
+            method: 'GET',
+            success: function(data) {
+                console.log('realtime data: ', data);
+                $('#userCount').text(data.userCount);
+                $('#totalRatings').text(data.totalRatings);
+                $('#totalReviews').text(data.totalReviews);
+            }
+        });
     }
 
 </script>

@@ -4,15 +4,14 @@ import com.example.movie_review.dbMovie.MovieCache;
 import com.example.movie_review.dbMovie.MovieCacheRepository;
 import com.example.movie_review.dbMovie.MovieCacheService;
 import com.example.movie_review.dbMovie.MovieType;
-import com.example.movie_review.review.Review;
-import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
+import com.example.movie_review.user.DTO.WeeklyUserDTO;
+import com.example.movie_review.user.UserService;
+import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -26,11 +25,12 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/jwt-login")
-public class JwtLoginController {
+public class HomeViewController {
 
     private final TmdbService tmdbService;
     private final MovieCacheService movieCacheService;
     private final ReviewService reviewService;
+    private final UserDTOService userDTOService;
 
     private final MovieCacheRepository movieCacheRepository;
 
@@ -60,6 +60,14 @@ public class JwtLoginController {
                 model.addAttribute("trendingMovies", trendingCache.getMovieData());
                 model.addAttribute("dBOM", dailyCache.getMovieData());
                 model.addAttribute("wBOM", weeklyCache.getMovieData());
+
+        List<WeeklyUserDTO> weeklyRatingUsers = userDTOService.getWeeklyRatingUsers();
+        System.out.println("weeklyRatingUsers = " + weeklyRatingUsers);
+        List<WeeklyUserDTO> weeklyReviewUsers = userDTOService.getWeeklyReviewUsers();
+        System.out.println("weeklyReviewUsers = " + weeklyReviewUsers);
+
+        model.addAttribute("ratingKings", weeklyRatingUsers);
+        model.addAttribute("reviewKings", weeklyReviewUsers);
 
                 return "home";
 //            } catch (Exception e) {

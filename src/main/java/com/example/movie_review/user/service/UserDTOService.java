@@ -2,6 +2,9 @@ package com.example.movie_review.user.service;
 
 import com.example.movie_review.dbMovie.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingDTO;
+import com.example.movie_review.dbRating.DbRatingRepository;
+import com.example.movie_review.dbRating.DbRatingService;
+import com.example.movie_review.review.ReviewRepository;
 import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
@@ -9,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,6 +21,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserDTOService {
     private final UserService userService;
+    private final ReviewRepository reviewRepository;
+    private final DbRatingRepository dbRatingRepository;
+
+    public List<WeeklyUserDTO> getWeeklyRatingUsers() {
+        LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
+        LocalDateTime endDate = LocalDateTime.now();
+        return dbRatingRepository.findTopRaters(startDate, endDate);
+    }
+
+    public List<WeeklyUserDTO> getWeeklyReviewUsers() {
+        LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
+        LocalDateTime endDate = LocalDateTime.now();
+        return reviewRepository.findTopReviewers(startDate, endDate);
+    }
 
     public UserCommonDTO getUserCommonDTO(String email) {
         User user = userService.getUserByEmail(email);

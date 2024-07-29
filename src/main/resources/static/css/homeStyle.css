@@ -1,6 +1,35 @@
 .container {
     position: relative; /* container 요소에 position: relative; 추가 */
 }
+.sections {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.section {
+    flex: 1;
+    margin: 0 10px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.section img.user-picture {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.section div {
+    margin-bottom: 10px;
+}
 
 .d-flex.position-relative {
     position: relative; /* 화살표 버튼이 포함된 부모 요소에 position: relative; 추가 */
