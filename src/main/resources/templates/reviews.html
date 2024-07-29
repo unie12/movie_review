@@ -4,6 +4,70 @@
     <meta charset="UTF-8">
     <title>전체 리뷰</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .review-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .user-picture {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .user-info {
+            flex-grow: 1;
+        }
+        .user-info h5 {
+            margin: 0;
+        }
+        .user-rating {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .review-divider {
+            border-top: 1px solid #eee;
+            margin: 10px 0;
+        }
+        .review-content {
+            display: flex;
+        }
+        .movie-poster {
+            width: 100px;
+            margin-right: 15px;
+        }
+        .review-text-content {
+            flex-grow: 1;
+        }
+        .review-text-content h4 {
+            margin-top: 0;
+        }
+        .review-footer {
+            margin-top: 10px;
+            text-align: right;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .active {
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -16,7 +80,7 @@
     </div>
 
     <div id="reviewList">
-        <div th:each="review : ${reviews}" class="review-card">
+        <div th:each="review : ${reviews}" th:id="'review-' + ${review.reviewDTO.review.id}" class="review-card" th:classappend="${review.reviewDTO.review.id == highlightReviewId} ? 'highlighted' : ''">
             <div class="review-header">
                 <img th:src="${review.reviewDTO.user.picture}" th:alt="${review.reviewDTO.user.nickname}" class="user-picture">
                 <div class="user-info">
@@ -24,10 +88,13 @@
                     <span class="user-rating" th:text="'평점: ' + ${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span>
                 </div>
             </div>
+            <div class="review-divider"></div>
             <div class="review-content">
                 <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
-                <h4 th:text="${review.movieCommonDTO.title}"></h4>
-                <p class="review-text" th:text="${review.reviewDTO.review.text}"></p>
+                <div class="review-text-content">
+                    <h4 th:text="${review.movieCommonDTO.title}"></h4>
+                    <p class="review-text" th:text="${review.reviewDTO.review.text}"></p>
+                </div>
             </div>
             <div class="review-footer">
                 <small th:text="'좋아요: ' + ${review.heartCnt}"></small>
@@ -43,6 +110,14 @@
     var totalPages = /*[[${totalPages}]]*/ 1;
     var currentFilter = /*[[${currentFilter}]]*/ 'popular';
     var loading = false;
+    var highlightReviewId = /*[[${highlightReviewId}]]*/ null;
+
+    if (highlightReviewId) {
+        var element = document.getElementById('review-' + highlightReviewId);
+        if (element) {
+            element.scrollIntoView({behavior: "smooth", block: "center"});
+        }
+    }
 
     function loadMoreReviews() {
         if (loading || currentPage >= totalPages - 1) return;
@@ -77,13 +152,16 @@
                     <span class="user-rating">평점: ${rating}</span>
                 </div>
             </div>
+            <div class="review-divider"></div>
             <div class="review-content">
                 <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="movie-poster">
-                <h4>${review.movieCommonDTO.title}</h4>
-                <p class="review-text">${review.reviewDTO.review.text}</p>
+                <div class="review-text-content">
+                    <h4>${review.movieCommonDTO.title}</h4>
+                    <p class="review-text">${review.reviewDTO.review.text}</p>
+                </div>
             </div>
             <div class="review-footer">
-                <small>좋아요: ${review.reviewDTO.heartCnt}</small>
+                <span>좋아요: ${review.reviewDTO.heartCnt}</span>
             </div>
         `;
 

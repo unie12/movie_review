@@ -98,7 +98,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
 
-        fetch('/api/reviews/popular-reviews')
+        fetch('/api/reviews/home-reviews')
             .then(response => response.json())
             .then(reviews => {
                 const container = document.getElementById('popularReviews');
@@ -116,15 +116,19 @@
      function createReviewCard(review) {
         const reviewElement = document.createElement('div');
         reviewElement.className = 'review-card';
+        reviewElement.setAttribute('data-review-id', review.reviewDTO.review.id);
         const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
 
         reviewElement.innerHTML = `
             <div class="review-header">
-                <img src="${review.reviewDTO.user.picture}" alt="${review.reviewDTO.user.nickname}" class="user-picture">
                 <div class="user-info">
+                    <img src="${review.reviewDTO.user.picture}" alt="${review.reviewDTO.user.nickname}" class="user-picture">
                     <h5>${review.reviewDTO.user.nickname}</h5>
+                </div>
+                <div class="user-rating-container">
                     <span class="user-rating">평점: ${rating}</span>
                 </div>
+
             </div>
             <div class="review-content">
                 <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="movie-poster">
@@ -137,7 +141,8 @@
         `;
 
         reviewElement.addEventListener('click', function() {
-            window.location.href = `/reviews?filter=popular`;
+            const reviewId = this.getAttribute('data-review-id');
+            goToReview(reviewId);
         });
 
         return reviewElement;
@@ -257,6 +262,10 @@
             left: direction * scrollAmount,
             behavior: 'smooth'
         });
+    }
+
+    function goToReview(reviewId) {
+        window.location.href = `/reviews?highlight=${reviewId}#review-${reviewId}`;
     }
 
 </script>

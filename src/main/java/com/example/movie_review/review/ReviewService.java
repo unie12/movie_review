@@ -13,13 +13,11 @@ import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -121,14 +119,46 @@ public class ReviewService {
     }
 
     public Page<ReviewMovieDTO> getRecentReviews(Pageable pageable) {
-        Page<Review> recentReviews = reviewRepository.findRecentReviews(pageable);
+        Page<Review> recentReviews = reviewRepository.findRecentReviewsWithPagination(pageable);
         return recentReviews.map(this::getReviewMovieDTO);
     }
 
     public Page<ReviewMovieDTO> getPopularReviews(Pageable pageable) {
-        Page<Review> popularReviews = reviewRepository.findPopularReviewsWithPagination(pageable);
-        return popularReviews.map(this::getReviewMovieDTO);
+        List<Review> popularReviews = reviewRepository.findPopularReviewsWithMinHearts(0);
+
+        Collections.shuffle(popularReviews);
+
+        // 페이지네이션 적용
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), popularReviews.size());
+        List<Review> pageContent = popularReviews.subList(start, end);
+
+        // ReviewMovieDTO로 변환
+        List<ReviewMovieDTO> reviewDTOs = pageContent.stream()
+                .map(this::getReviewMovieDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(reviewDTOs, pageable, popularReviews.size());
     }
+
+    public List<ReviewMovieDTO> getMixedHomeReviews(int count) {
+        List<Review> popularReviews = reviewRepository.findPopularReviews(1);
+        List<Review> recentReviews = reviewRepository.findRecentReviews(10);
+
+        List<Review> mixedReviews = new ArrayList<>();
+        mixedReviews.addAll(popularReviews);
+        mixedReviews.addAll(recentReviews);
+
+        Collections.shuffle(mixedReviews);
+
+        return mixedReviews.stream()
+                .distinct()
+                .limit(count)
+                .map(this::getReviewMovieDTO)
+                .collect(Collectors.toList());
+    }
+
+
 
 
 

@@ -108,6 +108,14 @@ public class ReviewController {
         return reviewService.getRandomPopularReviews(6);
     }
 
+    @GetMapping("/reviews/home-reviews")
+    public List<ReviewMovieDTO> getHomeReviews() {
+        return reviewService.getMixedHomeReviews(6);
+    }
+
+    /**
+     * 전체 리뷰 보기 리스트
+     */
     @GetMapping("/reviews")
     @ResponseBody
     public Page<ReviewMovieDTO> getReviews(@RequestParam(defaultValue = "popular") String filter,

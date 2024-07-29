@@ -34,6 +34,7 @@ public class ReviewViewController {
     public String getAllReviews(@RequestParam(defaultValue = "popular") String filter,
                                 @RequestParam(defaultValue = "0") int page,
                                 @RequestParam(defaultValue = "10") int size,
+                                @RequestParam(required = false) Long highlight,
                                 Model model) {
         Page<ReviewMovieDTO> reviewPage;
 
@@ -47,6 +48,7 @@ public class ReviewViewController {
         model.addAttribute("currentFilter", filter);
         model.addAttribute("currentPage", reviewPage.getNumber());
         model.addAttribute("totalPages", reviewPage.getTotalPages());
+        model.addAttribute("highlightReviewId", highlight);
 
         return "reviews";
     }

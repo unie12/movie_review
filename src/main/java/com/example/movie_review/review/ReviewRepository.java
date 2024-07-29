@@ -31,8 +31,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findPopularReviews(@Param("heartCount") int heartCount);
 
     @Query("SELECT r FROM Review r ORDER BY r.uploadDate DESC")
-    Page<Review> findRecentReviews(Pageable pageable);
+    List<Review> findRecentReviews(int limit);
 
-    @Query("SELECT r FROM Review r ORDER BY SIZE(r.hearts) DESC")
-    Page<Review> findPopularReviewsWithPagination(Pageable pageable);
+    @Query("SELECT r FROM Review r ORDER BY r.uploadDate DESC")
+    Page<Review> findRecentReviewsWithPagination(Pageable pageable);
+
+    @Query("SELECT r FROM Review r WHERE SIZE(r.hearts) >= :minHeartCount")
+    List<Review> findPopularReviewsWithMinHearts(@Param("minHeartCount") int minHeartCount);
 }
