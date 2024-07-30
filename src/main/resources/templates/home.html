@@ -9,10 +9,10 @@
 </head>
 
 <body>
+<div th:replace="fragments/bodyHeader :: bodyHeader" />
 <div class="container">
-    <div th:replace="fragments/bodyHeader :: bodyHeader" />
     <div class="jumbotron">
-        <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary me-2 active" role="button">Google Login</a>
+<!--        <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary me-2 active" role="button">Google Login</a>-->
 
         <div th:if="${#authentication.name == 'anonymousUser'}">
             <h3>로그인 되어있지 않습니다!</h3>
@@ -72,14 +72,14 @@
 
 
         <!-- 네비게이션 링크 -->
-        <p>
-            <a th:href="@{'/additional-info' + '/' + ${#authentication.name}}" class="btn btn-lg btn-info">추가 정보 입력</a>
-        </p>
+<!--        <p>-->
+<!--            <a th:href="@{'/additional-info' + '/' + ${#authentication.name}}" class="btn btn-lg btn-info">추가 정보 입력</a>-->
+<!--        </p>-->
 
-        <form th:action="@{/jwt-login/search}" method="get">
-            <input type="text" name="query" placeholder="영화 제목을 입력하세요">
-            <button type="submit">검색</button>
-        </form>
+<!--        <form th:action="@{/jwt-login/search}" method="get">-->
+<!--            <input type="text" name="query" placeholder="영화 제목을 입력하세요">-->
+<!--            <button type="submit">검색</button>-->
+<!--        </form>-->
 
         <div class="container mt-5">
             <div class="d-flex justify-content-between align-items-center mb-3">

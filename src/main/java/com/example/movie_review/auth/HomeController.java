@@ -3,22 +3,21 @@ package com.example.movie_review.auth;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.user.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/home")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class HomeController {
     private final UserService userService;
     private final ReviewService reviewService;
     private final DbRatingService dbRatingService;
 
-    @GetMapping("/realtime-data")
+    @GetMapping("/home/realtime-data")
     public ResponseEntity<RealTimeData> getRealTimeData() {
         Long userCount = userService.getUserCount();
         Long totalRatings = dbRatingService.getTotalRatings();

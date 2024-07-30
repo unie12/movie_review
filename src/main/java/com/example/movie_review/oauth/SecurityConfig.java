@@ -1,5 +1,6 @@
 package com.example.movie_review.oauth;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,10 +36,13 @@ public class SecurityConfig {
                     )
                     .failureUrl("/") // 로그인 실패 시 이동할 URL
                 )
-                .logout(
-                        (logout) -> logout
-                                .logoutSuccessUrl("/jwt-login")
-                                .deleteCookies("JSESSIONID", "jwtToken")
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/jwt-login")
+                        .deleteCookies("JSESSIONID", "jwtToken")
+                        .logoutSuccessHandler(((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.getWriter().flush();
+                        }))
                 );
 
         return http.build();
