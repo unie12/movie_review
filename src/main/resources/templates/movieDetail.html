@@ -71,7 +71,8 @@
             <!-- 감독 정보 -->
             <p><strong>감독:</strong></p>
             <div class="director" th:each="director : ${movieDTO.directors}">
-                <img th:src="'https://image.tmdb.org/t/p/w500' + ${director.profile_path}" th:alt="${director.name}">
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${director.profile_path}" th:alt="${director.name}"
+                    th:attr="onclick=|redirectToPerson(${director.id}, 'crew')|">
                 <span th:text="${director.name}"></span>
             </div>
 
@@ -166,7 +167,7 @@
                     actors.forEach(actor => {
                         actor.addEventListener('click', function() {
                             const actorId = this.getAttribute('data-actor-id');
-                            redirectToActor(actorId);
+                            redirectToPerson(actorId, 'cast');
                         });
                     });
 
@@ -237,8 +238,8 @@
                     });
                 });
                 // 배우 클릭 시 관련 영화 리스트로 redirect
-                function redirectToActor(actorId) {
-                    window.location.href = `/people/${actorId}`;
+                function redirectToPerson(personId, type) {
+                    window.location.href = `/people/${personId}?type=${type}`;
                 }
             </script>
         </div>

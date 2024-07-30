@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,9 +55,9 @@ public class MovieDetailController {
     /**
      * 영화 배우 클릭 관련.. 향후 수정 필요
      */
-    @GetMapping("/people/{actorId}")
-    public String actorDetail(@PathVariable Long actorId, Model model) {
-        String actorDetailsJson = tmdbService.getActorDetails(actorId).block();
+    @GetMapping("/people/{personId}")
+    public String actorDetail(@PathVariable Long personId, @RequestParam String type, Model model) {
+        String actorDetailsJson = tmdbService.getPersonDetails(personId).block();
 
         // popularity sort, media_type = movie만 일단
         try {
@@ -65,15 +66,30 @@ public class MovieDetailController {
             }
             ActorDetails actorDetails = objectMapper.readValue(actorDetailsJson, ActorDetails.class);
 
-            List<ActorDetails.Cast> sortedCast = actorDetails.getCast().stream()
-                    .filter(cast -> "movie".equals(cast.getMedia_type()))
-                    .sorted((cast1, cast2) -> Double.compare(cast2.getPopularity(), cast1.getPopularity()))
-                    .collect(Collectors.toList());
-            actorDetails.setCast(sortedCast);
-            model.addAttribute("actorDetails", actorDetails);
+            // 배우 담당
+            if("cast".equals(type)) {
+                List<ActorDetails.Cast> sortedCast = actorDetails.getCast().stream()
+                        .filter(cast -> "movie".equals(cast.getMedia_type()))
+                        .sorted((cast1, cast2) -> Double.compare(cast2.getPopularity(), cast1.getPopularity()))
+                        .collect(Collectors.toList());
+                actorDetails.setCast(sortedCast);
+                model.addAttribute("actorDetails", actorDetails);
+                return "actorDetail";
+            }
+            // 감독 담당
+            else {
+                List<ActorDetails.Crew> sortedCrew = actorDetails.getCrew().stream()
+                        .filter(crew -> "movie".equals(crew.getMedia_type()))
+                        .sorted((crew1, crew2) -> Double.compare(crew2.getPopularity(), crew1.getPopularity()))
+                        .collect(Collectors.toList());
+                actorDetails.setCrew(sortedCrew);
+                model.addAttribute("directorDetails", actorDetails);
+                return "directorDetail";
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "actorDetail";
+        return "jwt-login";
     }
 }
