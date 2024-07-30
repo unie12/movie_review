@@ -4,6 +4,7 @@ import com.example.movie_review.auth.JwtTokenUtil;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Controller
@@ -56,13 +58,22 @@ public class OAuth2Controller {
     }
 
     @PostMapping("/api/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Cookie cookie = new Cookie("jwtToken", null);
         cookie.setPath("/");
         cookie.setMaxAge(0);
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
+        request.getSession().invalidate();
+
+        Cookie jsessionCookie = new Cookie("JSESSIONID", null);
+        jsessionCookie.setPath("/");
+        jsessionCookie.setMaxAge(0);
+        jsessionCookie.setHttpOnly(true);
+        response.addCookie(jsessionCookie);
+
+        response.sendRedirect("/jwt-login");
         return ResponseEntity.ok().body("Logged out successfully");
     }
 }

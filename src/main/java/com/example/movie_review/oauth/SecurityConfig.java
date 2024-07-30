@@ -37,12 +37,13 @@ public class SecurityConfig {
                     .failureUrl("/") // 로그인 실패 시 이동할 URL
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/jwt-login")
                         .deleteCookies("JSESSIONID", "jwtToken")
                         .logoutSuccessHandler(((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
-                            response.getWriter().flush();
+                            response.sendRedirect("/jwt-login");
                         }))
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                 );
 
         return http.build();
