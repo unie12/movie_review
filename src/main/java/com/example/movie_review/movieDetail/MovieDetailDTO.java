@@ -46,4 +46,5 @@ public class MovieDetailDTO {
     private List<ReviewDTO> reviews;
     private List<Long> userHearts;
 
+    private String watchProvider;
 }

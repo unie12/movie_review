@@ -10,9 +10,13 @@ import com.example.movie_review.review.Review;
 import com.example.movie_review.review.ReviewCommonDTO;
 import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.User;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +31,26 @@ public class MovieDetailDTOService {
     private final ReviewService reviewService;
     private final HeartService heartService;
     private final DbRatingService dbRatingService;
+    private final TmdbService tmdbService;
 
+    @Cacheable("movieDetailDTO")
     public MovieDetailDTO getMovieDetailDTO(Long movieTId, Authentication principal) {
         DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
         MovieDetails movieDetails = dbMovie.getMovieDetails();
         List<Crew> directors = dbMovieService.getDirectors(movieDetails);
         List<Review> reviews = reviewService.findReviewByDbMovies(dbMovie);
+        String movieProvider = tmdbService.getMovieProvider(movieTId).block();
+        String url = null;
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(movieProvider);
+            JsonNode resultsNode = rootNode.path("results");
+            JsonNode krNode = resultsNode.path("KR");
+            url = krNode.path("link").asText(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         List<ReviewDTO> reviewDTOS = reviews.stream()
                 .map(review -> {
@@ -77,7 +95,8 @@ public class MovieDetailDTOService {
                         .map(cast -> new ActorDTO(cast.getId(), cast.getName(), cast.getProfile_path(), cast.getCharacter_name())).collect(Collectors.toList()))
 //                .reviews(reviewService.getReviewDTOs(reviews))
                 .reviews(reviewDTOS)
-                .userHearts(heartService.getUserHearts(principal.getName()));
+                .userHearts(heartService.getUserHearts(principal.getName()))
+                .watchProvider(url);
 
         if (principal != null) {
             String email = principal.getName();

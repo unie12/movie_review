@@ -8,6 +8,7 @@ import com.nimbusds.jose.shaded.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -257,4 +258,13 @@ public class TmdbService {
                 .retrieve()
                 .bodyToMono(String.class);
     }
+
+    @Cacheable("movieProvider")
+    public Mono<String> getMovieProvider(Long movieTId) {
+        return webClient.get()
+                .uri("/movie/{movieId}/watch/providers?api_key={api_key}", movieTId, apikey)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
 }

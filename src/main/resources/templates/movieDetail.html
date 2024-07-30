@@ -25,6 +25,10 @@
             <!-- 포스터 -->
             <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.poster_path}" th:alt="${movieDTO.title}">
 
+            <!-- 바로가기 버튼 -->
+<!--            <a th:href="${movieDTO.watchProvider}" class="btn btn-info" role="button">영화 바로가기</a>-->
+            <a th:href="${movieDTO.watchProvider}" class="btn btn-info" role="button" target="_blank" rel="noopener noreferrer">영화 바로가기</a>
+
             <!-- 찜 기능 -->
             <button id="favoriteButton" th:attr="data-movie-id=${movieDTO.id}" th:class="${movieDTO.isFavorite} ? 'favorite active' : 'favorite'">
                 <i class="fas fa-heart"></i>
