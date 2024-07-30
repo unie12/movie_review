@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -20,7 +21,20 @@ public class ReviewMovieDTO{
     private int heartCnt;
     private LocalDateTime heartDate;
 
+    private String filter;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReviewMovieDTO that = (ReviewMovieDTO) o;
+        return Objects.equals(reviewDTO.getReview().getId(), that.reviewDTO.getReview().getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(reviewDTO.getReview().getId());
+    }
 
     //    /**
 //     * Review 관련

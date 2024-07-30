@@ -32,14 +32,23 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT r FROM Review r WHERE SIZE(r.hearts) > :heartCount ORDER BY SIZE(r.hearts) DESC")
     List<Review> findPopularReviews(@Param("heartCount") int heartCount);
 
-    @Query("SELECT r FROM Review r ORDER BY r.uploadDate DESC")
-    List<Review> findRecentReviews(int limit);
 
     @Query("SELECT r FROM Review r ORDER BY r.uploadDate DESC")
     Page<Review> findRecentReviewsWithPagination(Pageable pageable);
 
     @Query("SELECT r FROM Review r WHERE SIZE(r.hearts) >= :minHeartCount")
     List<Review> findPopularReviewsWithMinHearts(@Param("minHeartCount") int minHeartCount);
+
+    @Query("SELECT r, " +
+            "LOG10(GREATEST(1, SIZE(r.hearts))) + " +
+            "(CASE WHEN TIMESTAMPDIFF(HOUR, r.uploadDate, CURRENT_TIMESTAMP) < 12 THEN 12.0 " +
+            "      WHEN TIMESTAMPDIFF(HOUR, r.uploadDate, CURRENT_TIMESTAMP) < 24 THEN 6.0 " +
+            "      WHEN TIMESTAMPDIFF(HOUR, r.uploadDate, CURRENT_TIMESTAMP) < 48 THEN 3.0 " +
+            "      WHEN TIMESTAMPDIFF(HOUR, r.uploadDate, CURRENT_TIMESTAMP) < 72 THEN 1.5 " +
+            "      ELSE 1.0 END) AS score " +
+            "FROM Review r " +
+            "ORDER BY score DESC")
+    Page<Object[]> findPopularReviewsWithScore(Pageable pageable);
 
     @Query("SELECT new com.example.movie_review.user.DTO.WeeklyUserDTO(new com.example.movie_review.user.DTO.UserCommonDTO(u.id, u.email, u.nickname, u.picture), COUNT(r)) " +
             "FROM Review r JOIN r.user u " +

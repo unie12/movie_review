@@ -62,9 +62,7 @@ public class HomeViewController {
                 model.addAttribute("wBOM", weeklyCache.getMovieData());
 
         List<WeeklyUserDTO> weeklyRatingUsers = userDTOService.getWeeklyRatingUsers();
-        System.out.println("weeklyRatingUsers = " + weeklyRatingUsers);
         List<WeeklyUserDTO> weeklyReviewUsers = userDTOService.getWeeklyReviewUsers();
-        System.out.println("weeklyReviewUsers = " + weeklyReviewUsers);
 
         model.addAttribute("ratingKings", weeklyRatingUsers);
         model.addAttribute("reviewKings", weeklyReviewUsers);

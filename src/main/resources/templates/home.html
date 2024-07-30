@@ -152,27 +152,40 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
-
-        fetch('/api/reviews/home-reviews')
-            .then(response => response.json())
-            .then(reviews => {
-                const container = document.getElementById('popularReviews');
-                reviews.forEach((review, index) => {
-                    const reviewElement = createReviewCard(review, index);
-                    container.appendChild(reviewElement);
-                });
-            });
+        loadHomeReviews();
 
         document.getElementById('viewAllBtn').addEventListener('click', function() {
             window.location.href = '/reviews?filter=popular';
         });
     });
 
-     function createReviewCard(review, index) {
+
+    function loadHomeReviews() {
+        fetch('/api/reviews/home-reviews')
+            .then(response => response.json())
+            .then(reviews => {
+                const container = document.getElementById('popularReviews');
+                container.innerHTML = ''; // Clear existing reviews
+
+                reviews.forEach((review) => {
+                    const reviewElement = createReviewCard(review);
+                    container.appendChild(reviewElement);
+                });
+            });
+    }
+
+    function refreshReviews() {
+        fetch('/api/reviews/refresh-cache', {method: 'POST' })
+            .then(() => {
+                loadHomeReviews();
+            });
+    }
+
+     function createReviewCard(review) {
         const reviewElement = document.createElement('div');
         reviewElement.className = 'review-card';
         reviewElement.setAttribute('data-review-id', review.reviewDTO.review.id);
-        reviewElement.setAttribute('data-review-index', index);
+        reviewElement.setAttribute('data-filter', review.filter);
         const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
 
         reviewElement.innerHTML = `
@@ -198,8 +211,7 @@
 
         reviewElement.addEventListener('click', function() {
             const reviewId = this.getAttribute('data-review-id');
-            const reviewIndex = parseInt(this.getAttribute('data-review-index'));
-            const filter = reviewIndex < 10 ? 'popular' : 'recently';
+            const filter = this.getAttribute('data-filter');
             goToReview(reviewId, filter);
         });
 

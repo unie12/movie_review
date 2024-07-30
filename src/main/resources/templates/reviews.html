@@ -124,6 +124,10 @@
     }
 
     function loadMoreReviews() {
+        console.log('currentPage: ', currentPage);
+        console.log('totalPage: ', totalPages);
+        console.log('loading: ', loading);
+
         if (loading || currentPage >= totalPages - 1) return;
 
         loading = true;
@@ -131,6 +135,8 @@
 
         $.get(`/api/reviews?filter=${currentFilter}&page=${currentPage + 1}`)
             .done(function(data) {
+                console.log('loadMore Data: ', data);
+
                 currentPage = data.number;
                 totalPages = data.totalPages;
 

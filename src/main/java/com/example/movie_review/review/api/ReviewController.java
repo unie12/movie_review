@@ -100,13 +100,6 @@ public class ReviewController {
         return reviewService.getMovieReviews(movieTId, page, size, sort, principal.getName());
     }
 
-    /**
-     * 홈 화면에서 보여줄 인기 리뷰 리스트
-     */
-    @GetMapping("/reviews/popular-reviews")
-    public List<ReviewMovieDTO> getPopularReviews() {
-        return reviewService.getRandomPopularReviews(6);
-    }
 
     @GetMapping("/reviews/home-reviews")
     public List<ReviewMovieDTO> getHomeReviews() {
@@ -121,11 +114,19 @@ public class ReviewController {
     public Page<ReviewMovieDTO> getReviews(@RequestParam(defaultValue = "popular") String filter,
                                            @RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "10") int size) {
+        System.out.println("page = " + page + "size = " + size);
         if ("recently".equals(filter)) {
             return reviewService.getRecentReviews(PageRequest.of(page, size));
         } else {
             return reviewService.getPopularReviews(PageRequest.of(page, size));
         }
+//        return reviewService.getReviews(filter, PageRequest.of(page, size));
+    }
+
+    @PostMapping("/reviews/refresh-cache")
+    public ResponseEntity<?> refreshCache() {
+        reviewService.updateReviewCache();
+        return ResponseEntity.ok().build();
     }
 
 }

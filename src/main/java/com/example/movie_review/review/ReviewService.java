@@ -150,13 +150,6 @@ public class ReviewService {
     }
 
     public List<ReviewMovieDTO> getMixedHomeReviews(int count) {
-//        List<Review> popularReviews = reviewRepository.findPopularReviews(1);
-//        List<Review> recentReviews = reviewRepository.findRecentReviews(10);
-
-//        List<Review> mixedReviews = new ArrayList<>();
-//        mixedReviews.addAll(popularReviews);
-//        mixedReviews.addAll(recentReviews);
-
 //        if (cachedPopularReviews == null || cachedRecentReviews == null) {
             updateReviewCache();
 //        }
@@ -170,11 +163,14 @@ public class ReviewService {
         return mixedReviews.stream()
                 .distinct()
                 .limit(count)
-//                .map(this::getReviewMovieDTO)
+                .map(this::addFilterInfo)
                 .collect(Collectors.toList());
     }
 
-
+    private ReviewMovieDTO addFilterInfo(ReviewMovieDTO review) {
+        review.setFilter(cachedPopularReviews.contains(review) ? "popular" : "recently");
+        return review;
+    }
 
 
 

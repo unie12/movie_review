@@ -36,6 +36,7 @@ public class ReviewViewController {
                                 @RequestParam(defaultValue = "10") int size,
                                 @RequestParam(required = false) Long highlight,
                                 Model model) {
+//        reviewService.checkAndUpdateCache();
         Page<ReviewMovieDTO> reviewPage;
 
         if("recently".equals(filter)) {
