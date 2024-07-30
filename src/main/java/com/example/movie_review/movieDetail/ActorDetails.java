@@ -2,6 +2,7 @@ package com.example.movie_review.movieDetail;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,16 +22,6 @@ public class ActorDetails {
         private String character;
         private Integer vote_count;
         private double vote_average;
-
-
-//        private boolean adult;
-//        private String backdrop_path;
-//        private List<Integer> genre_ids;
-//        private String original_language;
-//        private String overview;
-//        private boolean video;
-//        private String credit_id;
-//        private Integer order;
     }
 
     @Data

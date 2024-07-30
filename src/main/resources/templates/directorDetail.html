@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <head>
@@ -28,6 +28,9 @@
                 width: 150px;
                 height: auto;
             }
+            .actorDetail p {
+                white-space: pre-line;
+            }
         </style>
     </head>
 <body>
@@ -50,9 +53,16 @@
                     <td><span th:text="${crew.release_date}"></span></td>
                     <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${crew.poster_path}" th:alt="${crew.title}"
                              th:attr="onclick=|redirectToMovie(${crew.id})|"></td>
-                    <td><h3 th:utext="${crew.title} + '<br>' + '(' + ${crew.original_title} + ')'"></h3></td>
-                    <td><p th:text="${crew.job}"></p></td>
+                    <td><h3 th:text="${crew.title}"></h3></td>
+                    <td><p th:utext="${#strings.replace(crew.job, '\n', '<br>')}"></p></td>
                     <td><span th:utext="${crew.vote_average} + '<br>' + '(' + ${crew.vote_count} + '표)'"></span></td>
+
+                    <td>
+                        <script th:inline="javascript">
+                            var crew = /*[[${crew}]]*/ {};
+                            console.log('Crew:', crew);
+                        </script>
+                    </td>
                 </tr>
                 </tbody>
             </table>

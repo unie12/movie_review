@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
@@ -78,8 +80,22 @@ public class MovieDetailController {
             }
             // 감독 담당
             else {
-                List<ActorDetails.Crew> sortedCrew = actorDetails.getCrew().stream()
-                        .filter(crew -> "movie".equals(crew.getMedia_type()))
+                Map<Integer, ActorDetails.Crew> crewMap = new HashMap<>();
+
+                for (ActorDetails.Crew crew : actorDetails.getCrew()) {
+                    if ("movie".equals(crew.getMedia_type())) {
+                        int movieId = crew.getId();
+                        if (crewMap.containsKey(movieId)) {
+                            ActorDetails.Crew existingCrew = crewMap.get(movieId);
+                            String combinedJobs = existingCrew.getJob() + "\n" + crew.getJob();
+                            existingCrew.setJob(combinedJobs);
+                        } else {
+                            crewMap.put(movieId, crew);
+                        }
+                    }
+                }
+
+                List<ActorDetails.Crew> sortedCrew = crewMap.values().stream()
                         .sorted((crew1, crew2) -> Double.compare(crew2.getPopularity(), crew1.getPopularity()))
                         .collect(Collectors.toList());
                 actorDetails.setCrew(sortedCrew);

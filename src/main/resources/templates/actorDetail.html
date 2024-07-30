@@ -50,7 +50,7 @@
                     <td><span th:text="${cast.release_date}"></span></td>
                     <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${cast.poster_path}" th:alt="${cast.title}"
                         th:attr="onclick=|redirectToMovie(${cast.id})|"></td>
-                    <td><h3 th:text="'(' + ${cast.original_title} + ')'"></h3></td>
+                    <td><h3 th:text="${cast.title}"></h3></td>
                     <td><p th:text="${cast.character}"></p></td>
                     <td><span th:utext="${cast.vote_average} + '<br>' + '(' + ${cast.vote_count} + '표)'"></span></td>
                 </tr>
