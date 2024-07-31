@@ -3,11 +3,17 @@
 <head>
 <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .container {
+            position: relative; /* container 요소에 position: relative; 추가 */
+            padding: 10px 150px;
+        }
+    </style>
 
     <title>사용자 활동 내역</title>
 </head>
 <body>
-<div>
+<div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 
     <img th:src="${userDTO.userCommonDTO.picture}" alt="User Picture" class="user-picture">

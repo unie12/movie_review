@@ -9,6 +9,8 @@ import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Cache;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
@@ -24,12 +26,14 @@ public class UserDTOService {
     private final ReviewRepository reviewRepository;
     private final DbRatingRepository dbRatingRepository;
 
+    @Cacheable(value = "weeklyRatingUsers", key = "'weeklyRatingUsers'")
     public List<WeeklyUserDTO> getWeeklyRatingUsers() {
         LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
         LocalDateTime endDate = LocalDateTime.now();
         return dbRatingRepository.findTopRaters(startDate, endDate);
     }
 
+    @Cacheable(value = "weeklyReviewUsers", key = "'weeklyReviewUsers'")
     public List<WeeklyUserDTO> getWeeklyReviewUsers() {
         LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
         LocalDateTime endDate = LocalDateTime.now();

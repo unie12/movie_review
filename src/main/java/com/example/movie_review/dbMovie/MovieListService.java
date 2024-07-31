@@ -7,8 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,26 +17,13 @@ import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Service
 @RequiredArgsConstructor
-public class MovieCacheService {
-    private final MovieCacheRepository movieCacheRepository;
-
+public class MovieListService {
+    private MovieCacheRepository movieCacheRepository;
     private final TmdbService tmdbService;
     private final KobisService kobisService;
-    private final DbMovieService dbMovieService;
-
     private final ObjectMapper objectMapper;
 
-    public void updateDailyMovieCache() {
-        updateBoxOfficeCache(MovieType.DBOM);
-        updateTmdbCache(MovieType.POPULAR);
-        updateTmdbCache(MovieType.TRENDING);
-    }
-
-    public void updateWeeklyMovieCache() {
-        updateBoxOfficeCache(MovieType.WBOM);
-    }
-
-    private void updateBoxOfficeCache(MovieType movieType) {
+    public void updateBoxOfficeCache(MovieType movieType) {
         try {
             String movieData;
             if (movieType == MovieType.DBOM) {
@@ -61,7 +46,7 @@ public class MovieCacheService {
 
     }
 
-    private void updateTmdbCache(MovieType movieType) {
+    public void updateTmdbCache(MovieType movieType) {
         try {
             String movieData;
             if (movieType == MovieType.POPULAR) {
@@ -70,12 +55,6 @@ public class MovieCacheService {
                 movieData = tmdbService.getTrendingMovies().block();
             } else {
                 throw new IllegalArgumentException("Unsupported MovieType: " + movieType);
-            }
-
-            JsonNode moviesNode = objectMapper.readTree(movieData);
-            for (JsonNode movieNode : moviesNode.path("results")) {
-                Long tmdbId = movieNode.path("id").asLong();
-                dbMovieService.findOrCreateMovie(tmdbId);
             }
 
             MovieCache cache = movieCacheRepository.findByType(movieType)
@@ -89,19 +68,19 @@ public class MovieCacheService {
         }
     }
 
-    private String getFormattedDBOM() throws JsonProcessingException {
+    public String getFormattedDBOM() throws JsonProcessingException {
         JsonNode dailyBoxOffice = objectMapper.readTree(kobisService.getDailyBoxOfficeMovies().block());
         List<BoxOfficeMovieDTO> dailyBoxOfficeWithPosters = getBoxOfficeWithPosters(dailyBoxOffice, "dailyBoxOfficeList");
         return objectMapper.writeValueAsString(dailyBoxOfficeWithPosters);
     }
 
-    private String getFormattedWBOM() throws JsonProcessingException {
+    public String getFormattedWBOM() throws JsonProcessingException {
         JsonNode weeklyBoxOffice = objectMapper.readTree(kobisService.getWeeklyBoxOfficeMovies().block());
         List<BoxOfficeMovieDTO> weeklyBoxOfficeWithPosters = getBoxOfficeWithPosters(weeklyBoxOffice, "weeklyBoxOfficeList");
         return objectMapper.writeValueAsString(weeklyBoxOfficeWithPosters);
     }
 
-    private List<BoxOfficeMovieDTO> getBoxOfficeWithPosters(JsonNode boxOffice, String listType) {
+    public List<BoxOfficeMovieDTO> getBoxOfficeWithPosters(JsonNode boxOffice, String listType) {
         List<BoxOfficeMovieDTO> moviesWithPosters = new ArrayList<>();
         JsonNode movieList = boxOffice.path("boxOfficeResult").path(listType);
 
@@ -130,31 +109,5 @@ public class MovieCacheService {
         }
 
         return moviesWithPosters;
-    }
-
-    @Cacheable(value = "popularMovies", key = "'popularMovies'")
-    public String getPopularMovies() {
-        return getMovieCache(MovieType.POPULAR);
-    }
-
-    @Cacheable(value = "trendingMovies", key = "'trendingMovies'")
-    public String getTrendingMovies() {
-        return getMovieCache(MovieType.TRENDING);
-    }
-
-    @Cacheable(value = "dailyBoxOffice", key = "'dailyBoxOffice'")
-    public String getDailyBoxOffice() {
-        return getMovieCache(MovieType.DBOM);
-    }
-
-    @Cacheable(value = "weeklyBoxOffice", key = "'weeklyBoxOffice'")
-    public String getWeeklyBoxOffice() {
-        return getMovieCache(MovieType.WBOM);
-    }
-
-    private String getMovieCache(MovieType movieType) {
-        return movieCacheRepository.findByType(movieType)
-                .map(MovieCache::getMovieData)
-                .orElseThrow(() -> new RuntimeException(movieType + " cache not found"));
     }
 }

@@ -19,7 +19,13 @@ public class CacheConfig {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
                 "movieBasicInfo",
                 "movieProvider",
-                "personDetails"
+                "personDetails",
+                "popularMovies",
+                "trendingMovies",
+                "dailyBoxOffice",
+                "weeklyBoxOffice",
+                "weeklyRatingUsers",
+                "weeklyReviewUsers"
         );
         cacheManager.setAsyncCacheMode(true); // 비동기 처리
         cacheManager.setCaffeine(caffeineCacheBuilder());
@@ -29,8 +35,8 @@ public class CacheConfig {
     Caffeine<Object, Object> caffeineCacheBuilder() {
         return Caffeine.newBuilder()
                 .initialCapacity(100) // 초기 용량 100개 항목
-                .maximumSize(500) // 최대 500개 항목 저장
-                .expireAfterWrite(1, TimeUnit.HOURS) // 작성 후 1시간 후 만료
+                .maximumSize(1000) // 최대 500개 항목 저장
+                .expireAfterWrite(23, TimeUnit.HOURS) // 작성 후 1시간 후 만료
                 .recordStats(); // 캐시 통계 기록
     }
 }
