@@ -38,7 +38,6 @@ public class MovieDetailController {
     @GetMapping("/contents/{movieId}")
     public String movieDetail(@PathVariable Long movieId, Model model, Authentication principal) {
         try {
-            System.out.println("movieDetail movieId = " + movieId);
             MovieDetailDTO movieDetailDTO = movieDetailDTOService.getMovieDetailDTO(movieId, principal);
             List<ReviewDTO> sortedReviews = movieDetailDTO.getReviews().stream()
                     .sorted((r1, r2) -> Integer.compare(r2.getHeartCnt(), r1.getHeartCnt()))
