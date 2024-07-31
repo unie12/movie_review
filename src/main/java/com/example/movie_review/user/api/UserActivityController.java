@@ -21,6 +21,9 @@ public class UserActivityController {
     private final Map<String, UserActivityService> activityServices;
 
 
+    /**
+     * 해당 사용자의 각 카테고리별 활동 내역 리스트 보여주기
+     */
     @GetMapping("/{userEmail}/activities")
     public ResponseEntity<?> getUserActivities(
             @PathVariable String userEmail,
@@ -42,6 +45,9 @@ public class UserActivityController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 각 카테고리별 sort-option 리스트 보여주기
+     */
     @GetMapping("/{userEmail}/sort-options")
     public ResponseEntity<Map<String , List<SortOption>>> getSortOptions(@PathVariable String userEmail) {
         Map<String, List<SortOption>> sortOptions = new HashMap<>();

@@ -17,6 +17,9 @@ import java.util.Optional;
 public class DbRatingController {
     private final DbRatingService dbRatingService;
 
+    /**
+     * 해당 영화에 대한 해당 유저의 평점 보여주기
+     */
     @GetMapping("/{movieId}")
     public ResponseEntity<?> loadRating(@PathVariable Long movieId, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {

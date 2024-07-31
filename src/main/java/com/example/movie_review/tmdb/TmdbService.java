@@ -240,12 +240,12 @@ public class TmdbService {
     }
 
     /**
-     * 해당 actorId의 배우 상세정보 가져오기
+     * 해당 personId의 인물 상세정보 가져오기
      */
-    @Cacheable(value = "personDetails", key = "#actorId")
-    public Mono<String> getPersonDetails(Long actorId) {
+    @Cacheable(value = "personDetails", key = "#personId")
+    public Mono<String> getPersonDetails(Long personId) {
         return webClient.get()
-                .uri("/person/" + actorId + "/combined_credits?api_key={api_key}&language=ko-KR", apikey)
+                .uri("/person/" + personId + "/combined_credits?api_key={api_key}&language=ko-KR", apikey)
                 .retrieve()
                 .bodyToMono(String.class);
     }

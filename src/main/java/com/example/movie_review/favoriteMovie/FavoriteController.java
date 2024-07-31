@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class FavoriteController {
     private final UserFavoriteMovieService userFavoriteMovieService;
 
+    /**
+     * request의 영화에 대해 현재 사용자의 찜 기능 토글 활성화
+     */
     @PostMapping("")
     public ResponseEntity<?> toggleFavorite(@RequestBody FavoriteRequest request, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {

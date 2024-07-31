@@ -14,11 +14,17 @@ import java.util.List;
 public class PreferredMoviesController {
     private PreferredMoviesService preferredMoviesService;
 
+    /**
+     * 현재 사용자의 선호 영화 추가
+     */
     @PostMapping
     public void addPreferredMovie(@RequestBody PreferredMovies preferredMovie) {
         preferredMoviesService.savePreferredMovie(preferredMovie);
     }
 
+    /**
+     * 현재 사용자의 선호 영화 리스트 가져오기
+     */
     @GetMapping("/user/{userId}")
     public List<PreferredMovies> getPreferredMovies(@PathVariable Long userId) {
         User user = new User();
