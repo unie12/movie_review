@@ -1,5 +1,6 @@
 package com.example.movie_review.movieDetail;
 
+import com.example.movie_review.cache.MovieBasicService;
 import com.example.movie_review.dbMovie.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.dbRating.DbRatingService;
@@ -16,12 +17,15 @@ import com.example.movie_review.user.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Service
 @RequiredArgsConstructor
@@ -33,25 +37,13 @@ public class MovieDetailDTOService {
     private final DbRatingService dbRatingService;
     private final TmdbService tmdbService;
 
-    @Cacheable("movieDetailDTO")
+    private final MovieBasicService movieBasicService;
+
     public MovieDetailDTO getMovieDetailDTO(Long movieTId, Authentication principal) {
+        MovieBasicInfo basicInfo = movieBasicService.getMovieBasicInfo(movieTId);
+
         DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
-        MovieDetails movieDetails = dbMovie.getMovieDetails();
-        List<Crew> directors = dbMovieService.getDirectors(movieDetails);
         List<Review> reviews = reviewService.findReviewByDbMovies(dbMovie);
-        String movieProvider = tmdbService.getMovieProvider(movieTId).block();
-        String url = null;
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(movieProvider);
-            JsonNode resultsNode = rootNode.path("results");
-            JsonNode krNode = resultsNode.path("KR");
-            url = krNode.path("link").asText(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         List<ReviewDTO> reviewDTOS = reviews.stream()
                 .map(review -> {
                     User user = review.getUser();
@@ -71,40 +63,14 @@ public class MovieDetailDTOService {
                 })
                 .collect(Collectors.toList());
 
-        MovieDetailDTO.MovieDetailDTOBuilder movieDetailDTO = MovieDetailDTO.builder()
-                .id(dbMovie.getId())
-                .tId(dbMovie.getTmdbId())
+        return MovieDetailDTO.builder()
+                .basicInfo(basicInfo)
                 .reviewCnt(dbMovie.getReviewCount())
-                .title(movieDetails.getTitle())
-                .original_title(movieDetails.getOriginal_title())
-                .backdrop_path(movieDetails.getBackdrop_path())
-                .release_date(movieDetails.getRelease_date())
-                .genres(movieDetails.getGenres().stream().map(Genres::getName).collect(Collectors.toList()))
-                .runtime(movieDetails.getRuntime())
-                .poster_path(movieDetails.getPoster_path())
-                .poster_path(movieDetails.getPoster_path())
-                .tmdb_ratingAvg(movieDetails.getVote_average())
-                .tmdb_ratingCnt(movieDetails.getVote_count())
                 .ajou_ratingAvg(dbMovie.getDbRatingAvg())
                 .ajou_ratingCnt(dbMovie.getDbRatingCount())
-                .tagline(movieDetails.getTagline())
-                .overview(movieDetails.getOverview())
-                .directors(directors.stream().map(crew -> new DirectorDTO(crew.getId(), crew.getName(), crew.getProfile_path())).collect(Collectors.toList()))
-                .actors(movieDetails.getCredits().getCast().stream()
-                        .limit(24)
-                        .map(cast -> new ActorDTO(cast.getId(), cast.getName(), cast.getProfile_path(), cast.getCharacter_name())).collect(Collectors.toList()))
-//                .reviews(reviewService.getReviewDTOs(reviews))
                 .reviews(reviewDTOS)
                 .userHearts(heartService.getUserHearts(principal.getName()))
-                .watchProvider(url);
-
-        if (principal != null) {
-            String email = principal.getName();
-            movieDetailDTO.isFavorite(userFavoriteMovieService.isFavorite(email, movieDetails.getId()));
-        } else {
-            movieDetailDTO.isFavorite(false);
-        }
-
-        return movieDetailDTO.build();
+                .isFavorite(principal != null ? userFavoriteMovieService.isFavorite(principal.getName(), basicInfo.getId()) : false)
+                .build();
     }
 }

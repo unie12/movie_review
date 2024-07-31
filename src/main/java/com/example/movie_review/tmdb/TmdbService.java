@@ -242,6 +242,7 @@ public class TmdbService {
     /**
      * 해당 actorId의 배우 상세정보 가져오기
      */
+    @Cacheable(value = "personDetails", key = "#actorId")
     public Mono<String> getPersonDetails(Long actorId) {
         return webClient.get()
                 .uri("/person/" + actorId + "/combined_credits?api_key={api_key}&language=ko-KR", apikey)

@@ -16,8 +16,8 @@
             id="subscription"
             th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"
             th:text="${isSubscribed ? '구독 취소' : '구독'}"></button>
-    <button th:if="${#authentication.name == userDTO.userCommonDTO.email}"
-            th:text="${"
+<!--    <button th:if="${#authentication.name == userDTO.userCommonDTO.email}"-->
+<!--            th:text="${"-->
     <br>
     <div>
         <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscription'}">
