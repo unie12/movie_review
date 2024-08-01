@@ -72,7 +72,7 @@ public class OAuthAttributes {
                 .name(name)
                 .email(email)
                 .picture(picture)
-                .role(UserRole.USER)
+                .role(UserRole.BRONZE)
                 .nickname(nickname) // 닉네임 필드 추가
                 .gender(gender)
                 .age(age)

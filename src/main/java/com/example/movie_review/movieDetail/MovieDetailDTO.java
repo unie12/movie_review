@@ -13,8 +13,6 @@ public class MovieDetailDTO {
      * 연산 변수들
      */
     private int reviewCnt;
-    private double tmdb_ratingAvg;
-    private Long tmdb_ratingCnt;
     private Double ajou_ratingAvg;
     private int ajou_ratingCnt;
 

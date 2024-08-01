@@ -10,6 +10,7 @@ import com.example.movie_review.user.DTO.WeeklyUserDTO;
 import com.example.movie_review.user.UserService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -31,15 +32,17 @@ public class HomeViewController {
     private final MovieCacheService movieCacheService;
     private final ReviewService reviewService;
     private final UserDTOService userDTOService;
-
+    private final UserService userService;
     private final MovieCacheRepository movieCacheRepository;
 
 
 
+    @Timed(value = "home.request", description = "Time taken to return the home page")
     @GetMapping({"", "/"})
     public String home(@CookieValue(name = "jwtToken", required = false) String token, Model model, HttpServletResponse response) throws JsonProcessingException {
 //        movieCacheService.updateDailyMovieCache();
 //        movieCacheService.updateWeeklyMovieCache();
+        userService.updateUserRoles();
         System.out.println("home token = " + token);
 
         model.addAttribute("popularMovies", movieCacheService.getPopularMovies());

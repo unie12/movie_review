@@ -60,6 +60,8 @@ public class MovieBasicService {
                         .limit(24)
                         .map(cast -> new ActorDTO(cast.getId(), cast.getName(), cast.getProfile_path(), cast.getCharacter_name())).collect(Collectors.toList()))
                 .watchProvider(url)
+                .tmdb_ratingAvg(movieDetails.getVote_average())
+                .tmdb_ratingCnt(movieDetails.getVote_count())
                 .build();
     }
 }

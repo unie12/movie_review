@@ -23,6 +23,9 @@ public class MovieBasicInfo {
     private List<DirectorDTO> directors;
     private List<ActorDTO> actors;
 
+    private double tmdb_ratingAvg;
+    private Long tmdb_ratingCnt;
+
     private String watchProvider;
 
 }

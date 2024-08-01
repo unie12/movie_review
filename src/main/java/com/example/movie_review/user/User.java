@@ -156,6 +156,8 @@ public class User {
         return subscribers.size();
     }
 
+    public void updateRole(UserRole newRole) { this.role = newRole; }
+
     public List<User> getSubscribedUsers() {
         return subscriptions.stream()
                 .map(Subscription::getSubscribed)
@@ -167,5 +169,6 @@ public class User {
                 .map(Subscription::getSubscriber)
                 .collect(Collectors.toList());
     }
+
 
 }
