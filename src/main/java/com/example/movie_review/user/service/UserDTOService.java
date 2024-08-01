@@ -47,7 +47,8 @@ public class UserDTOService {
                 .id(user.getId())
                 .email(email)
                 .nickname(user.getNickname())
-                .picture(user.getPicture());
+                .picture(user.getPicture())
+                .role(user.getRole());
 
         return userCommonDTo.build();
     }
@@ -114,12 +115,7 @@ public class UserDTOService {
                 .map(heart -> heart.getReview().getId())
                 .collect(Collectors.toSet());
 
-        UserCommonDTO userCommonDTO = UserCommonDTO.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .picture(user.getPicture())
-                .build();
+        UserCommonDTO userCommonDTO = getUserCommonDTO(userEmail);
 
         List<MovieCommonDTO> favoriteMovies = user.getUserFavoriteMovies().stream()
                 .map(favorite -> MovieCommonDTO.builder()

@@ -13,7 +13,9 @@ import com.example.movie_review.review.ReviewDTO;
 import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
+import com.example.movie_review.user.DTO.UserDTO;
 import com.example.movie_review.user.User;
+import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,7 @@ public class MovieDetailDTOService {
     private final HeartService heartService;
     private final DbRatingService dbRatingService;
     private final TmdbService tmdbService;
+    private final UserDTOService userDTOService;
 
     private final MovieBasicService movieBasicService;
 
@@ -47,12 +50,7 @@ public class MovieDetailDTOService {
         List<ReviewDTO> reviewDTOS = reviews.stream()
                 .map(review -> {
                     User user = review.getUser();
-                    UserCommonDTO userCommonDTO = UserCommonDTO.builder()
-                            .id(user.getId())
-                            .email(user.getEmail())
-                            .nickname(user.getNickname())
-                            .picture(user.getPicture())
-                            .build();
+                    UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(user.getEmail());
                     ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
                             .id(review.getId())
                             .text(review.getContext())

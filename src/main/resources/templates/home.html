@@ -32,7 +32,8 @@
                             <a th:href="@{'/info/' + ${user.userCommonDTO.email}}">
                                 <img th:src="${user.userCommonDTO.picture}" alt="User Picture" class="user-picture">
                             </a>
-                            <strong th:text="${user.userCommonDTO.nickname}"></strong>
+                            <strong th:text="${user.userCommonDTO.nickname}"
+                                    th:style="'color: ' + ${user.userCommonDTO.role.color}"></strong>
         <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
                         </div>
                         <div>
@@ -51,7 +52,8 @@
                             <a th:href="@{'/info/' + ${user.userCommonDTO.email}}">
                                 <img th:src="${user.userCommonDTO.picture}" alt="User Picture" class="user-picture">
                             </a>
-                            <strong th:text="${user.userCommonDTO.nickname}"></strong>
+                            <strong th:text="${user.userCommonDTO.nickname}"
+                                    th:style="'color: ' + ${user.userCommonDTO.role.color}"></strong>
         <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
                         </div>
                         <div>
@@ -182,7 +184,9 @@
             <div class="review-header">
                 <div class="user-info">
                     <img src="${review.reviewDTO.user.picture}" alt="${review.reviewDTO.user.nickname}" class="user-picture">
-                    <h5>${review.reviewDTO.user.nickname}</h5>
+                    <span class="user-nickname"
+                      style="color: ${review.reviewDTO.user.role.color};">
+                      ${review.reviewDTO.user.nickname}</span>
                 </div>
                 <div class="user-rating-container">
                     <span class="user-rating">평점: ${rating}</span>

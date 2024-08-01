@@ -17,7 +17,9 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 
     <img th:src="${userDTO.userCommonDTO.picture}" alt="User Picture" class="user-picture">
-    <span th:text="${userDTO.userCommonDTO.nickname}" class="user-nickname"></span>
+    <span th:text="${userDTO.userCommonDTO.nickname}" class="user-nickname"
+          th:style="'color: ' + ${userDTO.userCommonDTO.role.color}">
+    </span>
     <button th:if="${#authentication.name != userDTO.userCommonDTO.email}"
             id="subscription"
             th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"

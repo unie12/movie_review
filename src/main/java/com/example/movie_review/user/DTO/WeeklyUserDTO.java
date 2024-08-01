@@ -2,20 +2,21 @@ package com.example.movie_review.user.DTO;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class WeeklyUserDTO {
     private UserCommonDTO userCommonDTO;
-    private Long WeeklyRatingCount;
-    private Long WeeklyReviewCount;
+    private Long weeklyRatingCount;
+    private Long weeklyReviewCount;
 
-    public WeeklyUserDTO(UserCommonDTO userCommonDTO, Long weeklyRatingCount, boolean isRating) {
+    public WeeklyUserDTO(UserCommonDTO userCommonDTO, Long weeklyCount, boolean isRating) {
         this.userCommonDTO = userCommonDTO;
-        this.WeeklyRatingCount = weeklyRatingCount;
-    }
-
-    public WeeklyUserDTO(UserCommonDTO userCommonDTO, Long weeklyReviewCount) {
-        this.userCommonDTO = userCommonDTO;
-        this.WeeklyReviewCount = weeklyReviewCount;
+        if (isRating) {
+            this.weeklyRatingCount = weeklyCount;
+        } else {
+            this.weeklyReviewCount = weeklyCount;
+        }
     }
 }

@@ -50,10 +50,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "ORDER BY score DESC")
     Page<Object[]> findPopularReviewsWithScore(Pageable pageable);
 
-    @Query("SELECT new com.example.movie_review.user.DTO.WeeklyUserDTO(new com.example.movie_review.user.DTO.UserCommonDTO(u.id, u.email, u.nickname, u.picture), COUNT(r)) " +
+    @Query("SELECT new com.example.movie_review.user.DTO.WeeklyUserDTO(" +
+            "new com.example.movie_review.user.DTO.UserCommonDTO(u.id, u.email, u.nickname, u.picture, u.role), " +
+            "COUNT(r), true) " +
             "FROM Review r JOIN r.user u " +
             "WHERE r.uploadDate BETWEEN :startDate AND :endDate " +
-            "GROUP BY u.id, u.email, u.nickname, u.picture " +
+            "GROUP BY u.id, u.email, u.nickname, u.picture, u.role " +
             "ORDER BY COUNT(r) DESC")
     List<WeeklyUserDTO> findTopReviewers(LocalDateTime startDate, LocalDateTime endDate);
 

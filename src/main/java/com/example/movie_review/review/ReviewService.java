@@ -12,6 +12,7 @@ import com.example.movie_review.movieDetail.MovieDetails;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
+import com.example.movie_review.user.service.UserDTOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class ReviewService {
     private final UserService userService;
     private final DbMovieService dbMovieService;
     private final DbRatingService dbRatingService;
+    private final UserDTOService userDTOService;
 
     private List<ReviewMovieDTO> cachedPopularReviews;
     private List<ReviewMovieDTO> cachedRecentReviews;
@@ -196,11 +198,8 @@ public class ReviewService {
             Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
                     .map(DbRatings::getScore)
                     .orElse(null);
-            UserCommonDTO userCommonDTO = UserCommonDTO.builder()
-                    .email(review.getUser().getEmail())
-                    .nickname(review.getUser().getNickname())
-                    .picture(review.getUser().getPicture())
-                    .build();
+
+            UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(review.getUser().getEmail());
             ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
                     .id(review.getId())
                     .text(review.getContext())
@@ -221,12 +220,7 @@ public class ReviewService {
                     .map(DbRatings::getScore)
                     .orElse(null);
 
-            UserCommonDTO userCommonDTO = UserCommonDTO.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .nickname(user.getNickname())
-                    .picture(user.getPicture())
-                    .build();
+            UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(user.getEmail());
 
             MovieCommonDTO movieCommonDTO = MovieCommonDTO.builder()
                     .id(dbMovie.getId())
@@ -276,12 +270,7 @@ public class ReviewService {
                 .map(DbRatings::getScore)
                 .orElse(null);
 
-        UserCommonDTO userCommonDTO = UserCommonDTO.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .picture(user.getPicture())
-                .build();
+        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(user.getEmail());
 
         MovieCommonDTO movieCommonDTO = MovieCommonDTO.builder()
                 .id(dbMovie.getId())
@@ -323,11 +312,7 @@ public class ReviewService {
         Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
                 .map(DbRatings::getScore)
                 .orElse(null);
-        UserCommonDTO userCommonDTO = UserCommonDTO.builder()
-                .email(review.getUser().getEmail())
-                .nickname(review.getUser().getNickname())
-                .picture(review.getUser().getPicture())
-                .build();
+        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(review.getUser().getEmail());
         ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
                 .id(review.getId())
                 .text(review.getContext())

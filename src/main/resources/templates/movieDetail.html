@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <p><strong>tmdb 기준 평균 평점:</strong> <span th:text="${movieDTO.tmdb_ratingAvg} + ' (' + ${movieDTO.tmdb_ratingCnt} + '표)'"></span></p>
+            <p><strong>tmdb 기준 평균 평점:</strong> <span th:text="${movieDTO.basicInfo.tmdb_ratingAvg} + ' (' + ${movieDTO.basicInfo.tmdb_ratingCnt} + '표)'"></span></p>
             <p><strong>아주대 학생 평균 평점:</strong> <span th:text="${movieDTO.ajou_ratingAvg} + ' (' + ${movieDTO.ajou_ratingCnt} + '표)'"></span></p>
 
             <!-- 별점 시스템 -->
@@ -108,7 +108,9 @@
                                 <img th:src="${reviewDTO.user.picture}" alt="User Picture" class="user-picture">
                             </a>
 
-                            <span th:text="${reviewDTO.user.nickname}" class="user-nickname"></span>
+                            <span th:text="${reviewDTO.user.nickname}" class="user-nickname"
+                                  th:style="'color: ' + ${reviewDTO.user.role.color}">
+                            </span>
                             <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
                         </div>
                         <p th:text="${#strings.abbreviate(reviewDTO.review.text, 100)}" class="review-content"></p>

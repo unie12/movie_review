@@ -42,7 +42,7 @@ public class HomeViewController {
     public String home(@CookieValue(name = "jwtToken", required = false) String token, Model model, HttpServletResponse response) throws JsonProcessingException {
 //        movieCacheService.updateDailyMovieCache();
 //        movieCacheService.updateWeeklyMovieCache();
-        userService.updateUserRoles();
+//        userService.updateUserRoles();
         System.out.println("home token = " + token);
 
         model.addAttribute("popularMovies", movieCacheService.getPopularMovies());
