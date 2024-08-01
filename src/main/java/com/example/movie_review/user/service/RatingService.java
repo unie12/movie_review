@@ -38,6 +38,14 @@ public class RatingService extends AbstractUserActivityService {
                 return ratings.stream()
                         .sorted(Comparator.comparing(DbRatingDTO::getRatingDate))
                         .collect(Collectors.toList());
+            case "rating_desc":
+                return ratings.stream()
+                        .sorted((a, b) -> b.getScore().compareTo(a.getScore()))
+                        .collect(Collectors.toList());
+            case "rating_asc":
+                return ratings.stream()
+                        .sorted(Comparator.comparing(DbRatingDTO::getScore))
+                        .collect(Collectors.toList());
             default:
                 return sortByCommonMovieOptions(ratings, sort, DbRatingDTO::getMovie);
 
@@ -48,7 +56,9 @@ public class RatingService extends AbstractUserActivityService {
     public List<SortOption> getSortOptions() {
         List<SortOption> options = new ArrayList<>(Arrays.asList(
                 new SortOption("rating_date_desc", "평가 최근순"),
-                new SortOption("rating_date_asc", "평가 과거순")
+                new SortOption("rating_date_asc", "평가 과거순"),
+        new SortOption("rating_desc", "평가 높은순"),
+        new SortOption("rating_asc", "평가 낮은순")
         ));
         options.addAll(getCommonSortOptions());
         return options;
