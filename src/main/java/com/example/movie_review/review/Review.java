@@ -22,7 +22,7 @@ public class Review{
     private Long id;
 
     private LocalDateTime uploadDate = LocalDateTime.now(); // 글 작성일
-    private String title; // 제목
+//    private String title; // 제목
     private String context; // 내용
 
 

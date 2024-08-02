@@ -176,37 +176,23 @@ public class ReviewService {
 
 
 
-    public Page<ReviewDTO> getMovieReviews(Long movieTId, int page, int size, String sortBy, String email) {
-        PageRequest pageRequest;
-        if ("heartCount".equals(sortBy)) {
-            // heartCount로 정렬할 경우 정렬 없이 PageRequest 생성
-            pageRequest = PageRequest.of(page, size);
-        } else {
-            // 다른 필드로 정렬할 경우
-            Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-            pageRequest = PageRequest.of(page, size, sort);
-        }
+    public Page<ReviewDTO> getMovieReviews(Long movieTId, int page, int size, String sort, String email) {
+        Long movieId = dbMovieRepository.findByTmdbId(movieTId).get().getId();
+        Sort.Direction direction = sort.endsWith(",desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        String sortBy = sort.split(",")[0];
 
-        Long movieId = dbMovieRepository.findByTmdbId(movieTId)
-                .orElseThrow(() -> new RuntimeException("Movie not found"))
-                .getId();
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<ReviewDTO> reviewDTOS = reviewRepository.findReviewByMovieId(movieId, pageRequest, sortBy, direction);
 
-        Page<ReviewWithHeartCount> reviewPage = reviewRepository.findByDbMovies_MovieDetails_IdWithHeartCount(movieId, pageRequest);
-
-        return reviewPage.map(reviewWithHeartCount  -> {
-            Review review = reviewWithHeartCount.getReview();
-            Double userRating = dbRatingService.getDbRating(review.getUser().getEmail(), review.getDbMovies().getMovieDetails().getId())
+        return reviewDTOS.map(dto -> {
+            Double userRating = dbRatingService.getDbRating(dto.getUser().getEmail(), movieId)
                     .map(DbRatings::getScore)
                     .orElse(null);
-
-            UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(review.getUser().getEmail());
-            ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
-                    .id(review.getId())
-                    .text(review.getContext())
-                    .build();
-            boolean isLikedByCurrentUser = isLikedByCurrentUser(review, email);
-
-            return new ReviewDTO(userRating, reviewWithHeartCount.getHeartCount(), userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
+            Review review = reviewRepository.findById(dto.getReview().getId()).orElse(null);
+            boolean isLikeByCurrentUser = isLikedByCurrentUser(review, email);
+            dto.setUserRating(userRating);
+            dto.setLikedByCurrentUser(isLikeByCurrentUser);
+            return dto;
         });
     }
 

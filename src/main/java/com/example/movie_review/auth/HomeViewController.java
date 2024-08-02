@@ -1,12 +1,9 @@
 package com.example.movie_review.auth;
 
-import com.example.movie_review.dbMovie.MovieCache;
 import com.example.movie_review.dbMovie.MovieCacheRepository;
 import com.example.movie_review.dbMovie.MovieCacheService;
-import com.example.movie_review.dbMovie.MovieType;
 import com.example.movie_review.review.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
-import com.example.movie_review.user.DTO.WeeklyUserDTO;
 import com.example.movie_review.user.UserService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,8 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor

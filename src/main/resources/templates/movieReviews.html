@@ -72,6 +72,14 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
     <a th:href="@{'/contents/' + ${movieTId}}">뒤로 가기</a>
     <h1 class="my-4">영화 리뷰</h1>
+
+    <select id="sorting" name="sort">
+        <option value="heartCount,desc">좋아요 많은 순</option>
+        <option value="heartCount,asc">좋아요 적은 순</option>
+        <option value="createdDate,desc">최신 작성 순</option>
+        <option value="createdDate,asc">과거 작성 순</option>
+    </select>
+
     <div id="reviewList"></div>
     <button id="loadMore" class="btn btn-primary mt-3">더 보기</button>
 </div>
@@ -80,9 +88,13 @@
 <script th:inline="javascript">
     const movieTId = [[${movieTId}]];
     let currentPage = 0;
+    let currentSort = "heartCount,desc";
 
     function loadReviews() {
-        fetch(`/api/movie/${movieTId}/reviews?page=${currentPage}`)
+        const sorting = document.getElementById('sorting');
+        currentSort = sorting.value;
+
+        fetch(`/api/movie/${movieTId}/reviews?page=${currentPage}&sort=${currentSort}`)
             .then(response => response.json())
             .then(data => {
                 const reviewList = document.getElementById('reviewList');
@@ -150,6 +162,12 @@
             });
         });
     }
+
+    document.getElementById('sorting').addEventListener('change', function() {
+        currentPage = 0;
+        document.getElementById('reviewList').innerHTML = '';
+        loadReviews();
+    });
 
     document.getElementById('loadMore').addEventListener('click', loadReviews);
 

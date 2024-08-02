@@ -95,7 +95,7 @@ public class ReviewController {
             @PathVariable Long movieTId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "heartCount") String sort,
+            @RequestParam(defaultValue = "heartCount,desc") String sort,
             Authentication principal) {
         return reviewService.getMovieReviews(movieTId, page, size, sort, principal.getName());
     }

@@ -8,4 +8,9 @@ import lombok.Data;
 public class ReviewCommonDTO {
     private Long id;
     private String text;
+
+    public ReviewCommonDTO(Long id, String text) {
+        this.id = id;
+        this.text = text;
+    }
 }

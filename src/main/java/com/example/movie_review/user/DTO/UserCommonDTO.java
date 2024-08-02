@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserCommonDTO {
     private Long id;
@@ -17,10 +16,11 @@ public class UserCommonDTO {
     private String picture;
     private UserRole role;
 
-    public UserCommonDTO(Long id, String email, String nickname, String picture) {
+    public UserCommonDTO(Long id, String email, String nickname, String picture, UserRole role) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.picture = picture;
+        this.role = role;
     }
 }
