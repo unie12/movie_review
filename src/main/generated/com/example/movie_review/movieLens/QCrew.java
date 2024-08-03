@@ -2,7 +2,7 @@ package com.example.movie_review.movieLens;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.example.movie_review.movieDetail.Crew;
+import com.example.movie_review.movieDetail.domain.Crew;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;

@@ -1,6 +1,6 @@
 package com.example.movie_review.genre;
 
-import com.example.movie_review.movieDetail.MovieDetails;
+import com.example.movie_review.movieDetail.domain.MovieDetails;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,17 +1,11 @@
 package com.example.movie_review.genre;
 
-import com.example.movie_review.movieDetail.GenreDto;
-import com.example.movie_review.movieDetail.MovieDTO;
-import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
-import com.example.movie_review.user.PreferredMovies;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserRepository;
-import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

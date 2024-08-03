@@ -1,6 +1,6 @@
 package com.example.movie_review.user;
 
-import com.example.movie_review.movieDetail.MovieDTO;
+import com.example.movie_review.movieDetail.DTO.MovieDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

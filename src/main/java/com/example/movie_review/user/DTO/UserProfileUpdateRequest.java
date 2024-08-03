@@ -1,12 +1,9 @@
 package com.example.movie_review.user.DTO;
 
-import com.example.movie_review.genre.PreferredGenres;
-import com.example.movie_review.movieDetail.MovieDTO;
-import com.example.movie_review.user.PreferredMovies;
+import com.example.movie_review.movieDetail.DTO.MovieDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data

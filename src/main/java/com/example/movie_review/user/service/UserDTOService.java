@@ -1,6 +1,6 @@
 package com.example.movie_review.user.service;
 
-import com.example.movie_review.dbMovie.MovieCommonDTO;
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingDTO;
 import com.example.movie_review.dbRating.DbRatingRepository;
 import com.example.movie_review.review.repository.ReviewRepository;

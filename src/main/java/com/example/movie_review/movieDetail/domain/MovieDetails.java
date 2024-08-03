@@ -1,7 +1,9 @@
-package com.example.movie_review.movieDetail;
+package com.example.movie_review.movieDetail.domain;
 
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
+import com.example.movie_review.movieDetail.DTO.GenreDto;
+import com.example.movie_review.movieDetail.domain.Credits;
 import jakarta.persistence.*;
 import lombok.*;
 

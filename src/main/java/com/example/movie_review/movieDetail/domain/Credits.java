@@ -1,4 +1,4 @@
-package com.example.movie_review.movieDetail;
+package com.example.movie_review.movieDetail.domain;
 
 
 import jakarta.persistence.*;

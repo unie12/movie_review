@@ -1,9 +1,8 @@
 package com.example.movie_review.movieDetail.service;
 
 import com.example.movie_review.dbMovie.DbMovies;
-import com.example.movie_review.dbMovie.MovieCommonDTO;
-import com.example.movie_review.movieDetail.MovieDetails;
-import io.swagger.v3.oas.annotations.servers.ServerVariable;
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
+import com.example.movie_review.movieDetail.domain.MovieDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

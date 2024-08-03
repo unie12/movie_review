@@ -1,7 +1,7 @@
 package com.example.movie_review.dbMovie.service;
 
 import com.example.movie_review.dbMovie.MovieCache;
-import com.example.movie_review.dbMovie.MovieCacheRepository;
+import com.example.movie_review.dbMovie.repository.MovieCacheRepository;
 import com.example.movie_review.dbMovie.MovieType;
 import com.example.movie_review.kobis.BoxOfficeMovieDTO;
 import com.example.movie_review.kobis.KobisService;

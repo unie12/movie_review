@@ -1,6 +1,6 @@
 package com.example.movie_review.favoriteMovie;
 
-import com.example.movie_review.dbMovie.DbMovieRepository;
+import com.example.movie_review.dbMovie.repository.DbMovieRepository;
 import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.user.User;

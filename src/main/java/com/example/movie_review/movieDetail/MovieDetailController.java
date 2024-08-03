@@ -1,5 +1,7 @@
 package com.example.movie_review.movieDetail;
 
+import com.example.movie_review.movieDetail.DTO.ActorDetails;
+import com.example.movie_review.movieDetail.DTO.MovieDetailDTO;
 import com.example.movie_review.movieDetail.service.MovieDetailDTOService;
 import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.tmdb.TmdbService;

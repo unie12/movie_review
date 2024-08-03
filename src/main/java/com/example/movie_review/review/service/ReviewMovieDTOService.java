@@ -1,12 +1,12 @@
 package com.example.movie_review.review.service;
 
-import com.example.movie_review.dbMovie.DbMovieRepository;
+import com.example.movie_review.dbMovie.repository.DbMovieRepository;
 import com.example.movie_review.dbMovie.DbMovies;
-import com.example.movie_review.dbMovie.MovieCommonDTO;
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.heart.Heart;
-import com.example.movie_review.movieDetail.MovieDetails;
+import com.example.movie_review.movieDetail.domain.MovieDetails;
 import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.review.*;
 import com.example.movie_review.review.DTO.ReviewDTO;

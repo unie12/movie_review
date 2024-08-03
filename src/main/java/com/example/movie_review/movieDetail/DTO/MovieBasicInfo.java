@@ -1,5 +1,7 @@
-package com.example.movie_review.movieDetail;
+package com.example.movie_review.movieDetail.DTO;
 
+import com.example.movie_review.movieDetail.DTO.ActorDTO;
+import com.example.movie_review.movieDetail.DTO.DirectorDTO;
 import lombok.Builder;
 import lombok.Data;
 

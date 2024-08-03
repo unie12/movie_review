@@ -1,9 +1,13 @@
-package com.example.movie_review.cache;
+package com.example.movie_review.movieDetail.service;
 
 import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
-import com.example.movie_review.movieDetail.*;
+import com.example.movie_review.movieDetail.DTO.ActorDTO;
+import com.example.movie_review.movieDetail.DTO.DirectorDTO;
+import com.example.movie_review.movieDetail.DTO.MovieBasicInfo;
+import com.example.movie_review.movieDetail.domain.Crew;
+import com.example.movie_review.movieDetail.domain.MovieDetails;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

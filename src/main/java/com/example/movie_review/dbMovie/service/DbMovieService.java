@@ -1,10 +1,15 @@
 package com.example.movie_review.dbMovie.service;
 
-import com.example.movie_review.dbMovie.DbMovieRepository;
+import com.example.movie_review.dbMovie.repository.DbMovieRepository;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.genre.GenresRepository;
-import com.example.movie_review.movieDetail.*;
+import com.example.movie_review.movieDetail.DTO.GenreDto;
+import com.example.movie_review.movieDetail.domain.Cast;
+import com.example.movie_review.movieDetail.domain.Credits;
+import com.example.movie_review.movieDetail.domain.Crew;
+import com.example.movie_review.movieDetail.domain.MovieDetails;
+import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

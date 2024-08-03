@@ -1,8 +1,8 @@
 package com.example.movie_review.user.DTO;
 
 
-import com.example.movie_review.movieDetail.GenreDto;
-import com.example.movie_review.movieDetail.MovieDTO;
+import com.example.movie_review.movieDetail.DTO.GenreDto;
+import com.example.movie_review.movieDetail.DTO.MovieDTO;
 import lombok.Builder;
 import lombok.Data;
 

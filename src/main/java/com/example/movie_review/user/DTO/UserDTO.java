@@ -1,8 +1,7 @@
 package com.example.movie_review.user.DTO;
 
-import com.example.movie_review.dbMovie.MovieCommonDTO;
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingDTO;
-import com.example.movie_review.user.User;
 import lombok.Builder;
 import lombok.Data;
 

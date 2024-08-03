@@ -1,18 +1,20 @@
-package com.example.movie_review.movieDetail;
+package com.example.movie_review.movieDetail.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+//@Data
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "crew")
-public class Crew {
+@Table(name = "cast")
+public class Cast {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "crew_id")
-    private Long crew_id;
+    @Column(name = "cast_id")
+    private Long cast_id;
 
     private Long id;
 
@@ -28,8 +30,9 @@ public class Crew {
     private String original_name;
     private double popularity;
     private String profile_path;
+//    private Integer cast_original_id;
+    @JsonProperty("character")
+    private String character_name;
     private String credit_id;
-    private String department;
-    private String job;
-
+    private Integer order_number;
 }

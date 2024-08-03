@@ -1,4 +1,4 @@
-package com.example.movie_review.dbMovie;
+package com.example.movie_review.dbMovie.DTO;
 
 import lombok.Builder;
 import lombok.Data;
