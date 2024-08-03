@@ -1,12 +1,8 @@
 package com.example.movie_review.tmdb;
 
-import com.example.movie_review.kobis.KobisService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.nimbusds.jose.shaded.gson.JsonObject;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,9 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.nio.channels.MembershipKey;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -242,7 +236,7 @@ public class TmdbService {
     /**
      * 해당 personId의 인물 상세정보 가져오기
      */
-    @Cacheable(value = "personDetails", key = "#personId")
+//    @Cacheable(value = "personDetails", key = "#personId")
     public Mono<String> getPersonDetails(Long personId) {
         return webClient.get()
                 .uri("/person/" + personId + "/combined_credits?api_key={api_key}&language=ko-KR", apikey)
@@ -260,7 +254,7 @@ public class TmdbService {
                 .bodyToMono(String.class);
     }
 
-    @Cacheable(value = "movieProvider", key = "#movieTId")
+//    @Cacheable(value = "movieProvider", key = "#movieTId")
     public Mono<String> getMovieProvider(Long movieTId) {
         return webClient.get()
                 .uri("/movie/{movieId}/watch/providers?api_key={api_key}", movieTId, apikey)

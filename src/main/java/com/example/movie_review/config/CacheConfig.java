@@ -1,4 +1,4 @@
-package com.example.movie_review.cache;
+package com.example.movie_review.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;

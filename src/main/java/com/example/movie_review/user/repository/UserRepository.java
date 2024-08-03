@@ -22,6 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT COUNT(u) FROM User u")
     Long getAllUserCount();
 
-    @Query("SELECT h.user FROM Heart h WHERE h.review = :review")
+    @Query("SELECT h.user FROM Heart h WHERE h.review = :review ORDER BY h.heartTime DESC")
     Page<User> findByLikedReviews(@Param("review") Review review, Pageable pageable);
 }

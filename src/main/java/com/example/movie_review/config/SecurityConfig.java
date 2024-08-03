@@ -1,5 +1,6 @@
-package com.example.movie_review.oauth;
+package com.example.movie_review.config;
 
+import com.example.movie_review.oauth.OAuth2Service;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

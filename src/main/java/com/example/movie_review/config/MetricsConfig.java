@@ -1,4 +1,4 @@
-package com.example.movie_review;
+package com.example.movie_review.config;
 
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;

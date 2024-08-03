@@ -56,9 +56,6 @@ public class MovieDetailController {
         return "movieDetail";
     }
 
-    /**
-     * 영화 배우 클릭 관련.. 향후 수정 필요
-     */
     @GetMapping("/people/{personId}")
     public String actorDetail(@PathVariable Long personId, @RequestParam String type, Model model) {
         String actorDetailsJson = tmdbService.getPersonDetails(personId).block();

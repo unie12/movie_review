@@ -170,13 +170,15 @@
                                     </a>
                                     <div>
                                         <h5 class="mb-0">${review.user.nickname}</h5>
-                                        <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
+                                        <span class="user-rating">평점 <span class="rating-value">${rating}</span></span>
                                     </div>
                                 </div>
                                 <hr>
                                 <p class="card-text">${review.review.text}</p>
                                 <p class="card-text">
-                                    <small class="text-muted">좋아요: <a href="#" class="like-count" data-review-id="${review.review.id}">${review.heartCnt}</a></small>
+                                    <small class="text-muted">
+                                        <a href="#" class="like-count" data-review-id="${review.review.id}">좋아요</a> ${review.heartCnt}
+                                    </small>
                                 </p>
                                 <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.review.id}">
                                     <i class="fas fa-heart"></i> 좋아요
