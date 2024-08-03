@@ -49,23 +49,23 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="crew : ${directorDetails.crew}">
+                <tr th:each="crew : ${pagedCrew}">
                     <td><span th:text="${crew.release_date}"></span></td>
                     <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${crew.poster_path}" th:alt="${crew.title}"
                              th:attr="onclick=|redirectToMovie(${crew.id})|"></td>
                     <td><h3 th:text="${crew.title}"></h3></td>
                     <td><p th:utext="${#strings.replace(crew.job, '\n', '<br>')}"></p></td>
                     <td><span th:utext="${crew.vote_average} + '<br>' + '(' + ${crew.vote_count} + '표)'"></span></td>
-
-                    <td>
-                        <script th:inline="javascript">
-                            var crew = /*[[${crew}]]*/ {};
-                            console.log('Crew:', crew);
-                        </script>
-                    </td>
                 </tr>
                 </tbody>
             </table>
+
+            <div class="pagination">
+                <a th:if="${currentPage > 1}" th:href="@{/people/{personId}(personId=${personId}, type='cast', page=${currentPage - 1})}">이전</a>
+                <span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span>
+                <a th:if="${currentPage < totalPages}" th:href="@{/people/{personId}(personId=${personId}, type='cast', page=${currentPage + 1})}">다음</a>
+            </div>
+
         </div>
     </div>
     <div th:replace="fragments/footer :: footer" />

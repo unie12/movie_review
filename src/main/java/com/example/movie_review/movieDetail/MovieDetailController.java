@@ -57,7 +57,12 @@ public class MovieDetailController {
     }
 
     @GetMapping("/people/{personId}")
-    public String actorDetail(@PathVariable Long personId, @RequestParam String type, Model model) {
+    public String actorDetail(
+            @PathVariable Long personId,
+            @RequestParam String type,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
         String actorDetailsJson = tmdbService.getPersonDetails(personId).block();
 
         // popularity sort, media_type = movie만 일단
@@ -73,14 +78,21 @@ public class MovieDetailController {
                         .filter(cast -> "movie".equals(cast.getMedia_type()))
                         .sorted((cast1, cast2) -> Double.compare(cast2.getPopularity(), cast1.getPopularity()))
                         .collect(Collectors.toList());
-                actorDetails.setCast(sortedCast);
+
+                int start = (page - 1) * size;
+                int end = Math.min(start + size, sortedCast.size());
+                List<ActorDetails.Cast> pagedCast = sortedCast.subList(start, end);
+
+//                actorDetails.setCast(sortedCast);
                 model.addAttribute("actorDetails", actorDetails);
+                model.addAttribute("pagedCast", pagedCast);
+                model.addAttribute("currentPage", page);
+                model.addAttribute("totalPages", (int) Math.ceil((double) sortedCast.size() / size));
                 return "actorDetail";
             }
             // 감독 담당
-            else {
+            else if("crew".equals(type)){
                 Map<Integer, ActorDetails.Crew> crewMap = new HashMap<>();
-
                 for (ActorDetails.Crew crew : actorDetails.getCrew()) {
                     if ("movie".equals(crew.getMedia_type())) {
                         int movieId = crew.getId();
@@ -97,8 +109,15 @@ public class MovieDetailController {
                 List<ActorDetails.Crew> sortedCrew = crewMap.values().stream()
                         .sorted((crew1, crew2) -> Double.compare(crew2.getPopularity(), crew1.getPopularity()))
                         .collect(Collectors.toList());
-                actorDetails.setCrew(sortedCrew);
+                int start = (page - 1) * size;
+                int end = Math.min(start + size, sortedCrew.size());
+                List<ActorDetails.Crew> pagedCrew = sortedCrew.subList(start, end);
+
                 model.addAttribute("directorDetails", actorDetails);
+                model.addAttribute("pagedCrew", pagedCrew);
+                model.addAttribute("currentPage", page);
+                model.addAttribute("totalPages", (int) Math.ceil((double) sortedCrew.size() / size));
+
                 return "directorDetail";
             }
 

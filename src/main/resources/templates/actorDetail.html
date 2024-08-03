@@ -46,7 +46,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="cast : ${actorDetails.cast}">
+                <tr th:each="cast : ${pagedCast}">
                     <td><span th:text="${cast.release_date}"></span></td>
                     <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${cast.poster_path}" th:alt="${cast.title}"
                         th:attr="onclick=|redirectToMovie(${cast.id})|"></td>
@@ -56,6 +56,12 @@
                 </tr>
                 </tbody>
             </table>
+
+            <div class="pagination">
+                <a th:if="${currentPage > 1}" th:href="@{/people/{personId}(personId=${personId}, type='cast', page=${currentPage - 1})}">이전</a>
+                <span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span>
+                <a th:if="${currentPage < totalPages}" th:href="@{/people/{personId}(personId=${personId}, type='cast', page=${currentPage + 1})}">다음</a>
+            </div>
         </div>
     </div>
     <div th:replace="fragments/footer :: footer" />

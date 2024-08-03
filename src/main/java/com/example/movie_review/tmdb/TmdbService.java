@@ -19,7 +19,13 @@ import java.util.List;
 @Service
 //@RequiredArgsConstructor
 public class TmdbService {
-    private final WebClient webClient;
+//    private final WebClient webClient;
+    WebClient webClient = WebClient.builder()
+            .codecs(configurer -> configurer
+                    .defaultCodecs()
+                    .maxInMemorySize(2 * 1024 * 1024))
+            .baseUrl("https://api.themoviedb.org/3")
+            .build();
 
     @Value("${tmdb.api.key}")
     private String apikey;
@@ -27,9 +33,9 @@ public class TmdbService {
     /**
      * tmdb api base url
      */
-    public TmdbService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("https://api.themoviedb.org/3").build();
-    }
+//    public TmdbService(WebClient.Builder webClientBuilder) {
+//        this.webClient = webClientBuilder.baseUrl("https://api.themoviedb.org/3").build();
+//    }
 
     /**
      * Popular movie list 가져오기
@@ -243,6 +249,12 @@ public class TmdbService {
                 .retrieve()
                 .bodyToMono(String.class);
     }
+//    public Flux<String> getPersonDetails(Long personId) {
+//        return webClient.get()
+//                .uri("/person/" + personId + "/combined_credits?api_key={api_key}&language=ko-KR", apikey)
+//                .retrieve()
+//                .bodyToFlux(String.class);
+//    }
 
     /**
      * 장르 정보 가져오기
