@@ -1,6 +1,7 @@
-package com.example.movie_review.user;
+package com.example.movie_review.user.service;
 
 import com.example.movie_review.user.DTO.UserActivityDTO;
+import com.example.movie_review.user.SortOption;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

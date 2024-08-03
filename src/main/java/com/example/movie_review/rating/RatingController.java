@@ -1,7 +1,7 @@
 package com.example.movie_review.rating;
 
 import com.example.movie_review.movieLens.MovieRepository;
-import com.example.movie_review.user.UserRepository;
+import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;

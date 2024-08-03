@@ -1,10 +1,9 @@
 package com.example.movie_review.oauth;
 
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.User;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 public class SessionUser implements Serializable {

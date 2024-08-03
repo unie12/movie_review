@@ -2,8 +2,8 @@ package com.example.movie_review.heart;
 
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.service.ReviewService;
-import com.example.movie_review.user.User;
-import com.example.movie_review.user.UserService;
+import com.example.movie_review.user.domain.User;
+import com.example.movie_review.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -13,7 +13,7 @@ import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserDTOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

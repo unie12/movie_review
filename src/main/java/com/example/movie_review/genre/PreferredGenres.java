@@ -1,7 +1,6 @@
 package com.example.movie_review.genre;
 
-import com.example.movie_review.user.User;
-import com.fasterxml.jackson.annotation.JacksonInject;
+import com.example.movie_review.user.domain.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

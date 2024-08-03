@@ -3,7 +3,7 @@ package com.example.movie_review.auth;
 import com.example.movie_review.dbMovie.repository.MovieCacheRepository;
 import com.example.movie_review.dbMovie.service.MovieCacheService;
 import com.example.movie_review.tmdb.TmdbService;
-import com.example.movie_review.user.UserService;
+import com.example.movie_review.user.service.UserService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.micrometer.core.annotation.Timed;

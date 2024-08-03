@@ -9,8 +9,7 @@ import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.SortOption;
-import com.example.movie_review.user.User;
-import com.example.movie_review.user.UserService;
+import com.example.movie_review.user.domain.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

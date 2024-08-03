@@ -1,4 +1,4 @@
-package com.example.movie_review.user;
+package com.example.movie_review.user.domain;
 
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.comment.Comment;
@@ -7,6 +7,7 @@ import com.example.movie_review.review.Review;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.subscription.Subscription;
+import com.example.movie_review.user.UserRole;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

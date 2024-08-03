@@ -28,7 +28,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final com.example.movie_review.review.QReview review;
 
-    public final com.example.movie_review.user.QUser user;
+    public final com.example.movie_review.user.domain.QUser user;
 
     public QComment(String variable) {
         this(Comment.class, forVariable(variable), INITS);
@@ -49,7 +49,7 @@ public class QComment extends EntityPathBase<Comment> {
     public QComment(Class<? extends Comment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.review = inits.isInitialized("review") ? new com.example.movie_review.review.QReview(forProperty("review"), inits.get("review")) : null;
-        this.user = inits.isInitialized("user") ? new com.example.movie_review.user.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new com.example.movie_review.user.domain.QUser(forProperty("user")) : null;
     }
 
 }

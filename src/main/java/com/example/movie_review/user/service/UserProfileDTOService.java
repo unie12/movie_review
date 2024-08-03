@@ -6,9 +6,11 @@ import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.genre.PreferredGenresService;
 import com.example.movie_review.movieDetail.DTO.GenreDto;
 import com.example.movie_review.movieDetail.DTO.MovieDTO;
-import com.example.movie_review.user.*;
 import com.example.movie_review.user.DTO.UserProfileDTO;
 import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
+import com.example.movie_review.user.domain.PreferredMovies;
+import com.example.movie_review.user.domain.User;
+import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -78,11 +80,6 @@ public class UserProfileDTOService {
 
     public Boolean isNicknameAvailable(String nickname) {
         return userRepository.findByNickname(nickname) == null;
-    }
-
-    public List<PreferredMovies> getFavoriteMovies(String userEmail) {
-        User user = userService.getUserByEmail(userEmail);
-        return preferredMoviesService.findByUser(user);
     }
 
     public List<PreferredGenres> getFavoriteGenres(String userEmail) {

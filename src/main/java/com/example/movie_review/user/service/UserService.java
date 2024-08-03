@@ -1,6 +1,8 @@
-package com.example.movie_review.user;
+package com.example.movie_review.user.service;
 
-import com.example.movie_review.user.DTO.WeeklyUserDTO;
+import com.example.movie_review.user.repository.UserRepository;
+import com.example.movie_review.user.UserRole;
+import com.example.movie_review.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

@@ -5,7 +5,7 @@ import com.example.movie_review.review.Review;
 import com.example.movie_review.review.DTO.ReviewCommonDTO;
 import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.user.DTO.UserCommonDTO;
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserDTOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

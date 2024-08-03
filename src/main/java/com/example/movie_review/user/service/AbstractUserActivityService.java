@@ -3,7 +3,6 @@ package com.example.movie_review.user.service;
 import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.SortOption;
-import com.example.movie_review.user.UserActivityService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;

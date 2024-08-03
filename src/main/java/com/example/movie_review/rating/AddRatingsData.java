@@ -4,8 +4,8 @@
 //import com.example.movie_review.genre.GenreService;
 //import com.example.movie_review.movie.MovieRepository;
 //import com.example.movie_review.movie.Movies;
-//import com.example.movie_review.user.User;
-//import com.example.movie_review.user.UserRepository;
+//import com.example.movie_review.user.domain.User;
+//import com.example.movie_review.user.repository.UserRepository;
 //import com.querydsl.core.dml.DMLClause;
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.slf4j.Slf4j;

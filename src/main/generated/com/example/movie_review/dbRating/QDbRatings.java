@@ -30,7 +30,7 @@ public class QDbRatings extends EntityPathBase<DbRatings> {
 
     public final DateTimePath<java.time.LocalDateTime> uploadRating = createDateTime("uploadRating", java.time.LocalDateTime.class);
 
-    public final com.example.movie_review.user.QUser user;
+    public final com.example.movie_review.user.domain.QUser user;
 
     public QDbRatings(String variable) {
         this(DbRatings.class, forVariable(variable), INITS);
@@ -51,7 +51,7 @@ public class QDbRatings extends EntityPathBase<DbRatings> {
     public QDbRatings(Class<? extends DbRatings> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.dbMovies = inits.isInitialized("dbMovies") ? new com.example.movie_review.dbMovie.QDbMovies(forProperty("dbMovies"), inits.get("dbMovies")) : null;
-        this.user = inits.isInitialized("user") ? new com.example.movie_review.user.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new com.example.movie_review.user.domain.QUser(forProperty("user")) : null;
     }
 
 }

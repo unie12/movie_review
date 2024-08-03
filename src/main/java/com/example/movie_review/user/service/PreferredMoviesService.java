@@ -1,6 +1,10 @@
-package com.example.movie_review.user;
+package com.example.movie_review.user.service;
 
 import com.example.movie_review.movieDetail.DTO.MovieDTO;
+import com.example.movie_review.user.domain.PreferredMovies;
+import com.example.movie_review.user.domain.User;
+import com.example.movie_review.user.repository.PreferredMoviesRepository;
+import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

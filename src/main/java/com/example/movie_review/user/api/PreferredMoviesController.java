@@ -1,8 +1,8 @@
 package com.example.movie_review.user.api;
 
-import com.example.movie_review.user.PreferredMovies;
-import com.example.movie_review.user.PreferredMoviesService;
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.PreferredMovies;
+import com.example.movie_review.user.service.PreferredMoviesService;
+import com.example.movie_review.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

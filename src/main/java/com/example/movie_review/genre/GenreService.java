@@ -1,7 +1,5 @@
 package com.example.movie_review.genre;
 
-import com.example.movie_review.user.User;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

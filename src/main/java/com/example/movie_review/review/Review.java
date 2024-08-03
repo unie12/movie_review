@@ -3,7 +3,7 @@ package com.example.movie_review.review;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.comment.Comment;
 import com.example.movie_review.heart.Heart;
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 

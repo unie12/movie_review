@@ -34,7 +34,7 @@ public class QReview extends EntityPathBase<Review> {
 
     public final DateTimePath<java.time.LocalDateTime> uploadDate = createDateTime("uploadDate", java.time.LocalDateTime.class);
 
-    public final com.example.movie_review.user.QUser user;
+    public final com.example.movie_review.user.domain.QUser user;
 
     public QReview(String variable) {
         this(Review.class, forVariable(variable), INITS);
@@ -55,7 +55,7 @@ public class QReview extends EntityPathBase<Review> {
     public QReview(Class<? extends Review> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.dbMovies = inits.isInitialized("dbMovies") ? new com.example.movie_review.dbMovie.QDbMovies(forProperty("dbMovies"), inits.get("dbMovies")) : null;
-        this.user = inits.isInitialized("user") ? new com.example.movie_review.user.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new com.example.movie_review.user.domain.QUser(forProperty("user")) : null;
     }
 
 }

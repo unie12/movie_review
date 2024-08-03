@@ -1,7 +1,7 @@
 package com.example.movie_review.heart;
 
 import com.example.movie_review.review.Review;
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

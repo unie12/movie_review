@@ -1,12 +1,11 @@
 package com.example.movie_review.subscription;
 
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 

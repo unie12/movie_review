@@ -17,7 +17,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.List;
 
 import static com.example.movie_review.review.QReview.review;
-import static com.example.movie_review.user.QUser.user;
+import static com.example.movie_review.user.domain.QUser.user;
 
 public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
 

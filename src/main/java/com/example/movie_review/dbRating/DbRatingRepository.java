@@ -2,7 +2,7 @@ package com.example.movie_review.dbRating;
 
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.user.DTO.WeeklyUserDTO;
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -28,7 +28,7 @@ public class QPreferredGenres extends EntityPathBase<PreferredGenres> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final com.example.movie_review.user.QUser user;
+    public final com.example.movie_review.user.domain.QUser user;
 
     public QPreferredGenres(String variable) {
         this(PreferredGenres.class, forVariable(variable), INITS);
@@ -48,7 +48,7 @@ public class QPreferredGenres extends EntityPathBase<PreferredGenres> {
 
     public QPreferredGenres(Class<? extends PreferredGenres> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.user = inits.isInitialized("user") ? new com.example.movie_review.user.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new com.example.movie_review.user.domain.QUser(forProperty("user")) : null;
     }
 
 }

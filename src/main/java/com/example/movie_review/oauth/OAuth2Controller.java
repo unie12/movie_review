@@ -1,8 +1,8 @@
 package com.example.movie_review.oauth;
 
 import com.example.movie_review.auth.JwtTokenUtil;
-import com.example.movie_review.user.User;
-import com.example.movie_review.user.UserService;
+import com.example.movie_review.user.domain.User;
+import com.example.movie_review.user.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

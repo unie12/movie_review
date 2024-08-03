@@ -1,7 +1,7 @@
 package com.example.movie_review.tag;
 
 import com.example.movie_review.movieLens.Movies;
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

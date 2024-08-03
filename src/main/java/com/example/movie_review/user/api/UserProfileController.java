@@ -3,9 +3,11 @@ package com.example.movie_review.user.api;
 import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserProfileDTO;
+import com.example.movie_review.user.service.PreferredMoviesService;
 import com.example.movie_review.user.service.UserProfileDTOService;
 import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
-import com.example.movie_review.user.PreferredMovies;
+import com.example.movie_review.user.domain.PreferredMovies;
+import com.example.movie_review.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,8 @@ import java.util.List;
 public class UserProfileController {
     private final TmdbService tmdbService;
     private final UserProfileDTOService userProfileDTOService;
+    private final PreferredMoviesService preferredMoviesService;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable String userEmail) {
@@ -43,7 +47,7 @@ public class UserProfileController {
 
     @GetMapping("/favorite-movies")
     public ResponseEntity<List<PreferredMovies>> getFavoriteMovies(@PathVariable String userEmail) {
-        return ResponseEntity.ok(userProfileDTOService.getFavoriteMovies(userEmail));
+        return ResponseEntity.ok(preferredMoviesService.getPreferredMoviesByUser(userService.getUserByEmail(userEmail)));
     }
 
     @GetMapping("/favorite-genres")

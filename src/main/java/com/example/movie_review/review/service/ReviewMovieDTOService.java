@@ -12,7 +12,7 @@ import com.example.movie_review.review.*;
 import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.review.DTO.ReviewMovieDTO;
 import com.example.movie_review.review.repository.ReviewRepository;
-import com.example.movie_review.user.User;
+import com.example.movie_review.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -155,7 +155,7 @@ public class ReviewMovieDTOService {
                 .reviewDate(review.getUploadDate())
                 .heartCnt(review.getHeartCount())
                 .heartDate(review.getHearts().stream()
-                        .filter(heart -> heart.getUser().getEmail().equals(user.getEmail()))  // userEmail을 파라미터로 받아야 함
+//                        .filter(heart -> heart.getUser().getEmail().equals(user.getEmail()))  // userEmail을 파라미터로 받아야 함
                         .map(Heart::getHeartTime)
                         .findFirst()
                         .orElse(null))

@@ -2,9 +2,9 @@
 //
 //import com.example.movie_review.domain.DTO.JoinRequest;
 //import com.example.movie_review.domain.DTO.LoginRequest;
-//import com.example.movie_review.user.User;
+//import com.example.movie_review.user.domain.User;
 //import com.example.movie_review.user.UserRole;
-//import com.example.movie_review.user.UserService;
+//import com.example.movie_review.user.service.UserService;
 //import jakarta.servlet.http.Cookie;
 //import jakarta.servlet.http.HttpServletResponse;
 //import jakarta.validation.Valid;
