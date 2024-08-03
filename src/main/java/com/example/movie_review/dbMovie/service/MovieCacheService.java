@@ -1,5 +1,8 @@
-package com.example.movie_review.dbMovie;
+package com.example.movie_review.dbMovie.service;
 
+import com.example.movie_review.dbMovie.MovieCache;
+import com.example.movie_review.dbMovie.MovieCacheRepository;
+import com.example.movie_review.dbMovie.MovieType;
 import com.example.movie_review.kobis.BoxOfficeMovieDTO;
 import com.example.movie_review.kobis.KobisService;
 import com.example.movie_review.tmdb.TmdbService;
@@ -8,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

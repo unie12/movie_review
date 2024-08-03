@@ -1,10 +1,8 @@
 package com.example.movie_review.user.api;
 
-import com.example.movie_review.movieDetail.MovieDetailDTOService;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.SortOption;
 import com.example.movie_review.user.UserActivityService;
-import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

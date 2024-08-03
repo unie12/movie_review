@@ -1,7 +1,7 @@
 package com.example.movie_review.review.view;
 
-import com.example.movie_review.review.ReviewMovieDTO;
-import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.review.DTO.ReviewMovieDTO;
+import com.example.movie_review.review.service.ReviewMovieDTOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
 public class ReviewViewController {
 
-    private final ReviewService reviewService;
+    private final ReviewMovieDTOService reviewMovieDTOService;
     /**
      * @return 해당 tid의 영화에 관한 리뷰들 보여주기
      */
@@ -40,9 +38,9 @@ public class ReviewViewController {
         Page<ReviewMovieDTO> reviewPage;
 
         if("recently".equals(filter)) {
-            reviewPage = reviewService.getRecentReviews(PageRequest.of(page, size));
+            reviewPage = reviewMovieDTOService.getRecentReviews(PageRequest.of(page, size));
         } else {
-            reviewPage = reviewService.getPopularReviews(PageRequest.of(page, size));
+            reviewPage = reviewMovieDTOService.getPopularReviews(PageRequest.of(page, size));
         }
 
         model.addAttribute("reviews", reviewPage.getContent());

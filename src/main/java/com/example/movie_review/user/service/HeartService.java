@@ -2,10 +2,12 @@ package com.example.movie_review.user.service;
 
 import com.example.movie_review.heart.Heart;
 import com.example.movie_review.review.Review;
-import com.example.movie_review.review.ReviewListDTO;
-import com.example.movie_review.review.ReviewMovieDTO;
-import com.example.movie_review.review.ReviewService;
-import com.example.movie_review.user.DTO.*;
+import com.example.movie_review.review.DTO.ReviewListDTO;
+import com.example.movie_review.review.DTO.ReviewMovieDTO;
+import com.example.movie_review.review.service.ReviewMovieDTOService;
+import com.example.movie_review.user.DTO.UserActivityDTO;
+import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
+import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.SortOption;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
@@ -19,13 +21,13 @@ import java.util.stream.Collectors;
 
 @Service("heart")
 public class HeartService extends AbstractUserActivityService {
-    private final com.example.movie_review.review.ReviewService reviewService;
     private final UserService userService;
+    private final ReviewMovieDTOService reviewMovieDTOService;
 
-    public HeartService(UserDTOService userDTOService, ReviewService reviewService, UserService userService) {
+    public HeartService(UserDTOService userDTOService, UserService userService, ReviewMovieDTOService reviewMovieDTOService) {
         super(userDTOService);
-        this.reviewService = reviewService;
         this.userService = userService;
+        this.reviewMovieDTOService = reviewMovieDTOService;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class HeartService extends AbstractUserActivityService {
                 .map(Heart::getReview)
                 .collect(Collectors.toList());
 
-        List<ReviewMovieDTO> reviewMovieDTOS = reviewService.getReviewMovieDTOs(likedReviews, userEmail);
+        List<ReviewMovieDTO> reviewMovieDTOS = reviewMovieDTOService.getReviewMovieDTOs(likedReviews, userEmail);
         UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
 
         // 정렬 type에 맞춰서 정렬

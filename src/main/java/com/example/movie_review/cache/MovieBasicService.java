@@ -1,6 +1,6 @@
 package com.example.movie_review.cache;
 
-import com.example.movie_review.dbMovie.DbMovieService;
+import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.movieDetail.*;

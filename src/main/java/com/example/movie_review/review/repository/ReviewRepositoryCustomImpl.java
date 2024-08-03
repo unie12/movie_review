@@ -1,5 +1,7 @@
-package com.example.movie_review.review;
+package com.example.movie_review.review.repository;
 
+import com.example.movie_review.review.DTO.ReviewCommonDTO;
+import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -7,9 +9,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -46,8 +46,6 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
                 .from(review)
                 .leftJoin(review.user, user)
                 .where(review.dbMovies.movieDetails.id.eq(movieId));
-
-        // 나머지 코드는 동일
 
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sortBy, direction);
         if (orderSpecifier != null) {

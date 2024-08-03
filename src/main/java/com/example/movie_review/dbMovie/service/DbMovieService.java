@@ -1,5 +1,7 @@
-package com.example.movie_review.dbMovie;
+package com.example.movie_review.dbMovie.service;
 
+import com.example.movie_review.dbMovie.DbMovieRepository;
+import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.genre.GenresRepository;
 import com.example.movie_review.movieDetail.*;

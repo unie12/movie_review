@@ -1,7 +1,7 @@
 package com.example.movie_review.dbRating;
 
 import com.example.movie_review.dbMovie.DbMovieRepository;
-import com.example.movie_review.dbMovie.DbMovieService;
+import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserRepository;
@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
-import static com.example.movie_review.dbRating.QDbRatings.dbRatings;
 
 @Service
 @RequiredArgsConstructor

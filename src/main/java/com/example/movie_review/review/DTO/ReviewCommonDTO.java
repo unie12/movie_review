@@ -1,4 +1,4 @@
-package com.example.movie_review.review;
+package com.example.movie_review.review.DTO;
 
 import lombok.Builder;
 import lombok.Data;

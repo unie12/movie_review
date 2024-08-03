@@ -1,7 +1,7 @@
 package com.example.movie_review.heart;
 
 import com.example.movie_review.review.Review;
-import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;

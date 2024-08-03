@@ -1,9 +1,7 @@
 package com.example.movie_review.user.view;
 
-import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.subscription.SubscriptionService;
-import com.example.movie_review.user.DTO.UserActivityDTO;
-import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
 import com.example.movie_review.user.DTO.UserDTO;
 import com.example.movie_review.user.service.CategoryService;
 import com.example.movie_review.user.service.UserDTOService;

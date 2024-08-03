@@ -3,13 +3,11 @@ package com.example.movie_review.user.service;
 import com.example.movie_review.dbMovie.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingDTO;
 import com.example.movie_review.dbRating.DbRatingRepository;
-import com.example.movie_review.dbRating.DbRatingService;
-import com.example.movie_review.review.ReviewRepository;
+import com.example.movie_review.review.repository.ReviewRepository;
 import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Cache;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 

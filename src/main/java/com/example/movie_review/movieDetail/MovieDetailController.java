@@ -1,12 +1,12 @@
 package com.example.movie_review.movieDetail;
 
-import com.example.movie_review.review.ReviewDTO;
+import com.example.movie_review.movieDetail.service.MovieDetailDTOService;
+import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,8 +1,7 @@
 package com.example.movie_review.auth;
 
 import com.example.movie_review.dbMovie.MovieCacheRepository;
-import com.example.movie_review.dbMovie.MovieCacheService;
-import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.dbMovie.service.MovieCacheService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.UserService;
 import com.example.movie_review.user.service.UserDTOService;
@@ -25,7 +24,6 @@ public class HomeViewController {
 
     private final TmdbService tmdbService;
     private final MovieCacheService movieCacheService;
-    private final ReviewService reviewService;
     private final UserDTOService userDTOService;
     private final UserService userService;
     private final MovieCacheRepository movieCacheRepository;

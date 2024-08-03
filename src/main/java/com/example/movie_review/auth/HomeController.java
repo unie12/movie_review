@@ -1,10 +1,8 @@
 package com.example.movie_review.auth;
 
 import com.example.movie_review.dbRating.DbRatingService;
-import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.user.UserService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

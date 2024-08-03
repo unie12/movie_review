@@ -1,6 +1,6 @@
 package com.example.movie_review.movieDetail;
 
-import com.example.movie_review.review.ReviewDTO;
+import com.example.movie_review.review.DTO.ReviewDTO;
 import lombok.Builder;
 import lombok.Data;
 

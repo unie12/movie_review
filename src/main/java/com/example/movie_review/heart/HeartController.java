@@ -1,6 +1,6 @@
 package com.example.movie_review.heart;
 
-import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.review.service.ReviewService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

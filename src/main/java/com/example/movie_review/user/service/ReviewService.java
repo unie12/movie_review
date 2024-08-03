@@ -1,7 +1,8 @@
 package com.example.movie_review.user.service;
 
-import com.example.movie_review.review.ReviewListDTO;
-import com.example.movie_review.review.ReviewMovieDTO;
+import com.example.movie_review.review.DTO.ReviewListDTO;
+import com.example.movie_review.review.DTO.ReviewMovieDTO;
+import com.example.movie_review.review.service.ReviewMovieDTOService;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
 import com.example.movie_review.user.DTO.UserCommonDTO;
@@ -18,19 +19,19 @@ import java.util.stream.Collectors;
 
 @Service("review")
 public class ReviewService extends AbstractUserActivityService {
-    private final com.example.movie_review.review.ReviewService reviewService;
     private final UserService userService;
+    private final ReviewMovieDTOService reviewMovieDTOService;
 
-    public ReviewService(UserDTOService userDTOService, com.example.movie_review.review.ReviewService reviewService, UserService userService) {
+    public ReviewService(UserDTOService userDTOService, UserService userService, ReviewMovieDTOService reviewMovieDTOService) {
         super(userDTOService);
-        this.reviewService = reviewService;
         this.userService = userService;
+        this.reviewMovieDTOService = reviewMovieDTOService;
     }
 
     @Override
     public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
         User user = userService.getUserByEmail(userEmail);
-        List<ReviewMovieDTO> reviewMovieDTOS = reviewService.getReviewMovieDTOs(user.getReviews(), userEmail);
+        List<ReviewMovieDTO> reviewMovieDTOS = reviewMovieDTOService.getReviewMovieDTOs(user.getReviews(), userEmail);
         UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
 
         List<ReviewMovieDTO> sortedReviews = sortReview(reviewMovieDTOS, sort);

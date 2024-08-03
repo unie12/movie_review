@@ -1,33 +1,27 @@
-package com.example.movie_review.movieDetail;
+package com.example.movie_review.movieDetail.service;
 
 import com.example.movie_review.cache.MovieBasicService;
-import com.example.movie_review.dbMovie.DbMovieService;
+import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovieService;
-import com.example.movie_review.genre.Genres;
 import com.example.movie_review.heart.HeartService;
+import com.example.movie_review.movieDetail.MovieBasicInfo;
+import com.example.movie_review.movieDetail.MovieDetailDTO;
 import com.example.movie_review.review.Review;
-import com.example.movie_review.review.ReviewCommonDTO;
-import com.example.movie_review.review.ReviewDTO;
-import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.review.DTO.ReviewCommonDTO;
+import com.example.movie_review.review.DTO.ReviewDTO;
+import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
-import com.example.movie_review.user.DTO.UserDTO;
 import com.example.movie_review.user.User;
 import com.example.movie_review.user.service.UserDTOService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Service
 @RequiredArgsConstructor
@@ -44,8 +38,8 @@ public class MovieDetailDTOService {
 
     public MovieDetailDTO getMovieDetailDTO(Long movieTId, Authentication principal) {
         MovieBasicInfo basicInfo = movieBasicService.getMovieBasicInfo(movieTId);
-
         DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
+
         List<Review> reviews = reviewService.findReviewByDbMovies(dbMovie);
         List<ReviewDTO> reviewDTOS = reviews.stream()
                 .map(review -> {
@@ -71,4 +65,5 @@ public class MovieDetailDTOService {
                 .isFavorite(principal != null ? userFavoriteMovieService.isFavorite(principal.getName(), basicInfo.getId()) : false)
                 .build();
     }
+
 }

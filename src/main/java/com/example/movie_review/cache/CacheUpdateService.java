@@ -1,6 +1,6 @@
 package com.example.movie_review.cache;
 
-import com.example.movie_review.dbMovie.MovieCacheService;
+import com.example.movie_review.dbMovie.service.MovieCacheService;
 import com.example.movie_review.user.service.UserDTOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;

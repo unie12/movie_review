@@ -5,8 +5,8 @@
 //import com.example.movie_review.genre.*;
 //import com.example.movie_review.oauth.SessionUser;
 //import com.example.movie_review.review.Review;
-//import com.example.movie_review.review.ReviewDTO;
-//import com.example.movie_review.review.ReviewService;
+//import com.example.movie_review.review.DTO.ReviewDTO;
+//import com.example.movie_review.review.service.ReviewService;
 //import com.example.movie_review.subscription.SubscriptionService;
 //import com.example.movie_review.tmdb.TmdbService;
 //import com.example.movie_review.user.*;

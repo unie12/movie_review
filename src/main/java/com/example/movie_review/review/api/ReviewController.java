@@ -1,9 +1,10 @@
 package com.example.movie_review.review.api;
 
 import com.example.movie_review.review.Review;
-import com.example.movie_review.review.ReviewDTO;
-import com.example.movie_review.review.ReviewMovieDTO;
-import com.example.movie_review.review.ReviewService;
+import com.example.movie_review.review.DTO.ReviewDTO;
+import com.example.movie_review.review.DTO.ReviewMovieDTO;
+import com.example.movie_review.review.service.ReviewService;
+import com.example.movie_review.review.service.ReviewMovieDTOService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class ReviewController {
     private final ReviewService reviewService;
+    private final ReviewMovieDTOService reviewMovieDTOService;
 
     /**
      * 해당 유저의 해당 영화에 대한 리뷰 보여주기
@@ -97,13 +99,13 @@ public class ReviewController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "heartCount,desc") String sort,
             Authentication principal) {
-        return reviewService.getMovieReviews(movieTId, page, size, sort, principal.getName());
+        return reviewMovieDTOService.getMovieReviews(movieTId, page, size, sort, principal.getName());
     }
 
 
     @GetMapping("/reviews/home-reviews")
     public List<ReviewMovieDTO> getHomeReviews() {
-        return reviewService.getMixedHomeReviews(6);
+        return reviewMovieDTOService.getMixedHomeReviews(6);
     }
 
     /**
@@ -116,16 +118,16 @@ public class ReviewController {
                                            @RequestParam(defaultValue = "10") int size) {
         System.out.println("page = " + page + "size = " + size);
         if ("recently".equals(filter)) {
-            return reviewService.getRecentReviews(PageRequest.of(page, size));
+            return reviewMovieDTOService.getRecentReviews(PageRequest.of(page, size));
         } else {
-            return reviewService.getPopularReviews(PageRequest.of(page, size));
+            return reviewMovieDTOService.getPopularReviews(PageRequest.of(page, size));
         }
 //        return reviewService.getReviews(filter, PageRequest.of(page, size));
     }
 
     @PostMapping("/reviews/refresh-cache")
     public ResponseEntity<?> refreshCache() {
-        reviewService.updateReviewCache();
+        reviewMovieDTOService.updateReviewCache();
         return ResponseEntity.ok().build();
     }
 
