@@ -124,10 +124,6 @@
     }
 
     function loadMoreReviews() {
-        console.log('currentPage: ', currentPage);
-        console.log('totalPage: ', totalPages);
-        console.log('loading: ', loading);
-
         if (loading || currentPage >= totalPages - 1) return;
 
         loading = true;

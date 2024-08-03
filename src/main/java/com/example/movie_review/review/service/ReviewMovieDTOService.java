@@ -50,11 +50,9 @@ public class ReviewMovieDTOService {
                 .collect(Collectors.toList());
     }
 
-
     /**
      * 홈 리뷰 관련
      */
-
     public void updateReviewCache() {
         this.cachedPopularReviews = getPopularReviews(PageRequest.of(0, 10)).getContent();
         this.cachedRecentReviews = getRecentReviews(PageRequest.of(0, 10)).getContent();

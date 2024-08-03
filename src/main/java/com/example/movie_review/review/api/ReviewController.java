@@ -5,11 +5,14 @@ import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.review.DTO.ReviewMovieDTO;
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.review.service.ReviewMovieDTOService;
+import com.example.movie_review.user.DTO.UserCommonDTO;
+import com.example.movie_review.user.service.UserDTOService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,6 +30,7 @@ import java.util.Optional;
 public class ReviewController {
     private final ReviewService reviewService;
     private final ReviewMovieDTOService reviewMovieDTOService;
+    private final UserDTOService userDTOService;
 
     /**
      * 해당 유저의 해당 영화에 대한 리뷰 보여주기
@@ -100,6 +104,18 @@ public class ReviewController {
             @RequestParam(defaultValue = "heartCount,desc") String sort,
             Authentication principal) {
         return reviewMovieDTOService.getMovieReviews(movieTId, page, size, sort, principal.getName());
+    }
+
+    /**
+     * 해당 리뷰에 좋아요 누른 사람들 리스트
+     */
+    @GetMapping("/review/{reviewId}/likes")
+    public Page<UserCommonDTO> getReviewLikeUser(
+            @PathVariable Long reviewId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userDTOService.getUsersByReviewLike(reviewId, pageable);
     }
 
 

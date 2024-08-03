@@ -5,9 +5,12 @@ import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.heart.HeartRepository;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.repository.ReviewRepository;
+import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -97,4 +100,5 @@ public class ReviewService {
     public Long getTotalReviews() {
         return reviewRepository.getTotalReviews();
     }
+
 }

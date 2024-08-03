@@ -3,11 +3,16 @@ package com.example.movie_review.user.service;
 import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingDTO;
 import com.example.movie_review.dbRating.DbRatingRepository;
+import com.example.movie_review.review.Review;
 import com.example.movie_review.review.repository.ReviewRepository;
+import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.domain.User;
+import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
@@ -20,8 +25,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserDTOService {
     private final UserService userService;
+    private final ReviewService reviewService;
+
     private final ReviewRepository reviewRepository;
     private final DbRatingRepository dbRatingRepository;
+    private final UserRepository userRepository;
 
     @Cacheable(value = "weeklyRatingUsers", key = "'weeklyRatingUsers'")
     public List<WeeklyUserDTO> getWeeklyRatingUsers() {
@@ -217,5 +225,12 @@ public class UserDTOService {
                 .ratings(ratings);
 
         return ratingDTOBuilder.build();
+    }
+
+    public Page<UserCommonDTO> getUsersByReviewLike(Long reviewId, Pageable pageable) {
+        Review review = reviewService.getReviewById(reviewId);
+        Page<User> likedUsers = userRepository.findByLikedReviews(review, pageable);
+
+        return likedUsers.map(user -> getUserCommonDTO(user.getEmail()));
     }
 }
