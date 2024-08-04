@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
+    <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
+    <title>검색 결과</title>
     <meta charset="UTF-8">
     <style>
         .movieSearch {
@@ -62,63 +63,103 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
     <div class="jumbotron">
-        <h2>검색 결과</h2>
-        <div class="movieSearch">
-            <table>
-                <thead>
-                <tr>
-                    <th>포스터</th>
-                    <th>제목</th>
-                    <th>개봉일</th>
-                    <th>평점</th>
-                </tr>
-                </thead>
-                <tbody id="search-results">
-                <!-- 검색 결과가 여기에 동적으로 추가됩니다 -->
-                </tbody>
-            </table>
+        <h2>검색 결과: <span th:text="${query}"></span></h2>
+
+        <div th:if="${searchResults.empty}">
+            <p>검색 결과가 없습니다.</p>
+        </div>
+
+        <div th:unless="${searchResults.empty}">
+            <div class="movieSearch">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>포스터</th>
+                        <th>제목</th>
+                        <th>개봉일</th>
+                        <th>평점</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="result : ${searchResults}">
+                        <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${result.poster_path}" th:alt="${result.title}"
+                                 th:attr="onclick=|redirectToMovie(${result.id})|"></td>
+                        <td><h3 th:text="${result.title}"></h3></td>
+                        <td><span th:text="${result.release_date}"></span></td>
+                        <td><span th:utext="${result.vote_average} + '<br>' + '(' + ${result.vote_count} + '표)'"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
         </div>
     </div>
+
     <div th:replace="fragments/footer :: footer" />
 </div>
 
 <script th:inline="javascript">
-    // 서버에서 전달받은 JSON 문자열
-    var searchResultJson = /*[[${searchResult}]]*/ '{}';
+    let currentPage = [[${currentPage}]];
+    let query = [[${query}]];
+    let loading = false;
 
-    // JSON 파싱
-    var searchData = JSON.parse(searchResultJson);
+    function loadMoreResults() {
+        if (loading) return;
+        loading = true;
 
-    // 검색 결과 표시
-    var searchResults = document.getElementById('search-results');
-    searchData.results.forEach(function(movie) {
-        var row = document.createElement('tr');
+        fetch(`/api/search?query=${query}&page=${currentPage + 1}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    appendResults(data);
+                    currentPage++;
+                    loading = false;
+                } else {
+                    // 모든 결과 로드 완료
+                    removeScrollListener();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loading = false;
+            });
+    }
 
-        var posterCell = document.createElement('td');
-        var posterImg = document.createElement('img');
-        posterImg.src = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
-        posterImg.alt = movie.title;
-        posterImg.onclick = function() {
-            window.location.href = '/contents/' + movie.id;
-        };
-        posterCell.appendChild(posterImg);
+    function appendResults(results) {
+        const tbody = document.querySelector('.movieSearch table tbody');
+        results.forEach(movie => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}"
+                         onclick="redirectToMovie(${movie.id})"></td>
+                <td><h3>${movie.title}</h3></td>
+                <td><span>${movie.release_date}</span></td>
+                <td><span>${movie.vote_average}<br>(${movie.vote_count}표)</span></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
 
-        var titleCell = document.createElement('td');
-        titleCell.innerHTML = '<span class="title">' + movie.title + '</span>';
+    function isBottom() {
+        return (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100;
+    }
 
-        var releaseDateCell = document.createElement('td');
-        releaseDateCell.innerHTML = '<span class="release-date">' + movie.release_date + '</span>';
+    function handleScroll() {
+        if(isBottom()) {
+            loadMoreResults();
+        }
+    }
 
-        var ratingCell = document.createElement('td');
-        ratingCell.innerHTML = '<span class="rating">' + movie.vote_average + '</span><br>(' + movie.vote_count + '표)';
+    window.addEventListener('scroll', handleScroll);
 
-        row.appendChild(posterCell);
-        row.appendChild(titleCell);
-        row.appendChild(releaseDateCell);
-        row.appendChild(ratingCell);
+    function removeScrollListener() {
+        window.removeEventListener('scroll', handScroll);
+    }
 
-        searchResults.appendChild(row);
-    });
+    function redirectToMovie(movieId) {
+        window.location.href = '/contents/' + movieId;
+    }
+
 </script>
 
 </body>

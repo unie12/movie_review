@@ -39,11 +39,11 @@ public class UserProfileController {
         return ResponseEntity.ok(userProfileDTOService.isNicknameAvailable(nickname));
     }
 
-    @GetMapping("/search-movies")
-    public Mono<ResponseEntity<String>> searchMovies(@RequestParam String query) {
-        return tmdbService.searchMovies(query)
-                .map(ResponseEntity::ok);
-    }
+//    @GetMapping("/search-movies")
+//    public Mono<ResponseEntity<String>> searchMovies(@RequestParam String query) {
+//        return tmdbService.searchMovies(query)
+//                .map(ResponseEntity::ok);
+//    }
 
     @GetMapping("/favorite-movies")
     public ResponseEntity<List<PreferredMovies>> getFavoriteMovies(@PathVariable String userEmail) {

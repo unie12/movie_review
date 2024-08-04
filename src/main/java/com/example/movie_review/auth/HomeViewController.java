@@ -2,10 +2,14 @@ package com.example.movie_review.auth;
 
 import com.example.movie_review.dbMovie.repository.MovieCacheRepository;
 import com.example.movie_review.dbMovie.service.MovieCacheService;
+import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
+import com.example.movie_review.movieLens.MovieService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.service.UserService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/jwt-login")
@@ -27,6 +34,8 @@ public class HomeViewController {
     private final UserDTOService userDTOService;
     private final UserService userService;
     private final MovieCacheRepository movieCacheRepository;
+
+    private final ObjectMapper objectMapper;
 
 
 
@@ -84,12 +93,16 @@ public class HomeViewController {
     }
 
     @GetMapping("/search")
-    public String searchMovies(@RequestParam String query, Model model) {
+    public String searchMovies(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "1") int page,
+            Model model) throws JsonProcessingException {
+        List<MovieSearchDTO> searchResults = tmdbService.searchMovies(query, page);
 
-        Mono<String> resultMono = tmdbService.searchMovies(query);
-        String result = resultMono.block();
-        // JSON 문자열을 모델에 추가
-        model.addAttribute("searchResult", result);
+        model.addAttribute("searchResults", searchResults);
+        model.addAttribute("query", query);
+        model.addAttribute("currentPage", page);
+
         return "search";
     }
 }

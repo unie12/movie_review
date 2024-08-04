@@ -1,5 +1,7 @@
 package com.example.movie_review.tmdb;
 
+import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -61,11 +63,31 @@ public class TmdbService {
      * 제목으로 영화 찾기
      * @return : Mono<String>
      */
-    public Mono<String> searchMovies(String query) {
-        return this.webClient.get()
-                .uri("/search/movie?api_key={api_key}&query={query}&language=ko-KR", apikey, query)
+    public List<MovieSearchDTO> searchMovies(String query, int page) throws JsonProcessingException {
+         Mono<String> resultMono = this.webClient.get()
+                 .uri("/search/movie?api_key={api_key}&query={query}&language=ko-KR&page={page}", apikey, query, page)
                 .retrieve()
                 .bodyToMono(String.class);
+         String result = resultMono.block();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(result);
+        JsonNode resultsNode = rootNode.get("results");
+        int totalPages = rootNode.get("total_pages").asInt();
+
+        List<MovieSearchDTO> searchResult = new ArrayList<>();
+        for (JsonNode movieNode : resultsNode) {
+            MovieSearchDTO searchDTO = new MovieSearchDTO(
+                    movieNode.get("id").asLong(),
+                    movieNode.get("title").asText(),
+                    movieNode.get("poster_path").asText(),
+                    movieNode.get("release_date").asText(),
+                    movieNode.get("vote_average").asDouble(),
+                    movieNode.get("vote_count").asInt()
+            );
+            searchResult.add(searchDTO);
+        }
+        return searchResult;
     }
 
     /**
@@ -242,7 +264,7 @@ public class TmdbService {
     /**
      * 해당 personId의 인물 상세정보 가져오기
      */
-//    @Cacheable(value = "personDetails", key = "#personId")
+    @Cacheable(value = "personDetails", key = "#personId")
     public Mono<String> getPersonDetails(Long personId) {
         return webClient.get()
                 .uri("/person/" + personId + "/combined_credits?api_key={api_key}&language=ko-KR", apikey)
