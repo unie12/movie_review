@@ -45,7 +45,7 @@ public class ReviewMovieDTOService {
     @Scheduled(fixedRate = 3600000)
     public void updateReviewCache() {
         LocalDateTime startDate = LocalDateTime.now().minusDays(30);
-        int minHeartCont = 1;
+        int minHeartCont = 0;
 
         List<Review> popularReviews = reviewRepository.findPopularReviewsWithMinHearts(minHeartCont, startDate);
         this.cachedPopularReviews = popularReviews.stream()
@@ -95,7 +95,8 @@ public class ReviewMovieDTOService {
     }
 
     private ReviewMovieDTO addFilterInfo(ReviewMovieDTO review) {
-        review.setFilter(cachedPopularReviews.contains(review) ? "popular" : "recently");
+        int popularReviewCount = Math.min(cachedPopularReviews.size(), 10);
+        review.setFilter(cachedPopularReviews.subList(0, popularReviewCount).contains(review) ? "popular" : "recently");
         return review;
     }
 
