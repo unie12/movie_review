@@ -124,7 +124,7 @@
             <input type="text" id="query" name="query" placeholder="영화 검색">
             <button type="button" id="search-button">검색</button>
             <div id="search-results-container" style="display:none;">
-                <button id="close-search-results">닫기</button>
+                <button type="button" id="close-search-results">닫기</button>
                 <ul id="search-results"></ul>
             </div>
         </div>
@@ -162,6 +162,172 @@
     let currentPage = [[${currentPage}]];
     let query = [[${query}]];
     let loading = false;
+
+        $(document).ready(function() {
+        <!-- 사용자 데이터 가져오기 -->
+        $.ajax({
+            url: '/api/user/additional-info/' + userEmail,
+            type: 'GET',
+            success: function(response) {
+                $('#nickname').val(response.nickname);
+                $('#gender').val(response.gender);
+                $('#age').val(response.age);
+                $('#mbti').val(response.mbti);
+                $('#favorite-movies').val(response.favoriteMovies);
+                $('#favorite-genres').val(response.userPreferredGenreIds);
+            }
+        });
+
+        <!--닉네임 중복 확인-->
+        $('#check-nickname').click(function() {
+            var nickname = $('#nickname').val();
+            $.ajax({
+                url: '/api/user/additional-info/' + userEmail + '/check-nickname',
+                type: 'GET',
+                data: { nickname: nickname },
+                success: function(response) {
+                    if (response) {
+                        $('#nickname-result').text('사용 가능한 닉네임입니다.').css('color', 'green');
+                    } else {
+                        $('#nickname-result').text('이미 사용 중인 닉네임입니다.').css('color', 'red');
+                    }
+                }
+            });
+        });
+
+        // 이벤트 위임을 사용하여 동적으로 생성된 요소에 대한 이벤트 처리
+        $('#search-results-container').on('click', '.add-favorite', function(e) {
+            console.log('Add favorite button clicked e', e);
+            e.preventDefault();
+
+            var $button = $(this);
+            var movieId = $button.data('id');
+            var movieTitle = $button.closest('.movie-details').find('.movie-title').text().trim();
+
+            if ($('#favorite-movies li').length < 5) {
+                if ($('#favorite-movies li[data-id="' + movieId + '"]').length === 0) {
+                    $('#favorite-movies').append('<li data-id="' + movieId + '">' + movieTitle + ' <button class="remove-favorite">제거</button></li>');
+                    updateFavoriteMoviesInput();
+                    console.log('영화가 추가되었습니다:', movieTitle);
+                } else {
+                    alert('이미 추가된 영화입니다.');
+                }
+            } else {
+                alert('최대 5개의 영화만 선택할 수 있습니다.');
+            }
+        });
+
+        $(document).on('click', '.remove-favorite', function(e) {
+            e.preventDefault();
+            $(this).parent().remove();
+            updateFavoriteMoviesInput();
+            updateFavoriteGenresInput();
+        });
+
+        $('#search-button').on('click', function(e) {
+            e.preventDefault();
+            searchMovies();
+        });
+
+        // 검색 입력 필드에서 Enter 키 처리
+        $('#query').on('keypress', function(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                searchMovies();
+            }
+        });
+
+        // 닫기 버튼 클릭 시 검색 결과 숨기기
+        $('#close-search-results').click(function() {
+            $('#search-results-container').hide();
+        });
+
+        // 검색 결과 영역 외 클릭 시 검색 결과 숨기기
+        $(document).click(function(event) {
+            var $target = $(event.target);
+            if(!$target.closest('.search-container').length &&
+               $('#search-results-container').is(":visible")) {
+                $('#search-results-container').hide();
+            }
+        });
+
+        // 검색 컨테이너 내부 클릭은 이벤트 전파 중지
+        $('.search-container').click(function(event){
+            event.stopPropagation();
+        });
+
+        <!--제출 버튼 클릭 시 동작-->
+        $('#profile-form').on('submit', function(e) {
+            e.preventDefault(); // 폼 제출 방지
+
+            var formData = {
+                nickname: $('#nickname').val(),
+                gender: $('#gender').val(),
+                age: $('#age').val(),
+                mbti: $('#mbti').val(),
+                preferredGenreIds: JSON.parse($('#favorite-genres-input').val() || '[]'),
+                favoriteMovies: JSON.parse($('#favorite-movies-input').val() || '[]')
+            };
+            console.log('Profile update:', formData);
+
+            $.ajax({
+                url: '/api/user/additional-info/' + userEmail,
+                type: 'PUT',
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                success: function(response) {
+                    alert('프로필이 업데이트되었습니다');
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert('프로필 업데이트에 실패했습니다: ' + error);
+                }
+            });
+        });
+
+        <!--사용자 선호 영화 리스트 가져오기-->
+        $.ajax({
+            url: '/api/user/additional-info/' + userEmail + '/favorite-movies',
+            type: 'GET',
+            success: function(response) {
+                var movieList = $('#favorite-movies');
+                movieList.empty();
+                response.forEach(function(movie) {
+                        movieList.append('<li data-id="' + movie.movieId + '">' + movie.movieTitle + ' <button class="remove-favorite">제거</button></li>');
+                });
+                updateFavoriteMoviesInput();
+            }
+        });
+
+        <!--사용자 선호 장르 리스트 가져오기-->
+        $.ajax({
+            url: '/api/user/additional-info/' + userEmail + '/favorite-genres',
+            type: 'GET',
+            success: function(response) {
+                var genreList = $('#favorite-genres');
+                genreList.empty();
+                response.forEach(function(genre) {
+                    genreList.append('<li data-id="' + genre.genreId + '">' + genre.genreName + ' <button class="remove-favorite">제거</button></li>');
+                    $('input[name="preferredGenres"][value="' + genre.genreId + '"]').prop('checked', true);
+                    console.log('genre.id: ', genre.id);
+                });
+                updateFavoriteGenresInput();
+            }
+        });
+
+        $('#nickname, #gender, #age, #mbti').on('input', checkFormValidity);
+        checkFormValidity();
+
+        $(document).on('click', 'button', function(e) {
+            console.log('Button clicked:', this.id || this.className);
+        });
+
+        $(document).on('submit', 'form', function(e) {
+            console.log('Form submitted:', this.id);
+        });
+
+
+    });
 
     <!--    선호 장르 checkbox 선택 시, 선호 장르 리스트로 바로 옮겨주고 총 개수 제한-->
     function updateFavoriteGenres(checkbox) {
@@ -230,7 +396,7 @@
                                 <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="movie-poster">
                                 <div class="movie-details">
                                     <span class="movie-title">${movie.title}</span>
-                                    <button class="add-favorite" data-id="${movie.id}">추가</button>
+                                    <button type="button" class="add-favorite" data-id="${movie.id}">추가</button>
                                 </div>
                             </li>`;
                         resultList.append(movieItem);
@@ -245,156 +411,6 @@
             }
         });
     }
-
-    $(document).ready(function() {
-        <!--    사용자 데이터 가져오기-->
-        $.ajax({
-            url: '/api/user/additional-info/' + userEmail,
-            type: 'GET',
-            success: function(response) {
-                $('#nickname').val(response.nickname);
-                $('#gender').val(response.gender);
-                $('#age').val(response.age);
-                $('#mbti').val(response.mbti);
-                $('#favorite-movies').val(response.favoriteMovies);
-                $('#favorite-genres').val(response.userPreferredGenreIds);
-            }
-        });
-
-        <!--닉네임 중복 확인-->
-        $('#check-nickname').click(function() {
-            var nickname = $('#nickname').val();
-            $.ajax({
-                url: '/api/user/additional-info/' + userEmail + '/check-nickname',
-                type: 'GET',
-                data: { nickname: nickname },
-                success: function(response) {
-                    if (response) {
-                        $('#nickname-result').text('사용 가능한 닉네임입니다.').css('color', 'green');
-                    } else {
-                        $('#nickname-result').text('이미 사용 중인 닉네임입니다.').css('color', 'red');
-                    }
-                }
-            });
-        });
-
-        $('#search-button').click(function(e) {
-            e.preventDefault(); // 기본 이벤트 방지
-            searchMovies();
-        });
-
-        $('#query').keypress(function(e) {
-            if (e.which == 13) { // Enter 키의 keycode는 13입니다.
-                e.preventDefault();
-                searchMovies();
-            }
-        });
-
-        <!--영화 검색 결과 중 선호 영화 추가-->
-        $(document).on('click', '.add-favorite', function() {
-            var movieId = $(this).data('id');
-<!--            var movieTitle = $(this).parent().text().trim().replace('추가', '').trim();-->
-            var movieTitle = $(this).closest('.movie-details').find('.movie-title').text().trim();
-            if ($('#favorite-movies li').length < 5) {
-                if ($('#favorite-movies li[data-id="' + movieId + '"]').length === 0) {
-                    $('#favorite-movies').append('<li data-id="' + movieId + '">' + movieTitle + ' <button class="remove-favorite">제거</button></li>');
-                        updateFavoriteMoviesInput();
-                        console.log('영화가 추가되었습니다:', movieTitle);
-                    } else {
-                        alert('이미 추가된 영화입니다.');
-                    }
-                } else {
-                    alert('최대 5개의 영화만 선택할 수 있습니다.');
-                }
-        });
-
-        <!--선호 영화 리스트에서 영화 제거-->
-        $(document).on('click', '.remove-favorite', function() {
-            $(this).parent().remove();
-            updateFavoriteMoviesInput();
-            updateFavoriteGenresInput();
-        });
-
-        // 닫기 버튼 클릭 시 검색 결과 숨기기
-        $('#close-search-results').click(function() {
-            $('#search-results-container').hide();
-        });
-
-        // 검색 결과 영역 외 클릭 시 검색 결과 숨기기
-        $(document).click(function(event) {
-            var $target = $(event.target);
-            if(!$target.closest('.search-container').length &&
-               $('#search-results-container').is(":visible")) {
-                $('#search-results-container').hide();
-            }
-        });
-
-        // 검색 컨테이너 내부 클릭은 이벤트 전파 중지
-        $('.search-container').click(function(event){
-            event.stopPropagation();
-        });
-
-        <!--제출 버튼 클릭 시 동작-->
-        $('#profile-form').submit(function(e) {
-            var formData = {
-                nickname: $('#nickname').val(),
-                gender: $('#gender').val(),
-                age: $('#age').val(),
-                mbti: $('#mbti').val(),
-                preferredGenreIds: JSON.parse($('#favorite-genres-input').val()),
-                favoriteMovies: JSON.parse($('#favorite-movies-input').val())
-            };
-            console.log('Profile update:', formData);
-
-
-            $.ajax({
-                url: '/api/user/additional-info/' + userEmail,
-                type: 'PUT',
-                data: JSON.stringify(formData),
-                contentType: 'application/json',
-                success: function(response) {
-                    alert('프로필이 업데이트되었습니다');
-                    location.reload();
-                },
-                error: function(xhr, status, error) {
-                    alert('프로필 업데이트에 실패했습니다: ' + error);
-                }
-            });
-        });
-
-        <!--사용자 선호 영화 리스트 가져오기-->
-        $.ajax({
-            url: '/api/user/additional-info/' + userEmail + '/favorite-movies',
-            type: 'GET',
-            success: function(response) {
-                var movieList = $('#favorite-movies');
-                movieList.empty();
-                response.forEach(function(movie) {
-                        movieList.append('<li data-id="' + movie.movieId + '">' + movie.movieTitle + ' <button class="remove-favorite">제거</button></li>');
-                });
-                updateFavoriteMoviesInput();
-            }
-        });
-
-        <!--사용자 선호 장르 리스트 가져오기-->
-        $.ajax({
-            url: '/api/user/additional-info/' + userEmail + '/favorite-genres',
-            type: 'GET',
-            success: function(response) {
-                var genreList = $('#favorite-genres');
-                genreList.empty();
-                response.forEach(function(genre) {
-                    genreList.append('<li data-id="' + genre.genreId + '">' + genre.genreName + ' <button class="remove-favorite">제거</button></li>');
-                    $('input[name="preferredGenres"][value="' + genre.genreId + '"]').prop('checked', true);
-                    console.log('genre.id: ', genre.id);
-                });
-                updateFavoriteGenresInput();
-            }
-        });
-
-        $('#nickname, #gender, #age, #mbti').on('input', checkFormValidity);
-        checkFormValidity();
-    });
 </script>
 
 </body>
