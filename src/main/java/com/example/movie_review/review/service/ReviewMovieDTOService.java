@@ -15,8 +15,10 @@ import com.example.movie_review.review.repository.ReviewRepository;
 import com.example.movie_review.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,24 +40,23 @@ public class ReviewMovieDTOService {
     private final ReviewDTOService reviewDTOService;
 
     /**
-     * @param count: 총 몇개의 리뷰를 보여줄건지
-     * @return
+     * Review Cache 업데이트
      */
-    public List<ReviewMovieDTO> getRandomPopularReviews(int count) {
-        List<Review> popularReviews = reviewRepository.findPopularReviews(0);
-        Collections.shuffle(popularReviews);
-        return popularReviews.stream()
-                .limit(count)
+    @Scheduled(fixedRate = 3600000)
+    public void updateReviewCache() {
+        LocalDateTime startDate = LocalDateTime.now().minusDays(30);
+        int minHeartCont = 1;
+
+        List<Review> popularReviews = reviewRepository.findPopularReviewsWithMinHearts(minHeartCont, startDate);
+        this.cachedPopularReviews = popularReviews.stream()
                 .map(this::getReviewMovieDTO)
                 .collect(Collectors.toList());
-    }
+        Collections.shuffle(cachedPopularReviews);
 
-    /**
-     * 홈 리뷰 관련
-     */
-    public void updateReviewCache() {
-        this.cachedPopularReviews = getPopularReviews(PageRequest.of(0, 10)).getContent();
-        this.cachedRecentReviews = getRecentReviews(PageRequest.of(0, 10)).getContent();
+        List<Review> recentReviews = reviewRepository.findRecentReviews();
+        this.cachedRecentReviews = recentReviews.stream()
+                .map(this::getReviewMovieDTO)
+                .collect(Collectors.toList());
     }
 
     public Page<ReviewMovieDTO> getRecentReviews(Pageable pageable) {
@@ -64,34 +65,28 @@ public class ReviewMovieDTOService {
     }
 
     public Page<ReviewMovieDTO> getPopularReviews(Pageable pageable) {
-        List<Review> popularReviews = reviewRepository.findPopularReviewsWithMinHearts(0);
-
-        Collections.shuffle(popularReviews);
-
         // 페이지네이션 적용
         int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), popularReviews.size());
-        List<Review> pageContent = popularReviews.subList(start, end);
+        int end = Math.min((start + pageable.getPageSize()), cachedPopularReviews.size());
+        List<ReviewMovieDTO> pageContent = cachedPopularReviews.subList(start, end);
 
-        // ReviewMovieDTO로 변환
-        List<ReviewMovieDTO> reviewDTOs = pageContent.stream()
-                .map(this::getReviewMovieDTO)
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(reviewDTOs, pageable, popularReviews.size());
+        return new PageImpl<>(pageContent, pageable, cachedPopularReviews.size());
     }
 
     public List<ReviewMovieDTO> getMixedHomeReviews(int count) {
-//        if (cachedPopularReviews == null || cachedRecentReviews == null) {
-        updateReviewCache();
-//        }
+        if (cachedPopularReviews == null || cachedRecentReviews == null) {
+            updateReviewCache();
+        }
 
         List<ReviewMovieDTO> mixedReviews = new ArrayList<>();
-        mixedReviews.addAll(cachedPopularReviews);
-        mixedReviews.addAll(cachedRecentReviews);
+        int popularReviewCount = Math.min(cachedPopularReviews.size(), 10);
+        mixedReviews.addAll(cachedPopularReviews.subList(0, popularReviewCount));
+
+        int recentReviewCount = Math.min(cachedRecentReviews.size(), 10);
+        mixedReviews.addAll(cachedRecentReviews.subList(0, recentReviewCount));
 
         Collections.shuffle(mixedReviews);
-
+        
         return mixedReviews.stream()
                 .distinct()
                 .limit(count)
@@ -102,6 +97,14 @@ public class ReviewMovieDTOService {
     private ReviewMovieDTO addFilterInfo(ReviewMovieDTO review) {
         review.setFilter(cachedPopularReviews.contains(review) ? "popular" : "recently");
         return review;
+    }
+
+    public void addNewPopularReview(Review review) {
+        ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
+        cachedPopularReviews.add(0, newReviewDTO);
+        if (cachedPopularReviews.size() > 1000) {
+            cachedPopularReviews.remove(cachedPopularReviews.size()-1);
+        }
     }
 
 

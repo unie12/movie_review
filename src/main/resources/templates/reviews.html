@@ -131,17 +131,23 @@
 
         $.get(`/api/reviews?filter=${currentFilter}&page=${currentPage + 1}`)
             .done(function(data) {
-                console.log('loadMore Data: ', data);
-
-                currentPage = data.number;
-                totalPages = data.totalPages;
+                console.log('loadMore review data', data);
 
                 data.content.forEach(function(review) {
                     $('#reviewList').append(createReviewCard(review));
                 });
-
+                currentPage++;
                 loading = false;
                 $('#loading').hide();
+            });
+    }
+
+    function refreshReviews() {
+        $.post('/api/reviews/refresh-cache')
+            .done(function() {
+                $('#reviewList').empty();
+                currentPage = 0;
+                loadMoreReviews();
             });
     }
 
@@ -192,6 +198,11 @@
     function navigateToUser(email) {
         window.location.href = '/info/' + email;
     }
+
+<!--    window.onload = function() {-->
+<!--        refreshReviews();-->
+<!--    };-->
+
 
 </script>
 </body>

@@ -129,10 +129,10 @@ public class ReviewController {
      */
     @GetMapping("/reviews")
     @ResponseBody
-    public Page<ReviewMovieDTO> getReviews(@RequestParam(defaultValue = "popular") String filter,
-                                           @RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "10") int size) {
-        System.out.println("page = " + page + "size = " + size);
+    public Page<ReviewMovieDTO> getReviews(
+            @RequestParam(defaultValue = "popular") String filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         if ("recently".equals(filter)) {
             return reviewMovieDTOService.getRecentReviews(PageRequest.of(page, size));
         } else {
@@ -144,6 +144,7 @@ public class ReviewController {
     @PostMapping("/reviews/refresh-cache")
     public ResponseEntity<?> refreshCache() {
         reviewMovieDTOService.updateReviewCache();
+        System.out.println("refreshCache update");
         return ResponseEntity.ok().build();
     }
 
