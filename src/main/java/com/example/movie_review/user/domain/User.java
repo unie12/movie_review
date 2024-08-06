@@ -125,11 +125,12 @@ public class User {
         return this.role.getKey();
     }
 
-    public User update(String nickname, String gender, Long age, String mbti) {
+    public User update(String nickname, String gender, Long age, String mbti, String picture) {
         this.nickname = nickname != null ? nickname : this.nickname;
         this.gender = gender != null ? gender : this.gender;
         this.age = age != null ? age : this.age;
         this.mbti = mbti != null ? mbti : this.mbti;
+        this.picture = picture != null ? picture : this.picture;
         return this;
     }
 

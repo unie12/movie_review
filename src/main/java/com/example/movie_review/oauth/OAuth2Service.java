@@ -47,6 +47,7 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
             attributes.setGender(user.getGender());
             attributes.setAge(user.getAge());
             attributes.setMbti(user.getMbti());
+            attributes.setPicture(user.getPicture());
             // 필요한 경우 preferGenres와 preferMovies도 반영
         }
 
@@ -69,6 +70,8 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
     }
 
     private User updateUser(User user, OAuthAttributes attributes) {
+        System.out.println("updateUSer picture = " + attributes.getPicture());
+
         user.setName(attributes.getName());
         user.setPicture(attributes.getPicture());
         user.setNickname(attributes.getNickname() != null ? attributes.getNickname() : "기본 닉네임");

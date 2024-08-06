@@ -1,17 +1,21 @@
 package com.example.movie_review.user.api;
 
 import com.example.movie_review.genre.PreferredGenres;
+import com.example.movie_review.movieDetail.DTO.MovieDTO;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserProfileDTO;
-import com.example.movie_review.user.service.PreferredMoviesService;
-import com.example.movie_review.user.service.UserProfileDTOService;
 import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
 import com.example.movie_review.user.domain.PreferredMovies;
+import com.example.movie_review.user.service.PreferredMoviesService;
+import com.example.movie_review.user.service.UserProfileDTOService;
 import com.example.movie_review.user.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,8 +34,11 @@ public class UserProfileController {
     }
 
     @PutMapping
-    public ResponseEntity<UserProfileDTO> updateUserProfile(@PathVariable String userEmail, @RequestBody UserProfileUpdateRequest updateRequest) {
-        return ResponseEntity.ok(userProfileDTOService.updateUserProfile(userEmail, updateRequest));
+    public ResponseEntity<UserProfileDTO> updateUserProfile(
+            @PathVariable String userEmail,
+            @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture,
+            @RequestPart("updateRequest") UserProfileUpdateRequest updateRequest) {
+        return ResponseEntity.ok(userProfileDTOService.updateUserProfile(userEmail, profilePicture, updateRequest));
     }
 
     @GetMapping("/check-nickname")

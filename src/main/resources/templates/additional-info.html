@@ -77,6 +77,13 @@
             padding: 5px 10px;
             cursor: pointer;
         }
+        .user-picture {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
     </style>
 
 </head>
@@ -86,11 +93,17 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
     <h1>추가 정보 입력</h1>
-    <form id="profile-form">
+    <form id="profile-form" enctype="multipart/form-data">
         <label for="nickname">닉네임:</label>
         <input type="text" id="nickname" name="nickname" th:value="${userProfile.nickname}" required><br>
         <button type="button" id="check-nickname">중복 확인</button>
         <span id="nickname-result"></span><br>
+
+        <img id="profile-preview" th:src="${userProfile.picture}" alt="프로필 사진" class="user-picture">
+        <label for="profile-picture">프로필 사진:</label>
+        <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
+<!--        <img th:src="${userProfile.picture}" th:alt="${userProfile.nickname}" class="user-picture">-->
+        <br>
 
         <label for="gender">성별:</label>
         <input type="text" id="gender" name="gender" th:value="${userProfile.gender}" required><br>
@@ -163,7 +176,7 @@
     let query = [[${query}]];
     let loading = false;
 
-        $(document).ready(function() {
+    $(document).ready(function() {
         <!-- 사용자 데이터 가져오기 -->
         $.ajax({
             url: '/api/user/additional-info/' + userEmail,
@@ -256,25 +269,44 @@
             event.stopPropagation();
         });
 
+        // 사진 파일 선택 시 미리보기
+        $('#profile-picture').change(function(e) {
+            var file = e.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#profile-preview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
         <!--제출 버튼 클릭 시 동작-->
         $('#profile-form').on('submit', function(e) {
             e.preventDefault(); // 폼 제출 방지
 
-            var formData = {
+            var formData = new FormData();
+
+            formData.append('profilePicture', $('#profile-picture')[0].files[0]);
+
+            var updateRequest = {
                 nickname: $('#nickname').val(),
                 gender: $('#gender').val(),
-                age: $('#age').val(),
+                age: parseInt($('#age').val()),
                 mbti: $('#mbti').val(),
-                preferredGenreIds: JSON.parse($('#favorite-genres-input').val() || '[]'),
-                favoriteMovies: JSON.parse($('#favorite-movies-input').val() || '[]')
+                preferredGenreIds: JSON.parse($('#favorite-genres-input').val()),
+                favoriteMovies: JSON.parse($('#favorite-movies-input').val())
             };
-            console.log('Profile update:', formData);
+
+            formData.append('updateRequest', new Blob([JSON.stringify(updateRequest)], {
+                type: "application/json"
+            }));
 
             $.ajax({
                 url: '/api/user/additional-info/' + userEmail,
                 type: 'PUT',
-                data: JSON.stringify(formData),
-                contentType: 'application/json',
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function(response) {
                     alert('프로필이 업데이트되었습니다');
                     location.reload();
@@ -325,7 +357,6 @@
         $(document).on('submit', 'form', function(e) {
             console.log('Form submitted:', this.id);
         });
-
 
     });
 

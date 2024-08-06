@@ -13,7 +13,10 @@ import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserProfileDTOService {
 
+    private final FileStorageService fileStorageService;
     private final UserService userService;
     private final PreferredGenresService preferredGenresService;
     private final PreferredMoviesService preferredMoviesService;
@@ -41,6 +45,7 @@ public class UserProfileDTOService {
         List<PreferredMovies> userPreferredMovies = preferredMoviesService.findByUser(user);
 
         return UserProfileDTO.builder()
+                .picture(user.getPicture())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .age(user.getAge())
@@ -66,9 +71,21 @@ public class UserProfileDTOService {
                 .build();
     }
 
-    public UserProfileDTO updateUserProfile(String userEmail, UserProfileUpdateRequest updateRequest) {
+    public UserProfileDTO updateUserProfile(String userEmail, MultipartFile profilePicture, UserProfileUpdateRequest updateRequest) {
         User user = userService.getUserByEmail(userEmail);
-        user.update(updateRequest.getNickname(), updateRequest.getGender(), updateRequest.getAge(), updateRequest.getMbti());
+
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            String fileDownloadUri = fileStorageService.storeFile(profilePicture);
+//            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                    .path("/downloadFile/")
+//                    .path(fileName)
+//                    .toUriString();
+//            System.out.println("fileName = " + fileName);
+//            System.out.println("fileDownloadUri = " + fileDownloadUri);
+            user.setPicture(fileDownloadUri);
+        }
+        System.out.println("updateRequest = " + updateRequest);
+        user.update(updateRequest.getNickname(), updateRequest.getGender(), updateRequest.getAge(), updateRequest.getMbti(), user.getPicture());
 
         preferredGenresService.updatePreferredGenres(user, updateRequest.getPreferredGenreIds());
         preferredMoviesService.updatePreferredMovies(user, updateRequest.getFavoriteMovies());
