@@ -22,9 +22,13 @@ public class RatingService extends AbstractUserActivityService {
     @Override
     public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
         RatingDTO dto = userDTOService.getRatingsDTO(userEmail);
-        List<DbRatingDTO> sortedDTO = sortRating(dto.getRatings(), sort);
 
-        dto.setRatings(sortedDTO);
+        int start = page * size;
+        int end = Math.min(start + size, dto.getRatings().size());
+
+        List<DbRatingDTO> sortedDTO = sortRating(dto.getRatings(), sort);
+        dto.setRatings(sortedDTO.subList(start, end));
+
         return new UserActivityDTOAdapter(dto);
     }
 

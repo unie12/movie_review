@@ -1,61 +1,66 @@
-function updateActivityList(response) {
-    var container = $('#activity-list');
-    container.empty();
+window.activityHandlers = window.activityHandlers || {};
+window.activityHandlers.review = {
+    updateActivityList: function(response, append) {
+    console.log('review response: ', response);
 
-    var reviews = response.reviews;
+        var container = $('#activity-list');
+        if (!append) {
+            container.empty();
+        }
+        var reviews = response.reviews;
 
-    if (reviews && reviews.length > 0) {
-        $('#activity-container').show();
-        $('#empty-message').hide();
+        if (reviews && reviews.length > 0) {
+            $('#activity-container').show();
+            $('#empty-message').hide();
 
-        reviews.forEach(function(review) {
-            var element = createReviewElement(review);
-            container.append(element);
-        });
+            reviews.forEach((review) => {
+                var element = this.createReviewElement(review);
+                container.append(element);
+            });
 
-        // 좋아요 버튼 이벤트 리스너 설정
-        setupLikeButtons();
-    } else {
-        $('#activity-container').hide();
-        $('#empty-message').show();
-    }
-}
+            setupLikeButtons();
+        } else if(!append){
+            $('#activity-container').hide();
+            $('#empty-message').show();
+        }
+    },
 
-function createReviewElement(review) {
-    var element = $('<div>').addClass('review-card');
-    var scoreText = review.reviewDTO.userRating !== null ? review.reviewDTO.userRating : '미정';
-    var likedClass = review.likedByCurrentUser ? 'active' : '';
+    createReviewElement: function(review) {
+        var element = $('<div>').addClass('review-card');
+        var scoreText = review.reviewDTO.userRating !== null ? review.reviewDTO.userRating : '미정';
+        var likedClass = review.likedByCurrentUser ? 'active' : '';
 
-    var ajouRatingAvg = review.movieCommonDTO.ajou_rating;
-    var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
-    var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
+        var ajouRatingAvg = review.movieCommonDTO.ajou_rating;
+        var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
+        var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
 
-    console.log('review detail', review);
-    console.log('isLikedByCurrentUser:', review.likedByCurrentUser); // 특정 속성 로깅
+        console.log('review detail', review);
+        console.log('isLikedByCurrentUser:', review.likedByCurrentUser); // 특정 속성 로깅
 
-    element.html(`
-        <div class="poster-container">
-            <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
-                 alt="${review.movieCommonDTO.title}"
-                 onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
-            <p class="movie-title">${review.movieCommonDTO.title}</p>
-            <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
-        </div>
-        <div class="review-content">
-            <div class="user-info">
-                <img src="${review.reviewDTO.user.picture}" alt="User Picture" class="user-picture">
-                <span class="user-nickname">${review.reviewDTO.user.nickname}</span>
-                <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
-                <span class="user-heart like-button ${likedClass}" data-review-id="${review.reviewDTO.review.id}"
-                      data-liked="${review.likedByCurrentUser}">
-                    좋아요: <span class="heart-value like-count">${review.reviewDTO.heartCnt}</span>
-                </span>
+        element.html(`
+            <div class="poster-container">
+                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
+                     alt="${review.movieCommonDTO.title}"
+                     onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
+                <p class="movie-title">${review.movieCommonDTO.title}</p>
+                <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
             </div>
-            <p class="review-text">${review.reviewDTO.review.text}</p>
-        </div>
-    `);
+            <div class="review-content">
+                <div class="user-info">
+                    <img src="${review.reviewDTO.user.picture}" alt="User Picture" class="user-picture">
+                    <span class="user-nickname">${review.reviewDTO.user.nickname}</span>
+                    <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
+                    <span class="user-heart like-button ${likedClass}" data-review-id="${review.reviewDTO.review.id}"
+                          data-liked="${review.likedByCurrentUser}">
+                        좋아요: <span class="heart-value like-count">${review.reviewDTO.heartCnt}</span>
+                    </span>
+                </div>
+                <p class="review-text">${review.reviewDTO.review.text}</p>
+            </div>
+        `);
 
-    return element;
+        return element;
+    }
 }
 
 function setupLikeButtons() {

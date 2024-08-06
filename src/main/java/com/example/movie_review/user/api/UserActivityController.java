@@ -28,7 +28,7 @@ public class UserActivityController {
             @RequestParam String category,
             @RequestParam(defaultValue = "createdAt_desc") String sort,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "9") int size) {
 
         UserActivityService service = activityServices.get(category);
         if(service == null) {
@@ -39,6 +39,7 @@ public class UserActivityController {
 
         Map<String, Object> response = activities.toMap();
         response.put("category", category);
+        response.put("hasMore", activities.getActivityItems().size() == size);
 
         return ResponseEntity.ok(response);
     }

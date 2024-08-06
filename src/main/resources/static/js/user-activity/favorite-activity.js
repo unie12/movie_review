@@ -1,49 +1,55 @@
-function updateActivityList(response) {
-    var container = $('#activity-list');
-    container.empty();
+window.activityHandlers = window.activityHandlers || {};
+window.activityHandlers.favorite = {
+    updateActivityList: function(response, append) {
 
-    var items = response.favoriteMovies;
+        var container = $('#activity-list');
+        if (!append) {
+            container.empty();
+        }
+        var items = response.favoriteMovies;
 
-    if (items && items.length > 0) {
-        $('#activity-container').show();
-        $('#empty-message').hide();
+        if (items && items.length > 0) {
+            $('#activity-container').show();
+            $('#empty-message').hide();
 
-        items.forEach(function(item) {
-            var element = createActivityElement(item);
-            container.append(element);
-        });
+            items.forEach((item) => {
+                var element = this.createActivityElement(item);
+                container.append(element);
+            });
 
-        setFavoriteButtonListeners();
-    } else {
-        $('#activity-container').hide();
-        $('#empty-message').show();
+            setFavoriteButtonListeners();
+        } else if(!append){
+            $('#activity-container').hide();
+            $('#empty-message').show();
+        }
+    },
+
+     createActivityElement: function(item) {
+        console.log('favorite item: ', item);
+
+        var element = $('<div>').addClass('activity-item');
+        var ajouRatingAvg = item.movieCommonDTO.ajou_rating;
+        var ajouRatingCnt = item.movieCommonDTO.ajou_rating_cnt;
+        var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
+
+        element.html(`
+            <img src="https://image.tmdb.org/t/p/w500${item.movieCommonDTO.poster_path}"
+                 alt="${item.movieCommonDTO.title}"
+                 onclick="navigateToMovieDetails(${item.movieCommonDTO.tid})">
+            <p class="activity-title">${item.movieCommonDTO.title}</p>
+            <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
+
+            <button id="favoriteButton-${item.movieCommonDTO.id}"
+                    data-activity-id="${item.movieCommonDTO.id}"
+                    class="favorite active">
+                <i class="fas fa-heart"></i>
+            </button>
+        `);
+
+        return element;
     }
 }
 
-function createActivityElement(item) {
-    console.log('favorite item: ', item);
-
-    var element = $('<div>').addClass('activity-item');
-    var ajouRatingAvg = item.movieCommonDTO.ajou_rating;
-    var ajouRatingCnt = item.movieCommonDTO.ajou_rating_cnt;
-    var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
-
-    element.html(`
-        <img src="https://image.tmdb.org/t/p/w500${item.movieCommonDTO.poster_path}"
-             alt="${item.movieCommonDTO.title}"
-             onclick="navigateToMovieDetails(${item.movieCommonDTO.tid})">
-        <p class="activity-title">${item.movieCommonDTO.title}</p>
-        <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
-
-        <button id="favoriteButton-${item.movieCommonDTO.id}"
-                data-activity-id="${item.movieCommonDTO.id}"
-                class="favorite active">
-            <i class="fas fa-heart"></i>
-        </button>
-    `);
-
-    return element;
-}
 
 function setFavoriteButtonListeners() {
     $('.favorite').click(function() {

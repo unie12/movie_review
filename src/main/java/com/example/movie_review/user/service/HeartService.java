@@ -38,14 +38,16 @@ public class HeartService extends AbstractUserActivityService {
                 .collect(Collectors.toList());
 
         List<ReviewMovieDTO> reviewMovieDTOS = reviewMovieDTOService.getReviewMovieDTOs(likedReviews, userEmail);
-        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
 
-        // 정렬 type에 맞춰서 정렬
+        int start = page * size;
+        int end = Math.min(start + size, reviewMovieDTOS.size());
+
+        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
         List<ReviewMovieDTO> sortedReviews = sortHeart(reviewMovieDTOS, sort);
 
         ReviewListDTO dto = ReviewListDTO.builder()
                 .userCommonDTO(userCommonDTO)
-                .reviews(sortedReviews)
+                .reviews(sortedReviews.subList(start, end))
                 .build();
 
         return new UserActivityDTOAdapter(dto);

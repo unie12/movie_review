@@ -31,13 +31,16 @@ public class ReviewService extends AbstractUserActivityService {
     public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
         User user = userService.getUserByEmail(userEmail);
         List<ReviewMovieDTO> reviewMovieDTOS = reviewMovieDTOService.getReviewMovieDTOs(user.getReviews(), userEmail);
-        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
+
+        int start = page * size;
+        int end = Math.min(start + size, reviewMovieDTOS.size());
 
         List<ReviewMovieDTO> sortedReviews = sortReview(reviewMovieDTOS, sort);
+        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
 
         ReviewListDTO dto = ReviewListDTO.builder()
                 .userCommonDTO(userCommonDTO)
-                .reviews(sortedReviews)
+                .reviews(sortedReviews.subList(start, end))
                 .build();
 
         return new UserActivityDTOAdapter(dto);

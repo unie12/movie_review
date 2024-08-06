@@ -34,6 +34,8 @@ public class OAuthAttributes {
                            String email, String picture, String nickname,
                            String gender, Long age, String mbti){
 //                           List<String> preferMovies) {
+        System.out.println("OAuthAttributes picture = " + picture);
+
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
         this.name = name;
@@ -52,6 +54,8 @@ public class OAuthAttributes {
     }
 
     private static OAuthAttributes ofGoogle(String usernameAttributeName, Map<String, Object> attributes) {
+        System.out.println("ofGoogle picture = " + attributes.get("picture"));
+
         return OAuthAttributes.builder()
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
@@ -66,6 +70,7 @@ public class OAuthAttributes {
     }
 
     public User toEntity() {
+        System.out.println("toEntity picture = " + picture);
         return User.builder()
                 .name(name)
                 .email(email)

@@ -1,12 +1,70 @@
-$(document).ready(function() {
-    initializedActivityList();
-    loadSortOptions();
-    loadActivities();
+let currentPage = 0;
+let isLoading = false;
+let hasMoreData = true;
 
-    $('#sorting').change(function() {
-        loadActivities();
+function loadActivities(append = true) {
+    if (isLoading || !hasMoreData) return;
+    isLoading = true;
+
+    var sortOption = $("#sorting").val() || defaultSort;
+
+    $.ajax({
+        url: `/api/user/${userEmail}/activities`,
+        type: 'GET',
+        data: {
+            category: category,
+            sort: sortOption,
+            page: currentPage,
+            size: 9
+        },
+        success: function(response) {
+            let activityItems = response.favoriteMovies || response.reviews || response.ratings || response.subscriptionDTOs || [];
+
+            if(activityItems.length > 0) {
+                if (window.activityHandlers && window.activityHandlers[category]) {
+                    window.activityHandlers[category].updateActivityList(response, append);
+                } else {
+                    console.error('Handler not found for category:', category);
+                }
+                currentPage++;
+                if(activityItems.length < 9) {
+                    hasMoreData = false;
+                }
+            } else {
+                hasMoreData = false;
+            }
+
+            if (!hasMoreData) {
+                $(window).off('scroll', scrollHandler);
+            }
+
+            isLoading = false;
+
+            if (currentPage === 1 && activityItems.length === 0) {
+                $('#empty-message').show();
+                $('#activity-container').hide();
+            }
+            updateScrollListener();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            isLoading = false;
+        }
     });
-});
+}
+
+function scrollHandler() {
+    if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
+        loadActivities(true);
+    }
+}
+
+function updateScrollListener() {
+    $(window).off('scroll', scrollHandler);
+    if (hasMoreData) {
+        $(window).on('scroll', scrollHandler);
+    }
+}
 
 function initializedActivityList() {
     var $activityList = $('#activity-list');
@@ -46,28 +104,6 @@ function loadSortOptions() {
     });
 }
 
-function loadActivities() {
-    var sortOption = $("#sorting").val() || defaultSort;
-
-    $.ajax({
-        url: `/api/user/${userEmail}/activities`,
-        type: 'GET',
-        data: {
-            category: category,
-            sort: sortOption,
-            page: 0,
-            size: 20
-        },
-        success: function(response) {
-            updateActivityList(response);
-        },
-        error: function(xhr, status, error) {
-            console.error('Error:', error);
-        }
-    });
-}
-
-
 function navigateToMovieDetails(movieId) {
     window.location.href = '/contents/' + movieId;
 }
@@ -75,3 +111,19 @@ function navigateToMovieDetails(movieId) {
 function navigateToUser(email) {
     window.location.href = '/info/' + email;
 }
+
+$(document).ready(function() {
+    initializedActivityList();
+    loadSortOptions();
+    loadActivities();
+
+    $('#sorting').change(function() {
+        currentPage = 0;
+        hasMoreData = true;
+        isLoading = false;
+        $('#activity-list').empty()
+        loadActivities(false);
+    });
+
+    updateScrollListener();
+});
