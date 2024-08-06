@@ -15,6 +15,7 @@ import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserDTOService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class MovieDetailDTOService {
 
     private final MovieBasicService movieBasicService;
 
-    public MovieDetailDTO getMovieDetailDTO(Long movieTId, Authentication principal) {
+    public MovieDetailDTO getMovieDetailDTO(Long movieTId, Authentication principal) throws JsonProcessingException {
         MovieBasicInfo basicInfo = movieBasicService.getMovieBasicInfo(movieTId);
         DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
 

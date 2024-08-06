@@ -1,7 +1,10 @@
 package com.example.movie_review.movieDetail;
 
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.movieDetail.DTO.ActorDetails;
+import com.example.movie_review.movieDetail.DTO.MovieDTO;
 import com.example.movie_review.movieDetail.DTO.MovieDetailDTO;
+import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.movieDetail.service.MovieDetailDTOService;
 import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.tmdb.TmdbService;
@@ -29,6 +32,7 @@ public class MovieDetailController {
     private final MovieDetailDTOService movieDetailDTOService;
     private final TmdbService tmdbService;
     private final UserDTOService userDTOService;
+    private final MovieCommonDTOService movieCommonDTOService;
 
     private final ObjectMapper objectMapper;
     /**

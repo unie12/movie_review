@@ -296,4 +296,11 @@ public class TmdbService {
                 .bodyToMono(String.class);
     }
 
+    public Mono<String> getMovieRecommendation(Long movieTId) {
+        return webClient.get()
+                .uri("/movie/{movieId}/recommendations?api_key={api_key}&language=ko-KR", movieTId, apikey)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
 }

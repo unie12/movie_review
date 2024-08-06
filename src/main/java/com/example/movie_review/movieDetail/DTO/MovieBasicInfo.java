@@ -1,5 +1,6 @@
 package com.example.movie_review.movieDetail.DTO;
 
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.movieDetail.DTO.ActorDTO;
 import com.example.movie_review.movieDetail.DTO.DirectorDTO;
 import lombok.Builder;
@@ -29,5 +30,7 @@ public class MovieBasicInfo {
     private Long tmdb_ratingCnt;
 
     private String watchProvider;
+
+    private List<MovieCommonDTO> recommendMovies;
 
 }

@@ -1,9 +1,8 @@
-/* movie Detail 초반 Ui들*/
-.movie-detail {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 11px;
+.container {
+    position: relative; /* container 요소에 position: relative; 추가 */
+    padding: 10px 150px;
 }
+/* movie Detail 초반 Ui들*/
 .movie-detail img {
     max-width: 100%;
 }
@@ -178,4 +177,23 @@
 
 .like-button.active {
     color: red;
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.movie-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 250px; /* 고정 높이 설정 */
+    overflow: hidden; /* 내용이 넘치면 숨김 */
+}
+.movie-poster {
+    height: auto;
 }

@@ -1,5 +1,6 @@
 package com.example.movie_review.movieDetail.service;
 
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
@@ -9,6 +10,7 @@ import com.example.movie_review.movieDetail.DTO.MovieBasicInfo;
 import com.example.movie_review.movieDetail.domain.Crew;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
 import com.example.movie_review.tmdb.TmdbService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +27,11 @@ import java.util.stream.Collectors;
 public class MovieBasicService {
     private final DbMovieService dbMovieService;
     private final TmdbService tmdbService;
+    private final MovieCommonDTOService movieCommonDTOService;
 
 
     @Cacheable(value = "movieBasicInfo", key = "#movieTId")
-    public MovieBasicInfo getMovieBasicInfo(Long movieTId) {
+    public MovieBasicInfo getMovieBasicInfo(Long movieTId) throws JsonProcessingException {
         log.info("Cache miss for movieTId: {}", movieTId);
         DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
         MovieDetails movieDetails = dbMovie.getMovieDetails();
@@ -45,6 +48,8 @@ public class MovieBasicService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        List<MovieCommonDTO> recommendedMovies = movieCommonDTOService.getRecommendMovies(movieTId);
 
         return MovieBasicInfo.builder()
                 .id(dbMovie.getId())
@@ -66,6 +71,8 @@ public class MovieBasicService {
                 .watchProvider(url)
                 .tmdb_ratingAvg(movieDetails.getVote_average())
                 .tmdb_ratingCnt(movieDetails.getVote_count())
+                .recommendMovies(recommendedMovies)
                 .build();
     }
+
 }
