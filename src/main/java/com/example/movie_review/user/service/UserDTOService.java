@@ -234,9 +234,7 @@ public class UserDTOService {
     }
 
     public Page<UserCommonDTO> searchUsers(String query, int page, int size) {
-        System.out.println("query = " + query);
         Page<User> users = userRepository.searchByNickname(query, PageRequest.of(page-1, size));
-        System.out.println("users.getContent() = " + users.getContent());
 
         return users.map(this::getUserCommonDTO);
     }
