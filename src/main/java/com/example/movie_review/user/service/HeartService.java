@@ -42,7 +42,7 @@ public class HeartService extends AbstractUserActivityService {
         int start = page * size;
         int end = Math.min(start + size, reviewMovieDTOS.size());
 
-        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
+        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(user);
         List<ReviewMovieDTO> sortedReviews = sortHeart(reviewMovieDTOS, sort);
 
         ReviewListDTO dto = ReviewListDTO.builder()

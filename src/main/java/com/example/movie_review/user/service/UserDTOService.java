@@ -12,6 +12,7 @@ import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -45,12 +46,10 @@ public class UserDTOService {
         return reviewRepository.findTopReviewers(startDate, endDate);
     }
 
-    public UserCommonDTO getUserCommonDTO(String email) {
-        User user = userService.getUserByEmail(email);
-
+    public UserCommonDTO getUserCommonDTO(User user) {
         UserCommonDTO.UserCommonDTOBuilder userCommonDTo = UserCommonDTO.builder()
                 .id(user.getId())
-                .email(email)
+                .email(user.getEmail())
                 .nickname(user.getNickname())
                 .picture(user.getPicture())
                 .role(user.getRole());
@@ -60,7 +59,7 @@ public class UserDTOService {
 
     public SubscriptionDTO getUserSubscribersDTO(String email) {
         User user = userService.getUserByEmail(email);
-        UserCommonDTO userCommonDTO = getUserCommonDTO(email);
+        UserCommonDTO userCommonDTO = getUserCommonDTO(user);
 
         List<SubscriptionInfo> subscriptionInfos = user.getSubscribers().stream()
                 .map(sub -> SubscriptionInfo.builder()
@@ -85,7 +84,7 @@ public class UserDTOService {
 
     public SubscriptionDTO getUserSubscriptionsDTO(String email) {
         User user = userService.getUserByEmail(email);
-        UserCommonDTO userCommonDTO = getUserCommonDTO(email);
+        UserCommonDTO userCommonDTO = getUserCommonDTO(user);
 
         List<SubscriptionInfo> subscriptionInfos = user.getSubscriptions().stream()
                 .map(sub -> SubscriptionInfo.builder()
@@ -120,7 +119,7 @@ public class UserDTOService {
                 .map(heart -> heart.getReview().getId())
                 .collect(Collectors.toSet());
 
-        UserCommonDTO userCommonDTO = getUserCommonDTO(userEmail);
+        UserCommonDTO userCommonDTO = getUserCommonDTO(user);
 
         List<MovieCommonDTO> favoriteMovies = user.getUserFavoriteMovies().stream()
                 .map(favorite -> MovieCommonDTO.builder()
@@ -173,7 +172,7 @@ public class UserDTOService {
 
     public FavoriteMovieDTO getUserFavoriteMoviesDTO(String email) {
         User user = userService.getUserByEmail(email);
-        UserCommonDTO userCommonDTO = getUserCommonDTO(email);
+        UserCommonDTO userCommonDTO = getUserCommonDTO(user);
 
         List<FavoriteMovieItem> favoriteMovies = user.getUserFavoriteMovies().stream()
                 .map(favorite -> FavoriteMovieItem.builder()
@@ -200,7 +199,7 @@ public class UserDTOService {
 
     public RatingDTO getRatingsDTO(String email) {
         User user = userService.getUserByEmail(email);
-        UserCommonDTO userCommonDTO = getUserCommonDTO(email);
+        UserCommonDTO userCommonDTO = getUserCommonDTO(user);
 
         List<DbRatingDTO> ratings = user.getDbRatings().stream()
                 .map(rating -> DbRatingDTO.builder()
@@ -231,6 +230,14 @@ public class UserDTOService {
         Review review = reviewService.getReviewById(reviewId);
         Page<User> likedUsers = userRepository.findByLikedReviews(review, pageable);
 
-        return likedUsers.map(user -> getUserCommonDTO(user.getEmail()));
+        return likedUsers.map(this::getUserCommonDTO);
+    }
+
+    public Page<UserCommonDTO> searchUsers(String query, int page, int size) {
+        System.out.println("query = " + query);
+        Page<User> users = userRepository.searchByNickname(query, PageRequest.of(page-1, size));
+        System.out.println("users.getContent() = " + users.getContent());
+
+        return users.map(this::getUserCommonDTO);
     }
 }

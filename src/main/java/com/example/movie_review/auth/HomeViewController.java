@@ -5,6 +5,8 @@ import com.example.movie_review.dbMovie.service.MovieCacheService;
 import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
 import com.example.movie_review.movieLens.MovieService;
 import com.example.movie_review.tmdb.TmdbService;
+import com.example.movie_review.user.DTO.UserCommonDTO;
+import com.example.movie_review.user.DTO.UserDTO;
 import com.example.movie_review.user.service.UserService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -92,16 +95,29 @@ public class HomeViewController {
 //        }
     }
 
+    /**
+     * 서버에서 초기에 검색 결과에 대한 리스트 보내주고 이후
+     * HomeController에서 api를 통해 추가 정보 업로드
+     */
     @GetMapping("/search")
     public String searchMovies(
             @RequestParam String query,
             @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "movieTitle") String searchType,
             Model model) throws JsonProcessingException {
-        List<MovieSearchDTO> searchResults = tmdbService.searchMovies(query, page);
+        if(searchType.equals("movieTitle")) {
+            Page<MovieSearchDTO> searchResults = tmdbService.searchMovies(query, page);
+            model.addAttribute("searchResults", searchResults);
+        } else if(searchType.equals("userNickname")) {
+            Page<UserCommonDTO> searchResults = userDTOService.searchUsers(query, page, 10);
+            System.out.println("searchResults = " + searchResults.getContent());
 
-        model.addAttribute("searchResults", searchResults);
+            model.addAttribute("searchResults", searchResults);
+        }
+
         model.addAttribute("query", query);
         model.addAttribute("currentPage", page);
+        model.addAttribute("searchType", searchType);
 
         return "search";
     }

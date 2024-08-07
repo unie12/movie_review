@@ -36,7 +36,7 @@ public class ReviewService extends AbstractUserActivityService {
         int end = Math.min(start + size, reviewMovieDTOS.size());
 
         List<ReviewMovieDTO> sortedReviews = sortReview(reviewMovieDTOS, sort);
-        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(userEmail);
+        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(user);
 
         ReviewListDTO dto = ReviewListDTO.builder()
                 .userCommonDTO(userCommonDTO)

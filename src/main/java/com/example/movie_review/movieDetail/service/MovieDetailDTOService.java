@@ -44,7 +44,7 @@ public class MovieDetailDTOService {
         List<ReviewDTO> reviewDTOS = reviews.stream()
                 .map(review -> {
                     User user = review.getUser();
-                    UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(user.getEmail());
+                    UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(user);
                     ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
                             .id(review.getId())
                             .text(review.getContext())

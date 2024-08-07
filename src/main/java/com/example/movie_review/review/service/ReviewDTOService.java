@@ -18,7 +18,7 @@ public class ReviewDTOService {
 
     public ReviewDTO createReviewDTO(Review review, String currentUserEmail, boolean isLikedByCurrentUser) {
         User user = review.getUser();
-        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(user.getEmail());
+        UserCommonDTO userCommonDTO = userDTOService.getUserCommonDTO(user);
         ReviewCommonDTO reviewCommonDTO = ReviewCommonDTO.builder()
                 .id(review.getId())
                 .text(review.getContext())

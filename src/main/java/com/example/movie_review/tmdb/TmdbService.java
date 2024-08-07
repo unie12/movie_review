@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -63,7 +66,7 @@ public class TmdbService {
      * 제목으로 영화 찾기
      * @return : Mono<String>
      */
-    public List<MovieSearchDTO> searchMovies(String query, int page) throws JsonProcessingException {
+    public Page<MovieSearchDTO> searchMovies(String query, int page) throws JsonProcessingException {
          Mono<String> resultMono = this.webClient.get()
                  .uri("/search/movie?api_key={api_key}&query={query}&language=ko-KR&page={page}", apikey, query, page)
                 .retrieve()
@@ -87,7 +90,7 @@ public class TmdbService {
             );
             searchResult.add(searchDTO);
         }
-        return searchResult;
+        return new PageImpl<>(searchResult, PageRequest.of(page, 20), searchResult.size());
     }
 
     /**

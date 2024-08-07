@@ -59,6 +59,59 @@
             font-weight: bold;
             color: #ffa500;
         }
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .user-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-nickname {
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .subscribe-btn {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .subscribe-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 
@@ -74,7 +127,9 @@
         </div>
 
         <div th:unless="${searchResults.empty}">
-            <div class="movieSearch">
+<!--            영화 제목 기준 검색-->
+            <div th:if="${searchType == 'movieTitle'}" class="movieSearch">
+                <h2>search type <span th:text="${searchType}"></span></h2>
                 <table>
                     <thead>
                     <tr>
@@ -85,7 +140,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="result : ${searchResults}">
+                    <tr th:each="result : ${searchResults.content}">
                         <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${result.poster_path}" th:alt="${result.title}"
                                  th:attr="onclick=|redirectToMovie(${result.id})|"></td>
                         <td><h3 th:text="${result.title}"></h3></td>
@@ -94,7 +149,20 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
 
+<!--            사용자 이름 기준 검색-->
+            <div th:if="${searchType == 'userNickname'}" class="userSearch">
+                <h2>search type <span th:text="${searchType}"></span></h2>
+                <div class="user-grid">
+                    <div th:each="user: ${searchResults.content}" class="user-item">
+                        <img th:src="${user.picture}" th:alt="${user.nickname}" class="user-avatar">
+                        <div class="user-info">
+                            <h3 th:text="${user.nickname}" class="user-nickname"></h3>
+                            <button class="subscribe-btn">구독</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -104,21 +172,33 @@
 
 <script th:inline="javascript">
     let currentPage = [[${currentPage}]];
-    console.log('currentPage: ', currentPage);
     let query = [[${query}]];
+    let searchType = [[${searchType}]];
     let loading = false;
 
     function loadMoreResults() {
         if (loading) return;
         loading = true;
 
-        fetch(`/api/search?query=${query}&page=${currentPage + 1}`)
+        let apiUrl = searchType === 'movieTitle'
+            ? `/api/search/movies?query=${query}&page=${currentPage + 1}`
+            : `/api/search/users?query=${query}&page=${currentPage + 1}&size=10`
+
+        fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
                 if (data.length > 0) {
-                    appendResults(data);
+                    if (searchType === 'movieTitle') {
+                        appendMovieResults(data.content);
+                    } else if (searchType === 'userNickname') {
+                        appendUserResults(data.content);
+                    }
                     currentPage++;
                     loading = false;
+
+                    if (currentPage >= data.totalPages) {
+                        removeScrollListener();
+                    }
                 } else {
                     // 모든 결과 로드 완료
                     removeScrollListener();
@@ -130,7 +210,7 @@
             });
     }
 
-    function appendResults(results) {
+    function appendMovieResults(results) {
         const tbody = document.querySelector('.movieSearch table tbody');
         results.forEach(movie => {
             const row = document.createElement('tr');
@@ -142,6 +222,22 @@
                 <td><span>${movie.vote_average}<br>(${movie.vote_count}표)</span></td>
             `;
             tbody.appendChild(row);
+        });
+    }
+
+    function appendUserResults(results) {
+        const userGrid = document.querySelector('.user-grid');
+        results.forEach(user => {
+            const userItem = document.createElement('div');
+            userItem.className = 'user-item';
+            userItem.innerHTML = `
+                <img src="${user.picture}" alt="${user.nickname}" class="user-avatar">
+                <div class="user-info">
+                    <h3 class="user-nickname">${user.nickname}</h3>
+                    <button class="subscribe-btn">구독</button>
+                </div>
+            `;
+            userGrid.appendChild(userItem);
         });
     }
 
@@ -158,7 +254,7 @@
     window.addEventListener('scroll', handleScroll);
 
     function removeScrollListener() {
-        window.removeEventListener('scroll', handScroll);
+        window.removeEventListener('scroll', handleScroll);
     }
 
     function redirectToMovie(movieId) {
