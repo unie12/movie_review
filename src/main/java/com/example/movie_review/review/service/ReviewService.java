@@ -1,16 +1,15 @@
 package com.example.movie_review.review.service;
 
-import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.dbMovie.DbMovies;
+import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.heart.HeartRepository;
 import com.example.movie_review.review.Review;
+import com.example.movie_review.review.event.ReviewEvent;
 import com.example.movie_review.review.repository.ReviewRepository;
-import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,6 +24,8 @@ public class ReviewService {
 
     private final UserService userService;
     private final DbMovieService dbMovieService;
+
+    private final ApplicationEventPublisher eventPublisher;
 
 
     /**
@@ -46,20 +47,21 @@ public class ReviewService {
         User user = userService.getUserByEmail(email);
         DbMovies dbMovie = dbMovieService.getDbMovieById(movieId);
         Optional<Review> byDbMoviesAndUser = reviewRepository.findByDbMoviesAndUser(dbMovie, user);
+        Review review = new Review();
 
         if(byDbMoviesAndUser.isPresent()) {
-            Review review = byDbMoviesAndUser.get();
+            review = byDbMoviesAndUser.get();
             review.setContext(reviewContext);
             review.setUploadDate(LocalDateTime.now());
-            return reviewRepository.save(review);
         }
         else {
-            Review review = new Review();
             review.setContext(reviewContext);
             review.setUser(user);
             review.setDbMovies(dbMovie);
-            return reviewRepository.save(review);
         }
+        Review savedReview = reviewRepository.save(review);
+        eventPublisher.publishEvent(new ReviewEvent(this, savedReview, ReviewEvent.ReviewEventType.CREATED));
+        return savedReview;
     }
 
     /**
@@ -71,6 +73,8 @@ public class ReviewService {
         Review existReview = getReviewByMovieAndUser(dbMovie, user);
 
         reviewRepository.delete(existReview);
+        eventPublisher.publishEvent(new ReviewEvent(this, existReview, ReviewEvent.ReviewEventType.DELETED));
+
     }
 
 

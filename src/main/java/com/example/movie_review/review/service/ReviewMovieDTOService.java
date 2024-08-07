@@ -1,19 +1,22 @@
 package com.example.movie_review.review.service;
 
-import com.example.movie_review.dbMovie.repository.DbMovieRepository;
-import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
+import com.example.movie_review.dbMovie.DbMovies;
+import com.example.movie_review.dbMovie.repository.DbMovieRepository;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.heart.Heart;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
 import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
-import com.example.movie_review.review.*;
 import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.review.DTO.ReviewMovieDTO;
+import com.example.movie_review.review.Review;
+import com.example.movie_review.review.event.ReviewEvent;
 import com.example.movie_review.review.repository.ReviewRepository;
 import com.example.movie_review.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewMovieDTOService {
 
     private final ReviewRepository reviewRepository;
@@ -42,7 +46,7 @@ public class ReviewMovieDTOService {
     /**
      * Review Cache 업데이트
      */
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(fixedRate = 144000000) // 4시간
     public void updateReviewCache() {
         LocalDateTime startDate = LocalDateTime.now().minusDays(30);
         int minHeartCont = 0;
@@ -59,12 +63,34 @@ public class ReviewMovieDTOService {
                 .collect(Collectors.toList());
     }
 
+    @EventListener
+    public void handleReviewEvent(ReviewEvent event) {
+        switch (event.getEventType()) {
+            case CREATED:
+            case UPDATED:
+                updateRecentReviewCache(event.getReview());
+                break;
+            case DELETED:
+                updateReviewCache();
+                break;
+        }
+    }
+
     public Page<ReviewMovieDTO> getRecentReviews(Pageable pageable) {
-        Page<Review> recentReviews = reviewRepository.findRecentReviewsWithPagination(pageable);
-        return recentReviews.map(this::getReviewMovieDTO);
+        checkCacheExist();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), cachedRecentReviews.size());
+        List<ReviewMovieDTO> pageContent = cachedRecentReviews.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, cachedRecentReviews.size());
+//        Page<Review> recentReviews = reviewRepository.findRecentReviewsWithPagination(pageable);
+//        return recentReviews.map(this::getReviewMovieDTO);
     }
 
     public Page<ReviewMovieDTO> getPopularReviews(Pageable pageable) {
+        checkCacheExist();
+
         // 페이지네이션 적용
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), cachedPopularReviews.size());
@@ -74,9 +100,7 @@ public class ReviewMovieDTOService {
     }
 
     public List<ReviewMovieDTO> getMixedHomeReviews(int count) {
-        if (cachedPopularReviews == null || cachedRecentReviews == null) {
-            updateReviewCache();
-        }
+        checkCacheExist();
 
         List<ReviewMovieDTO> mixedReviews = new ArrayList<>();
         int popularReviewCount = Math.min(cachedPopularReviews.size(), 10);
@@ -100,11 +124,25 @@ public class ReviewMovieDTOService {
         return review;
     }
 
-    public void addNewPopularReview(Review review) {
+    private void checkCacheExist() {
+        if (cachedPopularReviews == null || cachedRecentReviews == null) {
+            updateReviewCache();
+        }
+    }
+
+    public void updatePopularReviewCache(Review review) {
         ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
         cachedPopularReviews.add(0, newReviewDTO);
         if (cachedPopularReviews.size() > 1000) {
             cachedPopularReviews.remove(cachedPopularReviews.size()-1);
+        }
+    }
+
+    public void updateRecentReviewCache(Review review) {
+        ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
+        cachedRecentReviews.add(0, newReviewDTO);
+        if (cachedRecentReviews.size() > 1000) {
+            cachedRecentReviews.remove(cachedRecentReviews.size()-1);
         }
     }
 
