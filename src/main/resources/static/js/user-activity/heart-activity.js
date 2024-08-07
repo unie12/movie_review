@@ -33,8 +33,7 @@ window.activityHandlers.heart = {
         var ajouRatingAvg = review.movieCommonDTO.ajou_rating;
         var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
         var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
-
-        console.log('rating item: ', review);
+        var reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
 
         element.html(`
             <div class="poster-container">
@@ -57,7 +56,7 @@ window.activityHandlers.heart = {
                         좋아요: <span class="heart-value like-count">${review.reviewDTO.heartCnt}</span>
                     </span>
                 </div>
-                <p class="review-text">${review.reviewDTO.review.text}</p>
+                <p class="review-text">${reviewTextWithBreaks}</p>
             </div>
         `);
 

@@ -98,7 +98,7 @@
                 </a>
                 <div class="review-text-content">
                     <h4 th:text="${review.movieCommonDTO.title}"></h4>
-                    <p class="review-text" th:text="${review.reviewDTO.review.text}"></p>
+                    <p class="review-text" th:utext="${review.reviewDTO.review.text}"></p>
                 </div>
             </div>
             <div class="review-footer">
@@ -157,6 +157,8 @@
         reviewElement.className = 'review-card';
         const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
 
+        const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
+
         reviewElement.innerHTML = `
             <div class="review-header">
                 <img src="${review.reviewDTO.user.picture}"
@@ -175,7 +177,7 @@
                     onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
                 <div class="review-text-content">
                     <h4>${review.movieCommonDTO.title}</h4>
-                    <p class="review-text">${review.reviewDTO.review.text}</p>
+                    <p class="review-text">${reviewTextWithBreaks}</p>
                 </div>
             </div>
             <div class="review-footer">

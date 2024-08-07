@@ -43,6 +43,12 @@ public class ReviewViewController {
             reviewPage = reviewMovieDTOService.getPopularReviews(PageRequest.of(page, size));
         }
 
+        reviewPage.getContent().forEach(reviews -> {
+            String reviewTextWithBreaks = reviews.getReviewDTO().getReview().getText().replace("\n", "<br>");
+            reviews.getReviewDTO().getReview().setText(reviewTextWithBreaks);
+        });
+
+
         model.addAttribute("reviews", reviewPage.getContent());
         model.addAttribute("currentFilter", filter);
         model.addAttribute("currentPage", reviewPage.getNumber());

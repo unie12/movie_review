@@ -50,6 +50,11 @@ public class MovieDetailController {
                     .limit(6)
                     .collect(Collectors.toList());
 
+            sortedReviews.forEach(reviewDTO -> {
+                String reviewTextWithBreaks = reviewDTO.getReview().getText().replace("\n", "<br>");
+                reviewDTO.getReview().setText(reviewTextWithBreaks);
+            });
+
             model.addAttribute("sortedReviews", sortedReviews);
             model.addAttribute("movieDTO", movieDetailDTO);
         } catch (Exception e) {

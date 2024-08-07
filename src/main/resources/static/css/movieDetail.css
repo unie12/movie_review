@@ -108,7 +108,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 5; /* 최대 5줄까지 표시 */
+    -webkit-line-clamp: 6; /* 최대 5줄까지 표시 */
     -webkit-box-orient: vertical;
     word-wrap: break-word; /* 긴 단어 줄바꿈 */
 }
@@ -178,13 +178,13 @@
 .like-button.active {
     color: red;
 }
-
 .movie-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 10px;
     margin-bottom: 20px;
 }
+
 .movie-card {
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -194,6 +194,12 @@
     height: 250px; /* 고정 높이 설정 */
     overflow: hidden; /* 내용이 넘치면 숨김 */
 }
+
 .movie-poster {
-    height: auto;
+    width: 100%;
+}
+
+#reviewDisplayText {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }

@@ -48,19 +48,24 @@ public class ReviewService {
         DbMovies dbMovie = dbMovieService.getDbMovieById(movieId);
         Optional<Review> byDbMoviesAndUser = reviewRepository.findByDbMoviesAndUser(dbMovie, user);
         Review review = new Review();
+        String processedReviewContext = reviewContext.replace("\\n", "\n");
+        ReviewEvent.ReviewEventType event;
 
         if(byDbMoviesAndUser.isPresent()) {
             review = byDbMoviesAndUser.get();
-            review.setContext(reviewContext);
+            review.setContext(processedReviewContext);
             review.setUploadDate(LocalDateTime.now());
+            event = ReviewEvent.ReviewEventType.UPDATED;
         }
         else {
-            review.setContext(reviewContext);
+            review.setContext(processedReviewContext);
             review.setUser(user);
             review.setDbMovies(dbMovie);
+            event = ReviewEvent.ReviewEventType.CREATED;
         }
+
         Review savedReview = reviewRepository.save(review);
-        eventPublisher.publishEvent(new ReviewEvent(this, savedReview, ReviewEvent.ReviewEventType.CREATED));
+        eventPublisher.publishEvent(new ReviewEvent(this, savedReview, event));
         return savedReview;
     }
 

@@ -33,9 +33,7 @@ window.activityHandlers.review = {
         var ajouRatingAvg = review.movieCommonDTO.ajou_rating;
         var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
         var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
-
-        console.log('review detail', review);
-        console.log('isLikedByCurrentUser:', review.likedByCurrentUser); // 특정 속성 로깅
+        var reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
 
         element.html(`
             <div class="poster-container">
@@ -55,7 +53,7 @@ window.activityHandlers.review = {
                         좋아요: <span class="heart-value like-count">${review.reviewDTO.heartCnt}</span>
                     </span>
                 </div>
-                <p class="review-text">${review.reviewDTO.review.text}</p>
+                <p class="review-text">${reviewTextWithBreaks}</p>
             </div>
         `);
 

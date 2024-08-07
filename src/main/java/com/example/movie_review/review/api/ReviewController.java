@@ -7,6 +7,7 @@ import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.review.service.ReviewMovieDTOService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.service.UserDTOService;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -59,14 +60,17 @@ public class ReviewController {
      * 리뷰를 새로 작성하거나 기존의 작성 리뷰 수정
      */
     @PostMapping("/movie/{movieId}/review")
-    public ResponseEntity<?> saveReview(@RequestBody ReviewRequest request, @AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<?> saveReview(
+            @PathVariable Long movieId,
+            @RequestBody ReviewRequest request,
+            @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
 
         try {
             String email = principal.getAttribute("email");
-            Review savedReview = reviewService.saveOrUpdateReview(request.getMovieId(), email, request.getReview());
+            Review savedReview = reviewService.saveOrUpdateReview(movieId, email, request.getReview());
 
             return ResponseEntity.ok(new ReviewResponse(savedReview.getDbMovies().getId(), savedReview.getContext()));
         } catch (Exception e) {

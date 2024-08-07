@@ -81,7 +81,7 @@
             </div>
             <div class="position-relative">
                 <button class="arrow left" onclick="scrollContainer('popularReviews', -1)">&#9664;</button>
-                <div id="popularReviews" class="d-flex overflow-hidden">
+                <div id="popularReviews" class="popular-review">
                     <!-- 리뷰 카드들이 여기에 추가될 예정 -->
                 </div>
                 <button class="arrow right" onclick="scrollContainer('popularReviews', 1)">&#9654;</button>
@@ -185,6 +185,8 @@
         reviewElement.setAttribute('data-filter', review.filter);
         const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
 
+        const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
+
         reviewElement.innerHTML = `
             <div class="review-header">
                 <div class="user-info">
@@ -201,7 +203,7 @@
             <div class="review-content">
                 <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="movie-poster">
                 <h4>${review.movieCommonDTO.title}</h4>
-                <p class="review-text">${review.reviewDTO.review.text}</p>
+                <p class="review-text">${reviewTextWithBreaks}</p>
             </div>
             <div class="review-footer">
                 <small>좋아요: ${review.reviewDTO.heartCnt}</small>

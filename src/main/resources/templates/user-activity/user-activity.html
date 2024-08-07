@@ -11,6 +11,7 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
     <h2 th:text="${pageTitle}">사용자 활동</h2>
+    <a th:href="@{'/info/' + ${userEmail}}">사용자 정보로 돌아가기</a>
 
     <select id="sorting" name="sorting">
         <!-- 정렬 옵션은 JavaScript로 동적 생성 -->
@@ -26,7 +27,6 @@
         <p th:text="${emptyMessage}">활동이 없습니다.</p>
     </div>
 
-    <a th:href="@{'/info/' + ${userEmail}}">사용자 정보로 돌아가기</a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

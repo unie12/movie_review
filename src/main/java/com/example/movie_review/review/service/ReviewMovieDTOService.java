@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,6 +68,8 @@ public class ReviewMovieDTOService {
     public void handleReviewEvent(ReviewEvent event) {
         switch (event.getEventType()) {
             case CREATED:
+                createRecentReviewCache(event.getReview());
+                break;
             case UPDATED:
                 updateRecentReviewCache(event.getReview());
                 break;
@@ -140,6 +143,23 @@ public class ReviewMovieDTOService {
 
     public void updateRecentReviewCache(Review review) {
         ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
+        Optional<ReviewMovieDTO> existingReviewOpt = cachedRecentReviews.stream()
+                .filter(r -> r.getReviewDTO().getReview().getId().equals(review.getId()))
+                .findFirst();
+
+        int index = cachedRecentReviews.indexOf(existingReviewOpt.get());
+
+        if (index > 0) {
+            cachedRecentReviews.remove(index);
+            cachedRecentReviews.add(0, newReviewDTO);
+        } else {
+            cachedRecentReviews.set(index, newReviewDTO);
+        }
+    }
+
+    public void createRecentReviewCache(Review review) {
+        ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
+
         cachedRecentReviews.add(0, newReviewDTO);
         if (cachedRecentReviews.size() > 1000) {
             cachedRecentReviews.remove(cachedRecentReviews.size()-1);
