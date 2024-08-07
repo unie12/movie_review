@@ -183,11 +183,13 @@
         let apiUrl = searchType === 'movieTitle'
             ? `/api/search/movies?query=${query}&page=${currentPage + 1}`
             : `/api/search/users?query=${query}&page=${currentPage + 1}&size=10`
+        console.log('apiUrl', apiUrl);
 
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
-                if (data.length > 0) {
+                if (data.content.length > 0) {
+                    console.log('Remain data');
                     if (searchType === 'movieTitle') {
                         appendMovieResults(data.content);
                     } else if (searchType === 'userNickname') {
@@ -200,6 +202,7 @@
                         removeScrollListener();
                     }
                 } else {
+                    console.log('Finish data');
                     // 모든 결과 로드 완료
                     removeScrollListener();
                 }
@@ -242,11 +245,12 @@
     }
 
     function isBottom() {
-        return (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100;
+        return (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50;
     }
 
     function handleScroll() {
         if(isBottom()) {
+            console.log('scroll bottom');
             loadMoreResults();
         }
     }
@@ -254,6 +258,7 @@
     window.addEventListener('scroll', handleScroll);
 
     function removeScrollListener() {
+        console.log('remove scroll');
         window.removeEventListener('scroll', handleScroll);
     }
 
