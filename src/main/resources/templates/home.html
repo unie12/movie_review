@@ -25,7 +25,7 @@
 
         <div class="sections">
             <div class="section">
-            <h3>이번 주 평가왕</h3>
+            <h3>이번 주 평가왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyRatingKing"></i></h3>
                 <ul>
                     <li th:each="user : ${ratingKings}">
                         <div>
@@ -45,7 +45,7 @@
             </div>
 
             <div class="section">
-                <h3>이번 주 리뷰왕</h3>
+                <h3>이번 주 리뷰왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyReviewKing"></i></h3>
                 <ul>
                     <li th:each="user : ${reviewKings}">
                         <div>
@@ -75,7 +75,7 @@
 
         <div class="container mt-5">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2>인기 리뷰</h2>
+                <h2>인기 리뷰 <i class="fas fa-question-circle info-icon" data-info-key="popularReviews"></i></h2>
                 <button class="btn btn-secondary" id="refreshReviewsBtn">새로고침</button>
                 <button class="btn btn-primary" id="viewAllBtn">전체 보기</button>
             </div>
@@ -89,8 +89,8 @@
         </div>
 
 
-        <div th:if="${dBOM}">
-            <h2 class="category-title">일별 박스오피스 순위</h2>
+        <div class="dailyBox" th:if="${dBOM}">
+            <h2 class="category-title">일별 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i></h2>
             <div class="movie-list-container">
                 <button class="arrow left" onclick="scrollContainer('dBOMList', -1)">&#9664;</button>
                 <div class="movie-list" id="dBOMList"></div>
@@ -98,8 +98,8 @@
             </div>
         </div>
 
-        <div th:if="${wBOM}">
-            <h2 class="category-title">주간 박스오피스 순위</h2>
+        <div class="weekBox" th:if="${wBOM}">
+            <h2 class="category-title">주간 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i></h2>
             <div class="movie-list-container">
                 <button class="arrow left" onclick="scrollContainer('wBOMList', -1)">&#9664;</button>
                 <div class="movie-list" id="wBOMList"></div>
@@ -107,8 +107,8 @@
             </div>
         </div>
 
-        <div th:if="${popularMovies}">
-            <h2 class="category-title">인기 영화</h2>
+        <div class="popular" th:if="${popularMovies}">
+            <h2 class="category-title">인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i></h2>
             <div class="movie-list-container">
                 <button class="arrow left" onclick="scrollContainer('popularMovieList', -1)">&#9664;</button>
                 <div class="movie-list" id="popularMovieList"></div>
@@ -116,8 +116,8 @@
             </div>
         </div>
 
-        <div th:if="${trendingMovies}">
-            <h2 class="category-title">트렌딩 영화</h2>
+        <div class="trending" th:if="${trendingMovies}">
+            <h2 class="category-title">트렌딩 영화 <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i></h2>
             <div class="movie-list-container">
                 <button class="arrow left" onclick="scrollContainer('trendingMovieList', -1)">&#9664;</button>
                 <div class="movie-list" id="trendingMovieList"></div>
@@ -132,6 +132,16 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
+    const infoTexts = {
+        weeklyRatingKing: "지난 7일 동안 가장 많은 평가를 남긴 사용자입니다. \n평가 수에 따라 선정되며, 매주 월요일 오전 1시에 갱신됩니다.",
+        weeklyReviewKing: "지난 7일 동안 가장 많은 영화 리뷰를 작성한 사용자입니다. 리뷰 수에 따라 선정되며, 매주 월요일 오전 1시에 갱신됩니다.",
+        popularReviews: "리뷰의 작성 시간과 좋아요 수를 종합적으로 고려하여 선정됩니다.",
+        dailyBoxOffice: "전날의 영화관 관객 수를 기준으로 집계된 순위입니다. 매일 오전 9시경 전일자 데이터로 업데이트됩니다.",
+        weeklyBoxOffice: "지난 주 영화관 관객 수를 기준으로 집계된 순위입니다. 매주 월요일 오전 9시경 전주 데이터로 업데이트됩니다.",
+        popularMovies: "TMDB api를 통해 가져온 인기 영화들입니다. 평점, 리뷰 수, 조회수 등을 종합적으로 고려하여 선정됩니다.",
+        trendingMovies: "TMDB api를 통해 가져온 최근 급상승하고 있는 영화들입니다. 최근 평점과 리뷰의 증가율, 조회수 변화 등을 바탕으로 선정됩니다."
+    };
+
     $(document).ready(function() {
         getRealTimeData();
         setInterval(getRealTimeData, 60000); // 1분마다 갱신.. 이건 나중에 고려
@@ -144,6 +154,30 @@
     var trendingMovies = /*[[${trendingMovies}]]*/ '[]';
 
     document.addEventListener('DOMContentLoaded', function() {
+        const infoIcons = document.querySelectorAll('.info-icon');
+
+        infoIcons.forEach(icon => {
+            const infoKey = icon.getAttribute('data-info-key');
+            const tooltipText = infoTexts[infoKey] || "정보가 없습니다.";
+            const tooltip = document.createElement('span');
+            tooltip.className = 'info-tooltip';
+            tooltip.textContent = tooltipText;
+            icon.appendChild(tooltip);
+
+            icon.addEventListener('mouseenter', () => {
+                console.log('mouseEnter');
+                console.log('tooltip ', tooltip);
+                tooltip.style.visibility = 'visible';
+                tooltip.style.opacity = '1';
+            })
+
+            icon.addEventListener('mouseleave', () => {
+                console.log('mousLeave');
+                tooltip.style.visibility = 'hidden';
+                tooltip.style.opacity = '0';
+            });
+        });
+
         initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
         loadHomeReviews();
 

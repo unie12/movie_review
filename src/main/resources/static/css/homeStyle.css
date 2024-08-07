@@ -207,3 +207,50 @@
 .user-rating-container { /* 평점 요소를 위한 컨테이너 */
     margin-left: auto; /* 자동으로 왼쪽 마진을 주어 오른쪽 정렬 */
 }
+
+/* 각 카테고리 별 설명해주는 물음표 */
+.info-icon {
+    font-size: 0.8em;
+    color: #888;
+    cursor: help;
+    position: relative;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.info-tooltip {
+    visibility: hidden;
+    width: 250px;
+    background-color: #f9f9f9;
+    color: #333;
+    text-align: left;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 100%;
+    margin-left: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    font-size: 0.9em;
+    line-height: 1.4;
+    pointer-events: none;
+}
+
+.info-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #f9f9f9 transparent transparent;
+}
+
+.info-icon:hover .info-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
