@@ -6,6 +6,7 @@ import com.example.movie_review.dbRating.DbRatingRepository;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.repository.ReviewRepository;
 import com.example.movie_review.review.service.ReviewService;
+import com.example.movie_review.subscription.SubscriptionService;
 import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.repository.UserRepository;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class UserDTOService {
     private final UserService userService;
     private final ReviewService reviewService;
+    private final SubscriptionService subscriptionService;
 
     private final ReviewRepository reviewRepository;
     private final DbRatingRepository dbRatingRepository;
@@ -233,9 +235,12 @@ public class UserDTOService {
         return likedUsers.map(this::getUserCommonDTO);
     }
 
-    public Page<UserCommonDTO> searchUsers(String query, int page, int size) {
+    public Page<UserSearchDTO> searchUsers(String query, int page, int size, String currentEmail) {
         Page<User> users = userRepository.searchByNickname(query, PageRequest.of(page-1, size));
 
-        return users.map(this::getUserCommonDTO);
+        return users.map(user -> {
+            boolean isSubscribed = subscriptionService.isSubscribed(currentEmail, user.getEmail());
+            return new UserSearchDTO(getUserCommonDTO(user), isSubscribed);
+        });
     }
 }

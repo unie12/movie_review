@@ -5,12 +5,14 @@ import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
+import com.example.movie_review.user.DTO.UserSearchDTO;
 import com.example.movie_review.user.service.UserDTOService;
 import com.example.movie_review.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,11 +47,13 @@ public class HomeController {
     }
 
     @GetMapping("/search/users")
-    public ResponseEntity<Page<UserCommonDTO>> searchUsers(
+    public ResponseEntity<Page<UserSearchDTO>> searchUsers(
             @RequestParam String query,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) throws JsonProcessingException {
-        Page<UserCommonDTO> results = userDTOService.searchUsers(query, page, size);
+            @RequestParam(defaultValue = "10") int size,
+            Authentication auth) throws JsonProcessingException {
+        String currentEmail = auth != null ? auth.getName() : null;
+        Page<UserSearchDTO> results = userDTOService.searchUsers(query, page, size, currentEmail);
         return ResponseEntity.ok(results);
     }
 

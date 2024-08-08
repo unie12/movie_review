@@ -7,6 +7,7 @@ import com.example.movie_review.movieLens.MovieService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.DTO.UserDTO;
+import com.example.movie_review.user.DTO.UserSearchDTO;
 import com.example.movie_review.user.service.UserService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,6 +17,7 @@ import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -104,14 +106,13 @@ public class HomeViewController {
             @RequestParam String query,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "movieTitle") String searchType,
-            Model model) throws JsonProcessingException {
+            Model model, Authentication auth) throws JsonProcessingException {
         if(searchType.equals("movieTitle")) {
             Page<MovieSearchDTO> searchResults = tmdbService.searchMovies(query, page);
             model.addAttribute("searchResults", searchResults);
         } else if(searchType.equals("userNickname")) {
-            Page<UserCommonDTO> searchResults = userDTOService.searchUsers(query, page, 10);
-            System.out.println("searchResults = " + searchResults.getContent());
-
+            String currentEmail = auth != null ? auth.getName() : null;
+            Page<UserSearchDTO> searchResults = userDTOService.searchUsers(query, page, 10, currentEmail);
             model.addAttribute("searchResults", searchResults);
         }
 

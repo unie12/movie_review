@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,21 +18,19 @@ public class SubscriptionService {
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
 
-    private final UserService userService;
-    private final UserDTOService userDTOService;
 //    private final SubscriptionService subscriptionService;
 
     public boolean isSubscribed(String subscriberEmail, String subscribedEmail) {
-        User subscriber = userService.getUserByEmail(subscriberEmail);
-        User subscribed = userService.getUserByEmail(subscribedEmail);
+        User subscriber = getUser(subscriberEmail);
+        User subscribed = getUser(subscribedEmail);
 
         return subscriptionRepository.existsBySubscriberAndSubscribed(subscriber, subscribed);
     }
 
     @Transactional
     public boolean toggleSubscription(String subscriberEmail, String subscribedEmail) {
-        User subscriber= userService.getUserByEmail(subscriberEmail);
-        User subscribed = userService.getUserByEmail(subscribedEmail);
+        User subscriber= getUser(subscriberEmail);
+        User subscribed = getUser(subscribedEmail);
 
         Subscription savedSubscription = subscriptionRepository.findBySubscriberAndSubscribed(subscriber, subscribed);
 
@@ -47,6 +46,11 @@ public class SubscriptionService {
             subscriptionRepository.delete(savedSubscription);
             return false;
         }
+    }
+
+    private User getUser(String userEmail) {
+        return userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
 }
