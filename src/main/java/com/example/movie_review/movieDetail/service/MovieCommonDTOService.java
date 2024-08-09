@@ -6,6 +6,7 @@ import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.movieDetail.DTO.RecommendMovies;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
+import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,9 @@ public class MovieCommonDTOService {
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
     private final DbMovieService dbMovieService;
+
+    private final MovieDetailRepository movieDetailRepository;
+
     public MovieCommonDTO getMovieCommonDTO(DbMovies dbMovie, MovieDetails movieDetails) {
         MovieCommonDTO movieCommonDTO = MovieCommonDTO.builder()
                 .id(dbMovie.getId())
@@ -52,5 +56,12 @@ public class MovieCommonDTOService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<String> getMovieTitleSuggestions(String query) {
+        return movieDetailRepository.findTop10ByTitleContainingIgnoreCase(query)
+                .stream()
+                .map(MovieDetails::getTitle)
+                .collect(Collectors.toList());
     }
 }

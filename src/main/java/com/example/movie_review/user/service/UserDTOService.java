@@ -243,4 +243,11 @@ public class UserDTOService {
             return new UserSearchDTO(getUserCommonDTO(user), isSubscribed);
         });
     }
+
+    public List<String> getUserNicknameSuggestions(String query) {
+        return userRepository.findTop10ByNicknameContainingIgnoreCase(query)
+                .stream()
+                .map(User::getNickname)
+                .collect(Collectors.toList());
+    }
 }

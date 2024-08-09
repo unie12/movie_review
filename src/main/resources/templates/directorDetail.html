@@ -3,40 +3,41 @@
 <head>
 <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/bodyHeader.css">
 
-    <head>
-<!--        <link rel="stylesheet" href="/css/bootstrap.min.css">-->
-        <meta charset="UTF-8">
-        <style>
-            .container {
-                position: relative;
-                padding: 10px 150px;
-            }
-            .actorDetail table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 20px;
-            }
+    <meta charset="UTF-8">
+    <style>
+        .container {
+            position: relative;
+            padding: 10px 150px;
+        }
+        .actorDetail table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
 
-            .actorDetail th, .actorDetail td {
-                border: 1px solid #ddd;
-                padding: 8px;
-                text-align: left;
-            }
+        .actorDetail th, .actorDetail td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
 
-            .actorDetail th {
-                background-color: #f2f2f2;
-            }
+        .actorDetail th {
+            background-color: #f2f2f2;
+        }
 
-            .actorDetail img {
-                width: 150px;
-                height: auto;
-            }
-            .actorDetail p {
-                white-space: pre-line;
-            }
-        </style>
-    </head>
+        .actorDetail img {
+            width: 150px;
+            height: auto;
+        }
+        .actorDetail p {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<script th:src="@{'/js/search.js'}"></script>
+
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>

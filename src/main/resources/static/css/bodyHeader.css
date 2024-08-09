@@ -1,0 +1,99 @@
+body {
+    padding-top: 90px; /* navbar 높이 + 여분 */
+}
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #D4EAFB;
+    color: white;
+    padding: 10px 150px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    height: 70px; /* 네비게이션 바 높이 증가 */
+}
+.navbar a {
+    color: white;
+    text-decoration: none;
+}
+.navbar-brand {
+    font-size: 28px;
+    font-weight: bold;
+}
+.navbar .navbar-brand {
+    color: #5CC4F8;
+}
+.navbar-search {
+    flex-grow: 0.5; /* 검색창 너비 조절 */
+    margin: 0 20px;
+    display: flex;
+}
+.navbar-search input {
+    flex-grow: 1;
+    padding: 8px;
+    font-size: 16px;
+}
+.navbar-search button {
+    margin-left: 10px;
+    padding: 8px 15px;
+    font-size: 16px;
+}
+.navbar-links {
+    display: flex;
+    align-items: center;
+}
+.navbar-links > * {
+    margin-left: 15px;
+}
+.btn {
+    padding: 8px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn-primary {
+    background-color: #A4AFB1;
+    color: white;
+}
+.btn-info {
+    background-color: #A4AFB1;
+    color: white;
+}
+.user-icon {
+    display: flex;
+    align-items: center;
+}
+.navbar .user-icon {
+    color: #A4AFB1;
+}
+.user-icon i {
+    margin-right: 5px;
+}
+
+.navbar-search {
+    position: relative;
+}
+
+#searchSuggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;  /* 흰색 배경 */
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 1000;
+}
+
+#searchSuggestions div {
+    padding: 10px;
+    cursor: pointer;
+    color: black;  /* 검은색 텍스트 */
+}
+#searchSuggestions div:hover {
+    background-color: #f0f0f0;  /* 호버 시 배경색 변경 */
+}

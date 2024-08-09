@@ -3,11 +3,13 @@
 <head>
 <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/bodyHeader.css">
     <link rel="stylesheet" href="/css/activity.css">
     <title th:text="${pageTitle}">사용자 활동</title>
 </head>
-<body>
+<script th:src="@{'/js/search.js'}"></script>
 
+<body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
     <h2 th:text="${pageTitle}">사용자 활동</h2>

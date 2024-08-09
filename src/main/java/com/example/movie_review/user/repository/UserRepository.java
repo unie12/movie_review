@@ -30,4 +30,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE LOWER(u.nickname) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<User> searchByNickname(String query, Pageable pageable);
 
+    List<User> findTop10ByNicknameContainingIgnoreCase(String nickname);
 }
