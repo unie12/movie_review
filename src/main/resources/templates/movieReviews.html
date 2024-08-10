@@ -181,7 +181,7 @@
                                 <p class="card-text">${reviewTextWithBreaks}</p>
                                 <p class="card-text">
                                     <small class="text-muted">
-                                        <a href="#" class="like-count" data-review-id="${review.review.id}">좋아요</a> ${review.heartCnt}
+                                        <a href="#" class="like-count" data-review-id="${review.review.id}">좋아요</a> <span class="heart-count">${review.heartCnt}</span>
                                     </small>
                                 </p>
                                 <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.review.id}">
@@ -216,7 +216,7 @@
                     } else {
                         $button.removeClass('active');
                     }
-                    $button.closest('.card-body').find('.like-count').text(response.updateHeartCnt);
+                    $button.closest('.card-body').find('.heart-count').text(response.updateHeartCnt);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
