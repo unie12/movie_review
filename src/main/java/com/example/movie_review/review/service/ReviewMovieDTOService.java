@@ -74,11 +74,16 @@ public class ReviewMovieDTOService {
                 updateRecentReviewCache(event.getReview());
                 break;
             case DELETED:
-                updateReviewCache();
+                removeReviewFromCache(event.getReview().getId());
+            case HEART:
+                updateSingleReviewInList(event.getReview());
                 break;
         }
     }
 
+    /**
+     * recent 캐시 리뷰에서 페이지네이션 적용해서 반환
+     */
     public Page<ReviewMovieDTO> getRecentReviews(Pageable pageable) {
         checkCacheExist();
 
@@ -87,10 +92,11 @@ public class ReviewMovieDTOService {
         List<ReviewMovieDTO> pageContent = cachedRecentReviews.subList(start, end);
 
         return new PageImpl<>(pageContent, pageable, cachedRecentReviews.size());
-//        Page<Review> recentReviews = reviewRepository.findRecentReviewsWithPagination(pageable);
-//        return recentReviews.map(this::getReviewMovieDTO);
     }
 
+    /**
+     * popular 캐시 리뷰에서 페이지네이션 적용해서 반환
+     */
     public Page<ReviewMovieDTO> getPopularReviews(Pageable pageable) {
         checkCacheExist();
 
@@ -102,6 +108,9 @@ public class ReviewMovieDTOService {
         return new PageImpl<>(pageContent, pageable, cachedPopularReviews.size());
     }
 
+    /**
+     * 홈에서 인기 리뷰 보여줄 때 사용
+     */
     public List<ReviewMovieDTO> getMixedHomeReviews(int count) {
         checkCacheExist();
 
@@ -121,6 +130,9 @@ public class ReviewMovieDTOService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 해당 리뷰의 filter 적용
+     */
     private ReviewMovieDTO addFilterInfo(ReviewMovieDTO review) {
         int popularReviewCount = Math.min(cachedPopularReviews.size(), 10);
         review.setFilter(cachedPopularReviews.subList(0, popularReviewCount).contains(review) ? "popular" : "recently");
@@ -141,6 +153,9 @@ public class ReviewMovieDTOService {
         }
     }
 
+    /**
+     * 리뷰 수정이 이루어진 경우 recent 리뷰를 앞에 땡겨오기
+     */
     public void updateRecentReviewCache(Review review) {
         ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
         Optional<ReviewMovieDTO> existingReviewOpt = cachedRecentReviews.stream()
@@ -157,6 +172,9 @@ public class ReviewMovieDTOService {
         }
     }
 
+    /**
+     * 리뷰 생성 시 recent 맨 앞에 생성
+     */
     public void createRecentReviewCache(Review review) {
         ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
 
@@ -165,6 +183,44 @@ public class ReviewMovieDTOService {
             cachedRecentReviews.remove(cachedRecentReviews.size()-1);
         }
     }
+
+    /**
+     * 리뷰 삭제 시 해당 리뷰를 두 개의 캐시 리뷰에서 삭제
+     */
+    public void removeReviewFromCache(Long reviewId) {
+        cachedRecentReviews.removeIf(review -> review.getReviewDTO().getReview().getId().equals(reviewId));
+        cachedPopularReviews.removeIf(review -> review.getReviewDTO().getReview().getId().equals(reviewId));
+    }
+
+
+    /**
+     * 리류 좋아요 클릭 시 해당 리뷰에 대해 두 개의 캐시 리뷰에서 업데이트
+     */
+    public void updateSingleReviewInList(Review updateReview) {
+        ReviewMovieDTO newReviewDTO = getReviewMovieDTO(updateReview);
+
+        // popular cache 업데이트
+        Optional<ReviewMovieDTO> existingPopularReviewOpt = cachedPopularReviews.stream()
+                .filter(r -> r.getReviewDTO().getReview().getId().equals(updateReview.getId()))
+                .findFirst();
+
+        if (existingPopularReviewOpt.isPresent()) {
+            int index = cachedPopularReviews.indexOf(existingPopularReviewOpt.get());
+            cachedPopularReviews.set(index, newReviewDTO);
+        }
+
+        // recent cache 업데이트
+        newReviewDTO = getReviewMovieDTO(updateReview);
+        Optional<ReviewMovieDTO> existingRecentReviewOpt = cachedRecentReviews.stream()
+                .filter(r -> r.getReviewDTO().getReview().getId().equals(updateReview.getId()))
+                .findFirst();
+
+        if (existingRecentReviewOpt.isPresent()) {
+            int index = cachedRecentReviews.indexOf(existingRecentReviewOpt.get());
+            cachedRecentReviews.set(index, newReviewDTO);
+        }
+    }
+
 
 
     /**
