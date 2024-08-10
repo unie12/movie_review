@@ -1,5 +1,6 @@
 package com.example.movie_review.heart;
 
+import com.example.movie_review.review.service.ReviewMovieDTOService;
 import com.example.movie_review.review.service.ReviewService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class HeartController {
     private final HeartService heartService;
     private final ReviewService reviewService;
+    private final ReviewMovieDTOService reviewMovieDTOService;
 
     /**
      * 해당 리뷰에 좋아요 추가 및 삭제
@@ -30,6 +32,7 @@ public class HeartController {
             boolean isHeart = heartService.toggleHeart(email, request.getReviewId(), request.isHeart());
 
             int updateHeartCount = reviewService.getReviewById(request.getReviewId()).getHeartCount();
+            reviewMovieDTOService.updateReviewCache();
             return ResponseEntity.ok(new HeartResponse("Heart toggled successfully", isHeart, updateHeartCount));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new HeartResponse(e.getMessage(), false, reviewService.getReviewById(request.getReviewId()).getHeartCount()));

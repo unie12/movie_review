@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>전체 리뷰</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/css/bodyHeader.css">
 
     <style>
@@ -68,6 +69,86 @@
             font-weight: bold;
             color: red;
         }
+        .like-button {
+            cursor: pointer;
+        }
+        .like-button.active {
+            background-color: #007bff;
+            color: white;
+        }
+                .user-rating, .user-heart {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        .rating-value, .heart-value {
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+        .user-rating {
+            color: #f39c12;
+            border-color: #f39c12;
+        }
+        .user-heart {
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+        .rating-value {
+            background-color: #fdebd0;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .user-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .user-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .user-list img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
     </style>
 
 </head>
@@ -94,6 +175,7 @@
                 </div>
             </div>
             <div class="review-divider"></div>
+
             <div class="review-content">
                 <a th:href="@{'/contents/' + ${review.movieCommonDTO.tId}}">
                     <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
@@ -103,9 +185,24 @@
                     <p class="review-text" th:utext="${review.reviewDTO.review.text}"></p>
                 </div>
             </div>
+<!--            <div class="review-footer">-->
+<!--                <span th:text="'좋아요: ' + ${review.heartCnt}"></span>-->
+<!--            </div>-->
+
             <div class="review-footer">
-                <span th:text="'좋아요: ' + ${review.heartCnt}"></span>
+                <a href="javascript:void(0)" class="like-count" th:attr="data-review-id=${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count" th:text="${review.heartCnt}"></span>
             </div>
+            <button class="btn btn-outline-primary like-button" th:classappend="${review.isLikedByCurrentUser ? 'active' : ''}" th:attr="data-review-id=${review.reviewDTO.review.id}">
+                <i class="fas fa-heart"></i> 좋아요
+            </button>
+        </div>
+    </div>
+
+    <div id="likeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>좋아요를 누른 사용자</h2>
+            <ul id="likeUserList" class="user-list"></ul>
         </div>
     </div>
 
@@ -137,7 +234,10 @@
                 console.log('loadMore review data', data);
 
                 data.content.forEach(function(review) {
-                    $('#reviewList').append(createReviewCard(review));
+                    const newReviewCard = $(createReviewCard(review));
+                    $('#reviewList').append(newReviewCard);
+                    attachLikeEvents(newReviewCard);
+                    attachLikeCountEvents(newReviewCard);
                 });
                 currentPage++;
                 loading = false;
@@ -145,6 +245,7 @@
             });
     }
 
+    // 아직 미사용. /reviews 내에서 어떻ㄱ ㅔ새로고침해야할 지 모르겠음
     function refreshReviews() {
         $.post('/api/reviews/refresh-cache')
             .done(function() {
@@ -157,9 +258,10 @@
      function createReviewCard(review) {
         const reviewElement = document.createElement('div');
         reviewElement.className = 'review-card';
-        const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
 
+        const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
         const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
+        const isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
 
         reviewElement.innerHTML = `
             <div class="review-header">
@@ -183,18 +285,104 @@
                 </div>
             </div>
             <div class="review-footer">
-                <span>좋아요: ${review.reviewDTO.heartCnt}</span>
+                <a href="#" class="like-count" data-review-id="${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count">${review.reviewDTO.heartCnt}</span>
             </div>
+            <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.reviewDTO.review.id}">
+                <i class="fas fa-heart"></i> 좋아요
+            </button>
         `;
 
         return reviewElement;
     }
 
-    $(window).scroll(function() {
-        if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+    function attachLikeEvents(element) {
+        $(element).find('.like-button').on('click', function() {
+            var reviewId = $(this).data('review-id');
+            var $button = $(this);
+
+            $.ajax({
+                url: '/api/review/heart/' + reviewId,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active')}),
+                success: function(response) {
+                    if (response.heart) {
+                        $button.addClass('active');
+                    } else {
+                        $button.removeClass('active');
+                    }
+                    $button.closest('.review-card').find('.heart-count').text(response.updateHeartCnt);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    }
+
+    function attachLikeCountEvents(element) {
+        $(element).find('.like-count').on('click', function(e) {
+            e.preventDefault();
+            var reviewId = $(this).data('review-id');
+            openLikeModal(reviewId);
+        });
+    }
+
+    function openLikeModal(reviewId) {
+        let page = 0;
+        const size = 10;
+        const userList = document.getElementById('likeUserList');
+        userList.innerHTML = '';
+
+        loadLikes();
+
+        function loadLikes() {
+            fetch(`/api/review/${reviewId}/likes?page=${page}&size=${size}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.content.forEach(user => {
+                        userList.innerHTML += `
+                            <li>
+                                <a href="/info/${user.email}">
+                                    <img src="${user.picture}" alt="${user.nickname}">
+                                </a>
+                                <span>${user.nickname}</span>
+                            </li>
+                        `;
+                    });
+                    page++;
+                    if (data.last) {
+                        userList.removeEventListener('scroll', handleScroll);
+                    }
+                });
+        }
+        function handleScroll() {
+            if (userList.scrollTop + userList.clientHeight >= userList.scrollHeight - 5) {
+                loadLikes();
+            }
+        }
+
+        userList.addEventListener('scroll', handleScroll);
+        document.getElementById('likeModal').style.display = 'block';
+    }
+
+
+    $(document).on('click', '.close', function() {
+        $('#likeModal').hide();
+    });
+
+    $(document).on('click', function(event) {
+        if ($(event.target).is('#likeModal')) {
+            $('#likeModal').hide();
+        }
+    });
+
+    $(window).on('scroll', function() {
+        if($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
             loadMoreReviews();
         }
     });
+
 
     function navigateToMovieDetails(movieId) {
        window.location.href = '/contents/' + movieId;
@@ -204,6 +392,13 @@
         window.location.href = '/info/' + email;
     }
 
+    // 초기 리뷰에 대해 이벤트 연결
+    $(document).ready(function() {
+        $('.review-card').each(function() {
+            attachLikeEvents(this);
+            attachLikeCountEvents(this);
+        });
+    });
 
 </script>
 </body>
