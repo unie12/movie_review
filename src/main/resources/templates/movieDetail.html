@@ -131,8 +131,10 @@
                     <div class="movie-grid">
                         <div th:each="movie : ${movieDTO.basicInfo.recommendMovies}" class="movie-card">
                             <a th:href="@{'/contents/' + ${movie.id}}">
-                                <img th:src="@{'https://image.tmdb.org/t/p/w200' + ${movie.poster_path}}" alt="Movie Poster" class="movie-poster">
-                                <h4 th:text="${movie.title}"></h4>
+                                <div class="poster-container">
+                                    <img th:src="@{'https://image.tmdb.org/t/p/w200' + ${movie.poster_path}}" alt="Movie Poster" class="movie-poster">
+                                </div>
+                                <h4 th:text="${movie.title}" class="movie-title"></h4>
                             </a>
                         </div>
                     </div>

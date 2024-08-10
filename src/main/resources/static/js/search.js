@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const query = this.value;
             const searchType = searchTypeSelect.value;
             if (query.length >= 2) { // 두글자 이상부터 검색 시작
-                console.log('query: ', query);
                 fetchSuggestions(query, searchType);
             } else {
                 searchSuggestions.innerHTML = '';
@@ -24,7 +23,6 @@ function fetchSuggestions(query, searchType) {
     fetch(`api/search/suggestions?query=${encodeURIComponent(query)}&searchType=${searchType}`)
         .then(response => response.json())
         .then(data => {
-            console.log('data: ', data);
             displaySuggestions(data);
         })
         .catch(error => console.error('Error:', error));

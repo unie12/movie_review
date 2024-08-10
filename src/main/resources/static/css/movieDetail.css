@@ -180,23 +180,63 @@
 }
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
     margin-bottom: 20px;
 }
 
 .movie-card {
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 20px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 250px; /* 고정 높이 설정 */
-    overflow: hidden; /* 내용이 넘치면 숨김 */
+    aspect-ratio: 2 / 3; /* 포스터의 일반적인 비율 */
+}
+
+.poster-container {
+    width: 100%;
+    height: 0;
+    padding-top: 150%; /* 2:3 비율 유지 */
+    position: relative;
+    overflow: hidden;
 }
 
 .movie-poster {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.movie-title {
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 미디어 쿼리 */
+@media screen and (max-width: 1200px) {
+    .movie-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .movie-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .movie-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    }
 }
 
 #reviewDisplayText {
