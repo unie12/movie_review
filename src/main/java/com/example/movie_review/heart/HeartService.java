@@ -1,10 +1,12 @@
 package com.example.movie_review.heart;
 
 import com.example.movie_review.review.Review;
+import com.example.movie_review.review.event.ReviewEvent;
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,15 +16,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class HeartService {
-
     private final HeartRepository heartRepository;
+
     private final UserService userService;
     private final ReviewService reviewService;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     public boolean toggleHeart(String email, Long reviewId, boolean isHeart) {
         User user = userService.getUserByEmail(email);
         Review review = reviewService.getReviewById(reviewId);
-//        review.updateHeartCount();
 
         Optional<Heart> existingHeart = heartRepository.findByUserAndReview(user, review);
 
@@ -33,6 +36,7 @@ public class HeartService {
             heart.setReview(review);
             heartRepository.save(heart);
             reviewService.saveReview(review);
+            eventPublisher.publishEvent(new ReviewEvent(this, review, ReviewEvent.ReviewEventType.HEART));
             return true;
 
         }
@@ -41,8 +45,10 @@ public class HeartService {
 //            review.decrementHeartCnt();
             heartRepository.delete(existingHeart.get());
             reviewService.saveReview(review);
+            eventPublisher.publishEvent(new ReviewEvent(this, review, ReviewEvent.ReviewEventType.HEART));
             return false;
         }
+
         return existingHeart.isPresent();
     }
 

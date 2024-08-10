@@ -261,7 +261,8 @@
 
         const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
         const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
-        const isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
+        const isActive = review.likedByCurrentUser ? 'active' : '';
+        console.log('isActive: ', isActive);
 
         reviewElement.innerHTML = `
             <div class="review-header">
@@ -295,6 +296,7 @@
         return reviewElement;
     }
 
+
     function attachLikeEvents(element) {
         $(element).find('.like-button').on('click', function() {
             var reviewId = $(this).data('review-id');
@@ -306,6 +308,7 @@
                 contentType: 'application/json',
                 data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active')}),
                 success: function(response) {
+
                     if (response.heart) {
                         $button.addClass('active');
                     } else {

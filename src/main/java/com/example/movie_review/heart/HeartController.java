@@ -20,7 +20,6 @@ public class HeartController {
     private final HeartService heartService;
     private final ReviewService reviewService;
 
-    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 해당 리뷰에 좋아요 추가 및 삭제
@@ -35,7 +34,6 @@ public class HeartController {
             boolean isHeart = heartService.toggleHeart(email, request.getReviewId(), request.isHeart());
             int updateHeartCount = reviewService.getReviewById(request.getReviewId()).getHeartCount();
 
-            eventPublisher.publishEvent(new ReviewEvent(this, reviewService.getReviewById(request.getReviewId()), ReviewEvent.ReviewEventType.HEART));
             return ResponseEntity.ok(new HeartResponse("Heart toggled successfully", isHeart, updateHeartCount));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new HeartResponse(e.getMessage(), false, reviewService.getReviewById(request.getReviewId()).getHeartCount()));

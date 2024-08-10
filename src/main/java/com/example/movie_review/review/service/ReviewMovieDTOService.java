@@ -66,6 +66,7 @@ public class ReviewMovieDTOService {
 
     @EventListener
     public void handleReviewEvent(ReviewEvent event) {
+        System.out.println("event.getEventType() = " + event.getEventType());
         switch (event.getEventType()) {
             case CREATED:
                 createRecentReviewCache(event.getReview());
@@ -198,6 +199,7 @@ public class ReviewMovieDTOService {
      */
     public void updateSingleReviewInList(Review updateReview) {
         ReviewMovieDTO newReviewDTO = getReviewMovieDTO(updateReview);
+        System.out.println("newReviewDTO = " + newReviewDTO);
 
         // popular cache 업데이트
         Optional<ReviewMovieDTO> existingPopularReviewOpt = cachedPopularReviews.stream()
@@ -210,7 +212,6 @@ public class ReviewMovieDTOService {
         }
 
         // recent cache 업데이트
-        newReviewDTO = getReviewMovieDTO(updateReview);
         Optional<ReviewMovieDTO> existingRecentReviewOpt = cachedRecentReviews.stream()
                 .filter(r -> r.getReviewDTO().getReview().getId().equals(updateReview.getId()))
                 .findFirst();
@@ -252,6 +253,7 @@ public class ReviewMovieDTOService {
                 .collect(Collectors.toList());
     }
 
+    // 현재 사용자를 기준으로 해당 review user와 비교해야지
     public ReviewMovieDTO getReviewMovieDTO(Review review) {
         User user = review.getUser();
         DbMovies dbMovie = review.getDbMovies();
