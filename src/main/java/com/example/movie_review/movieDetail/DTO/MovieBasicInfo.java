@@ -30,6 +30,7 @@ public class MovieBasicInfo {
     private Long tmdb_ratingCnt;
 
     private String watchProvider;
+    private String youtubeLink;
 
     private List<MovieCommonDTO> recommendMovies;
 

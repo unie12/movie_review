@@ -36,7 +36,7 @@ public class CacheConfig {
         return Caffeine.newBuilder()
                 .initialCapacity(100) // 초기 용량 100개 항목
                 .maximumSize(1000) // 최대 500개 항목 저장
-                .expireAfterWrite(23, TimeUnit.HOURS) // 작성 후 1시간 후 만료
+                .expireAfterWrite(23, TimeUnit.HOURS) // 작성 후 23시간 후 만료
                 .recordStats(); // 캐시 통계 기록
     }
 }

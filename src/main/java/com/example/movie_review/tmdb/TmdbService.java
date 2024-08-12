@@ -16,6 +16,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -253,7 +255,6 @@ public class TmdbService {
         }
     }
 
-
     /**
      * 해당 movieId의 영화 상세정보 가져오기
      */
@@ -292,6 +293,10 @@ public class TmdbService {
     }
 
 //    @Cacheable(value = "movieProvider", key = "#movieTId")
+
+    /**
+     * movieProvider 링크 제공
+     */
     public Mono<String> getMovieProvider(Long movieTId) {
         return webClient.get()
                 .uri("/movie/{movieId}/watch/providers?api_key={api_key}", movieTId, apikey)
@@ -299,11 +304,52 @@ public class TmdbService {
                 .bodyToMono(String.class);
     }
 
+    /**
+     * 해당 영화와 관련 있는 영화 추천 tmdb api
+     */
     public Mono<String> getMovieRecommendation(Long movieTId) {
         return webClient.get()
                 .uri("/movie/{movieId}/recommendations?api_key={api_key}&language=ko-KR", movieTId, apikey)
                 .retrieve()
                 .bodyToMono(String.class);
+    }
+
+    public Mono<String> getYoutubeLink(Long movieTId) {
+        return webClient.get()
+                .uri("/movie/{movieId}/videos?api_key={api_key}&language=ko-KR", movieTId, apikey)
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(this::extractLatestTrailerKey);
+    }
+
+    private String extractLatestTrailerKey(String response) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response);
+            JsonNode resultNode = rootNode.path("results");
+
+            String latestTrailerKey = null;
+            LocalDateTime latestDate = LocalDateTime.MIN;
+
+            for (JsonNode result : resultNode) {
+                String type = result.path("type").asText();
+                String publishedAt = result.path("published_at").asText();
+                String key = result.path("key").asText();
+
+                if ("Trailer".equalsIgnoreCase(type)) {
+                    LocalDateTime publishedDate = LocalDateTime.parse(publishedAt, DateTimeFormatter.ISO_DATE_TIME);
+                    if (publishedDate.isAfter(latestDate)) {
+                        latestDate = publishedDate;
+                        latestTrailerKey = key;
+                    }
+                }
+            }
+
+            return latestTrailerKey;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

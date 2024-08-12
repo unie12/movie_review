@@ -32,11 +32,12 @@ public class MovieBasicService {
 
     @Cacheable(value = "movieBasicInfo", key = "#movieTId")
     public MovieBasicInfo getMovieBasicInfo(Long movieTId) throws JsonProcessingException {
-        log.info("Cache miss for movieTId: {}", movieTId);
         DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
         MovieDetails movieDetails = dbMovie.getMovieDetails();
         List<Crew> directors = dbMovieService.getDirectors(movieDetails);
         String movieProvider = tmdbService.getMovieProvider(movieTId).block();
+        String youtubeKey = tmdbService.getYoutubeLink(movieTId).block();
+        String youtubeLink = youtubeKey != null ? "https://www.youtube.com/watch?v=" + youtubeKey : null;
         String url = null;
 
         try {
@@ -72,6 +73,7 @@ public class MovieBasicService {
                 .tmdb_ratingAvg(movieDetails.getVote_average())
                 .tmdb_ratingCnt(movieDetails.getVote_count())
                 .recommendMovies(recommendedMovies)
+                .youtubeLink(youtubeLink)
                 .build();
     }
 

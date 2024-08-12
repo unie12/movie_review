@@ -29,6 +29,9 @@
             <!-- 바로가기 버튼 -->
             <a th:href="${movieDTO.basicInfo.watchProvider}" class="btn btn-info" role="button" target="_blank" rel="noopener noreferrer">영화 바로가기</a>
 
+            <!-- 유튜브 예고편 링크 버튼 -->
+            <a th:href="${movieDTO.basicInfo.youtubeLink}" class="btn btn-info" role="button" target="_blank" rel="noopener noreferrer">유튜브 예고편 바로가기</a>
+
             <!-- 찜 기능 -->
             <button id="favoriteButton" th:attr="data-movie-id=${movieDTO.basicInfo.id}" th:class="${movieDTO.isFavorite} ? 'favorite active' : 'favorite'">
                 <i class="fas fa-heart"></i>
