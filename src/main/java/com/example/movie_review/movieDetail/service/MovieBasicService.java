@@ -36,10 +36,19 @@ public class MovieBasicService {
         MovieDetails movieDetails = dbMovie.getMovieDetails();
         List<Crew> directors = dbMovieService.getDirectors(movieDetails);
         String movieProvider = tmdbService.getMovieProvider(movieTId).block();
-        String youtubeKey = tmdbService.getYoutubeLink(movieTId).block();
-        String youtubeLink = youtubeKey != null ? "https://www.youtube.com/watch?v=" + youtubeKey : null;
-        String url = null;
 
+        // youtubeKey를 가져올 때 예외 처리
+        String youtubeKey = null;
+        String youtubeLink = null;
+        try {
+            youtubeKey = tmdbService.getYoutubeLink(movieTId).block();
+            youtubeLink = youtubeKey != null ? "https://www.youtube.com/watch?v=" + youtubeKey : null;
+        } catch (Exception e) {
+            // 로그 출력 (선택사항)
+            log.warn("Failed to fetch YouTube key for movie ID: " + movieTId, e);
+        }
+
+        String url = null;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(movieProvider);
