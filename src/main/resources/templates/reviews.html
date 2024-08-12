@@ -175,6 +175,7 @@
                 <div class="user-info">
                     <h5 th:text="${review.reviewDTO.user.nickname}"></h5>
                     <span class="user-rating" th:text="'평점: ' + ${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span>
+                    <span class="upload-date" th:attr="data-upload-date=${review.reviewDate}"></span>
                 </div>
             </div>
             <div class="review-divider"></div>
@@ -277,6 +278,7 @@
                 <div class="user-info">
                     <h5>${review.reviewDTO.user.nickname}</h5>
                     <span class="user-rating">평점: ${rating}</span>
+                    <span class="upload-date" data-upload-date="${review.reviewDate}"></span>
                 </div>
             </div>
             <div class="review-divider"></div>
@@ -296,6 +298,9 @@
                 <i class="fas fa-heart"></i> 좋아요
             </button>
         `;
+
+        const uploadDateElement = reviewElement.querySelector('.upload-date');
+        uploadDateElement.textContent = formatRelativeTime(review.reviewDate);
 
         return reviewElement;
     }
@@ -372,6 +377,36 @@
         userList.addEventListener('scroll', handleScroll);
         document.getElementById('likeModal').style.display = 'block';
     }
+
+    function formatRelativeTime(dateString) {
+        const now = new Date();
+        const uploadDate = new Date(dateString);
+        const diffInMilliseconds = now - uploadDate;
+        const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        const diffInDays = Math.floor(diffInHours / 24);
+
+        if (diffInMinutes < 60) {
+            return `${diffInMinutes}분 전`;
+        } else if (diffInHours < 24) {
+            return `${diffInHours}시간 전`;
+        } else {
+            return `${diffInDays}일 전`;
+        }
+    }
+
+    function updateRelativeTimes() {
+        const uploadDates = document.querySelectorAll('.upload-date');
+        uploadDates.forEach(element => {
+            const dateString = element.getAttribute('data-upload-date');
+            element.textContent = formatRelativeTime(dateString);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', updateRelativeTimes);
+    setInterval(updateRelativeTimes, 60000);
+
+
 
 
     $(document).on('click', '.close', function() {
