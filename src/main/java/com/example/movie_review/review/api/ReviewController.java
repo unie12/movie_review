@@ -6,7 +6,9 @@ import com.example.movie_review.review.DTO.ReviewMovieDTO;
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.review.service.ReviewMovieDTOService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
+import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserDTOService;
+import com.example.movie_review.user.service.UserService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,6 +34,7 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ReviewMovieDTOService reviewMovieDTOService;
     private final UserDTOService userDTOService;
+    private final UserService userService;
 
     /**
      * 해당 유저의 해당 영화에 대한 리뷰 보여주기
@@ -136,11 +139,13 @@ public class ReviewController {
     public Page<ReviewMovieDTO> getReviews(
             @RequestParam(defaultValue = "popular") String filter,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            Authentication auth) {
+        User userByEmail = userService.getUserByEmail(auth.getName());
         if ("recently".equals(filter)) {
-            return reviewMovieDTOService.getRecentReviews(PageRequest.of(page, size));
+            return reviewMovieDTOService.getRecentReviews(PageRequest.of(page, size), userByEmail);
         } else {
-            return reviewMovieDTOService.getPopularReviews(PageRequest.of(page, size));
+            return reviewMovieDTOService.getPopularReviews(PageRequest.of(page, size), userByEmail);
         }
 //        return reviewService.getReviews(filter, PageRequest.of(page, size));
     }

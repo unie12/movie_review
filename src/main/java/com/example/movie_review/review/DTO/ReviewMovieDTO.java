@@ -10,16 +10,13 @@ import java.util.Objects;
 @Data
 @Builder
 public class ReviewMovieDTO{
-
     private MovieCommonDTO movieCommonDTO;
     private ReviewDTO reviewDTO;
 
-    private boolean isLikedByCurrentUser;
     private String original_title;
-
     private LocalDateTime reviewDate;
-    private int heartCnt;
     private LocalDateTime heartDate;
+    private int heartCnt;
 
     private String filter;
 

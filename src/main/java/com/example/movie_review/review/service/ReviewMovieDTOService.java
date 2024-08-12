@@ -85,20 +85,20 @@ public class ReviewMovieDTOService {
     /**
      * recent 캐시 리뷰에서 페이지네이션 적용해서 반환
      */
-    public Page<ReviewMovieDTO> getRecentReviews(Pageable pageable) {
+    public Page<ReviewMovieDTO> getRecentReviews(Pageable pageable, User currentUser) {
         checkCacheExist();
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), cachedRecentReviews.size());
         List<ReviewMovieDTO> pageContent = cachedRecentReviews.subList(start, end);
 
-        return new PageImpl<>(pageContent, pageable, cachedRecentReviews.size());
+        return new PageImpl<>(addUserSpecialInfo(pageContent, currentUser), pageable, cachedRecentReviews.size());
     }
 
     /**
      * popular 캐시 리뷰에서 페이지네이션 적용해서 반환
      */
-    public Page<ReviewMovieDTO> getPopularReviews(Pageable pageable) {
+    public Page<ReviewMovieDTO> getPopularReviews(Pageable pageable, User currentUser) {
         checkCacheExist();
 
         // 페이지네이션 적용
@@ -106,7 +106,19 @@ public class ReviewMovieDTOService {
         int end = Math.min((start + pageable.getPageSize()), cachedPopularReviews.size());
         List<ReviewMovieDTO> pageContent = cachedPopularReviews.subList(start, end);
 
-        return new PageImpl<>(pageContent, pageable, cachedPopularReviews.size());
+        return new PageImpl<>(addUserSpecialInfo(pageContent, currentUser), pageable, cachedPopularReviews.size());
+    }
+
+    public List<ReviewMovieDTO> addUserSpecialInfo(List<ReviewMovieDTO> reviews, User currentUser) {
+        return reviews.stream()
+                .map(review -> {
+                    boolean isLikedByCurrentUser = reviewservice.isLikedByCurrentUser(reviewservice.getReviewById(review.getReviewDTO().getReview().getId()), currentUser.getEmail());
+                    ReviewDTO reviewDTO = review.getReviewDTO();
+                    reviewDTO.setLikedByCurrentUser(isLikedByCurrentUser);
+                    review.setReviewDTO(reviewDTO);
+                    return review;
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -261,14 +273,14 @@ public class ReviewMovieDTOService {
 
         MovieCommonDTO movieCommonDTO = movieCommonDTOService.getMovieCommonDTO(dbMovie, movieDetails);
 
-        boolean isLikedByCurrentUser = reviewservice.isLikedByCurrentUser(review, user.getEmail());
-        ReviewDTO reviewDTO = reviewDTOService.createReviewDTO(review, user.getEmail(), isLikedByCurrentUser);
+//        boolean isLikedByCurrentUser = reviewservice.isLikedByCurrentUser(review, user.getEmail());
+        ReviewDTO reviewDTO = reviewDTOService.createReviewDTO(review, user.getEmail(), false); // 여기도 current user를
 
         return ReviewMovieDTO.builder()
                 .movieCommonDTO(movieCommonDTO)
                 .reviewDTO(reviewDTO)
-                .isLikedByCurrentUser(review.getHearts().stream()
-                        .anyMatch(heart -> heart.getUser().getEmail().equals(user.getEmail())))
+//                .isLikedByCurrentUser(review.getHearts().stream()
+//                        .anyMatch(heart -> heart.getUser().getEmail().equals(user.getEmail())))
                 .original_title(movieDetails.getOriginal_title())
                 .reviewDate(review.getUploadDate())
                 .heartCnt(review.getHeartCount())

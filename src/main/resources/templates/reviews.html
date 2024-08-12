@@ -192,7 +192,7 @@
             <div class="review-footer">
                 <a href="javascript:void(0)" class="like-count" th:attr="data-review-id=${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count" th:text="${review.heartCnt}"></span>
             </div>
-            <button class="btn btn-outline-primary like-button" th:classappend="${review.isLikedByCurrentUser ? 'active' : ''}" th:attr="data-review-id=${review.reviewDTO.review.id}">
+            <button class="btn btn-outline-primary like-button" th:classappend="${review.reviewDTO.isLikedByCurrentUser ? 'active' : ''}" th:attr="data-review-id=${review.reviewDTO.review.id}">
                 <i class="fas fa-heart"></i> 좋아요
             </button>
         </div>
@@ -261,7 +261,7 @@
 
         const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
         const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
-        const isActive = review.likedByCurrentUser ? 'active' : '';
+        const isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
         console.log('isActive: ', isActive);
 
         reviewElement.innerHTML = `
