@@ -148,18 +148,15 @@
         trendingMovies: "TMDB api를 통해 가져온 최근 급상승하고 있는 영화들입니다. 최근 평점과 리뷰의 증가율, 조회수 변화 등을 바탕으로 선정됩니다."
     };
 
-    $(document).ready(function() {
-        getRealTimeData();
-        setInterval(getRealTimeData, 60000); // 1분마다 갱신.. 이건 나중에 고려
-    });
-
     /*<![CDATA[*/
     var dBOM = /*[[${dBOM}]]*/ '[]';
     var wBOM = /*[[${wBOM}]]*/ '[]';
     var popularMovies = /*[[${popularMovies}]]*/ '[]';
     var trendingMovies = /*[[${trendingMovies}]]*/ '[]';
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+
+    function initializeInfoIcons() {
         const infoIcons = document.querySelectorAll('.info-icon');
 
         infoIcons.forEach(icon => {
@@ -180,17 +177,7 @@
                 tooltip.style.opacity = '0';
             });
         });
-
-        initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
-        loadHomeReviews();
-
-        document.getElementById('viewAllBtn').addEventListener('click', function() {
-            window.location.href = '/reviews?filter=popular';
-        });
-    });
-
-    document.getElementById('refreshReviewsBtn').addEventListener('click', refreshReviews);
-
+    }
 
     function loadHomeReviews() {
         fetch('/api/reviews/home-reviews')
@@ -261,96 +248,55 @@
             var popularMovies = JSON.parse(popularMoviesJson);
             var trendingMovies = JSON.parse(trendingMoviesJson);
 
-            // dBOM 조건문 수정
-            if (Array.isArray(dBOM) && dBOM.length > 0) {
-                createKobisMovieList(dBOM, 'dBOMList');
-            } else {
-                console.log('dBOM 조건문 통과 실패:', dBOM);
-            }
+            if (Array.isArray(dBOM) && dBOM.length > 0) { createMovieList(dBOM, 'dBOMList', 'kobis'); }
+            else { console.log('dBOM 조건문 통과 실패:', dBOM); }
 
-            // wBOM 조건문 수정
-            if (Array.isArray(wBOM) && wBOM.length > 0) {
-                createKobisMovieList(wBOM, 'wBOMList');
-            } else {
-                console.log('wBOM 조건문 통과 실패:', wBOM);
-            }
+            if (Array.isArray(wBOM) && wBOM.length > 0) { createMovieList(wBOM, 'wBOMList', 'kobis'); }
+            else { console.log('wBOM 조건문 통과 실패:', wBOM); }
 
-
-            if (popularMovies && popularMovies.results) { createTmdbMovieList(popularMovies.results, 'popularMovieList'); }
-            if (trendingMovies && trendingMovies.results) { createTmdbMovieList(trendingMovies.results, 'trendingMovieList'); }
+            if (popularMovies && popularMovies.results) { createMovieList(popularMovies.results, 'popularMovieList', 'tmdb'); }
+            if (trendingMovies && trendingMovies.results) { createMovieList(trendingMovies.results, 'trendingMovieList', 'tmdb'); }
         } catch (error) {
             console.error('Error initializing movie lists:', error);
         }
     }
 
-    function createKobisMovieList(movies, containerId) {
-        var movieListContainer = document.getElementById(containerId);
-
-        movies.forEach(function(movie) {
-            var li = document.createElement('li');
+    // 영화 리스트 생성 함수 통합
+    function createMovieList(movies, containerId, type) {
+        const movieListContainer = document.getElementById(containerId);
+        movies.forEach(movie => {
+            const li = document.createElement('li');
             li.classList.add('movie-item');
 
-            var img = document.createElement('img');
-            img.src = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
+            const img = document.createElement('img');
+            img.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
             img.alt = movie.title;
-            img.addEventListener('click', function() {
-                navigateToMovieDetails(movie.tmdbId);
-            });
+            img.addEventListener('click', () => navigateToMovieDetails(type === 'kobis' ? movie.tmdbId : movie.id));
 
-            var movieNm = document.createElement('p');
-            movieNm.textContent = movie.title;
-
-            var rank = document.createElement('h3');
-            rank.classList.add('rank');
-            rank.textContent = movie.rank;
-
-            var audiAcc = document.createElement('p');
-            var audiAccFormatted = formatNumber(movie.audiAcc);
-            audiAcc.innerHTML = '누적 관객<br>' + audiAccFormatted + '명';
+            const title = document.createElement('p');
+            title.textContent = movie.title;
 
             li.appendChild(img);
-            li.appendChild(movieNm);
-            li.appendChild(rank);
-            li.appendChild(audiAcc);
+            li.appendChild(title);
+
+            if (type === 'kobis') {
+                const rank = document.createElement('h3');
+                rank.classList.add('rank');
+                rank.textContent = movie.rank;
+
+                const audiAcc = document.createElement('p');
+                audiAcc.innerHTML = `누적 관객<br>${formatNumber(movie.audiAcc)}명`;
+
+                li.appendChild(rank);
+                li.appendChild(audiAcc);
+            }
+
             movieListContainer.appendChild(li);
         });
     }
 
     function formatNumber(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    }
-
-    function createTmdbMovieList(movies, containerId) {
-        var movieListContainer = document.getElementById(containerId);
-
-        movies.forEach(function(movie) {
-            var li = document.createElement('li');
-            li.classList.add('movie-item');
-
-            var h3 = document.createElement('p');
-            h3.textContent = movie.title;
-
-            var img = document.createElement('img');
-            img.src = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
-            img.alt = movie.title;
-            img.addEventListener('click', function() {
-                navigateToMovieDetails(movie.id);
-            });
-
-            var infoDiv = document.createElement('div');
-            infoDiv.classList.add('movie-info');
-            infoDiv.addEventListener('click', function() {
-                toggleMovieInfo(infoDiv);
-            });
-
-            li.appendChild(img);
-            li.appendChild(h3);
-            movieListContainer.appendChild(li);
-        });
-    }
-
-    function navigateToMovieDetails(movieId) {
-        window.location.href = '/contents/' + movieId;
     }
 
     function scrollContainer(containerId, direction) {
@@ -360,10 +306,6 @@
             left: direction * scrollAmount,
             behavior: 'smooth'
         });
-    }
-
-    function goToReview(reviewId, filter) {
-        window.location.href = `/reviews?filter=${filter}&highlight=${reviewId}#review-${reviewId}`;
     }
 
     function getRealTimeData() {
@@ -376,6 +318,24 @@
                 $('#totalReviews').text(data.totalReviews);
             }
         });
+    }
+
+    function initializeApp() {
+        getRealTimeData();
+        setInterval(getRealTimeData, 60000);
+        initializeInfoIcons();
+        initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
+        loadHomeReviews();
+        document.getElementById('viewAllBtn').addEventListener('click', () => window.location.href = '/reviews?filter=popular');
+        document.getElementById('refreshReviewsBtn').addEventListener('click', refreshReviews);
+    }
+
+    function goToReview(reviewId, filter) {
+        window.location.href = `/reviews?filter=${filter}&highlight=${reviewId}#review-${reviewId}`;
+    }
+
+    function navigateToMovieDetails(movieId) {
+        window.location.href = '/contents/' + movieId;
     }
 
 </script>
