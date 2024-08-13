@@ -28,7 +28,7 @@ window.activityHandlers.review = {
     createReviewElement: function(review) {
         var element = $('<div>').addClass('review-card');
         var scoreText = review.reviewDTO.userRating !== null ? review.reviewDTO.userRating : '미정';
-        var likedClass = review.likedByCurrentUser ? 'active' : '';
+        var likedClass = review.reviewDTO.likedByCurrentUser ? 'active' : '';
 
         var ajouRatingAvg = review.movieCommonDTO.ajou_rating;
         var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
@@ -49,7 +49,7 @@ window.activityHandlers.review = {
                     <span class="user-nickname">${review.reviewDTO.user.nickname}</span>
                     <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
                     <span class="user-heart like-button ${likedClass}" data-review-id="${review.reviewDTO.review.id}"
-                          data-liked="${review.likedByCurrentUser}">
+                          data-liked="${review.reviewDTO.likedByCurrentUser}">
                         좋아요: <span class="heart-value like-count">${review.reviewDTO.heartCnt}</span>
                     </span>
                 </div>
@@ -62,7 +62,10 @@ window.activityHandlers.review = {
 }
 
 function setupLikeButtons() {
-    $('.like-button').click(function() {
+//    $('.like-button').click(function() {
+    $('#activity-list').off('click', '.like-button').on('click', '.like-button', function() {
+        console.log('Like button clicked', new Date().toISOString());
+
         var reviewId = $(this).data('review-id');
         var $button = $(this);
         var isLiked = $button.hasClass('active');

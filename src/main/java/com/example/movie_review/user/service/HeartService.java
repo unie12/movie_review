@@ -38,6 +38,7 @@ public class HeartService extends AbstractUserActivityService {
                 .collect(Collectors.toList());
 
         List<ReviewMovieDTO> reviewMovieDTOS = reviewMovieDTOService.getReviewMovieDTOs(likedReviews, userEmail);
+        reviewMovieDTOS = reviewMovieDTOService.addUserSpecialInfo(reviewMovieDTOS, user);
 
         int start = page * size;
         int end = Math.min(start + size, reviewMovieDTOS.size());

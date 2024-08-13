@@ -29,6 +29,14 @@
         <p th:text="${emptyMessage}">활동이 없습니다.</p>
     </div>
 
+    <div id="likeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>좋아요를 누른 사용자</h2>
+            <ul id="likeUserList" class="user-list"></ul>
+        </div>
+    </div>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

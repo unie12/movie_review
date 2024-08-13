@@ -26,7 +26,6 @@ public class HeartService {
     public boolean toggleHeart(String email, Long reviewId, boolean isHeart) {
         User user = userService.getUserByEmail(email);
         Review review = reviewService.getReviewById(reviewId);
-
         Optional<Heart> existingHeart = heartRepository.findByUserAndReview(user, review);
 
         // 좋아요 안눌린 상태

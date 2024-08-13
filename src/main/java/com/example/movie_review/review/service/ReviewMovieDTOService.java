@@ -66,7 +66,8 @@ public class ReviewMovieDTOService {
 
     @EventListener
     public void handleReviewEvent(ReviewEvent event) {
-        System.out.println("event.getEventType() = " + event.getEventType());
+        checkCacheExist();
+
         switch (event.getEventType()) {
             case CREATED:
                 createRecentReviewCache(event.getReview());
@@ -158,13 +159,13 @@ public class ReviewMovieDTOService {
         }
     }
 
-    public void updatePopularReviewCache(Review review) {
-        ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
-        cachedPopularReviews.add(0, newReviewDTO);
-        if (cachedPopularReviews.size() > 1000) {
-            cachedPopularReviews.remove(cachedPopularReviews.size()-1);
-        }
-    }
+//    public void updatePopularReviewCache(Review review) {
+//        ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
+//        cachedPopularReviews.add(0, newReviewDTO);
+//        if (cachedPopularReviews.size() > 1000) {
+//            cachedPopularReviews.remove(cachedPopularReviews.size()-1);
+//        }
+//    }
 
     /**
      * 리뷰 수정이 이루어진 경우 recent 리뷰를 앞에 땡겨오기
@@ -190,7 +191,6 @@ public class ReviewMovieDTOService {
      */
     public void createRecentReviewCache(Review review) {
         ReviewMovieDTO newReviewDTO = getReviewMovieDTO(review);
-
         cachedRecentReviews.add(0, newReviewDTO);
         if (cachedRecentReviews.size() > 1000) {
             cachedRecentReviews.remove(cachedRecentReviews.size()-1);
