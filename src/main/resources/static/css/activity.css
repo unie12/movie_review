@@ -46,7 +46,12 @@
     border-radius: 8px;
     overflow: hidden;
     display: flex;
+    flex-direction: column;
     height: 100%;
+}
+.review-header {
+    display: flex;
+    padding: 15px;
 }
 .poster-container {
     width: 150px;
@@ -66,15 +71,22 @@
 }
 .review-content {
     flex: 1;
-    padding: 15px;
     display: flex;
     flex-direction: column;
 }
 .user-info {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin-bottom: 10px;
-    flex-wrap: wrap;
+}
+.user-details {
+    display: flex;
+    align-items: center;
+}
+.upload-date {
+    color: #777;
+    font-size: 0.9em;
 }
 .user-picture {
     width: 30px;
@@ -86,16 +98,6 @@
 .user-nickname {
     font-weight: bold;
     margin-right: 10px;
-    flex-grow: 1;
-    margin-bottom: 5px;
-}
-.user-rating, .user-heart {
-    display: inline-block;
-    padding: 2px 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-right: 10px;
-    font-size: 0.9em;
 }
 .rating-value, .heart-value {
     font-weight: bold;
@@ -106,7 +108,12 @@
 }
 .user-rating {
     color: #f39c12;
-    border-color: #f39c12;
+    border: 1px solid #f39c12;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.9em;
+    margin-left: auto;
+
 }
 .user-heart {
     color: #e74c3c;
@@ -123,11 +130,26 @@
     font-size: 0.9em;
     line-height: 1.6;
     overflow-y: auto;
-    margin-top: 10px;
 }
+
+.review-footer {
+    border-top: 1px solid #ddd;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.like-container {
+    display: flex;
+    align-items: center;
+}
+
 .like-button {
-    cursor: pointer;
-    user-select: none;
+    margin-right: 10px;
+}
+
+.heart-count {
+    font-weight: bold;
 }
 .like-button.active {
     background-color: #e74c3c;
@@ -185,4 +207,19 @@
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+.user-list {
+    list-style-type: none;
+    padding: 0;
+}
+.user-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.user-list img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
 }

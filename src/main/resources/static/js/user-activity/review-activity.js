@@ -1,8 +1,6 @@
 window.activityHandlers = window.activityHandlers || {};
 window.activityHandlers.review = {
     updateActivityList: function(response, append) {
-    console.log('review response: ', response);
-
         var container = $('#activity-list');
         if (!append) {
             container.empty();
@@ -16,9 +14,11 @@ window.activityHandlers.review = {
             reviews.forEach((review) => {
                 var element = this.createReviewElement(review);
                 container.append(element);
+                attachLikeEvents(element);
+                attachLikeCountEvents(element);
             });
 
-            setupLikeButtons();
+
         } else if(!append){
             $('#activity-container').hide();
             $('#empty-message').show();
@@ -34,29 +34,41 @@ window.activityHandlers.review = {
         var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
         var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
         var reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
+        var isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
 
         element.html(`
-            <div class="poster-container">
-                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
-                     alt="${review.movieCommonDTO.title}"
-                     onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
-                <p class="movie-title">${review.movieCommonDTO.title}</p>
-                <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
-            </div>
-            <div class="review-content">
-                <div class="user-info">
-                    <img src="${review.reviewDTO.user.picture}" alt="User Picture" class="user-picture">
-                    <span class="user-nickname">${review.reviewDTO.user.nickname}</span>
-                    <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
-                    <span class="user-heart like-button ${likedClass}" data-review-id="${review.reviewDTO.review.id}"
-                          data-liked="${review.reviewDTO.likedByCurrentUser}">
-                        좋아요: <span class="heart-value like-count">${review.reviewDTO.heartCnt}</span>
-                    </span>
+            <div class="review-header">
+                <div class="poster-container">
+                    <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
+                         alt="${review.movieCommonDTO.title}"
+                         onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
+                    <p class="movie-title">${review.movieCommonDTO.title}</p>
                 </div>
-                <p class="review-text">${reviewTextWithBreaks}</p>
+                <div class="review-content">
+                    <div class="user-info">
+                        <div class="user-details">
+                            <img src="${review.reviewDTO.user.picture}" alt="User Picture" class="user-picture">
+                            <span class="user-nickname">${review.reviewDTO.user.nickname}</span>
+                            <span class="upload-date" data-upload-date=${review.reviewDate}></span>
+                        </div>
+                        <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
+                    </div>
+                    <p class="review-text">${reviewTextWithBreaks}</p>
+                </div>
+            </div>
+            <div class="review-footer">
+                <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
+                <div class="like-container">
+                    <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.reviewDTO.review.id}">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <a href="#" class="like-count" data-review-id="${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count">${review.reviewDTO.heartCnt}</span>
+                </div>
             </div>
         `);
 
+        var uploadDateElement = element.find('.upload-date')[0];
+        uploadDateElement.textContent = formatRelativeTime(review.reviewDate);
         return element;
     }
 }
@@ -85,3 +97,105 @@ function setupLikeButtons() {
         });
     });
 }
+
+function attachLikeEvents(element) {
+    $(element).find('.like-button').on('click', function() {
+        var reviewId = $(this).data('review-id');
+        var $button = $(this);
+
+        $.ajax({
+            url: '/api/review/heart/' + reviewId,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active')}),
+            success: function(response) {
+
+                if (response.heart) {
+                    $button.addClass('active');
+                } else {
+                    $button.removeClass('active');
+                }
+                $button.closest('.review-card').find('.heart-count').text(response.updateHeartCnt);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+}
+
+function attachLikeCountEvents(element) {
+    $(element).find('.like-count').on('click', function(e) {
+        e.preventDefault();
+        var reviewId = $(this).data('review-id');
+        openLikeModal(reviewId);
+    });
+}
+
+function openLikeModal(reviewId) {
+    let page = 0;
+    const size = 10;
+    const userList = document.getElementById('likeUserList');
+    userList.innerHTML = '';
+
+    loadLikes();
+
+    function loadLikes() {
+        fetch(`/api/review/${reviewId}/likes?page=${page}&size=${size}`)
+            .then(response => response.json())
+            .then(data => {
+                data.content.forEach(user => {
+                    userList.innerHTML += `
+                        <li>
+                            <a href="/info/${user.email}">
+                                <img src="${user.picture}" alt="${user.nickname}" class="user-picture">
+                            </a>
+                            <span>${user.nickname}</span>
+                        </li>
+                    `;
+                });
+                page++;
+                if (data.last) {
+                    userList.removeEventListener('scroll', handleScroll);
+                }
+            });
+    }
+    function handleScroll() {
+        if (userList.scrollTop + userList.clientHeight >= userList.scrollHeight - 5) {
+            loadLikes();
+        }
+    }
+
+    userList.addEventListener('scroll', handleScroll);
+    document.getElementById('likeModal').style.display = 'block';
+}
+
+function formatRelativeTime(dateString) {
+    const now = new Date();
+    const uploadDate = new Date(dateString);
+    const diffInMilliseconds = now - uploadDate;
+    const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInMinutes < 60) {
+        return `${diffInMinutes}분 전`;
+    } else if (diffInHours < 24) {
+        return `${diffInHours}시간 전`;
+    } else {
+        return `${diffInDays}일 전`;
+    }
+}
+
+function updateRelativeTimes() {
+    var uploadDates = document.querySelectorAll('.upload-date');
+
+    uploadDates.forEach(element => {
+        const dateString = element.getAttribute('data-upload-date');
+        element.textContent = formatRelativeTime(dateString);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', updateRelativeTimes);
+setInterval(updateRelativeTimes, 60000);
+

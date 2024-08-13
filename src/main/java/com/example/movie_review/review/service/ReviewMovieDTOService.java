@@ -211,7 +211,6 @@ public class ReviewMovieDTOService {
      */
     public void updateSingleReviewInList(Review updateReview) {
         ReviewMovieDTO newReviewDTO = getReviewMovieDTO(updateReview);
-        System.out.println("newReviewDTO = " + newReviewDTO);
 
         // popular cache 업데이트
         Optional<ReviewMovieDTO> existingPopularReviewOpt = cachedPopularReviews.stream()

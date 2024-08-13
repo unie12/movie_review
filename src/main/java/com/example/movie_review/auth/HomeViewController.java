@@ -50,7 +50,6 @@ public class HomeViewController {
 //        movieCacheService.updateDailyMovieCache();
 //        movieCacheService.updateWeeklyMovieCache();
 //        userService.updateUserRoles();
-        System.out.println("home token = " + token);
 
         model.addAttribute("popularMovies", movieCacheService.getPopularMovies());
         model.addAttribute("trendingMovies", movieCacheService.getTrendingMovies());

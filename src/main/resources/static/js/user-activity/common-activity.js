@@ -127,3 +127,13 @@ $(document).ready(function() {
 
     updateScrollListener();
 });
+
+$(document).on('click', '.close', function() {
+    $('#likeModal').hide();
+});
+
+$(document).on('click', function(event) {
+    if ($(event.target).is('#likeModal')) {
+        $('#likeModal').hide();
+    }
+});
