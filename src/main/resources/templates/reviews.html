@@ -1,469 +1,495 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>전체 리뷰</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="/css/bodyHeader.css">
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>전체 리뷰</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <link rel="stylesheet" href="/css/bodyHeader.css">
 
-    <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .review-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .review-header {
-            display: flex;
-            padding: 5px;
-        }
-        .user-picture {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-        .user-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .user-details {
-            display: flex;
-            align-items: center;
-        }
-        .user-rating {
-            color: #f39c12;
-            border: 1px solid #f39c12;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-size: 0.9em;
-            margin-left: auto;
-        }
-        .user-rating, .user-heart {
-            display: inline-block;
-            padding: 2px 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
-            font-size: 0.9em;
-        }
-        .review-divider {
-            border-top: 1px solid #eee;
-            margin: 10px 0;
-        }
-        .review-content {
-            display: flex;
-        }
-        .movie-poster {
-            width: 150px;
-            height: 225px; /* 또는 적절한 고정 높이 */
-            object-fit: cover;
-            margin-right: 15px;
-            flex-shrink: 0; /* 포스터 크기는 유지 */
-        }
-        .review-text-content {
-            flex-grow: 1;
-        }
-        .review-text-content h4 {
-            margin-top: 0;
-        }
-        .review-footer {
-            margin-top: 10px;
-            text-align: right;
-            font-size: 0.9em;
-            color: #666;
-        }
-        .active {
-            font-weight: bold;
-            color: red;
-        }
-        .like-button {
-            cursor: pointer;
-        }
-        .like-button.active {
-            background-color: #007bff;
-            color: white;
-        }
-        .rating-value, .heart-value {
-            font-weight: bold;
-            background-color: #f0f0f0;
-            padding: 1px 5px;
-            border-radius: 3px;
-            margin-left: 5px;
-        }
-        .user-heart {
-            color: #e74c3c;
-            border-color: #e74c3c;
-        }
-        .rating-value {
-            background-color: #fdebd0;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .user-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .user-list li {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .user-list img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-        .user-nickname {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .upload-date {
-            color: #777;
-            font-size: 0.9em;
-        }
-    </style>
+        <style>
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .review-card {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                padding: 15px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .review-header {
+                display: flex;
+                padding: 5px;
+            }
+            .user-picture {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                margin-right: 10px;
+                object-fit: cover;
+            }
+            .user-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            .user-info {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+            .user-details {
+                display: flex;
+                align-items: center;
+            }
+            .user-rating {
+                color: #f39c12;
+                border: 1px solid #f39c12;
+                border-radius: 4px;
+                padding: 2px 8px;
+                font-size: 0.9em;
+                margin-left: auto;
+            }
+            .user-rating, .user-heart {
+                display: inline-block;
+                padding: 2px 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                margin-right: 10px;
+                font-size: 0.9em;
+            }
+            .review-divider {
+                border-top: 1px solid #eee;
+                margin: 10px 0;
+            }
+            .review-content {
+                display: flex;
+            }
+            .movie-poster {
+                width: 150px;
+                height: 225px; /* 또는 적절한 고정 높이 */
+                object-fit: cover;
+                margin-right: 15px;
+                flex-shrink: 0; /* 포스터 크기는 유지 */
+            }
+            .review-text-content {
+                flex-grow: 1;
+            }
+            .review-text-content h4 {
+                margin-top: 0;
+            }
+            .review-footer {
+                margin-top: 10px;
+                text-align: right;
+                font-size: 0.9em;
+                color: #666;
+            }
+            .active {
+                font-weight: bold;
+                color: red;
+            }
+            .like-button {
+                cursor: pointer;
+            }
+            .like-button.active {
+                background-color: #007bff;
+                color: white;
+            }
+            .rating-value, .heart-value {
+                font-weight: bold;
+                background-color: #f0f0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                margin-left: 5px;
+            }
+            .user-heart {
+                color: #e74c3c;
+                border-color: #e74c3c;
+            }
+            .rating-value {
+                background-color: #fdebd0;
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0,0,0,0.4);
+            }
+            .modal-content {
+                background-color: #fefefe;
+                margin: 15% auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 80%;
+                max-width: 500px;
+            }
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .user-list {
+                list-style-type: none;
+                padding: 0;
+            }
+            .user-list li {
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+            .user-list img {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                margin-right: 10px;
+            }
+            .user-nickname {
+                font-weight: bold;
+                margin-right: 10px;
+            }
+            .upload-date {
+                color: #777;
+                font-size: 0.9em;
+            }
+        </style>
 
-</head>
-<script th:src="@{'/js/search.js'}"></script>
+    </head>
+    <script th:src="@{'/js/search.js'}"></script>
 
-<body>
-<div class="container">
-    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <body>
+    <div class="container">
+        <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
-    <div>
-        <a th:href="@{/reviews(filter='popular')}" th:class="${currentFilter == 'popular' ? 'active' : ''}">인기순</a>
-        <a th:href="@{/reviews(filter='recently')}" th:class="${currentFilter == 'recently' ? 'active' : ''}">최신순</a>
-    </div>
+        <div>
+            <a th:href="@{/reviews(filter='popular')}" th:class="${currentFilter == 'popular' ? 'active' : ''}">인기순</a>
+            <a th:href="@{/reviews(filter='recently')}" th:class="${currentFilter == 'recently' ? 'active' : ''}">최신순</a>
+        </div>
 
-    <div id="reviewList">
-        <div th:each="review : ${reviews}" th:id="'review-' + ${review.reviewDTO.review.id}" class="review-card" th:classappend="${review.reviewDTO.review.id == highlightReviewId} ? 'highlighted' : ''">
-            <div class="review-header">
-                <a th:href="@{'/info/' + ${review.reviewDTO.user.email}}">
-                    <img th:src="${review.reviewDTO.user.picture}" th:alt="${review.reviewDTO.user.nickname}" class="user-picture">
-                </a>
-                <div class="user-content">
-                    <div class="user-info">
-                        <div class="user-details">
-                            <span class="user-nickname" th:text="${review.reviewDTO.user.nickname}"
-                                th:style="'color: ' + ${review.reviewDTO.user.role.color}"></span>
-                            <span class="upload-date" th:attr="data-upload-date=${review.reviewDate}"></span>
+        <div id="reviewList">
+            <div th:each="review : ${reviews}" th:id="'review-' + ${review.reviewDTO.review.id}" class="review-card" th:classappend="${review.reviewDTO.review.id == highlightReviewId} ? 'highlighted' : ''">
+                <div class="review-header">
+                    <a th:href="@{'/info/' + ${review.reviewDTO.user.email}}">
+                        <img th:src="${review.reviewDTO.user.picture}" th:alt="${review.reviewDTO.user.nickname}" class="user-picture">
+                    </a>
+                    <div class="user-content">
+                        <div class="user-info">
+                            <div class="user-details">
+                                <span class="user-nickname" th:text="${review.reviewDTO.user.nickname}"
+                                    th:style="'color: ' + ${review.reviewDTO.user.role.color}"></span>
+                                <span class="upload-date" th:attr="data-upload-date=${review.reviewDate}"></span>
+                            </div>
+                            <span class="user-rating">평점: <span class="rating-value" th:text="${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span></span>
                         </div>
-                        <span class="user-rating">평점: <span class="rating-value" th:text="${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span></span>
                     </div>
                 </div>
-            </div>
-            <div class="review-divider"></div>
+                <div class="review-divider"></div>
 
-            <div class="review-content">
-                <a th:href="@{'/contents/' + ${review.movieCommonDTO.tId}}">
-                    <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
-                </a>
-                <div class="review-text-content">
-                    <h4 th:text="${review.movieCommonDTO.title}"></h4>
-                    <p class="review-text" th:utext="${review.reviewDTO.review.text}"></p>
+                <div class="review-content">
+                    <a th:href="@{'/contents/' + ${review.movieCommonDTO.tId}}">
+                        <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
+                    </a>
+                    <div class="review-text-content">
+                        <h4 th:text="${review.movieCommonDTO.title}"></h4>
+                        <p th:if="${!review.reviewDTO.spoiler}" th:utext="${#strings.abbreviate(review.reviewDTO.review.text, 100)}"></p>
+                        <div th:if="${review.reviewDTO.spoiler}" class="spoiler-content">
+                            <button class="spoiler-toggle">스포일러 보기</button>
+                            <p class="spoiler-text" style="display: none;" th:utext="${review.reviewDTO.review.text}"></p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-<!--            <div class="review-footer">-->
-<!--                <span th:text="'좋아요: ' + ${review.heartCnt}"></span>-->
-<!--            </div>-->
+    <!--            <div class="review-footer">-->
+    <!--                <span th:text="'좋아요: ' + ${review.heartCnt}"></span>-->
+    <!--            </div>-->
 
-            <div class="review-footer">
-                <a href="javascript:void(0)" class="like-count" th:attr="data-review-id=${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count" th:text="${review.heartCnt}"></span>
+                <div class="review-footer">
+                    <a href="javascript:void(0)" class="like-count" th:attr="data-review-id=${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count" th:text="${review.heartCnt}"></span>
+                </div>
+                <button class="btn btn-outline-primary like-button" th:classappend="${review.reviewDTO.isLikedByCurrentUser ? 'active' : ''}" th:attr="data-review-id=${review.reviewDTO.review.id}">
+                    <i class="fas fa-heart"></i> 좋아요
+                </button>
             </div>
-            <button class="btn btn-outline-primary like-button" th:classappend="${review.reviewDTO.isLikedByCurrentUser ? 'active' : ''}" th:attr="data-review-id=${review.reviewDTO.review.id}">
-                <i class="fas fa-heart"></i> 좋아요
-            </button>
         </div>
+
+        <div id="likeModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>좋아요를 누른 사용자</h2>
+                <ul id="likeUserList" class="user-list"></ul>
+            </div>
+        </div>
+
+        <div id="loading" style="display: none;">Loading...</div>
     </div>
 
-    <div id="likeModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>좋아요를 누른 사용자</h2>
-            <ul id="likeUserList" class="user-list"></ul>
-        </div>
-    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:inline="javascript">
+        var currentPage = /*[[${currentPage}]]*/ 0;
+        var totalPages = /*[[${totalPages}]]*/ 1;
+        var currentFilter = /*[[${currentFilter}]]*/ 'popular';
+        var loading = false;
+        var highlightReviewId = /*[[${highlightReviewId}]]*/ null;
 
-    <div id="loading" style="display: none;">Loading...</div>
-</div>
+        function initPage() {
+            if (highlightReviewId) {
+                const element = document.getElementById('review-' + highlightReviewId);
+                if (element) {
+                    element.scrollIntoView({behavior: "smooth", block: "center"});
+                }
+            }
+            attachEventListeners();
+            updateRelativeTimes();
+            setInterval(updateRelativeTimes, 60000);
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script th:inline="javascript">
-    var currentPage = /*[[${currentPage}]]*/ 0;
-    var totalPages = /*[[${totalPages}]]*/ 1;
-    var currentFilter = /*[[${currentFilter}]]*/ 'popular';
-    var loading = false;
-    var highlightReviewId = /*[[${highlightReviewId}]]*/ null;
-
-    if (highlightReviewId) {
-        var element = document.getElementById('review-' + highlightReviewId);
-        if (element) {
-            element.scrollIntoView({behavior: "smooth", block: "center"});
+            document.querySelectorAll('.spoiler-toggle').forEach(button => {
+                button.addEventListener('click', toggleSpoiler);
+            });
         }
-    }
 
-    function loadMoreReviews() {
-        if (loading || currentPage >= totalPages - 1) return;
-
-        loading = true;
-        $('#loading').show();
-
-        $.get(`/api/reviews?filter=${currentFilter}&page=${currentPage + 1}`)
-            .done(function(data) {
-                console.log('loadMore review data', data);
-
-                data.content.forEach(function(review) {
-                    const newReviewCard = $(createReviewCard(review));
-                    $('#reviewList').append(newReviewCard);
-                    attachLikeEvents(newReviewCard);
-                    attachLikeCountEvents(newReviewCard);
-                });
-                currentPage++;
-                loading = false;
-                $('#loading').hide();
+        function attachEventListeners() {
+            document.querySelectorAll('.review-card').forEach(card => {
+                attachLikeEvents(card);
+                attachLikeCountEvents(card);
             });
-    }
 
-    // 아직 미사용. /reviews 내에서 어떻ㄱ ㅔ새로고침해야할 지 모르겠음
-    function refreshReviews() {
-        $.post('/api/reviews/refresh-cache')
-            .done(function() {
-                $('#reviewList').empty();
-                currentPage = 0;
-                loadMoreReviews();
+            document.querySelectorAll('.spoiler-toggle').forEach(button => {
+                button.addEventListener('click', toggleSpoiler);
             });
-    }
 
-     function createReviewCard(review) {
-        const reviewElement = document.createElement('div');
-        reviewElement.className = 'review-card';
-        const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
-        const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
-        const isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
-        const userRoleClass = review.reviewDTO.user.role;
+            document.querySelector('.close').addEventListener('click', () => {
+                document.getElementById('likeModal').style.display = 'none';
+            });
 
-        reviewElement.innerHTML = `
-            <div class="review-header">
-                <div class="user-info">
-                    <div class="user-details">
-                        <img src="${review.reviewDTO.user.picture}"
-                            alt="${review.reviewDTO.user.nickname}"
-                            onclick="navigateToUser('${review.reviewDTO.user.email}')"
-                            class="user-picture">
-                        <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
-                        <span class="upload-date" data-upload-date="${review.reviewDate}"></span>
-                    </div>
-                    <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
-                </div>
-            </div>
-            <div class="review-divider"></div>
-            <div class="review-content">
-                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
-                    alt="${review.movieCommonDTO.title}" class="movie-poster"
-                    onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
-                <div class="review-text-content">
-                    <h4>${review.movieCommonDTO.title}</h4>
-                    <p class="review-text">${reviewTextWithBreaks}</p>
-                </div>
-            </div>
-            <div class="review-footer">
-                <a href="#" class="like-count" data-review-id="${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count">${review.reviewDTO.heartCnt}</span>
-            </div>
-            <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.reviewDTO.review.id}">
-                <i class="fas fa-heart"></i> 좋아요
-            </button>
-        `;
-
-        const uploadDateElement = reviewElement.querySelector('.upload-date');
-        uploadDateElement.textContent = formatRelativeTime(review.reviewDate);
-
-        return reviewElement;
-    }
-
-
-    function attachLikeEvents(element) {
-        $(element).find('.like-button').on('click', function() {
-            var reviewId = $(this).data('review-id');
-            var $button = $(this);
-
-            $.ajax({
-                url: '/api/review/heart/' + reviewId,
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active')}),
-                success: function(response) {
-
-                    if (response.heart) {
-                        $button.addClass('active');
-                    } else {
-                        $button.removeClass('active');
-                    }
-                    $button.closest('.review-card').find('.heart-count').text(response.updateHeartCnt);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', error);
+            window.addEventListener('click', (event) => {
+                if (event.target.id === 'likeModal') {
+                    document.getElementById('likeModal').style.display = 'none';
                 }
             });
-        });
-    }
 
-    function attachLikeCountEvents(element) {
-        $(element).find('.like-count').on('click', function(e) {
-            e.preventDefault();
-            var reviewId = $(this).data('review-id');
-            openLikeModal(reviewId);
-        });
-    }
+            window.addEventListener('scroll', () => {
+                if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                    loadMoreReviews();
+                }
+            });
+        }
 
-    function openLikeModal(reviewId) {
-        let page = 0;
-        const size = 10;
-        const userList = document.getElementById('likeUserList');
-        userList.innerHTML = '';
 
-        loadLikes();
+        function loadMoreReviews() {
+            if (loading || currentPage >= totalPages - 1) return;
 
-        function loadLikes() {
-            fetch(`/api/review/${reviewId}/likes?page=${page}&size=${size}`)
+            loading = true;
+            document.getElementById('loading').style.display = 'block';
+
+            fetch(`/api/reviews?filter=${currentFilter}&page=${currentPage + 1}`)
                 .then(response => response.json())
                 .then(data => {
-                    data.content.forEach(user => {
-                        userList.innerHTML += `
-                            <li>
-                                <a href="/info/${user.email}">
-                                    <img src="${user.picture}" alt="${user.nickname}" class="user-picture">
-                                </a>
-                                <span>${user.nickname}</span>
-                            </li>
-                        `;
+                    data.content.forEach(review => {
+                        const newReviewCard = createReviewCard(review);
+                        document.getElementById('reviewList').appendChild(newReviewCard);
+                        attachLikeEvents(newReviewCard);
+                        attachLikeCountEvents(newReviewCard);
                     });
-                    page++;
-                    if (data.last) {
-                        userList.removeEventListener('scroll', handleScroll);
-                    }
+                    currentPage++;
+                    loading = false;
+                    document.getElementById('loading').style.display = 'none';
                 });
         }
-        function handleScroll() {
-            if (userList.scrollTop + userList.clientHeight >= userList.scrollHeight - 5) {
-                loadLikes();
+
+        function refreshReviews() {
+            $.post('/api/reviews/refresh-cache')
+                .done(function() {
+                    $('#reviewList').empty();
+                    currentPage = 0;
+                    loadMoreReviews();
+                });
+        }
+
+         function createReviewCard(review) {
+            const reviewElement = document.createElement('div');
+            reviewElement.className = 'review-card';
+            const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
+            const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
+            const isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
+            const userRoleClass = review.reviewDTO.user.role;
+
+            const spoilerContent = review.reviewDTO.spoiler
+                ? `<div class="spoiler-content">
+                 <button class="spoiler-toggle">스포일러 보기</button>
+                 <p class="spoiler-text" style="display: none;">${reviewTextWithBreaks}</p>
+               </div>`
+            : `<p class="card-text">${reviewTextWithBreaks}</p>`;
+
+            reviewElement.innerHTML = `
+                <div class="review-header">
+                    <div class="user-info">
+                        <div class="user-details">
+                            <img src="${review.reviewDTO.user.picture}"
+                                alt="${review.reviewDTO.user.nickname}"
+                                onclick="navigateToUser('${review.reviewDTO.user.email}')"
+                                class="user-picture">
+                            <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
+                            <span class="upload-date" data-upload-date="${review.reviewDate}"></span>
+                        </div>
+                        <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
+                    </div>
+                </div>
+                <div class="review-divider"></div>
+                <div class="review-content">
+                    <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
+                        alt="${review.movieCommonDTO.title}" class="movie-poster"
+                        onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
+                    <div class="review-text-content">
+                        <h4>${review.movieCommonDTO.title}</h4>
+                        ${spoilerContent}
+                    </div>
+                </div>
+                <div class="review-footer">
+                    <a href="#" class="like-count" data-review-id="${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count">${review.reviewDTO.heartCnt}</span>
+                </div>
+                <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.reviewDTO.review.id}">
+                    <i class="fas fa-heart"></i> 좋아요
+                </button>
+            `;
+
+            const uploadDateElement = reviewElement.querySelector('.upload-date');
+            uploadDateElement.textContent = formatRelativeTime(review.reviewDate);
+
+            const spoilerToggle = reviewElement.querySelector('.spoiler-toggle');
+            if (spoilerToggle) {
+                spoilerToggle.addEventListener('click', toggleSpoiler);
+            }
+            return reviewElement;
+        }
+
+
+        function attachLikeEvents(element) {
+            element.querySelector('.like-button').addEventListener('click', function() {
+                const reviewId = this.dataset.reviewId;
+                const isActive = this.classList.contains('active');
+
+                fetch(`/api/review/heart/${reviewId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({reviewId: reviewId, heart: !isActive}),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.classList.toggle('active', data.heart);
+                    element.querySelector('.heart-count').textContent = data.updateHeartCnt;
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        }
+
+        function attachLikeCountEvents(element) {
+            element.querySelector('.like-count').addEventListener('click', function(e) {
+                e.preventDefault();
+                openLikeModal(this.dataset.reviewId);
+            });
+        }
+
+        function openLikeModal(reviewId) {
+            let page = 0;
+            const size = 10;
+            const userList = document.getElementById('likeUserList');
+            userList.innerHTML = '';
+
+            function loadLikes() {
+                fetch(`/api/review/${reviewId}/likes?page=${page}&size=${size}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.content.forEach(user => {
+                            userList.innerHTML += `
+                                <li>
+                                    <a href="/info/${user.email}">
+                                        <img src="${user.picture}" alt="${user.nickname}" class="user-picture">
+                                    </a>
+                                    <span>${user.nickname}</span>
+                                </li>
+                            `;
+                        });
+                        page++;
+                        if (data.last) {
+                            userList.removeEventListener('scroll', handleScroll);
+                        }
+                    });
+            }
+
+            function handleScroll() {
+                if (userList.scrollTop + userList.clientHeight >= userList.scrollHeight - 5) {
+                    loadLikes();
+                }
+            }
+
+            userList.addEventListener('scroll', handleScroll);
+            loadLikes();
+            document.getElementById('likeModal').style.display = 'block';
+        }
+
+        function formatRelativeTime(dateString) {
+            const now = new Date();
+            const uploadDate = new Date(dateString);
+            const diffInMilliseconds = now - uploadDate;
+            const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            const diffInDays = Math.floor(diffInHours / 24);
+
+            if (diffInMinutes < 60) {
+                return `${diffInMinutes}분 전`;
+            } else if (diffInHours < 24) {
+                return `${diffInHours}시간 전`;
+            } else {
+                return `${diffInDays}일 전`;
             }
         }
 
-        userList.addEventListener('scroll', handleScroll);
-        document.getElementById('likeModal').style.display = 'block';
-    }
-
-    function formatRelativeTime(dateString) {
-        const now = new Date();
-        const uploadDate = new Date(dateString);
-        const diffInMilliseconds = now - uploadDate;
-        const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
-        const diffInHours = Math.floor(diffInMinutes / 60);
-        const diffInDays = Math.floor(diffInHours / 24);
-
-        if (diffInMinutes < 60) {
-            return `${diffInMinutes}분 전`;
-        } else if (diffInHours < 24) {
-            return `${diffInHours}시간 전`;
-        } else {
-            return `${diffInDays}일 전`;
+        function updateRelativeTimes() {
+            document.querySelectorAll('.upload-date').forEach(element => {
+                const dateString = element.getAttribute('data-upload-date');
+                element.textContent = formatRelativeTime(dateString);
+            });
         }
-    }
 
-    function updateRelativeTimes() {
-        const uploadDates = document.querySelectorAll('.upload-date');
-        uploadDates.forEach(element => {
-            const dateString = element.getAttribute('data-upload-date');
-            element.textContent = formatRelativeTime(dateString);
-        });
-    }
+        function toggleSpoiler(event) {
+            const button = event.target;
+            const spoilerText = button.nextElementSibling;
 
-    document.addEventListener('DOMContentLoaded', updateRelativeTimes);
-    setInterval(updateRelativeTimes, 60000);
-
-
-
-
-    $(document).on('click', '.close', function() {
-        $('#likeModal').hide();
-    });
-
-    $(document).on('click', function(event) {
-        if ($(event.target).is('#likeModal')) {
-            $('#likeModal').hide();
+            if (spoilerText && spoilerText.classList.contains('spoiler-text')) {
+                const isHidden = spoilerText.style.display === 'none' || spoilerText.style.display === '';
+                spoilerText.style.display = isHidden ? 'block' : 'none';
+                button.textContent = isHidden ? '스포일러 숨기기' : '스포일러 보기';
+            }
         }
-    });
 
-    $(window).on('scroll', function() {
-        if($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-            loadMoreReviews();
+        function navigateToMovieDetails(movieId) {
+           window.location.href = '/contents/' + movieId;
         }
-    });
 
+        function navigateToUser(email) {
+            window.location.href = '/info/' + email;
+        }
 
-    function navigateToMovieDetails(movieId) {
-       window.location.href = '/contents/' + movieId;
-    }
+        // 초기 리뷰에 대해 이벤트 연결
+        document.addEventListener('DOMContentLoaded', initPage);
 
-    function navigateToUser(email) {
-        window.location.href = '/info/' + email;
-    }
-
-    // 초기 리뷰에 대해 이벤트 연결
-    $(document).ready(function() {
-        $('.review-card').each(function() {
-            attachLikeEvents(this);
-            attachLikeCountEvents(this);
-        });
-    });
-
-</script>
-</body>
-</html>
+    </script>
+    </body>
+    </html>

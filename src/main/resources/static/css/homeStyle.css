@@ -163,6 +163,7 @@
 .user-info {
     display: flex;
     align-items: center;
+    padding: 10px;
 }
 .user-info h5 {
     margin: 0 10px 0 0;
