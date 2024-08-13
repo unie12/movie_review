@@ -4,6 +4,7 @@ import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.SortOption;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -16,7 +17,7 @@ public abstract class AbstractUserActivityService implements UserActivityService
     protected final UserDTOService userDTOService;
 
     @Override
-    public abstract UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size);
+    public abstract UserActivityDTO getUserActivity(String authEmail, String userEmail, String sort, int page, int size);
 
     @Override
     public abstract List<SortOption> getSortOptions();

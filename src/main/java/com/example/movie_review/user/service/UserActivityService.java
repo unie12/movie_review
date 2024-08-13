@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface UserActivityService {
-    UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size);
+    UserActivityDTO getUserActivity(String authEmail, String userEmail, String sort, int page, int size);
     List<SortOption> getSortOptions();
 
 }

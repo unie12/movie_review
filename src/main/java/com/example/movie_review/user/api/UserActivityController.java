@@ -5,6 +5,7 @@ import com.example.movie_review.user.SortOption;
 import com.example.movie_review.user.service.UserActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -28,14 +29,15 @@ public class UserActivityController {
             @RequestParam String category,
             @RequestParam(defaultValue = "createdAt_desc") String sort,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "9") int size) {
+            @RequestParam(defaultValue = "9") int size,
+            Authentication auth) {
 
         UserActivityService service = activityServices.get(category);
         if(service == null) {
             return ResponseEntity.badRequest().body("Invalid category");
         }
 
-        UserActivityDTO activities = service.getUserActivity(userEmail, sort, page, size);
+        UserActivityDTO activities = service.getUserActivity(auth.getName(), userEmail, sort, page, size);
 
         Map<String, Object> response = activities.toMap();
         response.put("category", category);

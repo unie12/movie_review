@@ -28,10 +28,10 @@ public class ReviewService extends AbstractUserActivityService {
     }
 
     @Override
-    public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
+    public UserActivityDTO getUserActivity(String authEmail, String userEmail, String sort, int page, int size) {
         User user = userService.getUserByEmail(userEmail);
         List<ReviewMovieDTO> reviewMovieDTOS = reviewMovieDTOService.getReviewMovieDTOs(user.getReviews(), userEmail);
-        reviewMovieDTOS = reviewMovieDTOService.addUserSpecialInfo(reviewMovieDTOS, user);
+        reviewMovieDTOS = reviewMovieDTOService.addUserSpecialInfo(reviewMovieDTOS, userService.getUserByEmail(authEmail));
 
         int start = page * size;
         int end = Math.min(start + size, reviewMovieDTOS.size());

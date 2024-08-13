@@ -20,7 +20,7 @@ public class RatingService extends AbstractUserActivityService {
     }
 
     @Override
-    public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
+    public UserActivityDTO getUserActivity(String authEmail, String userEmail, String sort, int page, int size) {
         RatingDTO dto = userDTOService.getRatingsDTO(userEmail);
 
         int start = page * size;

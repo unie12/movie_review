@@ -10,6 +10,7 @@ import com.example.movie_review.user.DTO.UserActivityDTOAdapter;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.SortOption;
 import com.example.movie_review.user.domain.User;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class HeartService extends AbstractUserActivityService {
     }
 
     @Override
-    public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
+    public UserActivityDTO getUserActivity(String authEmail, String userEmail, String sort, int page, int size) {
         User user = userService.getUserByEmail(userEmail);
 
         List<Review> likedReviews = user.getHearts().stream()
@@ -38,7 +39,7 @@ public class HeartService extends AbstractUserActivityService {
                 .collect(Collectors.toList());
 
         List<ReviewMovieDTO> reviewMovieDTOS = reviewMovieDTOService.getReviewMovieDTOs(likedReviews, userEmail);
-        reviewMovieDTOS = reviewMovieDTOService.addUserSpecialInfo(reviewMovieDTOS, user);
+        reviewMovieDTOS = reviewMovieDTOService.addUserSpecialInfo(reviewMovieDTOS, userService.getUserByEmail(authEmail));
 
         int start = page * size;
         int end = Math.min(start + size, reviewMovieDTOS.size());

@@ -2,6 +2,7 @@ package com.example.movie_review.user.service;
 
 import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.SortOption;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class FavoriteService extends AbstractUserActivityService {
     }
 
     @Override
-    public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
+    public UserActivityDTO getUserActivity(String authEmail, String userEmail, String sort, int page, int size) {
         FavoriteMovieDTO dto = userDTOService.getUserFavoriteMoviesDTO(userEmail);
         List<FavoriteMovieItem> movie = dto.getFavoriteMovies();
 

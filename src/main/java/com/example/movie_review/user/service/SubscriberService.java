@@ -16,7 +16,7 @@ public class SubscriberService extends AbstractUserActivityService {
     }
 
     @Override
-    public UserActivityDTO getUserActivity(String userEmail, String sort, int page, int size) {
+    public UserActivityDTO getUserActivity(String authEmail, String userEmail, String sort, int page, int size) {
         SubscriptionDTO dto = userDTOService.getUserSubscribersDTO(userEmail);
 
         int start = page * size;
