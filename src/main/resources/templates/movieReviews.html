@@ -141,6 +141,21 @@
         .like-count {
             margin-left: 10px;
         }
+        .spoiler-warning {
+            color: red;
+            font-weight: bold;
+        }
+
+        .spoiler-toggle {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .spoiler-text {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <script th:src="@{'/js/search.js'}"></script>
@@ -194,6 +209,13 @@
                     const reviewTextWithBreaks = review.review.text.replace(/\n/g, '<br>');
                     const userRoleClass = review.user.role;
 
+                     const spoilerContent = review.spoiler
+                        ? `<div class="spoiler-content">
+                         <button class="spoiler-toggle">스포일러 보기</button>
+                         <p class="spoiler-text" style="display: none;">${reviewTextWithBreaks}</p>
+                       </div>`
+                    : `<p class="card-text">${reviewTextWithBreaks}</p>`;
+
                     reviewList.innerHTML += `
                         <div class="card mb-4">
                             <div class="card-body">
@@ -207,7 +229,7 @@
                                     <span class="user-rating">평점 <span class="rating-value">${rating}</span></span>
                                 </div>
                                 <hr>
-                                <p class="card-text">${reviewTextWithBreaks}</p>
+                                ${spoilerContent}
                                 <div class="review-footer">
                                     <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.review.id}">
                                         <i class="fas fa-heart"></i>
@@ -224,6 +246,7 @@
                 }
                 attachLikeEvents();
                 attachLikeCountEvents();
+                attachSpoilerEvents();
             });
     }
 
@@ -296,6 +319,21 @@
 
         userList.addEventListener('scroll', handleScroll);
         document.getElementById('likeModal').style.display = 'block';
+    }
+
+    function attachSpoilerEvents() {
+        document.querySelectorAll('.spoiler-toggle').forEach(button => {
+            button.addEventListener('click', function() {
+                const spoilerText = this.nextElementSibling;
+                if (spoilerText.style.display === 'none') {
+                    spoilerText.style.display = 'block';
+                    this.textContent = '스포일러 숨기기';
+                } else {
+                    spoilerText.style.display = 'none';
+                    this.textContent = '스포일러 보기';
+                }
+            });
+        });
     }
 
 

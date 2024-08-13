@@ -42,7 +42,8 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
                         Projections.constructor(ReviewCommonDTO.class,
                                 review.id,
                                 review.context),
-                        Expressions.asBoolean(false).as("isLikedByCurrentUser"))) // isLikedByCurrentUser는 나중에 설정
+                        Expressions.asBoolean(false).as("isLikedByCurrentUser"),// isLikedByCurrentUser는 나중에 설정
+                        Expressions.asBoolean(false).as("spoiler"))) // 이것도 boolean 값 어떻게 설정해놓지?
                 .from(review)
                 .leftJoin(review.user, user)
                 .where(review.dbMovies.movieDetails.id.eq(movieId));

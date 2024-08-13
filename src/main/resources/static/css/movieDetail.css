@@ -243,3 +243,19 @@
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+
+.spoiler-warning {
+    color: red;
+    font-weight: bold;
+}
+
+.spoiler-toggle {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.spoiler-text {
+    margin-top: 10px;
+}

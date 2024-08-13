@@ -19,7 +19,6 @@ public class ReviewMovieDTO{
     private int heartCnt;
 
     private String filter;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

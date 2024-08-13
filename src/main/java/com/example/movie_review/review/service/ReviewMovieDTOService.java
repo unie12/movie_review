@@ -254,6 +254,7 @@ public class ReviewMovieDTOService {
             boolean isLikeByCurrentUser = reviewservice.isLikedByCurrentUser(review, email);
             dto.setUserRating(userRating);
             dto.setLikedByCurrentUser(isLikeByCurrentUser);
+            dto.setSpoiler(review != null && review.isSpoiler());
             return dto;
         });
     }

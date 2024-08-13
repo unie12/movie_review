@@ -30,10 +30,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
     @Query("SELECT r FROM Review r ORDER BY r.uploadDate DESC")
     Page<Review> findRecentReviewsWithPagination(Pageable pageable);
 
-    @Query("SELECT r FROM Review r WHERE SIZE(r.hearts) >= :minHeartCount AND r.uploadDate >= :startDate")
+    @Query("SELECT r FROM Review r WHERE SIZE(r.hearts) >= :minHeartCount AND r.uploadDate >= :startDate AND r.spoiler = false")
     List<Review> findPopularReviewsWithMinHearts(@Param("minHeartCount") int minHeartCount, @Param("startDate") LocalDateTime startDate);
 
-    @Query("SELECT r FROM Review r ORDER BY r.uploadDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.spoiler = false ORDER BY r.uploadDate DESC")
     List<Review> findRecentReviews();
 
     @Query("SELECT new com.example.movie_review.user.DTO.WeeklyUserDTO(" +

@@ -12,12 +12,14 @@ public class ReviewDTO {
     private UserCommonDTO user;
     private ReviewCommonDTO review;
     private boolean isLikedByCurrentUser;
+    private boolean spoiler;
 
-    public ReviewDTO(Double userRating, int heartCnt, UserCommonDTO user, ReviewCommonDTO review, boolean isLikedByCurrentUser) {
+    public ReviewDTO(Double userRating, int heartCnt, UserCommonDTO user, ReviewCommonDTO review, boolean isLikedByCurrentUser, boolean isSpoiler) {
         this.userRating = userRating;
         this.heartCnt = heartCnt;
         this.user = user;
         this.review = review;
         this.isLikedByCurrentUser = isLikedByCurrentUser;
+        this.spoiler = isSpoiler;
     }
 }

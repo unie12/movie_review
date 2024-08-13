@@ -51,7 +51,7 @@ public class MovieDetailDTOService {
                             .build();
                     boolean isLikedByCurrentUser = reviewService.isLikedByCurrentUser(review, principal.getName());
                     Double userRating = dbRatingService.getUserRatingForMovie(user.getId(), dbMovie.getId());
-                    return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
+                    return new ReviewDTO(userRating, review.getHeartCount(),userCommonDTO, reviewCommonDTO, isLikedByCurrentUser, review.isSpoiler());
                 })
                 .collect(Collectors.toList());
 

@@ -24,6 +24,6 @@ public class ReviewDTOService {
                 .text(review.getContext())
                 .build();
         Double userRating = dbRatingService.getUserRatingForMovie(user.getId(), review.getDbMovies().getId());
-        return new ReviewDTO(userRating, review.getHeartCount(), userCommonDTO, reviewCommonDTO, isLikedByCurrentUser);
+        return new ReviewDTO(userRating, review.getHeartCount(), userCommonDTO, reviewCommonDTO, isLikedByCurrentUser, review.isSpoiler());
     }
 }
