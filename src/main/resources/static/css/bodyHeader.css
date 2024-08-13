@@ -94,9 +94,10 @@ body {
     cursor: pointer;
     color: black;  /* 검은색 텍스트 */
 }
-#searchSuggestions div:hover {
-    background-color: #f0f0f0;  /* 호버 시 배경색 변경 */
+#searchSuggestions div:hover, #searchSuggestions div.active {
+    background-color: #f0f0f0;
 }
+
 .ADMIN { color: #CCCCFF; }
 .USER { color: #000000; }
 .BRONZE { color: #000000; }
