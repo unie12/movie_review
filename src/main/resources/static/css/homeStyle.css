@@ -151,7 +151,6 @@
 .review-header {
     display: flex;
     align-items: center;
-    padding: 10px;
     background-color: #f8f9fa;
 }
 .user-picture {

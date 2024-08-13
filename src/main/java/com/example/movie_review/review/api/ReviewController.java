@@ -1,15 +1,14 @@
 package com.example.movie_review.review.api;
 
-import com.example.movie_review.review.Review;
 import com.example.movie_review.review.DTO.ReviewDTO;
 import com.example.movie_review.review.DTO.ReviewMovieDTO;
-import com.example.movie_review.review.service.ReviewService;
+import com.example.movie_review.review.Review;
 import com.example.movie_review.review.service.ReviewMovieDTOService;
+import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserDTOService;
 import com.example.movie_review.user.service.UserService;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,19 +37,18 @@ public class ReviewController {
      * 해당 유저의 해당 영화에 대한 리뷰 보여주기
      */
     @GetMapping("/movie/{movieId}/review")
-        public ResponseEntity<?> loadReview(@PathVariable Long movieId, Model model, @AuthenticationPrincipal OAuth2User principal) {
+        public ResponseEntity<?> loadReview(@PathVariable Long movieId, Model model, Authentication principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
-
         try {
-            String email = principal.getAttribute("email");
+            String email = principal.getName();
             Optional<Review> review = reviewService.getReview(movieId, email);
 
             if(review.isPresent()) {
-                return ResponseEntity.ok(new ReviewResponse(movieId, review.get().getContext()));
+                return ResponseEntity.ok(new ReviewResponse(movieId, review.get().getContext(), review.get().isSpoiler()));
             } else {
-                return ResponseEntity.ok(new ReviewResponse(movieId, null));
+                return ResponseEntity.ok(new ReviewResponse(movieId, null, false));
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -66,16 +62,15 @@ public class ReviewController {
     public ResponseEntity<?> saveReview(
             @PathVariable Long movieId,
             @RequestBody ReviewRequest request,
-            @AuthenticationPrincipal OAuth2User principal) {
+            Authentication principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
-
         try {
-            String email = principal.getAttribute("email");
-            Review savedReview = reviewService.saveOrUpdateReview(movieId, email, request.getReview());
+            String email = principal.getName();
+            Review savedReview = reviewService.saveOrUpdateReview(movieId, email, request.getReview(), request.isSpoiler());
 
-            return ResponseEntity.ok(new ReviewResponse(savedReview.getDbMovies().getId(), savedReview.getContext()));
+            return ResponseEntity.ok(new ReviewResponse(savedReview.getDbMovies().getId(), savedReview.getContext(), savedReview.isSpoiler()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -85,13 +80,12 @@ public class ReviewController {
      * 리뷰 삭제
      */
     @DeleteMapping("/movie/{movieId}/review")
-    public ResponseEntity<?> deleteReview(@PathVariable Long movieId, @AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<?> deleteReview(@PathVariable Long movieId, Authentication principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
-
         try {
-            String email = principal.getAttribute("email");
+            String email = principal.getName();
             reviewService.deleteReview(movieId, email);
             return ResponseEntity.ok(new DeleteResponse(movieId, "Review successfully deleted"));
         } catch (Exception e) {
@@ -164,6 +158,7 @@ public class ReviewController {
 class ReviewResponse {
     private Long movieId;
     private String review;
+    private boolean isSpoiler;
 }
 @Data
 @AllArgsConstructor
@@ -175,4 +170,5 @@ class DeleteResponse {
 class ReviewRequest {
     private Long movieId;
     private String review;
+    private boolean spoiler;
 }

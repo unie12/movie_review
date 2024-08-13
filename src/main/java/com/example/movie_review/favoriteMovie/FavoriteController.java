@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,13 +23,13 @@ public class FavoriteController {
      * request의 영화에 대해 현재 사용자의 찜 기능 토글 활성화
      */
     @PostMapping("")
-    public ResponseEntity<?> toggleFavorite(@RequestBody FavoriteRequest request, @AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<?> toggleFavorite(@RequestBody FavoriteRequest request, Authentication principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new FavoriteResponse(false, "User not authenticated", false));
         }
 
         try {
-            String email = principal.getAttribute("email");
+            String email = principal.getName();
             boolean isFavorite = userFavoriteMovieService.toggleFavorite(email, request.getMovieId(), request.isFavorite());
             return ResponseEntity.ok(new FavoriteResponse(true, "Favorite toggled successfully", isFavorite));
         } catch (Exception e) {

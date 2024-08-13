@@ -43,7 +43,7 @@ public class ReviewService {
      * 1. 존재하지 않을 시 -> save
      * 2. 존재할 시 -> update
      */
-    public Review saveOrUpdateReview(Long movieId, String email, String reviewContext) {
+    public Review saveOrUpdateReview(Long movieId, String email, String reviewContext, boolean isSpoiler) {
         User user = userService.getUserByEmail(email);
         DbMovies dbMovie = dbMovieService.getDbMovieById(movieId);
         Optional<Review> byDbMoviesAndUser = reviewRepository.findByDbMoviesAndUser(dbMovie, user);
@@ -54,12 +54,14 @@ public class ReviewService {
         if(byDbMoviesAndUser.isPresent()) {
             review = byDbMoviesAndUser.get();
             review.setContext(processedReviewContext);
+            review.setSpoiler(isSpoiler);
             review.setUploadDate(LocalDateTime.now());
             event = ReviewEvent.ReviewEventType.UPDATED;
         }
         else {
             review.setContext(processedReviewContext);
             review.setUser(user);
+            review.setSpoiler(isSpoiler);
             review.setDbMovies(dbMovie);
             event = ReviewEvent.ReviewEventType.CREATED;
         }

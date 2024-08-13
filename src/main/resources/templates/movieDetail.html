@@ -54,6 +54,10 @@
                     <span class="close">&times;</span>
                     <h2 id="modalTitle">리뷰 작성</h2>
                     <textarea id="reviewText" rows="4" cols="50"></textarea>
+                    <div>
+                        <input type="checkbox" id="spoilerCheck">
+                        <label for="spoilerCheck">스포일러 포함</label>
+                    </div>
                     <button id="saveReviewBtn" class="btn btn-primary">저장</button>
                 </div>
             </div>
@@ -301,7 +305,6 @@ $(document).ready(function() {
     });
 
     var movieId = $('#favoriteButton').data('movie-id');
-    console.log('movieId : ', movieId);
     var modal = document.getElementById("reviewModal");
     var span = document.getElementsByClassName("close")[0];
 
@@ -315,6 +318,9 @@ $(document).ready(function() {
                     $('#reviewDisplayText').html(formattedReview);
                     $('#reviewDisplay').show();
                     $('#writeReviewBtn').hide();
+
+                    // 수정 시 스포일러 체크박스 상태 설정
+                    $('#spoilerCheck').prop('checked', response.spoiler);
                 } else {
                     $('#reviewDisplay').hide();
                     $('#writeReviewBtn').show();
@@ -330,6 +336,7 @@ $(document).ready(function() {
 
     $('#writeReviewBtn, #editReviewBtn').click(function() {
         $('#modalTitle').text($(this).attr('id') === 'writeReviewBtn' ? '리뷰 작성' : '리뷰 수정');
+
         if ($(this).attr('id') === 'editReviewBtn') {
             var originalText = $('#reviewDisplayText').html().replace(/<br>/g, '\n');
             $('#reviewText').val(originalText);
@@ -351,11 +358,18 @@ $(document).ready(function() {
 
     $('#saveReviewBtn').click(function() {
         var reviewText = $('#reviewText').val();
+        var spoiler = $('#spoilerCheck').is(':checked');
+        console.log('spoiler', spoiler);
+
         $.ajax({
             url: '/api/movie/' + movieId + '/review',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ movieId: movieId, review: reviewText }),
+            data: JSON.stringify({
+                movieId: movieId,
+                review: reviewText,
+                spoiler: spoiler
+            }),
             success: function(response) {
                 modal.style.display = "none";
                 loadReview();

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +22,13 @@ public class DbRatingController {
      * 해당 영화에 대한 해당 유저의 평점 보여주기
      */
     @GetMapping("/{movieId}")
-    public ResponseEntity<?> loadRating(@PathVariable Long movieId, @AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<?> loadRating(@PathVariable Long movieId, Authentication principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
 
         try {
-            String email = principal.getAttribute("email");
+            String email = principal.getName();
             Optional<DbRatings> dbRating = dbRatingService.getDbRating(email, movieId);
 
             return ResponseEntity.ok(new DbRatingResponse(movieId, dbRating.map(DbRatings::getScore).orElse(0.0), false));
@@ -40,13 +41,13 @@ public class DbRatingController {
      * 해당 영화에 대해 해당 유저의 평점 저장 또는 업데이트
      */
     @PostMapping("/{movieId}")
-    public ResponseEntity<?> saveOrDeleteRating(@PathVariable Long movieId, @RequestBody DbRatingRequest request, @AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<?> saveOrDeleteRating(@PathVariable Long movieId, @RequestBody DbRatingRequest request, Authentication principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
 
         try {
-            String email = principal.getAttribute("email");
+            String email = principal.getName();
             Optional<DbRatings> dbRating = dbRatingService.getDbRating(email, movieId);
 
             if(dbRating.isPresent() && request.getRating() == 0) {
