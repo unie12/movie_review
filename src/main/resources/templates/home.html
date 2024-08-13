@@ -171,14 +171,11 @@
             icon.appendChild(tooltip);
 
             icon.addEventListener('mouseenter', () => {
-                console.log('mouseEnter');
-                console.log('tooltip ', tooltip);
                 tooltip.style.visibility = 'visible';
                 tooltip.style.opacity = '1';
             })
 
             icon.addEventListener('mouseleave', () => {
-                console.log('mousLeave');
                 tooltip.style.visibility = 'hidden';
                 tooltip.style.opacity = '0';
             });
@@ -199,8 +196,6 @@
         fetch('/api/reviews/home-reviews')
             .then(response => response.json())
             .then(reviews => {
-            console.log('reviews filter: ', reviews);
-
                 const container = document.getElementById('popularReviews');
                 container.innerHTML = ''; // Clear existing reviews
 
@@ -226,14 +221,13 @@
         const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
 
         const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
+        const userRoleClass = review.reviewDTO.user.role;
 
         reviewElement.innerHTML = `
             <div class="review-header">
                 <div class="user-info">
                     <img src="${review.reviewDTO.user.picture}" alt="${review.reviewDTO.user.nickname}" class="user-picture">
-                    <span class="user-nickname" style="color: ${review.reviewDTO.user.role.color};">
-                        ${review.reviewDTO.user.nickname}
-                    </span>
+                    <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
                 </div>
                 <div class="user-rating-container">
                     <span class="user-rating">평점: ${rating}</span>
@@ -264,17 +258,11 @@
         try {
             var dBOM = JSON.parse(dBOMJson);
             var wBOM = JSON.parse(wBOMJson);
-            console.log('Parsed dBOM:', dBOM);
-            console.log('Parsed wBOM:', wBOM);
-
             var popularMovies = JSON.parse(popularMoviesJson);
             var trendingMovies = JSON.parse(trendingMoviesJson);
-            console.log('Parsed popularMovies:', popularMovies);
-            console.log('Parsed trendingMovies:', trendingMovies);
 
             // dBOM 조건문 수정
             if (Array.isArray(dBOM) && dBOM.length > 0) {
-<!--                console.log('dBOM 조건문 통과:', dBOM);-->
                 createKobisMovieList(dBOM, 'dBOMList');
             } else {
                 console.log('dBOM 조건문 통과 실패:', dBOM);
@@ -282,7 +270,6 @@
 
             // wBOM 조건문 수정
             if (Array.isArray(wBOM) && wBOM.length > 0) {
-<!--                console.log('wBOM 조건문 통과:', wBOM);-->
                 createKobisMovieList(wBOM, 'wBOMList');
             } else {
                 console.log('wBOM 조건문 통과 실패:', wBOM);
@@ -376,7 +363,6 @@
     }
 
     function goToReview(reviewId, filter) {
-    console.log('filter: ', filter);
         window.location.href = `/reviews?filter=${filter}&highlight=${reviewId}#review-${reviewId}`;
     }
 
@@ -385,7 +371,6 @@
             url: '/api/home/realtime-data',
             method: 'GET',
             success: function(data) {
-                console.log('realtime data: ', data);
                 $('#userCount').text(data.userCount);
                 $('#totalRatings').text(data.totalRatings);
                 $('#totalReviews').text(data.totalReviews);

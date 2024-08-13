@@ -24,12 +24,6 @@
             align-items: center;
             margin-bottom: 10px;
         }
-        .user-picture {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
         .star-rating {
             color: gold;
         }
@@ -57,7 +51,11 @@
         }
         .user-rating {
             color: #f39c12;
-            border-color: #f39c12;
+            border: 1px solid #f39c12;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.9em;
+            margin-left: auto;
         }
         .user-heart {
             color: #e74c3c;
@@ -113,6 +111,36 @@
             border-radius: 50%;
             margin-right: 10px;
         }
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .user-details {
+            display: flex;
+            align-items: center;
+        }
+        .user-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .user-nickname {
+            font-weight: bold;
+        }
+        .user-rating {
+            font-weight: bold;
+        }
+        .review-footer {
+            display: flex;
+            align-items: center;
+        }
+        .like-count {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <script th:src="@{'/js/search.js'}"></script>
@@ -164,29 +192,28 @@
                     const rating = review.userRating ? review.userRating.toFixed(1) : '평가 없음';
                     const isActive = review.likedByCurrentUser ? 'active' : '';
                     const reviewTextWithBreaks = review.review.text.replace(/\n/g, '<br>');
+                    const userRoleClass = review.user.role;
 
                     reviewList.innerHTML += `
                         <div class="card mb-4">
                             <div class="card-body">
-                                <div class="d-flex align-items-center mb-3">
-                                    <a href="/info/${review.user.email}">
-                                        <img src="${review.user.picture}" alt="${review.user.nickname}" class="user-picture mr-3">
-                                    </a>
-                                    <div>
-                                        <h5 class="mb-0">${review.user.nickname}</h5>
-                                        <span class="user-rating">평점 <span class="rating-value">${rating}</span></span>
+                                <div class="user-info">
+                                    <div class="user-details">
+                                        <a href="/info/${review.user.email}">
+                                            <img src="${review.user.picture}" alt="${review.user.nickname}" class="user-picture">
+                                        </a>
+                                        <span class="user-nickname ${userRoleClass}">${review.user.nickname}</span>
                                     </div>
+                                    <span class="user-rating">평점 <span class="rating-value">${rating}</span></span>
                                 </div>
                                 <hr>
                                 <p class="card-text">${reviewTextWithBreaks}</p>
-                                <p class="card-text">
-                                    <small class="text-muted">
-                                        <a href="#" class="like-count" data-review-id="${review.review.id}">좋아요</a> <span class="heart-count">${review.heartCnt}</span>
-                                    </small>
-                                </p>
-                                <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.review.id}">
-                                    <i class="fas fa-heart"></i> 좋아요
-                                </button>
+                                <div class="review-footer">
+                                    <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.review.id}">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                    <a href="#" class="like-count" data-review-id="${review.review.id}">좋아요</a> <span class="heart-count">${review.heartCnt}</span>
+                                </div>
                             </div>
                         </div>
                     `;

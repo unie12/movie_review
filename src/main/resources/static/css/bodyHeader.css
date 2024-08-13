@@ -97,3 +97,10 @@ body {
 #searchSuggestions div:hover {
     background-color: #f0f0f0;  /* 호버 시 배경색 변경 */
 }
+.ADMIN { color: #CCCCFF; }
+.USER { color: #000000; }
+.BRONZE { color: #000000; }
+.SILVER { color: #797d7f; }
+.EMERALD { color: #58D68D; }
+.MASTER { color: #f4d03f; }
+.CHALLENGER { color: #6af8f0; }

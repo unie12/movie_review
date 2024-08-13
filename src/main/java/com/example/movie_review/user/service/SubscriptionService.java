@@ -18,7 +18,6 @@ public class SubscriptionService extends AbstractUserActivityService {
     @Override
     public UserActivityDTO getUserActivity(String authEmail, String userEmail, String sort, int page, int size) {
         SubscriptionDTO dto = userDTOService.getUserSubscriptionsDTO(userEmail);
-
         int start = page * size;
         int end = Math.min(start + size, dto.getSubscriptionDTOs().size());
 

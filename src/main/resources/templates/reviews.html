@@ -22,8 +22,7 @@
         }
         .review-header {
             display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+            padding: 5px;
         }
         .user-picture {
             width: 50px;
@@ -32,15 +31,36 @@
             margin-right: 10px;
             object-fit: cover;
         }
-        .user-info {
-            flex-grow: 1;
+        .user-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
-        .user-info h5 {
-            margin: 0;
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .user-details {
+            display: flex;
+            align-items: center;
         }
         .user-rating {
+            color: #f39c12;
+            border: 1px solid #f39c12;
+            border-radius: 4px;
+            padding: 2px 8px;
             font-size: 0.9em;
-            color: #666;
+            margin-left: auto;
+        }
+        .user-rating, .user-heart {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 0.9em;
         }
         .review-divider {
             border-top: 1px solid #eee;
@@ -50,8 +70,8 @@
             display: flex;
         }
         .movie-poster {
-            width: 100px;
-            height: 150px; /* 또는 적절한 고정 높이 */
+            width: 150px;
+            height: 225px; /* 또는 적절한 고정 높이 */
             object-fit: cover;
             margin-right: 15px;
             flex-shrink: 0; /* 포스터 크기는 유지 */
@@ -79,24 +99,12 @@
             background-color: #007bff;
             color: white;
         }
-        .user-rating, .user-heart {
-            display: inline-block;
-            padding: 2px 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
-            font-size: 0.9em;
-        }
         .rating-value, .heart-value {
             font-weight: bold;
             background-color: #f0f0f0;
             padding: 1px 5px;
             border-radius: 3px;
             margin-left: 5px;
-        }
-        .user-rating {
-            color: #f39c12;
-            border-color: #f39c12;
         }
         .user-heart {
             color: #e74c3c;
@@ -152,6 +160,14 @@
             border-radius: 50%;
             margin-right: 10px;
         }
+        .user-nickname {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .upload-date {
+            color: #777;
+            font-size: 0.9em;
+        }
     </style>
 
 </head>
@@ -172,10 +188,15 @@
                 <a th:href="@{'/info/' + ${review.reviewDTO.user.email}}">
                     <img th:src="${review.reviewDTO.user.picture}" th:alt="${review.reviewDTO.user.nickname}" class="user-picture">
                 </a>
-                <div class="user-info">
-                    <h5 th:text="${review.reviewDTO.user.nickname}"></h5>
-                    <span class="user-rating" th:text="'평점: ' + ${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span>
-                    <span class="upload-date" th:attr="data-upload-date=${review.reviewDate}"></span>
+                <div class="user-content">
+                    <div class="user-info">
+                        <div class="user-details">
+                            <span class="user-nickname" th:text="${review.reviewDTO.user.nickname}"
+                                th:style="'color: ' + ${review.reviewDTO.user.role.color}"></span>
+                            <span class="upload-date" th:attr="data-upload-date=${review.reviewDate}"></span>
+                        </div>
+                        <span class="user-rating">평점: <span class="rating-value" th:text="${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span></span>
+                    </div>
                 </div>
             </div>
             <div class="review-divider"></div>
@@ -263,22 +284,23 @@
      function createReviewCard(review) {
         const reviewElement = document.createElement('div');
         reviewElement.className = 'review-card';
-
         const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
         const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
         const isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
-        console.log('isActive: ', isActive);
+        const userRoleClass = review.reviewDTO.user.role;
 
         reviewElement.innerHTML = `
             <div class="review-header">
-                <img src="${review.reviewDTO.user.picture}"
-                    alt="${review.reviewDTO.user.nickname}"
-                    onclick="navigateToUser('${review.reviewDTO.user.email}')"
-                    class="user-picture">
                 <div class="user-info">
-                    <h5>${review.reviewDTO.user.nickname}</h5>
-                    <span class="user-rating">평점: ${rating}</span>
-                    <span class="upload-date" data-upload-date="${review.reviewDate}"></span>
+                    <div class="user-details">
+                        <img src="${review.reviewDTO.user.picture}"
+                            alt="${review.reviewDTO.user.nickname}"
+                            onclick="navigateToUser('${review.reviewDTO.user.email}')"
+                            class="user-picture">
+                        <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
+                        <span class="upload-date" data-upload-date="${review.reviewDate}"></span>
+                    </div>
+                    <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
                 </div>
             </div>
             <div class="review-divider"></div>

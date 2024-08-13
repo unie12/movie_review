@@ -35,6 +35,10 @@ window.activityHandlers.review = {
         var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
         var reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
         var isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
+        var userRoleClass = review.reviewDTO.user.role;
+
+        var userNicknameStyle = review.reviewDTO.user.role && review.reviewDTO.user.role.color
+                ? `style="color: ${review.reviewDTO.user.role.color}"` : '';
 
         element.html(`
             <div class="review-header">
@@ -47,8 +51,9 @@ window.activityHandlers.review = {
                 <div class="review-content">
                     <div class="user-info">
                         <div class="user-details">
-                            <img src="${review.reviewDTO.user.picture}" alt="User Picture" class="user-picture">
-                            <span class="user-nickname">${review.reviewDTO.user.nickname}</span>
+                            <img src="${review.reviewDTO.user.picture}" alt="User Picture" class="user-picture"
+                            onclick="navigateToUser('${review.reviewDTO.user.email}')">
+                            <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
                             <span class="upload-date" data-upload-date=${review.reviewDate}></span>
                         </div>
                         <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
