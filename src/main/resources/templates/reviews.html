@@ -337,16 +337,18 @@
 
             reviewElement.innerHTML = `
                 <div class="review-header">
-                    <div class="user-info">
-                        <div class="user-details">
-                            <img src="${review.reviewDTO.user.picture}"
-                                alt="${review.reviewDTO.user.nickname}"
-                                onclick="navigateToUser('${review.reviewDTO.user.email}')"
-                                class="user-picture">
-                            <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
-                            <span class="upload-date" data-upload-date="${review.reviewDate}"></span>
+                   <img src="${review.reviewDTO.user.picture}"
+                        alt="${review.reviewDTO.user.nickname}"
+                        onclick="navigateToUser('${review.reviewDTO.user.email}')"
+                        class="user-picture">
+                    <div class="user-content">
+                        <div class="user-info">
+                            <div class="user-details">
+                                <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
+                                <span class="upload-date" data-upload-date="${review.reviewDate}"></span>
+                            </div>
+                            <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
                         </div>
-                        <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
                     </div>
                 </div>
                 <div class="review-divider"></div>
