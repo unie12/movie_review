@@ -1,6 +1,7 @@
 package com.example.movie_review.config;
 
 import com.example.movie_review.oauth.OAuth2Service;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +42,11 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID", "jwtToken")
                         .logoutSuccessHandler(((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
+                            // JWT 토큰 쿠키 삭제
+                            Cookie jwtCookie = new Cookie("jwtToken", null);
+                            jwtCookie.setMaxAge(0);
+                            jwtCookie.setPath("/");
+                            response.addCookie(jwtCookie);
                             response.sendRedirect("/jwt-login");
                         }))
                         .invalidateHttpSession(true)

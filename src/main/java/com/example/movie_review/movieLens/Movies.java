@@ -29,11 +29,8 @@ public class Movies {
     @Column(name = "tmdb_id")
     private Long tId;
 
-
     @ManyToMany
     private Set<Genres> genres;
-//    @OneToMany(mappedBy = "movie")
-//    private Set<MovieGenres> movieGenres;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Ratings> ratings;

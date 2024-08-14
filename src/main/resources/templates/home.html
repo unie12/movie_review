@@ -138,6 +138,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
+    /*<![CDATA[*/
     const infoTexts = {
         weeklyRatingKing: "지난 7일 동안 가장 많은 평가를 남긴 사용자입니다. \n평가 수에 따라 선정되며, 매주 월요일 오전 1시에 갱신됩니다.",
         weeklyReviewKing: "지난 7일 동안 가장 많은 영화 리뷰를 작성한 사용자입니다. 리뷰 수에 따라 선정되며, 매주 월요일 오전 1시에 갱신됩니다.",
@@ -148,13 +149,14 @@
         trendingMovies: "TMDB api를 통해 가져온 최근 급상승하고 있는 영화들입니다. 최근 평점과 리뷰의 증가율, 조회수 변화 등을 바탕으로 선정됩니다."
     };
 
-    /*<![CDATA[*/
     var dBOM = /*[[${dBOM}]]*/ '[]';
     var wBOM = /*[[${wBOM}]]*/ '[]';
     var popularMovies = /*[[${popularMovies}]]*/ '[]';
     var trendingMovies = /*[[${trendingMovies}]]*/ '[]';
+    /*]]>*/
 
     document.addEventListener('DOMContentLoaded', initializeApp);
+
 
     function initializeInfoIcons() {
         const infoIcons = document.querySelectorAll('.info-icon');
@@ -183,6 +185,7 @@
         fetch('/api/reviews/home-reviews')
             .then(response => response.json())
             .then(reviews => {
+            console.log('reviews', reviews);
                 const container = document.getElementById('popularReviews');
                 container.innerHTML = ''; // Clear existing reviews
 

@@ -2,8 +2,15 @@ package com.example.movie_review.user.api;
 
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.SortOption;
+import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserActivityService;
+import com.example.movie_review.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +25,7 @@ import java.util.Map;
 public class UserActivityController {
 
     private final Map<String, UserActivityService> activityServices;
+    private final UserService userService;
 
 
     /**
@@ -58,4 +66,28 @@ public class UserActivityController {
 
         return ResponseEntity.ok(sortOptions);
     }
+
+    @DeleteMapping("/{currentUserEmail}/deleteAccount")
+    public ResponseEntity<?> deleteAccount(@PathVariable String currentUserEmail, Authentication auth,
+                                           HttpServletRequest request, HttpServletResponse response) {
+        if (auth.getPrincipal() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        }
+        try {
+            User userByEmail = userService.getUserByEmail(currentUserEmail);
+            userService.deleteUser(userByEmail, request, response);
+            return ResponseEntity.ok(new DeleteAccountResponse(userByEmail.getId(), userByEmail.getNickname()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
+
+@Data
+@AllArgsConstructor
+class DeleteAccountResponse {
+    private Long userId;
+    private String userNickname;
+
+}
+

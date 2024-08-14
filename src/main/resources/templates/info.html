@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
 <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -38,7 +38,9 @@
             id="subscription"
             th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"
             th:text="${isSubscribed ? '구독 취소' : '구독'}"></button>
-<!--    <button th:if="${#authentication.name == userDTO.userCommonDTO.email}"-->
+
+    <button th:if="${#authentication.name == userDTO.userCommonDTO.email}"  id="deleteAccount">회원 탈퇴</button>
+    <!--    <button th:if="${#authentication.name == userDTO.userCommonDTO.email}"-->
 <!--            th:text="${"-->
     <br>
     <div>
@@ -83,52 +85,59 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    let userEmail, currentUserEmail;
     $(document).ready(function() {
         const subscriptionBtn = $('#subscription');
-        const userEmail = '[[${userDTO.userCommonDTO.email}]]';
-        const currentUserEmail = '[[${#authentication.name}]]';
+        const deleteAccountBtn = $('#deleteAccount');
+        userEmail = '[[${userDTO.userCommonDTO.email}]]';
+        currentUserEmail = '[[${#authentication.name}]]';
 
         if( userEmail !== currentUserEmail) {
             checkSubscriptionStatus();
-
-            subscriptionBtn.click(function() {
-                toggleSubscription();
-            });
+            subscriptionBtn.click(toggleSubscription);
         }
 
-        function checkSubscriptionStatus() {
-            $.ajax({
-                url: `/api/user/subscription/${userEmail}`,
-                type: 'GET',
-                success: function(response) {
-                    updateButtonState(response.subscribed);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error checking subscription status:', error);
-                }
-            });
-        }
+        deleteAccountBtn.click(confirmDeleteAccount);
+    });
 
-        function toggleSubscription() {
-            $.ajax({
-                url: `/api/user/subscription/${userEmail}`,
-                type: 'PUT',
-                contentType: 'application/json',
-                success: function(response) {
-                    updateButtonState(response.subscribed);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error toggling subscription:', error);
-                }
-            });
-        }
+    function checkSubscriptionStatus() {
+        makeApiCall(`/api/user/subscription/${userEmail}`, 'GET', null, updateButtonState);
+    }
 
-        function updateButtonState(isSubscribed) {
-            if(isSubscribed) {
-                subscriptionBtn.text('구독 취소').removeClass('btn-secondary').addClass('btn-danger');
-            } else {
-                subscriptionBtn.text('구독').removeClass('btn-danger').addClass('btn-secondary');
+    function toggleSubscription() {
+        makeApiCall(`/api/user/subscription/${userEmail}`, 'PUT', null, updateButtonState);
+    }
+
+    function updateButtonState(response) {
+        const isSubscribed = response.subscribed;
+        $('#subscription').text(isSubscribed ? '구독 취소' : '구독')
+            .removeClass(isSubscribed ? 'btn-secondary' : 'btn-danger')
+            .addClass(isSubscribed ? 'btn-danger' : 'btn-secondary');
+    }
+
+    function confirmDeleteAccount() {
+        if (confirm('회원 탈퇴를 진행한다면 해당 이메일의 모든 활동 내역은 사라지게 됩니다.')) {
+            if (confirm('회원 탈퇴를 진행하시겠습니까?')) {
+                makeApiCall(`/api/user/${currentUserEmail}/deleteAccount`, 'DELETE', null, handleDeleteAccountResponse);
             }
         }
-    });
+    }
+
+    function makeApiCall(url, method, data, successCallback) {
+        $.ajax({
+            url: url,
+            type: method,
+            data: data,
+            contentType: 'application/json',
+            success: successCallback,
+            error: function(xhr, status, error) {
+                console.error(`Error in ${method} request to ${url}:`, error);
+            }
+        });
+    }
+    function handleDeleteAccountResponse() {
+        localStorage.removeItem('jwtToken');
+        sessionStorage.clear();
+        window.location.href = `/jwt-login`;
+    }
 </script>

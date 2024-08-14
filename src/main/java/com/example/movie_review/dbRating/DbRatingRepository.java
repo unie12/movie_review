@@ -28,4 +28,6 @@ public interface DbRatingRepository extends JpaRepository<DbRatings, Long> {
 
     @Query("SELECT COUNT(r) FROM DbRatings r")
     Long getTotalRatings();
+
+    void deleteByUser(User user);
 }

@@ -30,8 +30,6 @@ public class QRatings extends EntityPathBase<Ratings> {
 
     public final NumberPath<Long> timestamp = createNumber("timestamp", Long.class);
 
-    public final com.example.movie_review.user.domain.QUser user;
-
     public QRatings(String variable) {
         this(Ratings.class, forVariable(variable), INITS);
     }
@@ -51,7 +49,6 @@ public class QRatings extends EntityPathBase<Ratings> {
     public QRatings(Class<? extends Ratings> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.movie = inits.isInitialized("movie") ? new com.example.movie_review.movieLens.QMovies(forProperty("movie")) : null;
-        this.user = inits.isInitialized("user") ? new com.example.movie_review.user.domain.QUser(forProperty("user")) : null;
     }
 
 }

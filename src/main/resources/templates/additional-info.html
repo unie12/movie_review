@@ -415,7 +415,7 @@
     function searchMovies() {
         var query = $('#query').val();
         $.ajax({
-            url: '/api/search',
+            url: '/api/search/movies',
             type: 'GET',
             data: {query: query},
             dataType: 'json',

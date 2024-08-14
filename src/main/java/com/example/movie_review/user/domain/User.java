@@ -64,6 +64,15 @@ public class User {
      * 사용자 이용 현황
      */
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<DbRatings> dbRatings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "subscriber", cascade = ALL, orphanRemoval = true)
+    private List<Subscription> subscriptions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "subscribed", cascade = ALL, orphanRemoval = true)
+    private List<Subscription> subscribers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
@@ -75,14 +84,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private List<UserFavoriteMovie> userFavoriteMovies = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
-    private List<DbRatings> dbRatings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "subscriber", cascade = ALL, orphanRemoval = true)
-    private List<Subscription> subscriptions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "subscribed", cascade = ALL, orphanRemoval = true)
-    private List<Subscription> subscribers = new ArrayList<>();
+
 
 
     /**

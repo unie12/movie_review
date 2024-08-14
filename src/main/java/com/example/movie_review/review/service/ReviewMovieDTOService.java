@@ -56,12 +56,14 @@ public class ReviewMovieDTOService {
         this.cachedPopularReviews = popularReviews.stream()
                 .map(this::getReviewMovieDTO)
                 .collect(Collectors.toList());
+        System.out.println("popularReviews = " + popularReviews);
         Collections.shuffle(cachedPopularReviews);
 
         List<Review> recentReviews = reviewRepository.findRecentReviews();
         this.cachedRecentReviews = recentReviews.stream()
                 .map(this::getReviewMovieDTO)
                 .collect(Collectors.toList());
+        System.out.println("recentReviews = " + recentReviews);
     }
 
     @EventListener
@@ -79,6 +81,9 @@ public class ReviewMovieDTOService {
                 removeReviewFromCache(event.getReview().getId());
             case HEART:
                 updateSingleReviewInList(event.getReview());
+                break;
+            case ACCOUNT:
+                updateReviewCache();
                 break;
         }
     }

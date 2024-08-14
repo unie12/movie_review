@@ -31,9 +31,4 @@ public class Ratings {
     @JoinColumn(name = "movie_id", insertable = false, updatable = false)
     private Movies movie;
 
-//    @Transient
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
-
 }

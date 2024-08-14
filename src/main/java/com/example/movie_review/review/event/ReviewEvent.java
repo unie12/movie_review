@@ -8,7 +8,7 @@ public class ReviewEvent extends ApplicationEvent {
     private final ReviewEventType eventType;
 
     public enum ReviewEventType {
-        CREATED, UPDATED, DELETED, HEART
+        CREATED, UPDATED, DELETED, HEART, ACCOUNT
     }
 
     public ReviewEvent(Object source, Review review,ReviewEventType eventType) {

@@ -43,7 +43,6 @@ public class HomeViewController {
     private final ObjectMapper objectMapper;
 
 
-
     @Timed(value = "home.request", description = "Time taken to return the home page")
     @GetMapping({"", "/"})
     public String home(@CookieValue(name = "jwtToken", required = false) String token, Model model, HttpServletResponse response) throws JsonProcessingException {
