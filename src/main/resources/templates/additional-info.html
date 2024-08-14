@@ -422,8 +422,9 @@
             success: function(response) {
                 var resultList = $('#search-results');
                 resultList.empty();
-                if (response && Array.isArray(response)) {
-                    response.forEach(function(movie) {
+                console.log('response.content', response.content);
+                if (response && response.content && Array.isArray(response.content)) {
+                    response.content.forEach(function(movie) {
                         var movieItem = `
                             <li class="movie-item">
                                 <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="movie-poster">

@@ -7,6 +7,7 @@ import com.example.movie_review.movieDetail.domain.Credits;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,8 +40,12 @@ public class MovieDetails {
     )
     private Set<Genres> genres = new HashSet<>();
 
+
     @OneToOne(mappedBy = "movieDetails", cascade = CascadeType.ALL)
     private DbMovies dbMovie;
+
+    @OneToMany(mappedBy = "movieDetails", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MovieKeyword> movieKeywords = new HashSet<>();
 
     @Transient
     private List<GenreDto> genreDtos;
@@ -64,5 +69,10 @@ public class MovieDetails {
     private boolean adult;
     private String media_type;
 
+
+    public void addMovieKeyword(MovieKeyword movieKeyword) {
+        movieKeywords.add(movieKeyword);
+        movieKeyword.setMovieDetails(this);
+    }
 
 }

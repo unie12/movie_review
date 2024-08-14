@@ -40,6 +40,7 @@ public class DbMovieService {
     @Transactional
     private DbMovies createMovieFromTmdb(Long movieId) {
         String movieDetailsJson = tmdbService.getMovieDetails(movieId).block();
+
         try {
             MovieDetails movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
             movieDetails.setTId(movieId.intValue());
@@ -74,6 +75,8 @@ public class DbMovieService {
             // 양방향 관계 설정?..
             movieDetails.setDbMovie(dbMovie);
             dbMovie = dbMovieRepository.save(dbMovie);
+
+            tmdbService.addMovieKeywords(movieId, movieDetails);
 
             return dbMovie;
         } catch (JsonProcessingException e) {

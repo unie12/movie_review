@@ -1,16 +1,24 @@
 package com.example.movie_review.tmdb;
 
 import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
+import com.example.movie_review.movieDetail.domain.Keyword;
+import com.example.movie_review.movieDetail.domain.MovieDetails;
+import com.example.movie_review.movieDetail.domain.MovieKeyword;
+import com.example.movie_review.movieDetail.repository.KeywordRepository;
+import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,6 +44,12 @@ public class TmdbService {
 
     @Value("${tmdb.api.key}")
     private String apikey;
+
+    @Autowired
+    private MovieDetailRepository movieDetailRepository;
+
+    @Autowired
+    private KeywordRepository keywordRepository;
 
     /**
      * tmdb api base url
@@ -320,6 +334,38 @@ public class TmdbService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .map(this::extractLatestTrailerKey);
+    }
+
+    @Transactional
+    public void addMovieKeywords(Long movieTId, MovieDetails movieDetails) {
+        webClient.get()
+                .uri("/movie/{movieId}/keywords?api_key={api_key}&language=ko-KR", movieTId, apikey)
+                .retrieve()
+                .bodyToMono(String.class)
+                .subscribe(jsonResponse -> {
+                    try {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        JsonNode root = objectMapper.readTree(jsonResponse);
+                        JsonNode keywordsNode = root.path("keywords");
+
+                        for (JsonNode keywordNode : keywordsNode) {
+                            String keywordName = keywordNode.path("name").asText();
+                            Keyword keyword = keywordRepository.findByName(keywordName)
+                                    .orElseGet(() -> {
+                                        Keyword newKeyword = new Keyword();
+                                        newKeyword.setName(keywordName);
+                                        return keywordRepository.save(newKeyword);
+                                    });
+
+                            MovieKeyword movieKeyword = new MovieKeyword();
+                            movieKeyword.setKeyword(keyword);
+                            movieDetails.addMovieKeyword(movieKeyword);
+                        }
+                        movieDetailRepository.save(movieDetails);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     private String extractLatestTrailerKey(String response) {
