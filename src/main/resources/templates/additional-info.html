@@ -212,7 +212,6 @@
 
         // 이벤트 위임을 사용하여 동적으로 생성된 요소에 대한 이벤트 처리
         $('#search-results-container').on('click', '.add-favorite', function(e) {
-            console.log('Add favorite button clicked e', e);
             e.preventDefault();
 
             var $button = $(this);
@@ -422,7 +421,7 @@
             success: function(response) {
                 var resultList = $('#search-results');
                 resultList.empty();
-                console.log('response.content', response.content);
+
                 if (response && response.content && Array.isArray(response.content)) {
                     response.content.forEach(function(movie) {
                         var movieItem = `

@@ -20,6 +20,23 @@
             font-weight: bold;
             margin-right: 10px;
         }
+        .life-movies {
+            display: flex; /* Flexbox 사용 */
+            flex-wrap: wrap; /* 줄바꿈 허용 */
+            gap: 10px; /* 영화 간의 간격 */
+        }
+        .movie-element {
+            width: 150px; /* 영화 요소의 너비 설정 */
+            cursor: pointer; /* 마우스 커서 포인터로 변경 */
+        }
+        .movie-content {
+            text-align: center; /* 영화 포스터 중앙 정렬 */
+        }
+        .movie-poster {
+            width: 100%; /* 포스터가 요소의 너비에 맞게 조정 */
+            height: auto; /* 비율 유지 */
+        }
+
     </style>
 
     <title>사용자 활동 내역</title>
@@ -79,6 +96,19 @@
     </div>
     <br>
 
+    <!-- ~님의 인생 영화-->
+    <div>
+        <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 인생 영화'"></h3>
+        <div id="lifeMovies" class="life-movies">
+            <!-- 해당 사용자의 인생 영화 리스트 동적으로 보여주기 -->
+        </div>
+    </div>
+<!--    ~님의 평가 분포-->
+<!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
+<!--    ~님의 선호 키워드-->
+<!--    ~님의 선호 감독, 배우, 장르-->
+<!--    ~님과 나의 취향매칭률-->
+
 </div>
 </body>
 </html>
@@ -98,6 +128,7 @@
         }
 
         deleteAccountBtn.click(confirmDeleteAccount);
+        loadLifeMovies();
     });
 
     function checkSubscriptionStatus() {
@@ -135,9 +166,57 @@
             }
         });
     }
+
     function handleDeleteAccountResponse() {
         localStorage.removeItem('jwtToken');
         sessionStorage.clear();
         window.location.href = `/jwt-login`;
+    }
+
+    function loadLifeMovies() {
+        fetch(`/api/user/${userEmail}/lifeMovies`)
+            .then(response => response.json())
+            .then(movies => {
+                console.log('movies', movies);
+                const container = document.getElementById('lifeMovies');
+                container.innerHTML = '';
+
+                if(movies.length === 0) {
+                    container.innerHTML = '<p>인생영화를 아직 등록하지 않았습니다!</p>';
+                } else {
+                    movies.forEach((movie) => {
+                        const movieElement = createMovieElement(movie);
+                        container.appendChild(movieElement);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching life movies:', error);
+                const container = document.getElementById('lifeMovies');
+                container.innerHTML = '<p>인생영화를 불러오는 데 오류가 발생했습니다</p>';
+            });
+    }
+
+    function createMovieElement(movie) {
+        const movieElement = document.createElement('div');
+        movieElement.className = 'movie-element';
+        movieElement.setAttribute('data-movie-tid', movie.tid);
+
+        movieElement.innerHTML = `
+            <div class="movie-content">
+                <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" class="movie-poster">
+            </div>
+        `;
+
+        movieElement.addEventListener('click', function() {
+            const movieTid = this.getAttribute('data-movie-tid');
+            navigateToMovie(movieTid);
+        });
+
+        return movieElement;
+    }
+
+    function navigateToMovie(movieId) {
+       window.location.href = '/contents/' + movieId;
     }
 </script>

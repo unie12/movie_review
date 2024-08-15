@@ -64,4 +64,8 @@ public class MovieCommonDTOService {
                 .map(MovieDetails::getTitle)
                 .collect(Collectors.toList());
     }
+
+    public String getMoviePoster(Long tId) {
+        return movieDetailRepository.findBytId(tId).getPoster_path();
+    }
 }

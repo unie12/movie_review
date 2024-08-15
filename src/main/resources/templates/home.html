@@ -185,7 +185,6 @@
         fetch('/api/reviews/home-reviews')
             .then(response => response.json())
             .then(reviews => {
-            console.log('reviews', reviews);
                 const container = document.getElementById('popularReviews');
                 container.innerHTML = ''; // Clear existing reviews
 

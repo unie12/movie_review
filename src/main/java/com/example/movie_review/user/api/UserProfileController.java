@@ -1,7 +1,10 @@
 package com.example.movie_review.user.api;
 
+import com.example.movie_review.dbMovie.DbMovies;
+import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.movieDetail.DTO.MovieDTO;
+import com.example.movie_review.movieDetail.service.MovieDetailDTOService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserProfileDTO;
 import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class UserProfileController {
     private final UserProfileDTOService userProfileDTOService;
     private final PreferredMoviesService preferredMoviesService;
     private final UserService userService;
+    private final DbMovieService dbMovieService;
 
     @GetMapping
     public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable String userEmail) {
@@ -38,6 +43,11 @@ public class UserProfileController {
             @PathVariable String userEmail,
             @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture,
             @RequestPart("updateRequest") UserProfileUpdateRequest updateRequest) {
+        // 인생 영화에 추가하면 영화 db에도 저장하기
+        List<DbMovies> collect = updateRequest.getFavoriteMovies().stream()
+                .map(movie -> dbMovieService.findOrCreateMovie(Long.valueOf(movie.getId())))
+                .collect(Collectors.toList());
+        System.out.println("collect = " + collect);
         return ResponseEntity.ok(userProfileDTOService.updateUserProfile(userEmail, profilePicture, updateRequest));
     }
 

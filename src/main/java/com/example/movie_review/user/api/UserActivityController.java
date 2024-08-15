@@ -1,7 +1,10 @@
 package com.example.movie_review.user.api;
 
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
+import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.SortOption;
+import com.example.movie_review.user.domain.PreferredMovies;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserActivityService;
 import com.example.movie_review.user.service.UserService;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class UserActivityController {
 
     private final Map<String, UserActivityService> activityServices;
     private final UserService userService;
+    private final MovieCommonDTOService movieCommonDTOService;
 
 
     /**
@@ -81,6 +86,16 @@ public class UserActivityController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/{userEmail}/lifeMovies")
+    public ResponseEntity<List<LifeMovie>> getLifeMovies(@PathVariable String userEmail) {
+        User user = userService.getUserByEmail(userEmail);
+        List<PreferredMovies> preferredMovies = user.getPreferredMovies();
+        List<LifeMovie> lifeMovies = preferredMovies.stream()
+                .map(movie -> new LifeMovie(movie.getMovieId(), movieCommonDTOService.getMoviePoster(Long.valueOf(movie.getMovieId()))))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(lifeMovies);
+    }
 }
 
 @Data
@@ -91,3 +106,9 @@ class DeleteAccountResponse {
 
 }
 
+@Data
+@AllArgsConstructor
+class LifeMovie {
+    private String tid;
+    private String poster_path;
+}
