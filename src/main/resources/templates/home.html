@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
+    <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="/css/homeStyle.css">
     <link rel="stylesheet" href="/css/bodyHeader.css">
 
@@ -17,19 +17,19 @@
 <div th:replace="fragments/bodyHeader :: bodyHeader" />
 <div class="container">
     <div class="jumbotron">
-<!--        <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary me-2 active" role="button">Google Login</a>-->
+        <!--        <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary me-2 active" role="button">Google Login</a>-->
 
         <div th:if="${#authentication.name == 'anonymousUser'}">
             <h3>로그인 되어있지 않습니다!</h3>
         </div>
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <h3>[[${#authentication.name}]]님 환영합니다!</h3>
-<!--            <a th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-primary">유저 정보</a>-->
+            <!--            <a th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-primary">유저 정보</a>-->
         </div>
 
         <div class="sections">
             <div class="section">
-            <h3>이번 주 평가왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyRatingKing"></i></h3>
+                <h3>이번 주 평가왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyRatingKing"></i></h3>
                 <ul>
                     <li th:each="user : ${ratingKings}">
                         <div>
@@ -38,11 +38,11 @@
                             </a>
                             <strong th:text="${user.userCommonDTO.nickname}"
                                     th:style="'color: ' + ${user.userCommonDTO.role.color}"></strong>
-        <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
+                            <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
                         </div>
                         <div>
                             <span th:text="'평가 수: ' + ${user.weeklyRatingCount}"></span>
-        <!--                    <span th:text="'리뷰 수: ' + ${user.weeklyReviewCount}"></span>-->
+                            <!--                    <span th:text="'리뷰 수: ' + ${user.weeklyReviewCount}"></span>-->
                         </div>
                     </li>
                 </ul>
@@ -58,10 +58,10 @@
                             </a>
                             <strong th:text="${user.userCommonDTO.nickname}"
                                     th:style="'color: ' + ${user.userCommonDTO.role.color}"></strong>
-        <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
+                            <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
                         </div>
                         <div>
-        <!--                    <span th:text="'평가 수: ' + ${user.weeklyRatingCount}"></span>-->
+                            <!--                    <span th:text="'평가 수: ' + ${user.weeklyRatingCount}"></span>-->
                             <span th:text="'리뷰 수: ' + ${user.weeklyReviewCount}"></span>
                         </div>
                     </li>
@@ -70,9 +70,9 @@
 
             <div class="section">
                 <div>
-                    <p>유저 수: <span id="userCount"></span></p>
-                    <p>총 평점 수: <span id="totalRatings"></span></p>
-                    <p>총 리뷰 수: <span id="totalReviews"></span></p>
+                    <p>유저 수: <span id="userCount">0</span></p>
+                    <p>총 평점 수: <span id="totalRatings">0</span></p>
+                    <p>총 리뷰 수: <span id="totalReviews">0</span></p>
                 </div>
             </div>
         </div>
@@ -311,18 +311,49 @@
         });
     }
 
+    function animateValue(id, start, end, duration) {
+        start = parseInt(start) || 0;
+        end = parseInt(end) || 0;
+        if (start === end) {
+            document.getElementById(id).innerHTML = end;
+            return;
+        }
+        let current = start;
+        const range = end - start;
+        const increment = range / (duration / 16);  // 60 FPS를 가정
+        const obj = document.getElementById(id);
+
+        const timer = setInterval(function() {
+            current += increment;
+            if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                clearInterval(timer);
+                current = end;
+            }
+            obj.innerHTML = Math.round(current);
+        }, 16);
+    }
+
+    function updateRealTimeData(data) {
+        console.log('Received data:', data);  // 데이터 로깅
+        if (data && typeof data === 'object') {
+            animateValue('userCount', $('#userCount').text(), data.userCount || 0, 1000);
+            animateValue('totalRatings', $('#totalRatings').text(), data.totalRatings || 0, 1000);
+            animateValue('totalReviews', $('#totalReviews').text(), data.totalReviews || 0, 1000);
+        } else {
+            console.error('Invalid data received:', data);
+        }
+    }
+
     function getRealTimeData() {
         $.ajax({
             url: '/api/home/realtime-data',
             method: 'GET',
-            success: function(data) {
-                $('#userCount').text(data.userCount);
-                $('#totalRatings').text(data.totalRatings);
-                $('#totalReviews').text(data.totalReviews);
+            success: updateRealTimeData,
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching real-time data:', textStatus, errorThrown);
             }
         });
     }
-
     function initializeApp() {
         getRealTimeData();
         setInterval(getRealTimeData, 60000);
