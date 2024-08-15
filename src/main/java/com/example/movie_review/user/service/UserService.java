@@ -1,6 +1,15 @@
 package com.example.movie_review.user.service;
 
+import com.example.movie_review.dbMovie.DbMovies;
+import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.dbRating.DbRatingRepository;
+import com.example.movie_review.dbRating.DbRatings;
+import com.example.movie_review.movieDetail.DTO.KeywordDTO;
+import com.example.movie_review.movieDetail.domain.Keyword;
+import com.example.movie_review.movieDetail.domain.MovieDetails;
+import com.example.movie_review.movieDetail.domain.MovieKeyword;
+import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
+import com.example.movie_review.movieDetail.service.MovieDetailDTOService;
 import com.example.movie_review.review.event.ReviewEvent;
 import com.example.movie_review.user.repository.UserRepository;
 import com.example.movie_review.user.UserRole;
@@ -16,7 +25,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,6 +38,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final MovieDetailRepository movieDetailRepository;
 
     private final DbRatingRepository dbRatingRepository;
 
@@ -123,5 +137,45 @@ public class UserService {
         jsessionidCookie.setMaxAge(0);
         jsessionidCookie.setPath("/");
         response.addCookie(jsessionidCookie);
+    }
+
+    // 사용자가 좋게 평가한 영화들 중에서 키워드 뽑아내는 걸로
+    public List<KeywordDTO> getTopKeywords(User user) {
+        List<DbMovies> preferMovies = user.getDbRatings().stream()
+                .filter(r -> r.getScore() >= 3.5)
+                .map(DbRatings::getDbMovies)
+                .collect(Collectors.toList());
+
+        List<MovieDetails> movieDetails = preferMovies.stream()
+                .map(movie -> movieDetailRepository.findBytId(movie.getTmdbId()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        Map<String, Long> keywordCount = movieDetails.stream()
+                .flatMap(movie -> movie.getMovieKeywords().stream())
+                .map(keyword -> keyword.getKeyword().getName())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        List<KeywordDTO> topKeywords = keywordCount.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(10)
+                .map(entry -> new KeywordDTO(entry.getKey(), entry.getValue().intValue(), 0))
+                .collect(Collectors.toList());
+
+        if (!topKeywords.isEmpty()) {
+            long maxCount = topKeywords.get(0).getCount();
+            long minCount = topKeywords.get(topKeywords.size() - 1).getCount();
+
+            for (KeywordDTO dto : topKeywords) {
+                dto.setSize(calculateSize(dto.getCount(), minCount, maxCount));
+            }
+        }
+
+        return topKeywords;
+    }
+
+    private int calculateSize(long count, long minCount, long maxCount) {
+        if (minCount == maxCount) return 3;
+        return 1 + (int) ((count - minCount) * 4 / (maxCount - minCount));
     }
 }

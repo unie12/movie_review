@@ -3,24 +3,12 @@
     margin: 0 auto;
     padding: 10px 200px;
 }
-.user-info-box, .activity-box, .life-movies-box, .rating-distribution-box {
+.user-info-box, .activity-box, .life-movies-box, .rating-distribution-box, .prefer-keyword-box{
     background-color: #f8f9fa;
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-.bar-container {
-    display: flex;
-    align-items: flex-end;
-    height: 200px;
-    width: 100%;
-}
-.bar-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 5px;
 }
 .user-picture {
     width: 100px;
@@ -44,6 +32,7 @@
 .activity-item {
     margin-bottom: 15px;
 }
+/* 사용자 인생 영화 */
 .life-movies {
     display: flex;
     flex-wrap: wrap;
@@ -62,6 +51,8 @@
     height: auto;
     border-radius: 5px;
 }
+
+/* 사용자 평점 분포 css*/
 .rating-distribution {
     display: flex;
     justify-content: center;
@@ -75,14 +66,12 @@
     height: 200px;
     gap: 10px;
 }
-
 .bar-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     transition: transform 0.3s ease;
 }
-
 .bar-wrapper:hover {
     transform: scale(1.1);
 }
@@ -92,7 +81,6 @@
     background-color: #007bff;
     transition: background-color 0.3s ease;
 }
-
 .bar:hover {
     background-color: #0056b3;
 }
@@ -101,7 +89,6 @@
     margin-top: 5px;
     font-size: 12px;
 }
-
 .bar:hover::after {
     content: attr(title);
     position: absolute;
@@ -114,4 +101,32 @@
     border-radius: 5px;
     font-size: 12px;
     white-space: nowrap;
+}
+
+/* 선호 키워드 css*/
+.keyword-cloud {
+    width: 80%;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    background-color: #f0f6fa;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-left: 8%;
+}
+
+.keyword {
+    position: absolute;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
+
+.keyword:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.9);
 }

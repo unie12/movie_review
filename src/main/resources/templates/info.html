@@ -71,8 +71,17 @@
             <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
         </div>
     </div>
+
+    <!-- 사용자 선호 키워드-->
+    <div class="prefer-keyword-box">
+        <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 키워드'"></h3>
+        <div id="keywordCloud" class="keyword-cloud">
+            <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
+        </div>
+    </div>
+
+
 <!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
-<!--    ~님의 선호 키워드-->
 <!--    ~님의 선호 감독, 배우, 장르-->
 <!--    ~님과 나의 취향매칭률-->
 
@@ -97,6 +106,7 @@
         deleteAccountBtn.click(confirmDeleteAccount);
         loadLifeMovies();
         loadRatingDistribution();
+        loadPreferKeyword();
     });
 
     // 구독 확인
@@ -179,6 +189,8 @@
 
     // 사용자 평가 정보 가져오기
     function loadRatingDistribution() {
+        const container = document.getElementById('ratingDistribution'); // container 정의
+
         fetch(`/api/user/${userEmail}/ratings`)
             .then(response => response.json())
             .then(ratings => {
@@ -196,6 +208,27 @@
             });
     }
 
+    // 사용자 선호 키워드 가져오기
+    function loadPreferKeyword() {
+        const container = document.getElementById('keywordCloud'); // container 정의
+
+        fetch(`/api/user/${userEmail}/keywords`)
+            .then(response => response.json())
+            .then(keywords => {
+                if(keywords.length === 0) {
+                    container.innerHTML = '<p>사용자 선호 키워드가 아직 없습니다!</p>';
+                } else {
+                    renderKeywords(keywords);
+                }
+            })
+            .catch(error => {
+                console.log('Error fetching ratings:', error);
+                document.getElementById('ratingDistribution').innerHTML = '<p>선호 키워드를 불러오는 데 오류가 발생했습니다</p>';
+            });
+    }
+
+
+    // 사용자 평가 분포 계산
     function calculateDistribution(ratings) {
         const distribution = {0.5: 0, 1.0: 0, 1.5: 0, 2.0: 0, 2.5: 0, 3.0: 0, 3.5: 0, 4.0: 0, 4.5: 0, 5.0: 0};
 
@@ -205,6 +238,7 @@
         return distribution;
     }
 
+    // 사용자 평가 분포 렌더링
     function renderDistribution(distribution) {
         const container = document.getElementById('ratingDistribution');
         container.innerHTML = '';
@@ -234,6 +268,59 @@
             barContainer.appendChild(barWrapper);
         });
         container.appendChild(barContainer);
+    }
+
+    // 사용자 선호 키워드 렌더링
+    function renderKeywords(keywords) {
+        const container = document.getElementById('keywordCloud');
+        container.innerHTML = '';  // 기존 내용 삭제
+
+        // 컨테이너 크기
+        const containerWidth = container.offsetWidth - 40;
+        const containerHeight = container.offsetHeight - 40;
+
+        // 이미 사용된 위치를 추적
+        let usedPositions = [];
+
+        keywords.forEach((keyword, index) => {
+            const span = document.createElement('span');
+            span.textContent = keyword.keyword;
+            span.className = 'keyword';
+
+            // 폰트 크기 설정 (15px에서 30px 사이)
+            const fontSize = keyword.size * 3 + 15;
+            span.style.fontSize = `${fontSize}px`;
+
+            // 색상 설정 (채도를 이용해 강조)
+            const saturation = 100 - (index * (70 / keywords.length)); // 100%에서 30%까지 채도 변화
+            span.style.color = `hsl(210, ${saturation}%, 50%)`;
+
+            // 위치 설정
+            let left, top;
+            do {
+                left = Math.random() * (containerWidth - 150); // 100px는 예상 최대 단어 너비
+                top = Math.random() * (containerHeight - 100);  // 50px는 예상 최대 단어 높이
+            } while (isOverlapping(left, top, usedPositions));
+
+            span.style.left = `${left}px`;
+            span.style.top = `${top}px`;
+
+            usedPositions.push({left, top, width: 150, height: 100}); // 사용된 위치 기록
+
+            container.appendChild(span);
+        });
+    }
+
+    function isOverlapping(left, top, usedPositions) {
+        for (let pos of usedPositions) {
+            if (left < pos.left + pos.width &&
+                left + 100 > pos.left &&
+                top < pos.top + pos.height &&
+                top + 50 > pos.top) {
+                return true; // 겹침
+            }
+        }
+        return false; // 겹치지 않음
     }
 
 

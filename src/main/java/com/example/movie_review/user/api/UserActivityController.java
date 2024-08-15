@@ -2,6 +2,7 @@ package com.example.movie_review.user.api;
 
 import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatings;
+import com.example.movie_review.movieDetail.DTO.KeywordDTO;
 import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.SortOption;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -73,6 +75,9 @@ public class UserActivityController {
         return ResponseEntity.ok(sortOptions);
     }
 
+    /**
+     * 회원탈퇴
+     */
     @DeleteMapping("/{currentUserEmail}/deleteAccount")
     public ResponseEntity<?> deleteAccount(@PathVariable String currentUserEmail, Authentication auth,
                                            HttpServletRequest request, HttpServletResponse response) {
@@ -88,6 +93,9 @@ public class UserActivityController {
         }
     }
 
+    /**
+     * 인생 영화 가져오기
+     */
     @GetMapping("/{userEmail}/lifeMovies")
     public ResponseEntity<List<LifeMovie>> getLifeMovies(@PathVariable String userEmail) {
         User user = userService.getUserByEmail(userEmail);
@@ -98,6 +106,9 @@ public class UserActivityController {
         return ResponseEntity.ok(lifeMovies);
     }
 
+    /**
+     * 사용자 평가 분포 가져오기
+     */
     @GetMapping("/{userEmail}/ratings")
     public ResponseEntity<List<Double>> getRatings(@PathVariable String userEmail) {
         User user = userService.getUserByEmail(userEmail);
@@ -105,6 +116,16 @@ public class UserActivityController {
                 .map(DbRatings::getScore)
                 .toList();
         return ResponseEntity.ok(ratings);
+    }
+
+    /**
+     * 사용자 선호 키워드 가져오기
+     */
+    @GetMapping("/{userEmail}/keywords")
+    public ResponseEntity<List<KeywordDTO>> getUserPreferKeywords(@PathVariable String userEmail) {
+        User user = userService.getUserByEmail(userEmail);
+        List<KeywordDTO> topKeywords = userService.getTopKeywords(user);
+        return ResponseEntity.ok(topKeywords);
     }
 }
 
