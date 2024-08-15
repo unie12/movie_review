@@ -18,7 +18,7 @@ public class Cast {
 
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "credits_id")
     private Credits credits;
 

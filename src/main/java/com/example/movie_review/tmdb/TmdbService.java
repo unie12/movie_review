@@ -306,11 +306,11 @@ public class TmdbService {
                 .bodyToMono(String.class);
     }
 
-//    @Cacheable(value = "movieProvider", key = "#movieTId")
 
     /**
      * movieProvider 링크 제공
      */
+    @Cacheable(value = "movieProvider", key = "#movieTId")
     public Mono<String> getMovieProvider(Long movieTId) {
         return webClient.get()
                 .uri("/movie/{movieId}/watch/providers?api_key={api_key}", movieTId, apikey)

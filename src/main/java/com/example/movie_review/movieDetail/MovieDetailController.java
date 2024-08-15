@@ -7,6 +7,7 @@ import com.example.movie_review.movieDetail.DTO.MovieDetailDTO;
 import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.movieDetail.service.MovieDetailDTOService;
 import com.example.movie_review.review.DTO.ReviewDTO;
+import com.example.movie_review.review.service.ReviewDTOService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,6 +34,7 @@ public class MovieDetailController {
     private final TmdbService tmdbService;
     private final UserDTOService userDTOService;
     private final MovieCommonDTOService movieCommonDTOService;
+    private final ReviewDTOService reviewDTOService;
 
     private final ObjectMapper objectMapper;
     /**
@@ -45,15 +47,8 @@ public class MovieDetailController {
     public String movieDetail(@PathVariable Long movieId, Model model, Authentication principal) {
         try {
             MovieDetailDTO movieDetailDTO = movieDetailDTOService.getMovieDetailDTO(movieId, principal);
-            List<ReviewDTO> sortedReviews = movieDetailDTO.getReviews().stream()
-                    .sorted((r1, r2) -> Integer.compare(r2.getHeartCnt(), r1.getHeartCnt()))
-                    .limit(6)
-                    .collect(Collectors.toList());
-
-            sortedReviews.forEach(reviewDTO -> {
-                String reviewTextWithBreaks = reviewDTO.getReview().getText().replace("\n", "<br>");
-                reviewDTO.getReview().setText(reviewTextWithBreaks);
-            });
+            System.out.println("movieDetailDTO = " + movieDetailDTO);
+            List<ReviewDTO> sortedReviews = reviewDTOService.getSortedReviews(movieDetailDTO);
 
             model.addAttribute("sortedReviews", sortedReviews);
             model.addAttribute("movieDTO", movieDetailDTO);

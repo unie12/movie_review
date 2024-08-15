@@ -60,15 +60,15 @@ public class DbMovieService {
                 credits.setCast(credits.getCast().stream()
                         .limit(30)
                         .collect(Collectors.toList()));
-//                for (Cast cast : credits.getCast()) {
-//                    cast.setCredits(credits);
-//                }
+                for (Cast cast : credits.getCast()) {
+                    cast.setCredits(credits);
+                }
                 credits.setCrew(credits.getCrew().stream()
                         .filter(c -> "Director".equals(c.getJob()))
                         .collect(Collectors.toList()));
-//                for (Crew crew : credits.getCrew()) {
-//                    crew.setCredits(credits);
-//                }
+                for (Crew crew : credits.getCrew()) {
+                    crew.setCredits(credits);
+                }
                 credits.setMovieDetails(movieDetails);
             }
 
