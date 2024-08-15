@@ -1,6 +1,7 @@
 package com.example.movie_review.user.api;
 
 import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
+import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.SortOption;
@@ -95,6 +96,15 @@ public class UserActivityController {
                 .map(movie -> new LifeMovie(movie.getMovieId(), movieCommonDTOService.getMoviePoster(Long.valueOf(movie.getMovieId()))))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(lifeMovies);
+    }
+
+    @GetMapping("/{userEmail}/ratings")
+    public ResponseEntity<List<Double>> getRatings(@PathVariable String userEmail) {
+        User user = userService.getUserByEmail(userEmail);
+        List<Double> ratings = user.getDbRatings().stream()
+                .map(DbRatings::getScore)
+                .toList();
+        return ResponseEntity.ok(ratings);
     }
 }
 

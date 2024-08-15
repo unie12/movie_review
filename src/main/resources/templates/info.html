@@ -4,40 +4,7 @@
 <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/css/bodyHeader.css">
-    <style>
-        .container {
-            position: relative; /* container 요소에 position: relative; 추가 */
-            padding: 10px 200px;
-        }
-        .user-picture {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-        .user-nickname {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .life-movies {
-            display: flex; /* Flexbox 사용 */
-            flex-wrap: wrap; /* 줄바꿈 허용 */
-            gap: 10px; /* 영화 간의 간격 */
-        }
-        .movie-element {
-            width: 150px; /* 영화 요소의 너비 설정 */
-            cursor: pointer; /* 마우스 커서 포인터로 변경 */
-        }
-        .movie-content {
-            text-align: center; /* 영화 포스터 중앙 정렬 */
-        }
-        .movie-poster {
-            width: 100%; /* 포스터가 요소의 너비에 맞게 조정 */
-            height: auto; /* 비율 유지 */
-        }
-
-    </style>
+    <link rel="stylesheet" href="/css/info.css">
 
     <title>사용자 활동 내역</title>
 </head>
@@ -47,63 +14,63 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 
-    <img th:src="${userDTO.userCommonDTO.picture}" alt="User Picture" class="user-picture">
-    <span th:text="${userDTO.userCommonDTO.nickname}" class="user-nickname"
-          th:style="'color: ' + ${userDTO.userCommonDTO.role.color}">
-    </span>
-    <button th:if="${#authentication.name != userDTO.userCommonDTO.email}"
-            id="subscription"
-            th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"
-            th:text="${isSubscribed ? '구독 취소' : '구독'}"></button>
-
-    <button th:if="${#authentication.name == userDTO.userCommonDTO.email}"  id="deleteAccount">회원 탈퇴</button>
-    <!--    <button th:if="${#authentication.name == userDTO.userCommonDTO.email}"-->
-<!--            th:text="${"-->
-    <br>
-    <div>
-        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscription'}">
-            <span th:text="'내가 구독한 사용자 ' +${userDTO.subscriptionCnt}"></span>
-        </a>
-        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscriber'}">
-            <span th:text="'나를 구독한 사용자 ' + ${userDTO.subscriberCnt}"></span>
-        </a>
+    <!-- 사용자 정보  -->
+    <div class="user-info-box">
+        <img th:src="${userDTO.userCommonDTO.picture}" alt="User Picture" class="user-picture">
+        <span th:text="${userDTO.userCommonDTO.nickname}" class="user-nickname"
+              th:style="'color: ' + ${userDTO.userCommonDTO.role.color}">
+        </span>
+        <button th:if="${#authentication.name != userDTO.userCommonDTO.email}"
+                id="subscription"
+                th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"
+                th:text="${isSubscribed ? '구독 취소' : '구독'}"></button>
+        <button th:if="${#authentication.name == userDTO.userCommonDTO.email}" id="deleteAccount">회원 탈퇴</button>
+        <div class="subscription-info">
+            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscription'}">
+                <span th:text="'내가 구독한 사용자 ' +${userDTO.subscriptionCnt}"></span>
+            </a>
+            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscriber'}">
+                <span th:text="'나를 구독한 사용자 ' + ${userDTO.subscriberCnt}"></span>
+            </a>
+        </div>
     </div>
-    <br>
 
-    <h2>사용자 활동 내역</h2>
-
-    <div>
-        <h3 th:text="'즐겨찾기 영화 (' + ${userDTO.favoriteCnt} + '개)'"></h3>
-        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/favorite'}">즐겨찾기 영화 보기</a>
+    <!-- 사용자 활동 내역-->
+    <div class="activity-box">
+        <h2>사용자 활동 내역</h2>
+        <div class="activity-item">
+            <h3 th:text="'즐겨찾기 영화 (' + ${userDTO.favoriteCnt} + '개)'"></h3>
+            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/favorite'}">즐겨찾기 영화 보기</a>
+        </div>
+        <div class="activity-item">
+            <h3 th:text="'리뷰 작성한 영화 (' + ${userDTO.reviewCnt} + '개)'"></h3>
+            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/review'}">리뷰 작성한 영화 보기</a>
+        </div>
+        <div class="activity-item">
+            <h3 th:text="'평점 매긴 영화 (' + ${userDTO.ratingCnt} + '개)'"></h3>
+            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/rating'}">평점 매긴 보기</a>
+        </div>
+        <div class="activity-item">
+            <h3 th:text="'좋아요 누른 리뷰 (' + ${userDTO.heartCnt} + '개)'"></h3>
+            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
+        </div>
     </div>
-    <br>
 
-    <div>
-        <h3 th:text="'리뷰 작성한 영화 (' + ${userDTO.reviewCnt} + '개)'"></h3>
-        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/review'}">리뷰 작성한 영화 보기</a>
-    </div>
-    <br>
-
-    <div>
-        <h3 th:text="'평점 매긴 영화 (' + ${userDTO.ratingCnt} + '개)'"></h3>
-        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/rating'}">평점 매긴 보기</a>
-    </div>
-    <br>
-
-    <div>
-        <h3 th:text="'좋아요 누른 리뷰 (' + ${userDTO.heartCnt} + '개)'"></h3>
-        <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
-    </div>
-    <br>
-
-    <!-- ~님의 인생 영화-->
-    <div>
+    <!-- 사용자 인생 영화-->
+    <div class="life-movies-box">
         <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 인생 영화'"></h3>
         <div id="lifeMovies" class="life-movies">
             <!-- 해당 사용자의 인생 영화 리스트 동적으로 보여주기 -->
         </div>
     </div>
-<!--    ~님의 평가 분포-->
+
+    <!-- 사용자 평가 분포-->
+    <div class="rating-distribution-box">
+        <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 평가 분포'"></h3>
+        <div id="ratingDistribution" class="rating-distribution">
+            <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
+        </div>
+    </div>
 <!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
 <!--    ~님의 선호 키워드-->
 <!--    ~님의 선호 감독, 배우, 장르-->
@@ -129,16 +96,20 @@
 
         deleteAccountBtn.click(confirmDeleteAccount);
         loadLifeMovies();
+        loadRatingDistribution();
     });
 
+    // 구독 확인
     function checkSubscriptionStatus() {
         makeApiCall(`/api/user/subscription/${userEmail}`, 'GET', null, updateButtonState);
     }
 
+    // 구독 버튼 토글
     function toggleSubscription() {
         makeApiCall(`/api/user/subscription/${userEmail}`, 'PUT', null, updateButtonState);
     }
 
+    // 구독 버튼 상태 변경
     function updateButtonState(response) {
         const isSubscribed = response.subscribed;
         $('#subscription').text(isSubscribed ? '구독 취소' : '구독')
@@ -146,6 +117,7 @@
             .addClass(isSubscribed ? 'btn-danger' : 'btn-secondary');
     }
 
+    // 회원 탈퇴
     function confirmDeleteAccount() {
         if (confirm('회원 탈퇴를 진행한다면 해당 이메일의 모든 활동 내역은 사라지게 됩니다.')) {
             if (confirm('회원 탈퇴를 진행하시겠습니까?')) {
@@ -154,30 +126,18 @@
         }
     }
 
-    function makeApiCall(url, method, data, successCallback) {
-        $.ajax({
-            url: url,
-            type: method,
-            data: data,
-            contentType: 'application/json',
-            success: successCallback,
-            error: function(xhr, status, error) {
-                console.error(`Error in ${method} request to ${url}:`, error);
-            }
-        });
-    }
-
+    // 탈퇴 후 로그인 인증 정보 삭제
     function handleDeleteAccountResponse() {
         localStorage.removeItem('jwtToken');
         sessionStorage.clear();
         window.location.href = `/jwt-login`;
     }
 
+    // 인생 영화 리스트 가져오기
     function loadLifeMovies() {
         fetch(`/api/user/${userEmail}/lifeMovies`)
             .then(response => response.json())
             .then(movies => {
-                console.log('movies', movies);
                 const container = document.getElementById('lifeMovies');
                 container.innerHTML = '';
 
@@ -197,6 +157,7 @@
             });
     }
 
+    // 인생 영화 리스트 토대로 포스터 보여주기
     function createMovieElement(movie) {
         const movieElement = document.createElement('div');
         movieElement.className = 'movie-element';
@@ -215,6 +176,80 @@
 
         return movieElement;
     }
+
+    // 사용자 평가 정보 가져오기
+    function loadRatingDistribution() {
+        fetch(`/api/user/${userEmail}/ratings`)
+            .then(response => response.json())
+            .then(ratings => {
+
+                if(ratings.length === 0) {
+                    container.innerHTML = '<p>평가 항목이 아직 없습니다!</p>';
+                } else {
+                    const distribution = calculateDistribution(ratings);
+                    renderDistribution(distribution);
+                }
+            })
+            .catch(error => {
+                console.log('Error fetching ratings:', error);
+                document.getElementById('ratingDistribution').innerHTML = '<p>평가 분포를 불러오는 데 오류가 발생했습니다</p>';
+            });
+    }
+
+    function calculateDistribution(ratings) {
+        const distribution = {0.5: 0, 1.0: 0, 1.5: 0, 2.0: 0, 2.5: 0, 3.0: 0, 3.5: 0, 4.0: 0, 4.5: 0, 5.0: 0};
+
+        ratings.forEach(rating => {
+            distribution[rating]++;
+        });
+        return distribution;
+    }
+
+    function renderDistribution(distribution) {
+        const container = document.getElementById('ratingDistribution');
+        container.innerHTML = '';
+
+        const maxCount = Math.max(...Object.values(distribution));
+        const barContainer = document.createElement('div');
+        barContainer.className = 'bar-container';
+
+        Object.entries(distribution).sort((a, b) => parseFloat(a[0]) - parseFloat(b[0])).forEach(([rating, count]) => {
+            const barWrapper = document.createElement('div');
+            barWrapper.className = 'bar-wrapper';
+
+            const bar = document.createElement('div');
+            const height = count > 0 ? (count / maxCount) * 180 : 0;
+            bar.className = 'bar';
+            bar.style.height = `${height}px`;
+            bar.style.backgroundColor = count === maxCount ? '#ff4500' : '#007bff';
+            bar.title = `${count}개`;
+
+            const ratingLabel = document.createElement('div');
+            ratingLabel.className = 'rating-label';
+            ratingLabel.textContent = rating;
+
+            barWrapper.appendChild(bar);
+            barWrapper.appendChild(ratingLabel);
+
+            barContainer.appendChild(barWrapper);
+        });
+        container.appendChild(barContainer);
+    }
+
+
+    function makeApiCall(url, method, data, successCallback) {
+        $.ajax({
+            url: url,
+            type: method,
+            data: data,
+            contentType: 'application/json',
+            success: successCallback,
+            error: function(xhr, status, error) {
+                console.error(`Error in ${method} request to ${url}:`, error);
+            }
+        });
+    }
+
 
     function navigateToMovie(movieId) {
        window.location.href = '/contents/' + movieId;
