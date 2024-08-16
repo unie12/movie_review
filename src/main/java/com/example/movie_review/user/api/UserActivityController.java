@@ -1,8 +1,8 @@
 package com.example.movie_review.user.api;
 
-import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.movieDetail.DTO.KeywordDTO;
+import com.example.movie_review.movieDetail.DTO.PreferPerson;
 import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.SortOption;
@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -34,7 +33,6 @@ public class UserActivityController {
     private final Map<String, UserActivityService> activityServices;
     private final UserService userService;
     private final MovieCommonDTOService movieCommonDTOService;
-
 
     /**
      * 해당 사용자의 각 카테고리별 활동 내역 리스트 보여주기
@@ -126,6 +124,29 @@ public class UserActivityController {
         User user = userService.getUserByEmail(userEmail);
         List<KeywordDTO> topKeywords = userService.getTopKeywords(user);
         return ResponseEntity.ok(topKeywords);
+    }
+
+    /**
+     * 사용자 선호 감독 가져오기
+     */
+    @GetMapping("/{userEmail}/directors")
+    public ResponseEntity<List<PreferPerson>> getUserPreferDirectors(@PathVariable String userEmail) {
+        User user = userService.getUserByEmail(userEmail);
+
+        List<PreferPerson> preferDirectors = userService.getPreferDirectors(user);
+
+        return ResponseEntity.ok(preferDirectors);
+    }
+
+    /**
+     * 사용자 선호 배우 가져오기
+     */
+    @GetMapping("/{userEmail}/actors")
+    public ResponseEntity<List<PreferPerson>> getUserPreferActors(@PathVariable String userEmail) {
+        User user = userService.getUserByEmail(userEmail);
+
+        List<PreferPerson> preferActors = userService.getPreferActors(user);
+        return ResponseEntity.ok(preferActors);
     }
 }
 

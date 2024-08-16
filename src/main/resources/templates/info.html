@@ -80,9 +80,24 @@
         </div>
     </div>
 
+    <!-- 사용자 선호 감독-->
+    <div class="prefer-director-box">
+        <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 감독'"></h3>
+        <div id="preferDirectors" class="prefer-person">
+            <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
+        </div>
+    </div>
+
+    <!-- 사용자 선호 배우-->
+    <div class="prefer-actor-box">
+        <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 배우'"></h3>
+        <div id="preferActors" class="prefer-person">
+            <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
+        </div>
+    </div>
+    <!-- 사용자 선호 장르-->
 
 <!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
-<!--    ~님의 선호 감독, 배우, 장르-->
 <!--    ~님과 나의 취향매칭률-->
 
 </div>
@@ -92,22 +107,48 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     let userEmail, currentUserEmail;
+
     $(document).ready(function() {
-        const subscriptionBtn = $('#subscription');
-        const deleteAccountBtn = $('#deleteAccount');
+        initializeUserInfo();
+        initializeDataLoading();
+    });
+
+    function initializeUserInfo() {
         userEmail = '[[${userDTO.userCommonDTO.email}]]';
         currentUserEmail = '[[${#authentication.name}]]';
 
-        if( userEmail !== currentUserEmail) {
+        if (userEmail !== currentUserEmail) {
             checkSubscriptionStatus();
-            subscriptionBtn.click(toggleSubscription);
+            $('#subscription').click(toggleSubscription);
         }
 
-        deleteAccountBtn.click(confirmDeleteAccount);
-        loadLifeMovies();
-        loadRatingDistribution();
-        loadPreferKeyword();
-    });
+        $('#deleteAccount').click(confirmDeleteAccount);
+    }
+
+    function initializeDataLoading() {
+        loadData('lifeMovies', 'lifeMovies', renderLifeMovies);
+        loadData('ratings', 'ratingDistribution', renderRatingDistribution);
+        loadData('keywords', 'keywordCloud', renderKeywords);
+        loadData('directors', 'preferDirectors', (data, container) => renderPeople(data, container, 'crew'));
+        loadData('actors', 'preferActors', (data, container) => renderPeople(data, container, 'cast'));
+    }
+
+    function loadData(endpoint, containerId, renderFunction) {
+        const container = document.getElementById(containerId);
+        fetch(`/api/user/${userEmail}/${endpoint}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
+                } else {
+                    renderFunction(data, container);
+                }
+            })
+            .catch(error => {
+                console.error(`Error fetching ${endpoint}:`, error);
+                container.innerHTML = `<p>${endpoint}를 불러오는 데 오류가 발생했습니다</p>`;
+            });
+    }
 
     // 구독 확인
     function checkSubscriptionStatus() {
@@ -143,104 +184,34 @@
         window.location.href = `/jwt-login`;
     }
 
-    // 인생 영화 리스트 가져오기
-    function loadLifeMovies() {
-        fetch(`/api/user/${userEmail}/lifeMovies`)
-            .then(response => response.json())
-            .then(movies => {
-                const container = document.getElementById('lifeMovies');
-                container.innerHTML = '';
-
-                if(movies.length === 0) {
-                    container.innerHTML = '<p>인생영화를 아직 등록하지 않았습니다!</p>';
-                } else {
-                    movies.forEach((movie) => {
-                        const movieElement = createMovieElement(movie);
-                        container.appendChild(movieElement);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching life movies:', error);
-                const container = document.getElementById('lifeMovies');
-                container.innerHTML = '<p>인생영화를 불러오는 데 오류가 발생했습니다</p>';
-            });
-    }
 
     // 인생 영화 리스트 토대로 포스터 보여주기
-    function createMovieElement(movie) {
-        const movieElement = document.createElement('div');
-        movieElement.className = 'movie-element';
-        movieElement.setAttribute('data-movie-tid', movie.tid);
+    function renderLifeMovies(movies, container) {
+        container.innerHTML = '';
 
-        movieElement.innerHTML = `
-            <div class="movie-content">
-                <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" class="movie-poster">
-            </div>
-        `;
+        movies.forEach((movie) => {
+            const movieElement = document.createElement('div');
+            movieElement.className = 'movie-element';
+            movieElement.setAttribute('data-movie-tid', movie.tid);
 
-        movieElement.addEventListener('click', function() {
-            const movieTid = this.getAttribute('data-movie-tid');
-            navigateToMovie(movieTid);
-        });
+            movieElement.innerHTML = `
+                <div class="movie-content">
+                    <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" class="movie-poster">
+                </div>
+            `;
 
-        return movieElement;
-    }
-
-    // 사용자 평가 정보 가져오기
-    function loadRatingDistribution() {
-        const container = document.getElementById('ratingDistribution'); // container 정의
-
-        fetch(`/api/user/${userEmail}/ratings`)
-            .then(response => response.json())
-            .then(ratings => {
-
-                if(ratings.length === 0) {
-                    container.innerHTML = '<p>평가 항목이 아직 없습니다!</p>';
-                } else {
-                    const distribution = calculateDistribution(ratings);
-                    renderDistribution(distribution);
-                }
-            })
-            .catch(error => {
-                console.log('Error fetching ratings:', error);
-                document.getElementById('ratingDistribution').innerHTML = '<p>평가 분포를 불러오는 데 오류가 발생했습니다</p>';
+            movieElement.addEventListener('click', function() {
+                const movieTid = this.getAttribute('data-movie-tid');
+                navigateToMovie(movieTid);
             });
-    }
 
-    // 사용자 선호 키워드 가져오기
-    function loadPreferKeyword() {
-        const container = document.getElementById('keywordCloud'); // container 정의
-
-        fetch(`/api/user/${userEmail}/keywords`)
-            .then(response => response.json())
-            .then(keywords => {
-                if(keywords.length === 0) {
-                    container.innerHTML = '<p>사용자 선호 키워드가 아직 없습니다!</p>';
-                } else {
-                    renderKeywords(keywords);
-                }
-            })
-            .catch(error => {
-                console.log('Error fetching ratings:', error);
-                document.getElementById('ratingDistribution').innerHTML = '<p>선호 키워드를 불러오는 데 오류가 발생했습니다</p>';
-            });
-    }
-
-
-    // 사용자 평가 분포 계산
-    function calculateDistribution(ratings) {
-        const distribution = {0.5: 0, 1.0: 0, 1.5: 0, 2.0: 0, 2.5: 0, 3.0: 0, 3.5: 0, 4.0: 0, 4.5: 0, 5.0: 0};
-
-        ratings.forEach(rating => {
-            distribution[rating]++;
+            container.appendChild(movieElement);
         });
-        return distribution;
     }
 
     // 사용자 평가 분포 렌더링
-    function renderDistribution(distribution) {
-        const container = document.getElementById('ratingDistribution');
+    function renderRatingDistribution(ratings, container) {
+        const distribution = calculateDistribution(ratings);
         container.innerHTML = '';
 
         const maxCount = Math.max(...Object.values(distribution));
@@ -270,9 +241,42 @@
         container.appendChild(barContainer);
     }
 
+    // 사용자 평가 분포 계산
+    function calculateDistribution(ratings) {
+        const distribution = {0.5: 0, 1.0: 0, 1.5: 0, 2.0: 0, 2.5: 0, 3.0: 0, 3.5: 0, 4.0: 0, 4.5: 0, 5.0: 0};
+        ratings.forEach(rating => {
+            distribution[rating]++;
+        });
+        return distribution;
+    }
+
+    // 선호 감독 요소 만들기
+    function renderPeople(people, container, type) {
+        container.innerHTML = '';
+        people.forEach(person => {
+            const personElement = document.createElement('div');
+            personElement.className = 'person-element';
+
+            const imageUrl = person.profile_path
+            ? `https://image.tmdb.org/t/p/w200${person.profile_path}`
+            : '/images/defaultMovie.png'; // 기본 이미지 경로 설정
+
+            personElement.innerHTML = `
+                <div class="person-content">
+                    <img src="${imageUrl}" alt="${person.name}" class="person-image"
+                        onclick="navigateToPerson(${person.id}, '${type}')">
+                    <div class="person-info">
+                        <h5>${person.name}</h5>
+                        <p>선호도: ${person.frequency}</p>
+                    </div>
+                </div>
+            `;
+            container.appendChild(personElement);
+        });
+    }
+
     // 사용자 선호 키워드 렌더링
-    function renderKeywords(keywords) {
-        const container = document.getElementById('keywordCloud');
+    function renderKeywords(keywords, container) {
         container.innerHTML = '';
 
         const gridSize = Math.ceil(Math.sqrt(keywords.length));
@@ -325,18 +329,6 @@
         }, 100);
     }
 
-    function isOverlapping(left, top, usedPositions) {
-        for (let pos of usedPositions) {
-            if (left < pos.left + pos.width &&
-                left + 100 > pos.left &&
-                top < pos.top + pos.height &&
-                top + 50 > pos.top) {
-                return true; // 겹침
-            }
-        }
-        return false; // 겹치지 않음
-    }
-
 
     function makeApiCall(url, method, data, successCallback) {
         $.ajax({
@@ -354,5 +346,9 @@
 
     function navigateToMovie(movieId) {
        window.location.href = '/contents/' + movieId;
+    }
+
+    function navigateToPerson(personId, type) {
+        window.location.href = `/people/${personId}?type=${type}`;
     }
 </script>

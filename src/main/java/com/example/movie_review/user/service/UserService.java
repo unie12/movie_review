@@ -1,19 +1,18 @@
 package com.example.movie_review.user.service;
 
 import com.example.movie_review.dbMovie.DbMovies;
-import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.dbRating.DbRatingRepository;
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.movieDetail.DTO.KeywordDTO;
-import com.example.movie_review.movieDetail.domain.Keyword;
+import com.example.movie_review.movieDetail.DTO.PreferPerson;
+import com.example.movie_review.movieDetail.domain.Cast;
+import com.example.movie_review.movieDetail.domain.Crew;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
-import com.example.movie_review.movieDetail.domain.MovieKeyword;
 import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
-import com.example.movie_review.movieDetail.service.MovieDetailDTOService;
 import com.example.movie_review.review.event.ReviewEvent;
-import com.example.movie_review.user.repository.UserRepository;
 import com.example.movie_review.user.UserRole;
 import com.example.movie_review.user.domain.User;
+import com.example.movie_review.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,10 +23,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -141,15 +137,7 @@ public class UserService {
 
     // 사용자가 좋게 평가한 영화들 중에서 키워드 뽑아내는 걸로
     public List<KeywordDTO> getTopKeywords(User user) {
-        List<DbMovies> preferMovies = user.getDbRatings().stream()
-                .filter(r -> r.getScore() >= 3.5)
-                .map(DbRatings::getDbMovies)
-                .collect(Collectors.toList());
-
-        List<MovieDetails> movieDetails = preferMovies.stream()
-                .map(movie -> movieDetailRepository.findBytId(movie.getTmdbId()))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<MovieDetails> movieDetails = getPreferMovies(user);
 
         Map<String, Long> keywordCount = movieDetails.stream()
                 .flatMap(movie -> movie.getMovieKeywords().stream())
@@ -174,8 +162,90 @@ public class UserService {
         return topKeywords;
     }
 
+    /**
+     * 사용자 선호 영화에 대한 선호 감독
+     */
+    public List<PreferPerson> getPreferDirectors(User user) {
+        List<MovieDetails> preferMovies = getPreferMovies(user);
+        Map<String, Crew> directorMap = new HashMap<>(); // 감독 이름, crew 정보 맵
+        Map<String ,Integer> directorFrequency = new HashMap<>(); // 감독 이름, count
+
+        preferMovies.forEach(movie -> {
+            movie.getCredits().getCrew().stream()
+                    .forEach(director -> {
+                        String directorName = director.getName();
+                        directorMap.put(directorName, director);
+                        directorFrequency.merge(directorName, 1, Integer::sum);
+                    });
+        });
+
+        return directorFrequency.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(5)
+                .map(entry -> {
+                    Crew director = directorMap.get(entry.getKey());
+                    return new PreferPerson(
+                            director.getId(),
+                            director.getProfile_path(),
+                            director.getOriginal_name(),
+                            director.getName(),
+                            entry.getValue()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 사용자 선호 영화에 대한 선호 배우
+     */
+    public List<PreferPerson> getPreferActors(User user) {
+        List<MovieDetails> preferMovies = getPreferMovies(user);
+        Map<String, Integer> actorFrequency = new HashMap<>();
+        Map<String, Cast> actorMap = new HashMap<>();
+
+        preferMovies.forEach(movie -> {
+            movie.getCredits().getCast().stream()
+                    .forEach(actor -> {
+                        String actorName = actor.getName();
+                        actorMap.put(actorName, actor);
+                        actorFrequency.merge(actorName, 1, Integer::sum);
+                    });
+        });
+
+        return actorFrequency.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(5)
+                .map(entry -> {
+                    Cast actor = actorMap.get(entry.getKey());
+                    return new PreferPerson(
+                            actor.getId(),
+                            actor.getProfile_path(),
+                            actor.getOriginal_name(),
+                            actor.getName(),
+                            entry.getValue()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
     private int calculateSize(long count, long minCount, long maxCount) {
         if (minCount == maxCount) return 3;
         return 1 + (int) ((count - minCount) * 4 / (maxCount - minCount));
     }
+
+    private List<MovieDetails> getPreferMovies(User user) {
+        List<DbMovies> preferMovies = user.getDbRatings().stream()
+                .filter(r -> r.getScore() >= 3.5)
+                .map(DbRatings::getDbMovies)
+                .collect(Collectors.toList());
+
+        List<MovieDetails> movieDetails = preferMovies.stream()
+                .map(movie -> movieDetailRepository.findBytId(movie.getTmdbId()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return movieDetails;
+    }
+
+
 }

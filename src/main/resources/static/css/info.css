@@ -3,7 +3,7 @@
     margin: 0 auto;
     padding: 10px 200px;
 }
-.user-info-box, .activity-box, .life-movies-box, .rating-distribution-box, .prefer-keyword-box{
+.user-info-box, .activity-box, .life-movies-box, .rating-distribution-box, .prefer-keyword-box, .prefer-director-box, .prefer-actor-box {
     background-color: #f8f9fa;
     border-radius: 10px;
     padding: 20px;
@@ -129,4 +129,36 @@
     transform: scale(1.1);
     z-index: 10;
     background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* 선호 감독 css*/
+.prefer-person {
+    display: flex;
+    justify-content: space-around;
+}
+
+.person-element {
+    width: 150px;
+    margin: 10px;
+    text-align: center;
+}
+
+.person-image {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.person-info {
+    margin-top: 10px;
+}
+
+.person-info h5 {
+    margin: 5px 0;
+}
+
+.person-info p {
+    margin: 3px 0;
+    font-size: 0.9em;
 }
