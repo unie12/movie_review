@@ -273,42 +273,56 @@
     // 사용자 선호 키워드 렌더링
     function renderKeywords(keywords) {
         const container = document.getElementById('keywordCloud');
-        container.innerHTML = '';  // 기존 내용 삭제
+        container.innerHTML = '';
 
-        // 컨테이너 크기
-        const containerWidth = container.offsetWidth - 40;
-        const containerHeight = container.offsetHeight - 40;
-
-        // 이미 사용된 위치를 추적
-        let usedPositions = [];
+        const gridSize = Math.ceil(Math.sqrt(keywords.length));
+        const cellWidth = container.offsetWidth / gridSize;
+        const cellHeight = container.offsetHeight / gridSize;
 
         keywords.forEach((keyword, index) => {
             const span = document.createElement('span');
             span.textContent = keyword.keyword;
             span.className = 'keyword';
 
-            // 폰트 크기 설정 (15px에서 30px 사이)
-            const fontSize = keyword.size * 3 + 15;
+            const fontSize = Math.min(20, 10 + keyword.size * 2);
             span.style.fontSize = `${fontSize}px`;
 
-            // 색상 설정 (채도를 이용해 강조)
-            const saturation = 100 - (index * (70 / keywords.length)); // 100%에서 30%까지 채도 변화
-            span.style.color = `hsl(210, ${saturation}%, 50%)`;
+            const hue = (index * 137.5) % 360; // 골든앵글을 이용한 색상 분포
+            span.style.color = `hsl(${hue}, 70%, 50%)`;
 
-            // 위치 설정
-            let left, top;
-            do {
-                left = Math.random() * (containerWidth - 150); // 100px는 예상 최대 단어 너비
-                top = Math.random() * (containerHeight - 100);  // 50px는 예상 최대 단어 높이
-            } while (isOverlapping(left, top, usedPositions));
+            const col = index % gridSize;
+            const row = Math.floor(index / gridSize);
+
+            const left = col * cellWidth + Math.random() * (cellWidth / 2);
+            const top = row * cellHeight + Math.random() * (cellHeight / 2);
 
             span.style.left = `${left}px`;
             span.style.top = `${top}px`;
+            span.style.position = 'absolute';
+            span.style.transition = 'all 0.3s ease';
 
-            usedPositions.push({left, top, width: 150, height: 100}); // 사용된 위치 기록
+            // 호버 효과 추가
+            span.addEventListener('mouseover', () => {
+                span.style.transform = 'scale(1.1)';
+                span.style.zIndex = '10';
+            });
+            span.addEventListener('mouseout', () => {
+                span.style.transform = 'scale(1)';
+                span.style.zIndex = '1';
+            });
 
             container.appendChild(span);
         });
+
+        // 간단한 애니메이션 효과 추가
+        setTimeout(() => {
+            document.querySelectorAll('.keyword').forEach(keyword => {
+                const newLeft = parseFloat(keyword.style.left) + (Math.random() - 0.5) * 20;
+                const newTop = parseFloat(keyword.style.top) + (Math.random() - 0.5) * 20;
+                keyword.style.left = `${newLeft}px`;
+                keyword.style.top = `${newTop}px`;
+            });
+        }, 100);
     }
 
     function isOverlapping(left, top, usedPositions) {

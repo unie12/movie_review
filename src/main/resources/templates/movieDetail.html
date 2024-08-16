@@ -5,195 +5,177 @@
 <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/css/bodyHeader.css">
+    <link rel="stylesheet" href="/css/loading.css">
+    <link rel="stylesheet" href="/css/movieDetail.css">
 
     <title>영화 상세정보</title>
-    <link rel="stylesheet" href="/css/movieDetail.css">
     <meta charset="UTF-8">
 </head>
 <script th:src="@{'/js/search.js'}"></script>
 
 <body>
-<div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <script src="/js/loading.js"></script>
+    <script>
+        LoadingManager.show();
 
-<div class="container">
-    <div id="loading-screen" class="loading-screen">
-        <div class="spinner"></div>
-        <p>영화 정보를 불러오는 중입니다...</p>
-    </div>
-    <div id="movie-content" style="display: none;">
-        <div class="movie-detail" th:if="${movieDTO}">
-            <h1 th:text="${movieDTO.basicInfo.title}"></h1>
-            <h3 th:text="'(' + ${movieDTO.basicInfo.original_title} + ')'"></h3>
-            <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.basicInfo.backdrop_path}" th:alt="${movieDTO.basicInfo.title}" class="backdrop_poster">
-            <p><strong>개봉일:</strong> <span th:text="${movieDTO.basicInfo.release_date}"></span></p>
-            <p><strong>장르:</strong> <span th:each="genre : ${movieDTO.basicInfo.genres}" th:text="'[' + ${genre} + ']' + ' ' "></span></p>
-            <p><span th:text="${movieDTO.basicInfo.runtime} + '분'"></span></p>
-            <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.basicInfo.poster_path}" th:alt="${movieDTO.basicInfo.title}" class="movie_poster">
+        window.addEventListener('load', function() {
+            LoadingManager.waitForImages().then(() => {
+                LoadingManager.hide();
+                document.getElementById('movie-content').style.display = 'block';
+                initializePageContent();
+            });
+        });
+    </script>
 
-            <!-- 바로가기 버튼 -->
-            <a th:if="${movieDTO.basicInfo.watchProvider}" th:href="${movieDTO.basicInfo.watchProvider}" class="btn btn-info" role="button" target="_blank" rel="noopener noreferrer">영화 바로가기</a>
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
-            <!-- 유튜브 예고편 링크 버튼 -->
-            <a th:if="${movieDTO.basicInfo.youtubeLink != null}" th:href="${movieDTO.basicInfo.youtubeLink}" class="btn btn-info" role="button" target="_blank" rel="noopener noreferrer">유튜브 예고편 바로가기</a>
+    <div class="container">
+        <div id="movie-content" style="display: none;">
+            <div class="movie-detail" th:if="${movieDTO}">
+                <h1 th:text="${movieDTO.basicInfo.title}"></h1>
+                <h3 th:text="'(' + ${movieDTO.basicInfo.original_title} + ')'"></h3>
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.basicInfo.backdrop_path}" th:alt="${movieDTO.basicInfo.title}" class="backdrop_poster">
+                <p><strong>개봉일:</strong> <span th:text="${movieDTO.basicInfo.release_date}"></span></p>
+                <p><strong>장르:</strong> <span th:each="genre : ${movieDTO.basicInfo.genres}" th:text="'[' + ${genre} + ']' + ' ' "></span></p>
+                <p><span th:text="${movieDTO.basicInfo.runtime} + '분'"></span></p>
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.basicInfo.poster_path}" th:alt="${movieDTO.basicInfo.title}" class="movie_poster">
 
-            <!-- 찜 기능 -->
-            <button id="favoriteButton" th:attr="data-movie-id=${movieDTO.basicInfo.id}" th:class="${movieDTO.isFavorite} ? 'favorite active' : 'favorite'">
-                <i class="fas fa-heart"></i>
-            </button>
+                <!-- 바로가기 버튼 -->
+                <a th:if="${movieDTO.basicInfo.watchProvider}" th:href="${movieDTO.basicInfo.watchProvider}" class="btn btn-info" role="button" target="_blank" rel="noopener noreferrer">영화 바로가기</a>
 
-            <!-- 사용자 리뷰 섹션 -->
-            <div id="reviewSection">
-                <h3>리뷰</h3>
-                <div id="reviewDisplay" style="display:none;">
-                    <p id="reviewDisplayText"></p>
-                    <button id="editReviewBtn" class="btn btn-secondary">수정</button>
-                    <button id="deleteReviewBtn" class="btn btn-danger">삭제</button>
-                </div>
-                <button id="writeReviewBtn" class="btn btn-primary" style="display:none;">리뷰 작성</button>
-            </div>
+                <!-- 유튜브 예고편 링크 버튼 -->
+                <a th:if="${movieDTO.basicInfo.youtubeLink != null}" th:href="${movieDTO.basicInfo.youtubeLink}" class="btn btn-info" role="button" target="_blank" rel="noopener noreferrer">유튜브 예고편 바로가기</a>
 
-            <!-- 리뷰 모달 -->
-            <div id="reviewModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2 id="modalTitle">리뷰 작성</h2>
-                    <textarea id="reviewText" rows="4" cols="50"></textarea>
-                    <div>
-                        <input type="checkbox" id="spoilerCheck">
-                        <label for="spoilerCheck">스포일러 포함</label>
+                <!-- 찜 기능 -->
+                <button id="favoriteButton" th:attr="data-movie-id=${movieDTO.basicInfo.id}" th:class="${movieDTO.isFavorite} ? 'favorite active' : 'favorite'">
+                    <i class="fas fa-heart"></i>
+                </button>
+
+                <!-- 사용자 리뷰 섹션 -->
+                <div id="reviewSection">
+                    <h3>리뷰</h3>
+                    <div id="reviewDisplay" style="display:none;">
+                        <p id="reviewDisplayText"></p>
+                        <button id="editReviewBtn" class="btn btn-secondary">수정</button>
+                        <button id="deleteReviewBtn" class="btn btn-danger">삭제</button>
                     </div>
-                    <button id="saveReviewBtn" class="btn btn-primary">저장</button>
+                    <button id="writeReviewBtn" class="btn btn-primary" style="display:none;">리뷰 작성</button>
                 </div>
-            </div>
 
-            <p><strong>tmdb 기준 평균 평점:</strong> <span th:text="${movieDTO.basicInfo.tmdb_ratingAvg} + ' (' + ${movieDTO.basicInfo.tmdb_ratingCnt} + '표)'"></span></p>
-            <p><strong>아주대 학생 평균 평점:</strong> <span th:text="${movieDTO.ajou_ratingAvg} + ' (' + ${movieDTO.ajou_ratingCnt} + '표)'"></span></p>
-
-            <!-- 별점 시스템 -->
-            <div id="starRating" class="star-rating">
-                <span class="star" data-rating="0.5">☆</span><span class="star" data-rating="1">☆</span>
-                <span class="star" data-rating="1.5">☆</span><span class="star" data-rating="2">☆</span>
-                <span class="star" data-rating="2.5">☆</span><span class="star" data-rating="3">☆</span>
-                <span class="star" data-rating="3.5">☆</span><span class="star" data-rating="4">☆</span>
-                <span class="star" data-rating="4.5">☆</span><span class="star" data-rating="5">☆</span>
-            </div>
-            <p id="selectedRating">선택한 평점: <span>0</span></p>
-
-            <p><strong><span th:text="${movieDTO.basicInfo.tagline}"></span></strong> </p>
-            <p><span th:text="${movieDTO.basicInfo.overview}"></span></p>
-
-
-            <!-- 감독 정보 -->
-            <p><strong>감독:</strong></p>
-            <div class="director" th:each="director : ${movieDTO.basicInfo.directors}">
-                <img th:src="'https://image.tmdb.org/t/p/w500' + ${director.profile_path}" th:alt="${director.name}"
-                    th:attr="onclick=|redirectToPerson(${director.id}, 'crew')|">
-                <span th:text="${director.name}"></span>
-            </div>
-
-            <!-- 배우 정보 -->
-            <p><strong>주요 출연:</strong></p>
-            <div class="actor-slider">
-                <button id="prevButton">이전</button>
-                <div class="actor-list" id="actorList">
-                    <div class="actor" th:each="actor : ${movieDTO.basicInfo.actors}" th:attr="data-actor-id=${actor.id}">
-                        <img th:src="'https://image.tmdb.org/t/p/w500' + ${actor.profile_path}" th:alt="${actor.name}">
+                <!-- 리뷰 모달 -->
+                <div id="reviewModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2 id="modalTitle">리뷰 작성</h2>
+                        <textarea id="reviewText" rows="4" cols="50"></textarea>
                         <div>
-                            <span th:text="${actor.name}"></span>
-                            <p th:text="${actor.character_name}"></p>
+                            <input type="checkbox" id="spoilerCheck">
+                            <label for="spoilerCheck">스포일러 포함</label>
                         </div>
+                        <button id="saveReviewBtn" class="btn btn-primary">저장</button>
                     </div>
                 </div>
-                <button id="nextButton">다음</button>
-            </div>
 
-            <!-- 리뷰 리스트 -->
-            <div class="review-section">
-                <h3>영화 리뷰 <span th:text="'(총 ' + ${movieDTO.reviewCnt} + '개)'"></span></h3>
+                <p><strong>tmdb 기준 평균 평점:</strong> <span th:text="${movieDTO.basicInfo.tmdb_ratingAvg} + ' (' + ${movieDTO.basicInfo.tmdb_ratingCnt} + '표)'"></span></p>
+                <p><strong>아주대 학생 평균 평점:</strong> <span th:text="${movieDTO.ajou_ratingAvg} + ' (' + ${movieDTO.ajou_ratingCnt} + '표)'"></span></p>
 
-                <div class="review-grid">
-                    <div th:each="reviewDTO : ${sortedReviews}" class="review-card">
+                <!-- 별점 시스템 -->
+                <div id="starRating" class="star-rating">
+                    <span class="star" data-rating="0.5">☆</span><span class="star" data-rating="1">☆</span>
+                    <span class="star" data-rating="1.5">☆</span><span class="star" data-rating="2">☆</span>
+                    <span class="star" data-rating="2.5">☆</span><span class="star" data-rating="3">☆</span>
+                    <span class="star" data-rating="3.5">☆</span><span class="star" data-rating="4">☆</span>
+                    <span class="star" data-rating="4.5">☆</span><span class="star" data-rating="5">☆</span>
+                </div>
+                <p id="selectedRating">선택한 평점: <span>0</span></p>
 
-                        <div class="user-info">
-                            <a th:href="@{'/info/' + ${reviewDTO.user.email}}">
-                                <img th:src="${reviewDTO.user.picture}" alt="User Picture" class="user-picture">
-                            </a>
-                            <span th:text="${reviewDTO.user.nickname}" class="user-nickname"
-                                  th:style="'color: ' + ${reviewDTO.user.role.color}">
-                            </span>
-                            <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
-                        </div>
-                        <div class="review-content">
-                            <p th:if="${!reviewDTO.spoiler}" th:utext="${#strings.abbreviate(reviewDTO.review.text, 100)}"></p>
-                            <div th:if="${reviewDTO.spoiler}" class="spoiler-content">
-                                <button class="spoiler-toggle" onclick="toggleSpoiler(this)">스포일러 보기</button>
-                                <p class="spoiler-text" style="display: none;" th:utext="${reviewDTO.review.text}"></p>
+                <p><strong><span th:text="${movieDTO.basicInfo.tagline}"></span></strong> </p>
+                <p><span th:text="${movieDTO.basicInfo.overview}"></span></p>
+
+
+                <!-- 감독 정보 -->
+                <p><strong>감독:</strong></p>
+                <div class="director" th:each="director : ${movieDTO.basicInfo.directors}">
+                    <img th:src="'https://image.tmdb.org/t/p/w500' + ${director.profile_path}" th:alt="${director.name}"
+                        th:attr="onclick=|redirectToPerson(${director.id}, 'crew')|">
+                    <span th:text="${director.name}"></span>
+                </div>
+
+                <!-- 배우 정보 -->
+                <p><strong>주요 출연:</strong></p>
+                <div class="actor-slider">
+                    <button id="prevButton">이전</button>
+                    <div class="actor-list" id="actorList">
+                        <div class="actor" th:each="actor : ${movieDTO.basicInfo.actors}" th:attr="data-actor-id=${actor.id}">
+                            <img th:src="'https://image.tmdb.org/t/p/w500' + ${actor.profile_path}" th:alt="${actor.name}">
+                            <div>
+                                <span th:text="${actor.name}"></span>
+                                <p th:text="${actor.character_name}"></p>
                             </div>
                         </div>
+                    </div>
+                    <button id="nextButton">다음</button>
+                </div>
 
-                        <div class="review-actions">
-                            <button class="like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${movieDTO.userHearts.contains(reviewDTO.review.id)} ? 'active' : ''">
-                                좋아요 <span th:text="${reviewDTO.heartCnt ?: 0}" class="like-count"></span>
-                            </button>
+                <!-- 리뷰 리스트 -->
+                <div class="review-section">
+                    <h3>영화 리뷰 <span th:text="'(총 ' + ${movieDTO.reviewCnt} + '개)'"></span></h3>
+
+                    <div class="review-grid">
+                        <div th:each="reviewDTO : ${sortedReviews}" class="review-card">
+
+                            <div class="user-info">
+                                <a th:href="@{'/info/' + ${reviewDTO.user.email}}">
+                                    <img th:src="${reviewDTO.user.picture}" alt="User Picture" class="user-picture">
+                                </a>
+                                <span th:text="${reviewDTO.user.nickname}" class="user-nickname"
+                                      th:style="'color: ' + ${reviewDTO.user.role.color}">
+                                </span>
+                                <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
+                            </div>
+                            <div class="review-content">
+                                <p th:if="${!reviewDTO.spoiler}" th:utext="${#strings.abbreviate(reviewDTO.review.text, 100)}"></p>
+                                <div th:if="${reviewDTO.spoiler}" class="spoiler-content">
+                                    <button class="spoiler-toggle" onclick="toggleSpoiler(this)">스포일러 보기</button>
+                                    <p class="spoiler-text" style="display: none;" th:utext="${reviewDTO.review.text}"></p>
+                                </div>
+                            </div>
+
+                            <div class="review-actions">
+                                <button class="like-button" th:attr="data-review-id=${reviewDTO.review.id}" th:classappend="${movieDTO.userHearts.contains(reviewDTO.review.id)} ? 'active' : ''">
+                                    좋아요 <span th:text="${reviewDTO.heartCnt ?: 0}" class="like-count"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <p>
-                    <a th:href="@{'/contents/' + ${movieDTO.basicInfo.tId} + '/reviews'}" class="btn btn-lg btn-info">전체 리뷰 보기</a>
-                </p>
+                    <p>
+                        <a th:href="@{'/contents/' + ${movieDTO.basicInfo.tId} + '/reviews'}" class="btn btn-lg btn-info">전체 리뷰 보기</a>
+                    </p>
 
-                <!-- 추천 영화 목록 -->
-                <div class="recommended-movies">
-                    <h3>추천 영화</h3>
-                    <div class="movie-grid">
-                        <div th:each="movie : ${movieDTO.basicInfo.recommendMovies}" class="movie-card">
-                            <a th:href="@{'/contents/' + ${movie.id}}">
-                                <div class="poster-container">
-                                    <img th:src="@{'https://image.tmdb.org/t/p/w200' + ${movie.poster_path}}" alt="Movie Poster" class="movie-poster">
-                                </div>
-                                <h4 th:text="${movie.title}" class="movie-title"></h4>
-                            </a>
+                    <!-- 추천 영화 목록 -->
+                    <div class="recommended-movies">
+                        <h3>추천 영화</h3>
+                        <div class="movie-grid">
+                            <div th:each="movie : ${movieDTO.basicInfo.recommendMovies}" class="movie-card">
+                                <a th:href="@{'/contents/' + ${movie.id}}">
+                                    <div class="poster-container">
+                                        <img th:src="@{'https://image.tmdb.org/t/p/w200' + ${movie.poster_path}}" alt="Movie Poster" class="movie-poster">
+                                    </div>
+                                    <h4 th:text="${movie.title}" class="movie-title"></h4>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div th:replace="fragments/footer :: footer" />
     </div>
-    <div th:replace="fragments/footer :: footer" />
-</div>
 </body>
 </html>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-
-document.addEventListener('DOMContentLoaded', function() {
-    const loadingScreen = document.getElementById('loading-screen');
-    const movieContent = document.getElementById('movie-content');
-
-    const images = document.querySelectorAll('img');
-    let loadedImages = 0;
-
-    function imageLoaded() {
-        loadedImages++;
-        if (loadedImages == images.length) {
-            loadingScreen.style.display = 'none';
-            movieContent.style.display = 'block';
-            initializePageContent();
-        }
-    }
-
-    images.forEach(img => {
-        if (img.complete) {
-            imageLoaded();
-        } else {
-            img.addEventListener('load', imageLoaded);
-            img.addEventListener('error', imageLoaded);  // 에러 시에도 카운트
-        }
-    });
-});
-
-
 function initializePageContent() {
     const favoriteButton = document.getElementById('favoriteButton');
     if (favoriteButton) {
