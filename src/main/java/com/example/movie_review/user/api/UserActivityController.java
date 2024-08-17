@@ -3,6 +3,7 @@ package com.example.movie_review.user.api;
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.movieDetail.DTO.KeywordDTO;
 import com.example.movie_review.movieDetail.DTO.PreferPerson;
+import com.example.movie_review.movieDetail.domain.MovieDetails;
 import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.user.DTO.UserActivityDTO;
 import com.example.movie_review.user.SortOption;
@@ -160,6 +161,24 @@ public class UserActivityController {
         return ResponseEntity.ok(preferGenres);
     }
 
+    /**
+     * 두 사용자의 유사한 선호 영화 가져오기
+     */
+    @GetMapping("/{userEmail}/similarMovies")
+    public ResponseEntity<List<LifeMovie>> getUserPreferGenres(@PathVariable String userEmail, @RequestParam String currentUserEmail) {
+        User user = userService.getUserByEmail(userEmail);
+        User currentUser = userService.getUserByEmail(currentUserEmail);
+
+        List<MovieDetails> preferMovies = userService.getCommonPreferMovies(user, currentUser);
+        List<LifeMovie> commonMovies = preferMovies.stream()
+                .map(movie -> {
+                    return new LifeMovie(movie.getTId(), movie.getPoster_path());
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(commonMovies);
+    }
+
 
 }
 
@@ -172,8 +191,17 @@ class DeleteAccountResponse {
 }
 
 @Data
-@AllArgsConstructor
 class LifeMovie {
     private String tid;
     private String poster_path;
+
+    public LifeMovie(Integer tid, String poster_path) {
+        this.tid = String.valueOf(tid);
+        this.poster_path = poster_path;
+    }
+
+    public LifeMovie(String tid, String poster_path) {
+        this.tid = tid;
+        this.poster_path = poster_path;
+    }
 }

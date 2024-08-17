@@ -3,7 +3,7 @@
     margin: 0 auto;
     padding: 10px 200px;
 }
-.user-info-box, .activity-box, .life-movies-box, .rating-distribution-box, .prefer-keyword-box, .prefer-director-box, .prefer-actor-box, .prefer-genre-box {
+.user-info-box, .activity-box, .life-movies-box, .rating-distribution-box, .prefer-keyword-box, .prefer-director-box, .prefer-actor-box, .prefer-genre-box, .similar-movie-box {
     background-color: #f8f9fa;
     border-radius: 10px;
     padding: 20px;
@@ -188,4 +188,44 @@
     width: 48%;
     margin-bottom: 5px;
     font-size: 0.9em;
+}
+
+
+/* 두 사용자의 선호 영화*/
+.similar-movie-carousel {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.similar-movie {
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+}
+
+.simMovie-element {
+    flex: 0 0 20%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.prev-arrow {
+    left: 10px;
+}
+
+.next-arrow {
+    right: 10px;
 }

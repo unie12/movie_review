@@ -76,7 +76,7 @@
     <div class="prefer-keyword-box">
         <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 키워드'"></h3>
         <div id="keywordCloud" class="keyword-cloud">
-            <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
+            <!-- 해당 사용자의 선호 키워드 동적으로 보여주기 -->
         </div>
     </div>
 
@@ -84,7 +84,7 @@
     <div class="prefer-director-box">
         <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 감독'"></h3>
         <div id="preferDirectors" class="prefer-person">
-            <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
+            <!-- 해당 사용자의 선호 감독 동적으로 보여주기 -->
         </div>
     </div>
 
@@ -92,7 +92,7 @@
     <div class="prefer-actor-box">
         <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 배우'"></h3>
         <div id="preferActors" class="prefer-person">
-            <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
+            <!-- 해당 사용자의 선호 배우 동적으로 보여주기 -->
         </div>
     </div>
 
@@ -100,11 +100,24 @@
     <div class="prefer-genre-box">
         <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 장르'"></h3>
         <div id="preferGenres" class="prefer-genre">
-            <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
+            <!-- 해당 사용자의 선호 장르 동적으로 보여주기 -->
         </div>
     </div>
 
-<!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
+    <!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
+    <div th:if="${#authentication.name != userDTO.userCommonDTO.email}">
+        <div class="similar-movie-box">
+            <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님이 재밌게 본 영화'"></h3>
+            <div class="similar-movie-carousel">
+                <button class="arrow prev-arrow">&lt;</button>
+                <div id="similarMovies" class="similar-movie">
+                    <!-- 해당 사용자와 현재 사용자가 동시에 재밌게 본 영화 동적으로 보여주기 -->
+                </div>
+                <button class="arrow next-arrow">&gt;</button>
+            </div>
+        </div>
+    </div>
+
 <!--    ~님과 나의 취향매칭률-->
 
 </div>
@@ -113,7 +126,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    let userEmail, currentUserEmail;
+    let userEmail, currentUserEmail, currentIndex;
 
     $(document).ready(function() {
         initializeUserInfo();
@@ -139,6 +152,7 @@
         loadData('directors', 'preferDirectors', (data, container) => renderPeople(data, container, 'crew'));
         loadData('actors', 'preferActors', (data, container) => renderPeople(data, container, 'cast'));
         loadData('genres', 'preferGenres', renderGenres);
+        loadSimilarData();
     }
 
     function loadData(endpoint, containerId, renderFunction) {
@@ -155,6 +169,25 @@
             .catch(error => {
                 console.error(`Error fetching ${endpoint}:`, error);
                 container.innerHTML = `<p>${endpoint}를 불러오는 데 오류가 발생했습니다</p>`;
+            });
+    }
+
+    function loadSimilarData() {
+        const container = document.getElementById('similarMovies');
+        if (!container) return; // 현재 자기 페이지를 보고 있는 경우
+
+        fetch(`/api/user/${userEmail}/similarMovies?currentUserEmail=${currentUserEmail}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
+                } else {
+                    renderSimilarMovies(data, container);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching similar movies:', error);
+                container.innerHTML = '<p>유사한 영화를 불러오는 데 오류가 발생했습니다</p>';
             });
     }
 
@@ -368,6 +401,57 @@
 
         container.appendChild(topGenresContainer);
         container.appendChild(otherGenresContainer);
+    }
+
+    // 두 사용자의 유사한 선호 영화 보여주기
+    function renderSimilarMovies(simMovies, container) {
+        container.innerHTML = '';
+
+        simMovies.forEach((movie, index) => {
+            const movieElement = document.createElement('div');
+            movieElement.className = 'simMovie-element';
+            movieElement.style.display = index < 5 ? 'block' : 'none';
+            movieElement.innerHTML = `
+                <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" class="movie-poster">
+            `;
+            movieElement.addEventListener('click', () => navigateToMovie(movie.tid));
+            container.appendChild(movieElement);
+        });
+
+        const prevArrow = document.querySelector('.prev-arrow');
+        const nextArrow = document.querySelector('.next-arrow');
+
+        prevArrow.addEventListener('click', () => moveCarousel(-1, simMovies.length));
+        nextArrow.addEventListener('click', () => moveCarousel(1, simMovies.length));
+
+        currentIndex = 0;
+        updateArrowVisibility(simMovies.length);
+    }
+
+
+
+    // 유틸 함수들
+
+    function moveCarousel(direction, totalMovies) {
+        const movieElements = document.querySelectorAll('.simMovie-element');
+        currentIndex += direction * 5;
+
+        if (currentIndex < 0) currentIndex = 0;
+        if (currentIndex >= totalMovies) currentIndex = Math.max(0, totalMovies - 5);
+
+        movieElements.forEach((element, index) => {
+            element.style.display = (index >= currentIndex && index < currentIndex + 5) ? 'block' : 'none';
+        });
+
+        updateArrowVisibility(totalMovies);
+    }
+
+    function updateArrowVisibility(totalMovies) {
+        const prevArrow = document.querySelector('.prev-arrow');
+        const nextArrow = document.querySelector('.next-arrow');
+
+        prevArrow.style.visibility = currentIndex > 0 ? 'visible' : 'hidden';
+        nextArrow.style.visibility = currentIndex + 5 < totalMovies ? 'visible' : 'hidden';
     }
 
 

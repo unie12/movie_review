@@ -3,6 +3,7 @@ package com.example.movie_review.user.view;
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.subscription.SubscriptionService;
 import com.example.movie_review.user.DTO.UserDTO;
+import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.CategoryService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.example.movie_review.user.service.UserActivityService;
@@ -40,8 +41,11 @@ public class UserActivityViewController {
     public String userInfo(@PathVariable String userEmail, Model model, Authentication auth) throws AccessDeniedException {
         UserDTO userDTO = userDTOService.getuserDTO(userEmail);
         boolean isSubscribed = subscriptionService.isSubscribed(auth.getName(), userEmail);
+        User currentUSer = userService.getUserByEmail(auth.getName());
+
         model.addAttribute("userDTO", userDTO);
         model.addAttribute("isSubscribed", isSubscribed);
+        model.addAttribute("currentUser", currentUSer.getNickname());
         return "info";
     }
 

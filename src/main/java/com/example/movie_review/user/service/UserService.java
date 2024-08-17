@@ -138,7 +138,7 @@ public class UserService {
 
     // 사용자가 좋게 평가한 영화들 중에서 키워드 뽑아내는 걸로
     public List<KeywordDTO> getTopKeywords(User user) {
-        List<MovieDetails> movieDetails = getPreferMovies(user);
+        List<MovieDetails> movieDetails = getPreferMovies(user, 0.0);
 
         Map<String, Long> keywordCount = movieDetails.stream()
                 .flatMap(movie -> movie.getMovieKeywords().stream())
@@ -167,7 +167,7 @@ public class UserService {
      * 사용자 선호 영화에 대한 선호 감독
      */
     public List<PreferPerson> getPreferDirectors(User user) {
-        List<MovieDetails> preferMovies = getPreferMovies(user);
+        List<MovieDetails> preferMovies = getPreferMovies(user, 0.0);
         Map<String, Crew> directorMap = new HashMap<>(); // 감독 이름, crew 정보 맵
         Map<String ,Integer> directorFrequency = new HashMap<>(); // 감독 이름, count
 
@@ -200,7 +200,7 @@ public class UserService {
      * 사용자 선호 영화에 대한 선호 배우
      */
     public List<PreferPerson> getPreferActors(User user) {
-        List<MovieDetails> preferMovies = getPreferMovies(user);
+        List<MovieDetails> preferMovies = getPreferMovies(user, 0.0);
         Map<String, Integer> actorFrequency = new HashMap<>();
         Map<String, Cast> actorMap = new HashMap<>();
 
@@ -230,7 +230,7 @@ public class UserService {
     }
 
     public List<KeywordDTO> getPreferGenre(User user) {
-        List<MovieDetails> preferMovies = getPreferMovies(user);
+        List<MovieDetails> preferMovies = getPreferMovies(user, 0.0);
 
         Map<String, Long> genreCount = preferMovies.stream()
                 .flatMap(movie -> movie.getGenres().stream())
@@ -256,15 +256,29 @@ public class UserService {
 
     }
 
+    /**
+     * 현재 사용자, 지금 보고 있는 사용자의 평가 높은 영화들 중 서로 공통적인 영화 뽑아내기
+     */
+    public List<MovieDetails> getCommonPreferMovies(User user, User currentUser) {
+        List<MovieDetails> preferMovies = getPreferMovies(user, 4.0);
+        List<MovieDetails> currentPreferMovies = getPreferMovies(currentUser, 4.0);
+
+        return preferMovies.stream()
+                .filter(currentPreferMovies::contains)
+                .distinct()
+                .limit(15)
+                .collect(Collectors.toList());
+    }
+
 
     private int calculateSize(long count, long minCount, long maxCount) {
         if (minCount == maxCount) return 3;
         return 1 + (int) ((count - minCount) * 4 / (maxCount - minCount));
     }
 
-    private List<MovieDetails> getPreferMovies(User user) {
+    private List<MovieDetails> getPreferMovies(User user, Double filter) {
         List<DbMovies> preferMovies = user.getDbRatings().stream()
-//                .filter(r -> r.getScore() >= 3.5)
+                .filter(r -> r.getScore() >= filter)
                 .map(DbRatings::getDbMovies)
                 .collect(Collectors.toList());
 
@@ -275,7 +289,4 @@ public class UserService {
 
         return movieDetails;
     }
-
-
-
 }
