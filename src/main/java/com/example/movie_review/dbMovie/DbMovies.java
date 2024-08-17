@@ -5,12 +5,14 @@ import com.example.movie_review.review.Review;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity @Getter @Setter
+@Entity @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "DbMovies")

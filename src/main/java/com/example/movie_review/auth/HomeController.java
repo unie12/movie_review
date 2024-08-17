@@ -1,7 +1,5 @@
 package com.example.movie_review.auth;
 
-import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
-import com.example.movie_review.dbMovie.DTO.MoviePopularityDTO;
 import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
 import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
@@ -75,6 +73,7 @@ public class HomeController {
         } else {
             return ResponseEntity.badRequest().build();
         }
+        System.out.println("suggestions = " + suggestions);
         // 일단 10개로 제한은 해놓을게
         return ResponseEntity.ok(suggestions.stream().limit(10).collect(Collectors.toList()));
     }
@@ -82,12 +81,5 @@ public class HomeController {
     /**
      * 후에 영화 리스트...
      */
-    @GetMapping("/home/ajouPopularMovies")
-    public ResponseEntity<List<MoviePopularityDTO>> getAjouPopularMovies() {
-        List<MoviePopularityDTO> movies = movieCommonDTOService.getAjouPopularMovies();
-        return ResponseEntity.ok(movies);
-    }
-
-
 
 }
