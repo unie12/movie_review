@@ -66,9 +66,9 @@
             </table>
 
             <div class="pagination">
-                <a th:if="${currentPage > 1}" th:href="@{/people/{personId}(personId=${personId}, type='cast', page=${currentPage - 1})}">이전</a>
+                <a th:if="${currentPage > 1}" th:href="@{/people/{personId}(personId=${personId}, type='crew', page=${currentPage - 1})}">이전</a>
                 <span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span>
-                <a th:if="${currentPage < totalPages}" th:href="@{/people/{personId}(personId=${personId}, type='cast', page=${currentPage + 1})}">다음</a>
+                <a th:if="${currentPage < totalPages}" th:href="@{/people/{personId}(personId=${personId}, type='crew', page=${currentPage + 1})}">다음</a>
             </div>
 
         </div>
