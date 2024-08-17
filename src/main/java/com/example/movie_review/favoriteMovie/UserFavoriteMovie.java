@@ -4,10 +4,12 @@ import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Entity @Data
+@Entity @Getter @Setter
 @Table(name = "user_favorite_movie")
 public class UserFavoriteMovie {
     @Id

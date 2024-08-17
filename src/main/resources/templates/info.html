@@ -145,6 +145,11 @@
         $('#deleteAccount').click(confirmDeleteAccount);
     }
 
+    function initializeDataLoading() {
+        loadUserPreferences();
+        loadSimilarData();
+    }
+
     function loadUserPreferences() {
         const fields = ['lifeMovies', 'ratings', 'keywords', 'directors', 'actors', 'genres'];
         fetch(`/api/user/${userEmail}/preferences?fields=${fields.join(',')}`)
@@ -158,11 +163,6 @@
                 if (data.genres) renderGenres(data.genres, document.getElementById('preferGenres'));
             })
             .catch(error => console.error('Error fetching user preferences:', error));
-    }
-
-    function initializeDataLoading() {
-        loadUserPreferences();
-        loadSimilarData();
     }
 
     // 구독 확인
@@ -424,7 +424,6 @@
 
 
     // 유틸 함수들
-
     function moveCarousel(direction, totalMovies) {
         const movieElements = document.querySelectorAll('.simMovie-element');
         currentIndex += direction * 5;

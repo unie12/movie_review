@@ -279,3 +279,13 @@
     visibility: visible;
     opacity: 1;
 }
+
+
+.prev-arrow {
+    left: 0;
+}
+
+.next-arrow {
+    right: 0;
+}
+

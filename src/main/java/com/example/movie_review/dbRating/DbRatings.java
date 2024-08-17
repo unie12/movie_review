@@ -3,14 +3,12 @@ package com.example.movie_review.dbRating;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "DbRatings", uniqueConstraints = {
