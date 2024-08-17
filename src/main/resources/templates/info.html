@@ -145,50 +145,24 @@
         $('#deleteAccount').click(confirmDeleteAccount);
     }
 
+    function loadUserPreferences() {
+        const fields = ['lifeMovies', 'ratings', 'keywords', 'directors', 'actors', 'genres'];
+        fetch(`/api/user/${userEmail}/preferences?fields=${fields.join(',')}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.lifeMovies) renderLifeMovies(data.lifeMovies, document.getElementById('lifeMovies'));
+                if (data.ratings) renderRatingDistribution(data.ratings, document.getElementById('ratingDistribution'));
+                if (data.keywords) renderKeywords(data.keywords, document.getElementById('keywordCloud'));
+                if (data.directors) renderPeople(data.directors, document.getElementById('preferDirectors'), 'crew');
+                if (data.actors) renderPeople(data.actors, document.getElementById('preferActors'), 'cast');
+                if (data.genres) renderGenres(data.genres, document.getElementById('preferGenres'));
+            })
+            .catch(error => console.error('Error fetching user preferences:', error));
+    }
+
     function initializeDataLoading() {
-        loadData('lifeMovies', 'lifeMovies', renderLifeMovies);
-        loadData('ratings', 'ratingDistribution', renderRatingDistribution);
-        loadData('keywords', 'keywordCloud', renderKeywords);
-        loadData('directors', 'preferDirectors', (data, container) => renderPeople(data, container, 'crew'));
-        loadData('actors', 'preferActors', (data, container) => renderPeople(data, container, 'cast'));
-        loadData('genres', 'preferGenres', renderGenres);
+        loadUserPreferences();
         loadSimilarData();
-    }
-
-    function loadData(endpoint, containerId, renderFunction) {
-        const container = document.getElementById(containerId);
-        fetch(`/api/user/${userEmail}/${endpoint}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length === 0) {
-                    container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
-                } else {
-                    renderFunction(data, container);
-                }
-            })
-            .catch(error => {
-                console.error(`Error fetching ${endpoint}:`, error);
-                container.innerHTML = `<p>${endpoint}를 불러오는 데 오류가 발생했습니다</p>`;
-            });
-    }
-
-    function loadSimilarData() {
-        const container = document.getElementById('similarMovies');
-        if (!container) return; // 현재 자기 페이지를 보고 있는 경우
-
-        fetch(`/api/user/${userEmail}/similarMovies?currentUserEmail=${currentUserEmail}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length === 0) {
-                    container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
-                } else {
-                    renderSimilarMovies(data, container);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching similar movies:', error);
-                container.innerHTML = '<p>유사한 영화를 불러오는 데 오류가 발생했습니다</p>';
-            });
     }
 
     // 구독 확인
@@ -225,6 +199,25 @@
         window.location.href = `/jwt-login`;
     }
 
+    // 두 사용자의 공통된 선호 영화 보여주기
+    function loadSimilarData() {
+        const container = document.getElementById('similarMovies');
+        if (!container) return; // 현재 자기 페이지를 보고 있는 경우
+
+        fetch(`/api/user/${userEmail}/similarMovies?currentUserEmail=${currentUserEmail}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
+                } else {
+                    renderSimilarMovies(data, container);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching similar movies:', error);
+                container.innerHTML = '<p>유사한 영화를 불러오는 데 오류가 발생했습니다</p>';
+            });
+    }
 
     // 인생 영화 리스트 토대로 포스터 보여주기
     function renderLifeMovies(movies, container) {

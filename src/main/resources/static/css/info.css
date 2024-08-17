@@ -223,9 +223,9 @@
 }
 
 .prev-arrow {
-    left: 10px;
+    left: 0;
 }
 
 .next-arrow {
-    right: 10px;
+    right: 0;
 }

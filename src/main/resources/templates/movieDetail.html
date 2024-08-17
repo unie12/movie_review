@@ -189,7 +189,6 @@ function initializePageContent() {
             prevButton: document.getElementById('prevButton'),
             nextButton: document.getElementById('nextButton')
         };
-        console.log('actorlist', actorList);
         initializeActorList(actorList);
         initializeStarRating(movieId);
         initializeFavoriteButton(movieId);
@@ -212,8 +211,6 @@ function initializeActorList(actorList) {
 }
 
 function updateActorVisibility(actorList) {
-    console.log('actorList', actorList);
-
     actorList.actors.forEach((actor, index) => {
         const isVisible = index >= actorList.currentIndex * actorList.actorsPerPage &&
                           index < (actorList.currentIndex + 1) * actorList.actorsPerPage;

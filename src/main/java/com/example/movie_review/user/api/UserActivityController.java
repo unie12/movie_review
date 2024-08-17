@@ -19,8 +19,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,72 +95,40 @@ public class UserActivityController {
     }
 
     /**
-     * 인생 영화 가져오기
+     * 사용자 선호 활동 내역 선택적 반환
+     * Map Object로 처리하는게 맞을까??
      */
-    @GetMapping("/{userEmail}/lifeMovies")
-    public ResponseEntity<List<LifeMovie>> getLifeMovies(@PathVariable String userEmail) {
+    @GetMapping("/{userEmail}/preferences")
+    public ResponseEntity<Map<String ,Object>> getUserPreference(
+            @PathVariable String userEmail,
+            @RequestParam(required = false) List<String> fields) {
         User user = userService.getUserByEmail(userEmail);
-        List<PreferredMovies> preferredMovies = user.getPreferredMovies();
-        List<LifeMovie> lifeMovies = preferredMovies.stream()
-                .map(movie -> new LifeMovie(movie.getMovieId(), movieCommonDTOService.getMoviePoster(Long.valueOf(movie.getMovieId()))))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(lifeMovies);
-    }
+        Map<String, Object> preferences = new HashMap<>();
 
-    /**
-     * 사용자 평가 분포 가져오기
-     */
-    @GetMapping("/{userEmail}/ratings")
-    public ResponseEntity<List<Double>> getRatings(@PathVariable String userEmail) {
-        User user = userService.getUserByEmail(userEmail);
-        List<Double> ratings = user.getDbRatings().stream()
-                .map(DbRatings::getScore)
-                .toList();
-        return ResponseEntity.ok(ratings);
-    }
+        if (fields == null || fields.isEmpty()) {
+            fields = Arrays.asList("lifeMovies", "ratings", "keywords", "directors", "actors", "genres");
+        }
 
-    /**
-     * 사용자 선호 키워드 가져오기
-     */
-    @GetMapping("/{userEmail}/keywords")
-    public ResponseEntity<List<KeywordDTO>> getUserPreferKeywords(@PathVariable String userEmail) {
-        User user = userService.getUserByEmail(userEmail);
-        List<KeywordDTO> topKeywords = userService.getTopKeywords(user);
-        return ResponseEntity.ok(topKeywords);
-    }
+        if (fields.contains("lifeMovies")) {
+            preferences.put("lifeMovies", getLifeMovies(user));
+        }
+        if (fields.contains("ratings")) {
+            preferences.put("ratings", getRatings(user));
+        }
+        if (fields.contains("keywords")) {
+            preferences.put("keywords", getTopKeywords(user));
+        }
+        if (fields.contains("directors")) {
+            preferences.put("directors", getPreferDirectors(user));
+        }
+        if (fields.contains("actors")) {
+            preferences.put("actors", getPreferActors(user));
+        }
+        if (fields.contains("genres")) {
+            preferences.put("genres", getPreferGenre(user));
+        }
 
-    /**
-     * 사용자 선호 감독 가져오기
-     */
-    @GetMapping("/{userEmail}/directors")
-    public ResponseEntity<List<PreferPerson>> getUserPreferDirectors(@PathVariable String userEmail) {
-        User user = userService.getUserByEmail(userEmail);
-
-        List<PreferPerson> preferDirectors = userService.getPreferDirectors(user);
-
-        return ResponseEntity.ok(preferDirectors);
-    }
-
-    /**
-     * 사용자 선호 배우 가져오기
-     */
-    @GetMapping("/{userEmail}/actors")
-    public ResponseEntity<List<PreferPerson>> getUserPreferActors(@PathVariable String userEmail) {
-        User user = userService.getUserByEmail(userEmail);
-
-        List<PreferPerson> preferActors = userService.getPreferActors(user);
-        return ResponseEntity.ok(preferActors);
-    }
-
-    /**
-     * 사용자 선호 장르 가져오기
-     */
-    @GetMapping("/{userEmail}/genres")
-    public ResponseEntity<List<KeywordDTO>> getUserPreferGenres(@PathVariable String userEmail) {
-        User user = userService.getUserByEmail(userEmail);
-
-        List<KeywordDTO> preferGenres = userService.getPreferGenre(user);
-        return ResponseEntity.ok(preferGenres);
+        return ResponseEntity.ok(preferences);
     }
 
     /**
@@ -178,6 +148,108 @@ public class UserActivityController {
 
         return ResponseEntity.ok(commonMovies);
     }
+
+    private List<LifeMovie> getLifeMovies(User user) {
+        List<PreferredMovies> preferredMovies = user.getPreferredMovies();
+        List<LifeMovie> lifeMovies = preferredMovies.stream()
+                .map(movie -> new LifeMovie(movie.getMovieId(), movieCommonDTOService.getMoviePoster(Long.valueOf(movie.getMovieId()))))
+                .collect(Collectors.toList());
+        return lifeMovies;
+    }
+
+    private List<Double> getRatings(User user) {
+        return user.getDbRatings().stream()
+            .map(DbRatings::getScore)
+            .toList();
+    }
+
+    private List<KeywordDTO> getTopKeywords(User user) {
+        return userService.getTopKeywords(user);
+    }
+
+    private List<PreferPerson> getPreferDirectors(User user) {
+        return userService.getPreferDirectors(user);
+    }
+
+    private List<PreferPerson> getPreferActors(User user) {
+        return userService.getPreferActors(user);
+    }
+
+    private List<KeywordDTO> getPreferGenre(User user) {
+        return userService.getPreferGenre(user);
+    }
+
+
+//    /**
+//     * 인생 영화 가져오기
+//     */
+//    @GetMapping("/{userEmail}/lifeMovies")
+//    public ResponseEntity<List<LifeMovie>> getLifeMovies(@PathVariable String userEmail) {
+//        User user = userService.getUserByEmail(userEmail);
+//        List<PreferredMovies> preferredMovies = user.getPreferredMovies();
+//        List<LifeMovie> lifeMovies = preferredMovies.stream()
+//                .map(movie -> new LifeMovie(movie.getMovieId(), movieCommonDTOService.getMoviePoster(Long.valueOf(movie.getMovieId()))))
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(lifeMovies);
+//    }
+//
+//    /**
+//     * 사용자 평가 분포 가져오기
+//     */
+//    @GetMapping("/{userEmail}/ratings")
+//    public ResponseEntity<List<Double>> getRatings(@PathVariable String userEmail) {
+//        User user = userService.getUserByEmail(userEmail);
+//        List<Double> ratings = user.getDbRatings().stream()
+//                .map(DbRatings::getScore)
+//                .toList();
+//        return ResponseEntity.ok(ratings);
+//    }
+//
+//    /**
+//     * 사용자 선호 키워드 가져오기
+//     */
+//    @GetMapping("/{userEmail}/keywords")
+//    public ResponseEntity<List<KeywordDTO>> getUserPreferKeywords(@PathVariable String userEmail) {
+//        User user = userService.getUserByEmail(userEmail);
+//        List<KeywordDTO> topKeywords = userService.getTopKeywords(user);
+//        return ResponseEntity.ok(topKeywords);
+//    }
+//
+//    /**
+//     * 사용자 선호 감독 가져오기
+//     */
+//    @GetMapping("/{userEmail}/directors")
+//    public ResponseEntity<List<PreferPerson>> getUserPreferDirectors(@PathVariable String userEmail) {
+//        User user = userService.getUserByEmail(userEmail);
+//
+//        List<PreferPerson> preferDirectors = userService.getPreferDirectors(user);
+//
+//        return ResponseEntity.ok(preferDirectors);
+//    }
+//
+//    /**
+//     * 사용자 선호 배우 가져오기
+//     */
+//    @GetMapping("/{userEmail}/actors")
+//    public ResponseEntity<List<PreferPerson>> getUserPreferActors(@PathVariable String userEmail) {
+//        User user = userService.getUserByEmail(userEmail);
+//
+//        List<PreferPerson> preferActors = userService.getPreferActors(user);
+//        return ResponseEntity.ok(preferActors);
+//    }
+//
+//    /**
+//     * 사용자 선호 장르 가져오기
+//     */
+//    @GetMapping("/{userEmail}/genres")
+//    public ResponseEntity<List<KeywordDTO>> getUserPreferGenres(@PathVariable String userEmail) {
+//        User user = userService.getUserByEmail(userEmail);
+//
+//        List<KeywordDTO> preferGenres = userService.getPreferGenre(user);
+//        return ResponseEntity.ok(preferGenres);
+//    }
+//
+
 
 
 }
