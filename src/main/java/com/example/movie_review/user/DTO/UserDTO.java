@@ -20,6 +20,7 @@ public class UserDTO {
     private int favoriteCnt;
     private int reviewCnt;
     private int ratingCnt;
+    private Double ratingAvg;
     private int heartCnt;
     private int subscriptionCnt;
     private int subscriberCnt;

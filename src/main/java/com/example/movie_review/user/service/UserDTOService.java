@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -156,12 +157,21 @@ public class UserDTOService {
                         .build())
                 .collect(Collectors.toList());
 
+        Double ratingSum = ratings.stream()
+                .map(DbRatingDTO::getScore)
+                .reduce(0.0, Double::sum);
+
+        Double ratingAvg = user.getRatingCount() > 0 ? ratingSum / user.getRatingCount() : 0.0;
+
+        DecimalFormat df = new DecimalFormat("#.#");
+        String formattedRatingAvg = df.format(ratingAvg);
+
         UserDTO.UserDTOBuilder userDTO = UserDTO.builder()
                 .id(user.getId())
-//                .user(user)
                 .favoriteCnt(user.getFavoriteCount())
                 .reviewCnt(user.getReviewCount())
                 .ratingCnt(user.getRatingCount())
+                .ratingAvg(Double.valueOf(formattedRatingAvg))
                 .heartCnt(user.getHeartCount())
                 .likedReviewIds(likedReviewIds)
                 .subscriptionCnt(user.getSubscriptionCount())

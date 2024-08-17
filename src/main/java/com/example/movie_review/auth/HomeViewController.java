@@ -3,15 +3,11 @@ package com.example.movie_review.auth;
 import com.example.movie_review.dbMovie.repository.MovieCacheRepository;
 import com.example.movie_review.dbMovie.service.MovieCacheService;
 import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
-import com.example.movie_review.movieLens.MovieService;
 import com.example.movie_review.tmdb.TmdbService;
-import com.example.movie_review.user.DTO.UserCommonDTO;
-import com.example.movie_review.user.DTO.UserDTO;
 import com.example.movie_review.user.DTO.UserSearchDTO;
-import com.example.movie_review.user.service.UserService;
 import com.example.movie_review.user.service.UserDTOService;
+import com.example.movie_review.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,10 +20,6 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
