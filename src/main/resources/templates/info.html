@@ -95,7 +95,14 @@
             <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
         </div>
     </div>
+
     <!-- 사용자 선호 장르-->
+    <div class="prefer-genre-box">
+        <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 장르'"></h3>
+        <div id="preferGenres" class="prefer-genre">
+            <!-- 해당 사용자의 전체 평점 분포 동적으로 보여주기 -->
+        </div>
+    </div>
 
 <!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
 <!--    ~님과 나의 취향매칭률-->
@@ -131,6 +138,7 @@
         loadData('keywords', 'keywordCloud', renderKeywords);
         loadData('directors', 'preferDirectors', (data, container) => renderPeople(data, container, 'crew'));
         loadData('actors', 'preferActors', (data, container) => renderPeople(data, container, 'cast'));
+        loadData('genres', 'preferGenres', renderGenres);
     }
 
     function loadData(endpoint, containerId, renderFunction) {
@@ -250,7 +258,7 @@
         return distribution;
     }
 
-    // 선호 감독 요소 만들기
+    // 선호 사람 (감독, 배우) 요소 만들기
     function renderPeople(people, container, type) {
         container.innerHTML = '';
         people.forEach(person => {
@@ -267,7 +275,7 @@
                         onclick="navigateToPerson(${person.id}, '${type}')">
                     <div class="person-info">
                         <h5>${person.name}</h5>
-                        <p>선호도: ${person.frequency}</p>
+                        <p>${person.frequency}편</p>
                     </div>
                 </div>
             `;
@@ -327,6 +335,39 @@
                 keyword.style.top = `${newTop}px`;
             });
         }, 100);
+    }
+
+    // 선호 장르 렌더링
+    function renderGenres(genres, container) {
+        container.innerHTML = '';
+
+        const topGenresContainer = document.createElement('div');
+        topGenresContainer.className = 'top-genres';
+
+        const otherGenresContainer = document.createElement('div');
+        otherGenresContainer.className = 'other-genres';
+
+        genres.forEach((genre, index) => {
+            if (index < 3) {
+                const genreElement = document.createElement('div');
+                genreElement.className = 'top-genre';
+                genreElement.innerHTML = `
+                    <h4>${genre.keyword}</h4>
+                    <p>${genre.count}편</p>
+
+                    <div style="width: ${genre.size * 20}px;"}></div>
+                `;
+                topGenresContainer.appendChild(genreElement);
+            } else {
+                const genreElement = document.createElement('div');
+                genreElement.className = 'other-genre';
+                genreElement.textContent = `${genre.keyword} (${genre.count}편)`;
+                otherGenresContainer.appendChild(genreElement);
+            }
+        });
+
+        container.appendChild(topGenresContainer);
+        container.appendChild(otherGenresContainer);
     }
 
 

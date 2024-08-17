@@ -3,6 +3,7 @@ package com.example.movie_review.user.service;
 import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.dbRating.DbRatingRepository;
 import com.example.movie_review.dbRating.DbRatings;
+import com.example.movie_review.genre.Genres;
 import com.example.movie_review.movieDetail.DTO.KeywordDTO;
 import com.example.movie_review.movieDetail.DTO.PreferPerson;
 import com.example.movie_review.movieDetail.domain.Cast;
@@ -228,6 +229,34 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public List<KeywordDTO> getPreferGenre(User user) {
+        List<MovieDetails> preferMovies = getPreferMovies(user);
+
+        Map<String, Long> genreCount = preferMovies.stream()
+                .flatMap(movie -> movie.getGenres().stream())
+                .map(Genres::getName)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        List<KeywordDTO> topGenres = genreCount.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(10)
+                .map(entry -> new KeywordDTO(entry.getKey(), entry.getValue().intValue(), 0))
+                .collect(Collectors.toList());
+
+        if (!topGenres.isEmpty()) {
+            long maxCount = topGenres.get(0).getCount();
+            long minCount = topGenres.get(topGenres.size() - 1).getCount();
+
+            for (KeywordDTO dto : topGenres) {
+                dto.setSize(calculateSize(dto.getCount(), minCount, maxCount));
+            }
+        }
+
+        return topGenres;
+
+    }
+
+
     private int calculateSize(long count, long minCount, long maxCount) {
         if (minCount == maxCount) return 3;
         return 1 + (int) ((count - minCount) * 4 / (maxCount - minCount));
@@ -235,7 +264,7 @@ public class UserService {
 
     private List<MovieDetails> getPreferMovies(User user) {
         List<DbMovies> preferMovies = user.getDbRatings().stream()
-                .filter(r -> r.getScore() >= 3.5)
+//                .filter(r -> r.getScore() >= 3.5)
                 .map(DbRatings::getDbMovies)
                 .collect(Collectors.toList());
 
@@ -246,6 +275,7 @@ public class UserService {
 
         return movieDetails;
     }
+
 
 
 }

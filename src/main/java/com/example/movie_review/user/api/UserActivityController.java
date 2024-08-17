@@ -148,6 +148,19 @@ public class UserActivityController {
         List<PreferPerson> preferActors = userService.getPreferActors(user);
         return ResponseEntity.ok(preferActors);
     }
+
+    /**
+     * 사용자 선호 장르 가져오기
+     */
+    @GetMapping("/{userEmail}/genres")
+    public ResponseEntity<List<KeywordDTO>> getUserPreferGenres(@PathVariable String userEmail) {
+        User user = userService.getUserByEmail(userEmail);
+
+        List<KeywordDTO> preferGenres = userService.getPreferGenre(user);
+        return ResponseEntity.ok(preferGenres);
+    }
+
+
 }
 
 @Data
