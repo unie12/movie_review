@@ -270,6 +270,34 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 현재 사용자, 지금 보고 있는 사용자의 상반된 선호 영화 뽑아내기
+     */
+    public List<MovieDetails> getOppositeMovies(User user, User currentUser) {
+        // 1. 보고 있는 사용자는 높은 평점, 현재 나는 낮은 평점
+        List<MovieDetails> preferMovies = getPreferMovies(user, 4.0);
+        List<MovieDetails> curOppositeMovies = getOppositeMovies(currentUser, 2.5);
+        List<MovieDetails> movie1 = preferMovies.stream()
+                .filter(curOppositeMovies::contains)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // 2. 보고 있는 사용자는 낮은 평점, 현재 나는 높은 평점
+        List<MovieDetails> oppositeMovies = getOppositeMovies(user, 2.5);
+        List<MovieDetails> curPreferMovies = getPreferMovies(currentUser, 4.0);
+        List<MovieDetails> movie2 = oppositeMovies.stream()
+                .filter(curPreferMovies::contains)
+                .distinct()
+                .collect(Collectors.toList());
+
+        movie1.addAll(movie2);
+
+
+        return movie1.stream().distinct().collect(Collectors.toList());
+
+    }
+
+
 
     private int calculateSize(long count, long minCount, long maxCount) {
         if (minCount == maxCount) return 3;
@@ -277,16 +305,33 @@ public class UserService {
     }
 
     private List<MovieDetails> getPreferMovies(User user, Double filter) {
-        List<DbMovies> preferMovies = user.getDbRatings().stream()
-                .filter(r -> r.getScore() >= filter)
-                .map(DbRatings::getDbMovies)
-                .collect(Collectors.toList());
+        List<DbMovies> preferDbMovies = getPreferDbMovies(user, filter);
+        return getMovieDetails(preferDbMovies);
+    }
 
-        List<MovieDetails> movieDetails = preferMovies.stream()
+    private List<MovieDetails> getOppositeMovies(User user, Double filter) {
+        List<DbMovies> preferDbMovies = getOppositeDbMovies(user, filter);
+        return getMovieDetails(preferDbMovies);
+    }
+
+    private List<MovieDetails> getMovieDetails(List<DbMovies> movies) {
+        return movies.stream()
                 .map(movie -> movieDetailRepository.findBytId(movie.getTmdbId()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
 
-        return movieDetails;
+    private List<DbMovies> getPreferDbMovies(User user, Double filter) {
+        return user.getDbRatings().stream()
+                .filter(r -> r.getScore() >= filter)
+                .map(DbRatings::getDbMovies)
+                .collect(Collectors.toList());
+    }
+
+    private List<DbMovies> getOppositeDbMovies(User user, Double filter) {
+        return user.getDbRatings().stream()
+                .filter(r -> r.getScore() <= filter)
+                .map(DbRatings::getDbMovies)
+                .collect(Collectors.toList());
     }
 }

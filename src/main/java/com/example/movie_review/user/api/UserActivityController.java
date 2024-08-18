@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @RestController
@@ -135,18 +136,16 @@ public class UserActivityController {
      * 두 사용자의 유사한 선호 영화 가져오기
      */
     @GetMapping("/{userEmail}/similarMovies")
-    public ResponseEntity<List<LifeMovie>> getUserPreferGenres(@PathVariable String userEmail, @RequestParam String currentUserEmail) {
-        User user = userService.getUserByEmail(userEmail);
-        User currentUser = userService.getUserByEmail(currentUserEmail);
+    public ResponseEntity<List<LifeMovie>> getCommonPreferMovies(@PathVariable String userEmail, @RequestParam String currentUserEmail) {
+        return ResponseEntity.ok(getMoviesBasedOnPreference(userEmail, currentUserEmail, userService::getCommonPreferMovies));
+    }
 
-        List<MovieDetails> preferMovies = userService.getCommonPreferMovies(user, currentUser);
-        List<LifeMovie> commonMovies = preferMovies.stream()
-                .map(movie -> {
-                    return new LifeMovie(movie.getTId(), movie.getPoster_path());
-                })
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(commonMovies);
+    /**
+     * 두 사용자의 상반된 선호 영화 가져오기
+     */
+    @GetMapping("/{userEmail}/disSimilarMovies")
+    public ResponseEntity<List<LifeMovie>> getOppositePreferMovies(@PathVariable String userEmail, @RequestParam String currentUserEmail) {
+        return ResponseEntity.ok(getMoviesBasedOnPreference(userEmail, currentUserEmail, userService::getOppositeMovies));
     }
 
     private List<LifeMovie> getLifeMovies(User user) {
@@ -179,6 +178,16 @@ public class UserActivityController {
         return userService.getPreferGenre(user);
     }
 
+    private List<LifeMovie> getMoviesBasedOnPreference(String userEmail, String currentUserEmail,
+                                                       BiFunction<User, User, List<MovieDetails>> preferenceFunction) {
+        User user = userService.getUserByEmail(userEmail);
+        User currentUser = userService.getUserByEmail(currentUserEmail);
+
+        List<MovieDetails> preferMovies = preferenceFunction.apply(user, currentUser);
+        return preferMovies.stream()
+                .map(movie -> new LifeMovie(movie.getTId(), movie.getPoster_path()))
+                .collect(Collectors.toList());
+    }
 
 //    /**
 //     * 인생 영화 가져오기

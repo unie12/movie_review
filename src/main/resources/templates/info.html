@@ -118,6 +118,21 @@
         </div>
     </div>
 
+
+    <!--    ~님과 나의 정반대의 활동 내역 영화-->
+    <div th:if="${#authentication.name != userDTO.userCommonDTO.email}">
+        <div class="disSimilar-movie-box">
+            <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님의 정반대 취향의 영화'"></h3>
+            <div class="disSimilar-movie-carousel">
+                <button class="arrow prev-arrow">&lt;</button>
+                <div id="disSimilarMovies" class="disSimilar-movie">
+                    <!-- 해당 사용자와 현재 사용자가 동시에 재밌게 본 영화 동적으로 보여주기 -->
+                </div>
+                <button class="arrow next-arrow">&gt;</button>
+            </div>
+        </div>
+    </div>
+
 <!--    ~님과 나의 취향매칭률-->
 
 </div>
@@ -126,7 +141,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    let userEmail, currentUserEmail, currentIndex;
+    let userEmail, currentUserEmail;
 
     $(document).ready(function() {
         initializeUserInfo();
@@ -148,6 +163,7 @@
     function initializeDataLoading() {
         loadUserPreferences();
         loadSimilarData();
+        loadDisSimilarData();
     }
 
     function loadUserPreferences() {
@@ -199,23 +215,32 @@
         window.location.href = `/jwt-login`;
     }
 
-    // 두 사용자의 공통된 선호 영화 보여주기
     function loadSimilarData() {
-        const container = document.getElementById('similarMovies');
-        if (!container) return; // 현재 자기 페이지를 보고 있는 경우
+        loadMovieData('similarMovies', `/api/user/${userEmail}/similarMovies`);
+    }
 
-        fetch(`/api/user/${userEmail}/similarMovies?currentUserEmail=${currentUserEmail}`)
+    function loadDisSimilarData() {
+        loadMovieData('disSimilarMovies', `/api/user/${userEmail}/disSimilarMovies`);
+    }
+
+    function loadMovieData(containerId, apiUrl) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        fetch(`${apiUrl}?currentUserEmail=${currentUserEmail}`)
             .then(response => response.json())
             .then(data => {
+            console.log('data', data);
                 if (data.length === 0) {
                     container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
                 } else {
-                    renderSimilarMovies(data, container);
+                    renderMovies(data, container);
+                    initializeCarousel(container.parentElement);
                 }
             })
             .catch(error => {
-                console.error('Error fetching similar movies:', error);
-                container.innerHTML = '<p>유사한 영화를 불러오는 데 오류가 발생했습니다</p>';
+                console.error(`Error fetching movies for ${containerId}:`, error);
+                container.innerHTML = '<p>영화를 불러오는 데 오류가 발생했습니다</p>';
             });
     }
 
@@ -397,54 +422,52 @@
     }
 
     // 두 사용자의 유사한 선호 영화 보여주기
-    function renderSimilarMovies(simMovies, container) {
+    function renderMovies(movies, container) {
         container.innerHTML = '';
-
-        simMovies.forEach((movie, index) => {
+        movies.forEach((movie, index) => {
             const movieElement = document.createElement('div');
-            movieElement.className = 'simMovie-element';
-            movieElement.style.display = index < 5 ? 'block' : 'none';
+            movieElement.className = 'sim-element';
             movieElement.innerHTML = `
                 <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" class="movie-poster">
             `;
             movieElement.addEventListener('click', () => navigateToMovie(movie.tid));
             container.appendChild(movieElement);
         });
+    }
 
-        const prevArrow = document.querySelector('.prev-arrow');
-        const nextArrow = document.querySelector('.next-arrow');
+    function initializeCarousel(carouselElement) {
+        const container = carouselElement.querySelector('.similar-movie, .disSimilar-movie');
+        const prevArrow = carouselElement.querySelector('.prev-arrow');
+        const nextArrow = carouselElement.querySelector('.next-arrow');
+        let currentIndex = 0;
 
-        prevArrow.addEventListener('click', () => moveCarousel(-1, simMovies.length));
-        nextArrow.addEventListener('click', () => moveCarousel(1, simMovies.length));
+        function moveCarousel(direction) {
+            const movieElements = container.querySelectorAll('.sim-element');
+            const totalMovies = movieElements.length;
+            currentIndex += direction * 5;
 
-        currentIndex = 0;
-        updateArrowVisibility(simMovies.length);
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex >= totalMovies) currentIndex = Math.max(0, totalMovies - 5);
+
+            movieElements.forEach((element, index) => {
+                element.style.display = (index >= currentIndex && index < currentIndex + 5) ? 'block' : 'none';
+            });
+
+            updateArrowVisibility(totalMovies);
+        }
+
+        function updateArrowVisibility(totalMovies) {
+            prevArrow.style.visibility = currentIndex > 0 ? 'visible' : 'hidden';
+            nextArrow.style.visibility = currentIndex + 5 < totalMovies ? 'visible' : 'hidden';
+        }
+
+        prevArrow.addEventListener('click', () => moveCarousel(-1));
+        nextArrow.addEventListener('click', () => moveCarousel(1));
+        moveCarousel(0);
     }
 
 
 
-    // 유틸 함수들
-    function moveCarousel(direction, totalMovies) {
-        const movieElements = document.querySelectorAll('.simMovie-element');
-        currentIndex += direction * 5;
-
-        if (currentIndex < 0) currentIndex = 0;
-        if (currentIndex >= totalMovies) currentIndex = Math.max(0, totalMovies - 5);
-
-        movieElements.forEach((element, index) => {
-            element.style.display = (index >= currentIndex && index < currentIndex + 5) ? 'block' : 'none';
-        });
-
-        updateArrowVisibility(totalMovies);
-    }
-
-    function updateArrowVisibility(totalMovies) {
-        const prevArrow = document.querySelector('.prev-arrow');
-        const nextArrow = document.querySelector('.next-arrow');
-
-        prevArrow.style.visibility = currentIndex > 0 ? 'visible' : 'hidden';
-        nextArrow.style.visibility = currentIndex + 5 < totalMovies ? 'visible' : 'hidden';
-    }
 
 
     function makeApiCall(url, method, data, successCallback) {
