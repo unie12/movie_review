@@ -34,96 +34,71 @@
     margin-bottom: 10px;
 }
 
-.d-flex.position-relative {
-    position: relative; /* 화살표 버튼이 포함된 부모 요소에 position: relative; 추가 */
+
+.movie-category {
+    margin-bottom: 30px;
 }
+
 .movie-list-container {
     position: relative;
     overflow: hidden;
-    width: 100%;
     list-style-type: none; /* 마커 제거 */
+    width: 100%;
 }
 
 .movie-list {
     display: flex;
-    overflow-x: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
     gap: 20px;
-    padding: 10px 0;
 }
 
 .movie-item {
     flex: 0 0 calc(20% - 16px);
-    scroll-snap-align: start;
-    width: calc(20% - 16px);
     text-align: center;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
-.movie-item img {
-    cursor: pointer;
+.movie-poster {
     width: 100%;
     height: 400px;
     object-fit: cover;
+    cursor: pointer;
+    border-radius: 8px;
 }
-.rank {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 2px 5px;
-    font-size: 14px;
-    border-radius: 3px;
-}
-.audiAcc {
-    margin-top: 5px;
+
+.movie-title {
+    margin-top: 10px;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .movie-info {
-    display: none;
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #666;
+}
+.movie-rank {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
     color: white;
-    padding: 10px;
-    box-sizing: border-box;
-}
-.movie-info p {
-    margin: 5px 0;
-}
-.arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    z-index: 10;
-}
-.arrow.left {
-    left: 0;
-}
-.arrow.right {
-    right: 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
 .popular-container {
+    position: relative;
     max-width: 100%;
     margin: 0 auto;
     padding: 20px;
-}
-
-.reviews-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    overflow: hidden;
 }
 
 .reviews-container {
@@ -134,8 +109,7 @@
     display: flex;
     overflow-x: hidden;
     scroll-behavior: smooth;
-    padding: 20px;
-    gap: 30px;
+    gap: 20px;
 }
 
 .review-card {
@@ -147,6 +121,27 @@
     height: 300px;
     display: flex;
     flex-direction: column;
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 50%;
+}
+
+.arrow.left {
+    left: 10px;
+}
+
+.arrow.right {
+    right: 10px;
 }
 .review-header {
     display: flex;
@@ -173,7 +168,7 @@
     flex-grow: 1;
     overflow: hidden;
 }
-.movie-poster {
+.review-poster {
     width: 120px;
     height: 180px;
     object-fit: cover;
@@ -233,6 +228,20 @@
     margin-left: auto; /* 자동으로 왼쪽 마진을 주어 오른쪽 정렬 */
 }
 
+.movie-list, .popular-reviews {
+    display: flex;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+.movie-list::-webkit-scrollbar, .popular-reviews::-webkit-scrollbar {
+    display: none;  /* WebKit */
+}
+
+
+
 /* 각 카테고리 별 설명해주는 물음표 */
 .info-icon {
     font-size: 0.8em;
@@ -279,3 +288,4 @@
     visibility: visible;
     opacity: 1;
 }
+
