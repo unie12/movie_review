@@ -31,4 +31,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> searchByNickname(String query, Pageable pageable);
 
     List<User> findTop10ByNicknameContainingIgnoreCase(String nickname);
+
+    List<User> findByMbti(String mbti);
 }

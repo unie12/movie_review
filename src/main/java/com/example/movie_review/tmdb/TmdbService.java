@@ -16,7 +16,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -74,6 +73,16 @@ public class TmdbService {
     public Mono<String> getTrendingMovies() {
         return this.webClient.get()
                 .uri("/trending/movie/day?api_key={apiKey}&language=ko-KR", apikey)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    /**
+     * upcoming movie list
+     */
+    public Mono<String> getUpcomingMovies() {
+        return this.webClient.get()
+                .uri("/discover/movie/day?api_key={apiKey}&language=ko-KR", apikey)
                 .retrieve()
                 .bodyToMono(String.class);
     }

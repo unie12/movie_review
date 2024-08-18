@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class MoviePopularityDTO {
+    private Integer id; // tmdb id
     private String poster_path;
     private String title;
 
@@ -15,7 +16,8 @@ public class MoviePopularityDTO {
     private Double avgRating;
     private Long totalRatingCount;
 
-    public MoviePopularityDTO(String poster_path, String title, Long favoriteCount, Long ratingCount, Long reviewCount, Double avgRating, Long totalRatingCount) {
+    public MoviePopularityDTO(Integer tmdbId, String poster_path, String title, Long favoriteCount, Long ratingCount, Long reviewCount, Double avgRating, Long totalRatingCount) {
+        this.id = tmdbId;
         this.poster_path = poster_path;
         this.title = title;
         this.favoriteCount = favoriteCount;

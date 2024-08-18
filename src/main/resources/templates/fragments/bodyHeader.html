@@ -21,7 +21,7 @@
             </form>
             <div class="navbar-links">
                 <!-- 로그인 전 -->
-                <a th:if="${#authentication.name == 'anonymousUser'}    "
+                <a th:if="${#authentication.name == 'anonymousUser'}"
                    th:href="@{/oauth2/authorization/google}"
                    class="btn btn-primary" role="button">로그인</a>
 

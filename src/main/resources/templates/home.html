@@ -86,59 +86,83 @@
                 </div>
             </div>
             <div class="reviews-container">
-                <button class="arrow left" onclick="scrollContainer('popularReviews', -1)">&#9664;</button>
-                <div id="popularReviews" class="popular-reviews">
+                <button class="arrow left">&#9664;</button>
+                <div id="popularReviews" class="popular-reviews" style="overflow-x: auto; white-space: nowrap;">
                     <!-- 리뷰 카드들이 여기에 추가될 예정 -->
                 </div>
-                <button class="arrow right" onclick="scrollContainer('popularReviews', 1)">&#9654;</button>
+                <button class="arrow right">&#9654;</button>
             </div>
         </div>
 
 
-        <div class="dailyBox" th:if="${dBOM}">
-            <h2 class="category-title">일별 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i></h2>
-            <div class="movie-list-container">
-                <button class="arrow left" onclick="scrollContainer('dBOMList', -1)">&#9664;</button>
-                <div class="movie-list" id="dBOMList"></div>
-                <button class="arrow right" onclick="scrollContainer('dBOMList', 1)">&#9654;</button>
-            </div>
-        </div>
 
-        <div class="weekBox" th:if="${wBOM}">
-            <h2 class="category-title">주간 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i></h2>
-            <div class="movie-list-container">
-                <button class="arrow left" onclick="scrollContainer('wBOMList', -1)">&#9664;</button>
-                <div class="movie-list" id="wBOMList"></div>
-                <button class="arrow right" onclick="scrollContainer('wBOMList', 1)">&#9654;</button>
-            </div>
-        </div>
 
-        <div class="popular" th:if="${popularMovies}">
-            <h2 class="category-title">인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i></h2>
-            <div class="movie-list-container">
-                <button class="arrow left" onclick="scrollContainer('popularMovieList', -1)">&#9664;</button>
-                <div class="movie-list" id="popularMovieList"></div>
-                <button class="arrow right" onclick="scrollContainer('popularMovieList', 1)">&#9654;</button>
-            </div>
-        </div>
-
-        <div class="trending" th:if="${trendingMovies}">
-            <h2 class="category-title">트렌딩 영화 <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i></h2>
-            <div class="movie-list-container">
-                <button class="arrow left" onclick="scrollContainer('trendingMovieList', -1)">&#9664;</button>
-                <div class="movie-list" id="trendingMovieList"></div>
-                <button class="arrow right" onclick="scrollContainer('trendingMovieList', 1)">&#9654;</button>
-            </div>
-        </div>
-
-        <div class="ajou-popular">
+        <div class="movie-category">
             <h2 class="category-title">오늘 아주대의 인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="ajouPopular"></i></h2>
             <div class="movie-list-container">
-                <button class="arrow prev-arrow">&lt;</button>
-                <div class="movie-list" id="ajouPopularList">
+                <button class="arrow left">&#9664;</button>
+                <ul class="movie-list" id="ajouPopularList" style="overflow-x: auto; white-space: nowrap;">
                     <!-- 오늘 아주대의 인기 영화 동적으로 보여주기 -->
+                </ul>
+                <button class="arrow right">&#9654;</button>
+            </div>
+        </div>
+
+        <div th:if="${#authentication.name != 'anonymousUser'}">
+            <div class="movie-category">
+                <h2 class="category-title">나와 같은 mbti 사용자의 선호 영화 <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i></h2>
+                <div class="movie-list-container">
+                    <button class="arrow left">&#9664;</button>
+                    <ul class="movie-list" id="mbtiMovieList" style="overflow-x: auto; white-space: nowrap;">
+                        <!-- 현재 로그인한 사용자의 mbti와 똑같은 다른 사용자의 선호 영화 동적으로 보여주기 -->
+                    </ul>
+                    <button class="arrow right">&#9654;</button>
                 </div>
-                <button class="arrow next-arrow">&gt;</button>
+            </div>
+        </div>
+
+
+        <div class="movie-category" th:if="${dBOM}">
+            <h2 class="category-title">일별 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i></h2>
+            <div class="movie-list-container">
+                <button class="arrow left">&#9664;</button>
+                <ul class="movie-list" id="dBOMList" style="overflow-x: auto; white-space: nowrap;">
+<!--                    일별 박스오피스 동적 생성-->
+                </ul>
+                <button class="arrow right">&#9654;</button>
+            </div>
+        </div>
+
+        <div class="movie-category" th:if="${wBOM}">
+            <h2 class="category-title">주간 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i></h2>
+            <div class="movie-list-container">
+                <button class="arrow left">&#9664;</button>
+                <ul class="movie-list" id="wBOMList" style="overflow-x: auto; white-space: nowrap;">
+<!--                    주간 박스오피스 동적 생성-->
+                </ul>
+                <button class="arrow right">&#9654;</button>
+            </div>
+        </div>
+
+        <div class="movie-category" th:if="${popularMovies}">
+            <h2 class="category-title">인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i></h2>
+            <div class="movie-list-container">
+                <button class="arrow left" >&#9664;</button>
+                <ul class="movie-list" id="popularMovieList" style="overflow-x: auto; white-space: nowrap;">
+<!--                    tmdb 인기 영화 동적 생성-->
+                </ul>
+                <button class="arrow right">&#9654;</button>
+            </div>
+        </div>
+
+        <div class="movie-category" th:if="${trendingMovies}">
+            <h2 class="category-title">트렌딩 영화 <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i></h2>
+            <div class="movie-list-container">
+                <button class="arrow left" >&#9664;</button>
+                <ul class="movie-list" id="trendingMovieList" style="overflow-x: auto; white-space: nowrap;">
+<!--                    tmdb 트렌딩 영화 동적 생성-->
+                </ul>
+                <button class="arrow right">&#9654;</button>
             </div>
         </div>
 
@@ -160,7 +184,9 @@
         dailyBoxOffice: "전날의 영화관 관객 수를 기준으로 집계된 순위입니다. 매일 오전 9시경 전일자 데이터로 업데이트됩니다.",
         weeklyBoxOffice: "지난 주 영화관 관객 수를 기준으로 집계된 순위입니다. 매주 월요일 오전 9시경 전주 데이터로 업데이트됩니다.",
         popularMovies: "TMDB api를 통해 가져온 인기 영화들입니다. 평점, 리뷰 수, 조회수 등을 종합적으로 고려하여 선정됩니다.",
-        trendingMovies: "TMDB api를 통해 가져온 최근 급상승하고 있는 영화들입니다. 최근 평점과 리뷰의 증가율, 조회수 변화 등을 바탕으로 선정됩니다."
+        trendingMovies: "TMDB api를 통해 가져온 최근 급상승하고 있는 영화들입니다. 최근 평점과 리뷰의 증가율, 조회수 변화 등을 바탕으로 선정됩니다.",
+        ajouPopular: "하루 동안 사용자의 찜, 평가, 리뷰 작성 등의 활동 내역을 바탕으로 선정됩니다.",
+        mbtiMovieList: "사용자와 동일한 mbti를 가진 사용자의 선호 영화들입니다."
     };
 
     var dBOM = /*[[${dBOM}]]*/ '[]';
@@ -175,70 +201,51 @@
         getRealTimeData();
         setInterval(getRealTimeData, 60000);
         initializeInfoIcons();
-        initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
         loadHomeReviews();
         loadAjouPopularMovies();
+        loadMbtiPreferMovies();
+
+        initializeMovieLists(dBOM, wBOM, popularMovies, trendingMovies);
+        initializeMovieSmoothScrolls();
+        initializeReviewSmoothScroll();
+
         document.getElementById('viewAllBtn').addEventListener('click', () => window.location.href = '/reviews?filter=popular');
         document.getElementById('refreshReviewsBtn').addEventListener('click', refreshReviews);
+    }
+
+    function initializeMovieSmoothScrolls() {
+        const movieLists = ['dBOMList', 'wBOMList', 'popularMovieList', 'trendingMovieList', 'ajouPopularList', 'mbtiMovieList'];
+        movieLists.forEach(listId => {
+            initializeSmoothScroll(listId, 5);
+        });
+    }
+
+    function initializeReviewSmoothScroll() {
+        initializeSmoothScroll('popularReviews', 3);
     }
 
     function loadAjouPopularMovies() {
         fetch(`/api/home/ajouPopularMovies`)
             .then(response => response.json())
             .then(movies => {
-            console.log('movies', movies);
-                renderMovie(movies, document.getElementById('ajouPopularList'));
+                if (movies.length > 0) {
+                    createMovieList(movies, 'ajouPopularList', 'ajouPop');
+                    document.querySelector('.movie-category').style.display = 'block'; // div를 보이게 함
+                } else {
+                    document.querySelector('.movie-category').style.display = 'none'; // div를 보이게 함
+                }
             })
             .catch(error => console.error('Error fetching user preferences:', error));
     }
 
-    function renderMovie(movies, container) {
-        container.innerHTML = '';
-
-        movies.forEach((movie, index) => {
-            const movieElement = document.createElement('div');
-            movieElement.className = 'movie-element';
-            movieElement.style.display = index < 5 ? 'block' : 'none';
-            movieElement.innerHTML = `
-                <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" class="movie-poster">
-            `;
-            movieElement.addEventListener('click', () => navigateToMovieDetails(movie.tid));
-            container.appendChild(movieElement);
-        });
-
-        const prevArrow = document.querySelector('.prev-arrow');
-        const nextArrow = document.querySelector('.next-arrow');
-
-        prevArrow.addEventListener('click', () => moveCarousel(-1, movies.length));
-        nextArrow.addEventListener('click', () => moveCarousel(1, movies.length));
-
-        currentIndex = 0;
-        updateArrowVisibility(movies.length);
+    function loadMbtiPreferMovies() {
+        fetch(`/api/home/mbtiMovies`)
+            .then(response => response.json())
+            .then(movies => {
+                createMovieList(movies, 'mbtiMovieList', 'mbtiMovie');
+            })
+            .catch(error => console.error('Error fetching user preferences:', error));
     }
-
-    function moveCarousel(direction, totalMovies) {
-        const movieElements = document.querySelectorAll('.movie-element');
-        currentIndex += direction * 5;
-
-        if (currentIndex < 0) currentIndex = 0;
-        if (currentIndex >= totalMovies) currentIndex = Math.max(0, totalMovies - 5);
-
-        movieElements.forEach((element, index) => {
-            element.style.display = (index >= currentIndex && index < currentIndex + 5) ? 'block' : 'none';
-        });
-
-        updateArrowVisibility(totalMovies);
-    }
-
-    function updateArrowVisibility(totalMovies) {
-        const prevArrow = document.querySelector('.prev-arrow');
-        const nextArrow = document.querySelector('.next-arrow');
-
-        prevArrow.style.visibility = currentIndex > 0 ? 'visible' : 'hidden';
-        nextArrow.style.visibility = currentIndex + 5 < totalMovies ? 'visible' : 'hidden';
-    }
-
-
 
     function initializeInfoIcons() {
         const infoIcons = document.querySelectorAll('.info-icon');
@@ -275,6 +282,7 @@
                     container.appendChild(reviewElement);
                 });
             });
+        initializeSmoothScroll('popularReviews', 3);
     }
 
     function refreshReviews() {
@@ -306,7 +314,7 @@
 
             </div>
             <div class="review-content">
-                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="movie-poster">
+                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="review-poster">
                 <h4>${review.movieCommonDTO.title}</h4>
                 <p class="review-text">${reviewTextWithBreaks}</p>
             </div>
@@ -348,36 +356,80 @@
     // 영화 리스트 생성 함수 통합
     function createMovieList(movies, containerId, type) {
         const movieListContainer = document.getElementById(containerId);
-        movies.forEach(movie => {
-            const li = document.createElement('li');
-            li.classList.add('movie-item');
+        movieListContainer.innerHTML = '';
 
-            const img = document.createElement('img');
-            img.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-            img.alt = movie.title;
-            img.addEventListener('click', () => navigateToMovieDetails(type === 'kobis' ? movie.tmdbId : movie.id));
+        movies.forEach((movie, index) => {
+            const movieItem = document.createElement('li');
+            movieItem.classList.add('movie-item');
+
+            const poster = document.createElement('img');
+            poster.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+            poster.alt = movie.title;
+            poster.classList.add('movie-poster');
+            poster.addEventListener('click', () => navigateToMovieDetails(type === 'kobis' ? movie.tmdbId : movie.id));
+
+            poster.addEventListener('click', () => {
+                const movieId = type === 'mbtiMovie' ? movie.tid : (type === 'kobis' ? movie.tmdbId : movie.id);
+                navigateToMovieDetails(movieId);
+            });
+
 
             const title = document.createElement('p');
             title.textContent = movie.title;
+            title.classList.add('movie-title');
 
-            li.appendChild(img);
-            li.appendChild(title);
+            movieItem.appendChild(poster);
+            movieItem.appendChild(title);
 
             if (type === 'kobis') {
-                const rank = document.createElement('h3');
-                rank.classList.add('rank');
+                const rank = document.createElement('div');
+                rank.classList.add('movie-rank');
                 rank.textContent = movie.rank;
 
                 const audiAcc = document.createElement('p');
+                audiAcc.classList.add('movie-info');
                 audiAcc.innerHTML = `누적 관객<br>${formatNumber(movie.audiAcc)}명`;
 
-                li.appendChild(rank);
-                li.appendChild(audiAcc);
+                movieItem.appendChild(rank);
+                movieItem.appendChild(audiAcc);
             }
 
-            movieListContainer.appendChild(li);
+            movieListContainer.appendChild(movieItem);
         });
+        initializeSmoothScroll(containerId, 5);
     }
+
+    function initializeSmoothScroll(containerId, itemsPerPage) {
+        const container = document.getElementById(containerId);
+        const leftArrow = container.parentElement.querySelector('.arrow.left');
+        const rightArrow = container.parentElement.querySelector('.arrow.right');
+
+        function scroll(direction) {
+            const itemWidth = container.querySelector('.movie-item, .review-card').offsetWidth;
+            const gap = 20; // gap between items
+            const scrollAmount = (itemWidth + gap) * itemsPerPage * direction;
+            container.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+
+        leftArrow.onclick = () => scroll(-1);
+        rightArrow.onclick = () => scroll(1);
+
+        // 스크롤 이벤트 리스너 추가
+        container.addEventListener('scroll', () => {
+            leftArrow.style.visibility = container.scrollLeft > 0 ? 'visible' : 'hidden';
+            rightArrow.style.visibility =
+                (container.scrollLeft + container.clientWidth < container.scrollWidth) ? 'visible' : 'hidden';
+        });
+
+        // 초기 화살표 상태 설정
+        leftArrow.style.visibility = 'hidden';
+        rightArrow.style.visibility =
+            (container.scrollWidth > container.clientWidth) ? 'visible' : 'hidden';
+    }
+
 
     function formatNumber(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -435,7 +487,6 @@
             }
         });
     }
-
 
     function goToReview(reviewId, filter) {
         window.location.href = `/reviews?filter=${filter}&highlight=${reviewId}#review-${reviewId}`;

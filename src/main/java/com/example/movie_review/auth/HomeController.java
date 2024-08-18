@@ -8,6 +8,7 @@ import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserSearchDTO;
+import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserDTOService;
 import com.example.movie_review.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,6 +31,26 @@ public class HomeController {
     private final TmdbService tmdbService;
     private final UserDTOService userDTOService;
     private final MovieCommonDTOService movieCommonDTOService;
+
+
+    /**
+     * 아주대 인기 영화 리스트...
+     */
+    @GetMapping("/home/ajouPopularMovies")
+    public ResponseEntity<List<MoviePopularityDTO>> getAjouPopularMovies() {
+        List<MoviePopularityDTO> movies = movieCommonDTOService.getAjouPopularMovies();
+        return ResponseEntity.ok(movies);
+    }
+
+    /**
+     * 현재 사용자와 동일한 mbti를 가진 다른 사용자의 선호 영화
+     */
+    @GetMapping("/home/mbtiMovies")
+    public ResponseEntity<List<MovieCommonDTO>> getSameMbtiMovies(Authentication auth) {
+        User user = userService.getUserByEmail(auth.getName());
+        List<MovieCommonDTO> movies = movieCommonDTOService.getSameMbtiMovies(user);
+        return ResponseEntity.ok(movies);
+    }
 
     @GetMapping("/home/realtime-data")
     public ResponseEntity<RealTimeData> getRealTimeData() {
@@ -79,14 +100,6 @@ public class HomeController {
         return ResponseEntity.ok(suggestions.stream().limit(10).collect(Collectors.toList()));
     }
 
-    /**
-     * 후에 영화 리스트...
-     */
-    @GetMapping("/home/ajouPopularMovies")
-    public ResponseEntity<List<MoviePopularityDTO>> getAjouPopularMovies() {
-        List<MoviePopularityDTO> movies = movieCommonDTOService.getAjouPopularMovies();
-        return ResponseEntity.ok(movies);
-    }
 
 
 

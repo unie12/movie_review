@@ -38,6 +38,7 @@ public class DbMovieRepositoryImpl implements DbMovieRepositoryCustom {
         return queryFactory
                 // MoviePopularityDTO 객체 생성
                 .select(Projections.constructor(MoviePopularityDTO.class,
+                        md.tId,
                         md.poster_path,
                         md.title,
                         f.favoriteDate.goe(startDate).count(),
