@@ -109,11 +109,11 @@
         <div class="similar-movie-box">
             <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님이 재밌게 본 영화'"></h3>
             <div class="similar-movie-carousel">
-                <button class="arrow prev-arrow">&lt;</button>
+                <button class="arrow left">&lt;</button>
                 <div id="similarMovies" class="similar-movie">
                     <!-- 해당 사용자와 현재 사용자가 동시에 재밌게 본 영화 동적으로 보여주기 -->
                 </div>
-                <button class="arrow next-arrow">&gt;</button>
+                <button class="arrow right">&gt;</button>
             </div>
         </div>
     </div>
@@ -124,11 +124,11 @@
         <div class="disSimilar-movie-box">
             <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님의 정반대 취향의 영화'"></h3>
             <div class="disSimilar-movie-carousel">
-                <button class="arrow prev-arrow">&lt;</button>
+                <button class="arrow left">&lt;</button>
                 <div id="disSimilarMovies" class="disSimilar-movie">
                     <!-- 해당 사용자와 현재 사용자가 동시에 재밌게 본 영화 동적으로 보여주기 -->
                 </div>
-                <button class="arrow next-arrow">&gt;</button>
+                <button class="arrow right">&gt;</button>
             </div>
         </div>
     </div>
@@ -146,6 +146,9 @@
     $(document).ready(function() {
         initializeUserInfo();
         initializeDataLoading();
+
+        initializeSmoothScroll('similarMovies', 5);
+        initializeSmoothScroll('disSimilarMovies', 5);
     });
 
     function initializeUserInfo() {
@@ -235,7 +238,7 @@
                     container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
                 } else {
                     renderMovies(data, container);
-                    initializeCarousel(container.parentElement);
+                    initializeSmoothScroll(containerId, 5);
                 }
             })
             .catch(error => {
@@ -434,6 +437,48 @@
             container.appendChild(movieElement);
         });
     }
+
+    function initializeSmoothScroll(containerId, itemsPerPage) {
+        const container = document.getElementById(containerId);
+        const leftArrow = container.parentElement.querySelector('.arrow.left');
+        const rightArrow = container.parentElement.querySelector('.arrow.right');
+
+        function scroll(direction) {
+        console.log('scroll action');
+
+            const itemWidth = container.querySelector('.similar-movie, .disSimilar-movie, .sim-element').offsetWidth;
+            const gap = 20; // gap between items
+            const scrollAmount = (itemWidth + gap) * itemsPerPage * direction;
+
+            console.log('itemWidth', itemWidth);
+            console.log('itemsPerPage', itemsPerPage);
+            console.log('direction', direction);
+
+            container.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+
+        leftArrow.onclick = () => scroll(-1);
+        rightArrow.onclick = () => scroll(1);
+
+        container.addEventListener('scroll', () => updateArrowVisibility(container));
+
+        // 초기 arrow 상태 설정
+        setTimeout(() => updateArrowVisibility(container), 100);
+    }
+
+    function updateArrowVisibility(container) {
+        const leftArrow = container.parentElement.querySelector('.arrow.left');
+        const rightArrow = container.parentElement.querySelector('.arrow.right');
+
+        leftArrow.style.visibility = container.scrollLeft > 0 ? 'visible' : 'hidden';
+        rightArrow.style.visibility =
+            (container.scrollLeft + container.clientWidth < container.scrollWidth) ? 'visible' : 'hidden';
+    }
+
+
 
     function initializeCarousel(carouselElement) {
         const container = carouselElement.querySelector('.similar-movie, .disSimilar-movie');
