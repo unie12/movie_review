@@ -30,4 +30,5 @@ public interface DbRatingRepository extends JpaRepository<DbRatings, Long> {
     Long getTotalRatings();
 
     void deleteByUser(User user);
+
 }

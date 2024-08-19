@@ -10,7 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +72,21 @@ public class DbRatingService {
 
     public Long getTotalRatings() {
         return dbRatingRepository.getTotalRatings();
+    }
+
+    public Map<Double, Long> getTotalRatingsDistribution() {
+        Map<Double, Long> ratingDistribution = new LinkedHashMap<>();
+        for (double i = 0.5; i <= 5.0; i += 0.5) {
+            ratingDistribution.put(i, 0L);
+        }
+
+        List<DbRatings> ratings  = dbRatingRepository.findAll();
+        for(DbRatings rating : ratings) {
+            Double score = rating.getScore();
+            ratingDistribution.put(score, ratingDistribution.getOrDefault(score, 0L) + 1);
+        }
+
+        return ratingDistribution;
     }
 }
 

@@ -289,3 +289,61 @@
     opacity: 1;
 }
 
+
+/* 사용자 평점 분포 css*/
+.rating-distribution {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 220px;
+    padding: 20px 0;
+}
+.bar-container {
+    display: flex;
+    align-items: flex-end;
+    height: 200px;
+    gap: 10px;
+}
+.bar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+.bar-wrapper:hover {
+    transform: scale(1.1);
+}
+
+@keyframes growBar {
+    from { height: 0; }
+    to { height: var(--target-height); }
+}
+
+.bar {
+    width: 30px;
+    background-color: #007bff;
+    transition: background-color 0.3s ease;
+    animation: growBar 1s ease-out forwards;
+    height: 0;
+}
+.bar:hover {
+    background-color: #0056b3;
+}
+
+.rating-label {
+    margin-top: 5px;
+    font-size: 12px;
+}
+.bar:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+}

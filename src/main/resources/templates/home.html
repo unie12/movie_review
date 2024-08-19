@@ -69,10 +69,13 @@
             </div>
 
             <div class="section">
-                <div>
+                <div class="data-section">
                     <p>유저 수: <span id="userCount">0</span></p>
                     <p>총 평점 수: <span id="totalRatings">0</span></p>
                     <p>총 리뷰 수: <span id="totalReviews">0</span></p>
+                    <div id="ratingDistribution" class="rating-distribution">
+<!--                        전체 사용자들의 평가 분포 보여주기-->
+                    </div>
                 </div>
             </div>
         </div>
@@ -201,6 +204,7 @@
         getRealTimeData();
         setInterval(getRealTimeData, 60000);
         initializeInfoIcons();
+
         loadHomeReviews();
         loadAjouPopularMovies();
         loadMbtiPreferMovies();
@@ -467,9 +471,10 @@
 
     function updateRealTimeData(data) {
         if (data && typeof data === 'object') {
-            animateValue('userCount', $('#userCount').text(), data.userCount || 0, 1000);
-            animateValue('totalRatings', $('#totalRatings').text(), data.totalRatings || 0, 1000);
-            animateValue('totalReviews', $('#totalReviews').text(), data.totalReviews || 0, 1000);
+            animateValue('userCount', $('#userCount').text(), data.userCount || 0, 800);
+            animateValue('totalRatings', $('#totalRatings').text(), data.totalRatings || 0, 800);
+            animateValue('totalReviews', $('#totalReviews').text(), data.totalReviews || 0, 800);
+            renderRatingDistribution(data.ratingDistribution);
         } else {
             console.error('Invalid data received:', data);
         }
@@ -484,6 +489,44 @@
                 console.error('Error fetching real-time data:', textStatus, errorThrown);
             }
         });
+    }
+
+    function renderRatingDistribution(distribution) {
+        const container = document.getElementById('ratingDistribution');
+        container.innerHTML = '';
+
+        const maxCount = Math.max(...Object.values(distribution));
+        const barContainer = document.createElement('div');
+        barContainer.className = 'bar-container';
+
+        Object.entries(distribution).forEach(([rating, count]) => {
+            const barWrapper = document.createElement('div');
+            barWrapper.className = 'bar-wrapper';
+
+            const bar = document.createElement('div');
+            const height = count > 0 ? (count / maxCount) * 180 : 0;
+            bar.className = 'bar';
+            bar.style.setProperty('--target-height', `${height}px`);
+            bar.style.backgroundColor = count === maxCount ? '#ff4500' : '#007bff';
+            bar.title = `${count}개`;
+
+            const ratingLabel = document.createElement('div');
+            ratingLabel.className = 'rating-label';
+            ratingLabel.textContent = rating;
+
+            barWrapper.appendChild(bar);
+            barWrapper.appendChild(ratingLabel);
+
+            barContainer.appendChild(barWrapper);
+        });
+        container.appendChild(barContainer);
+
+        // 애니메이션 시작을 위한 지연
+        setTimeout(() => {
+            barContainer.querySelectorAll('.bar').forEach(bar => {
+                bar.style.animationPlayState = 'running';
+            });
+        }, 50);
     }
 
     function goToReview(reviewId, filter) {

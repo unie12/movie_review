@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -57,8 +58,9 @@ public class HomeController {
         Long userCount = userService.getUserCount();
         Long totalRatings = dbRatingService.getTotalRatings();
         Long totalReviews = reviewService.getTotalReviews();
+        Map<Double, Long> ratings = dbRatingService.getTotalRatingsDistribution();
 
-        RealTimeData data = new RealTimeData(userCount, totalRatings, totalReviews);
+        RealTimeData data = new RealTimeData(userCount, totalRatings, totalReviews, ratings);
         return ResponseEntity.ok(data);
     }
 
