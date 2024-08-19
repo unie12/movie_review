@@ -287,7 +287,7 @@
             const bar = document.createElement('div');
             const height = count > 0 ? (count / maxCount) * 180 : 0;
             bar.className = 'bar';
-            bar.style.height = `${height}px`;
+            bar.style.setProperty('--target-height', `${height}px`);
             bar.style.backgroundColor = count === maxCount ? '#ff4500' : '#007bff';
             bar.title = `${count}개`;
 
@@ -301,6 +301,13 @@
             barContainer.appendChild(barWrapper);
         });
         container.appendChild(barContainer);
+
+        // 애니메이션 시작을 위한 지연
+        setTimeout(() => {
+            barContainer.querySelectorAll('.bar').forEach(bar => {
+                bar.style.animationPlayState = 'running';
+            });
+        }, 50);
     }
 
     // 사용자 평가 분포 계산

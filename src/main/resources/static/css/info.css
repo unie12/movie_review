@@ -79,10 +79,17 @@
     transform: scale(1.1);
 }
 
+@keyframes growBar {
+    from { height: 0; }
+    to { height: var(--target-height); }
+}
+
 .bar {
     width: 30px;
     background-color: #007bff;
     transition: background-color 0.3s ease;
+    animation: growBar 1s ease-out forwards;
+    height: 0;
 }
 .bar:hover {
     background-color: #0056b3;
