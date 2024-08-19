@@ -72,11 +72,31 @@
         </div>
     </div>
 
-    <!-- 사용자 선호 키워드-->
-    <div class="prefer-keyword-box">
-        <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 키워드'"></h3>
-        <div id="keywordCloud" class="keyword-cloud">
-            <!-- 해당 사용자의 선호 키워드 동적으로 보여주기 -->
+    <!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
+    <div th:if="${#authentication.name != userDTO.userCommonDTO.email}">
+        <div class="similar-movie-box">
+            <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님이 재밌게 본 영화'"></h3>
+            <div class="similar-movie-carousel">
+                <button class="arrow left">&lt;</button>
+                <div id="similarMovies" class="similar-movie">
+                    <!-- 해당 사용자와 현재 사용자가 동시에 재밌게 본 영화 동적으로 보여주기 -->
+                </div>
+                <button class="arrow right">&gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <!--    ~님과 나의 정반대의 활동 내역 영화-->
+    <div th:if="${#authentication.name != userDTO.userCommonDTO.email}">
+        <div class="disSimilar-movie-box">
+            <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님의 정반대 취향의 영화'"></h3>
+            <div class="disSimilar-movie-carousel">
+                <button class="arrow left">&lt;</button>
+                <div id="disSimilarMovies" class="disSimilar-movie">
+                    <!-- 해당 사용자와 현재 사용자가 동시에 재밌게 본 영화 동적으로 보여주기 -->
+                </div>
+                <button class="arrow right">&gt;</button>
+            </div>
         </div>
     </div>
 
@@ -104,32 +124,11 @@
         </div>
     </div>
 
-    <!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
-    <div th:if="${#authentication.name != userDTO.userCommonDTO.email}">
-        <div class="similar-movie-box">
-            <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님이 재밌게 본 영화'"></h3>
-            <div class="similar-movie-carousel">
-                <button class="arrow left">&lt;</button>
-                <div id="similarMovies" class="similar-movie">
-                    <!-- 해당 사용자와 현재 사용자가 동시에 재밌게 본 영화 동적으로 보여주기 -->
-                </div>
-                <button class="arrow right">&gt;</button>
-            </div>
-        </div>
-    </div>
-
-
-    <!--    ~님과 나의 정반대의 활동 내역 영화-->
-    <div th:if="${#authentication.name != userDTO.userCommonDTO.email}">
-        <div class="disSimilar-movie-box">
-            <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님의 정반대 취향의 영화'"></h3>
-            <div class="disSimilar-movie-carousel">
-                <button class="arrow left">&lt;</button>
-                <div id="disSimilarMovies" class="disSimilar-movie">
-                    <!-- 해당 사용자와 현재 사용자가 동시에 재밌게 본 영화 동적으로 보여주기 -->
-                </div>
-                <button class="arrow right">&gt;</button>
-            </div>
+    <!-- 사용자 선호 키워드-->
+    <div class="prefer-keyword-box">
+        <h3 th:text="${userDTO.userCommonDTO.nickname} + '님의 선호 키워드'"></h3>
+        <div id="keywordCloud" class="keyword-cloud">
+            <!-- 해당 사용자의 선호 키워드 동적으로 보여주기 -->
         </div>
     </div>
 
@@ -145,10 +144,7 @@
 
     $(document).ready(function() {
         initializeUserInfo();
-        initializeDataLoading();
-
-        initializeSmoothScroll('similarMovies', 5);
-        initializeSmoothScroll('disSimilarMovies', 5);
+        loadDataSequentially();
     });
 
     function initializeUserInfo() {
@@ -163,25 +159,131 @@
         $('#deleteAccount').click(confirmDeleteAccount);
     }
 
-    function initializeDataLoading() {
-        loadUserPreferences();
-        loadSimilarData();
-        loadDisSimilarData();
+    function loadDataSequentially() {
+        const dataLoaders = [
+            { loader: loadLifeMovies, containerId: 'lifeMovies' },
+            { loader: loadRatingDistribution, containerId: 'ratingDistribution' },
+            { loader: loadSimilarMovies, containerId: 'similarMovies' },
+            { loader: loadDisSimilarMovies, containerId: 'disSimilarMovies' },
+            { loader: loadPreferGenres, containerId: 'preferGenres' },
+            { loader: loadPreferDirectors, containerId: 'preferDirectors' },
+            { loader: loadPreferActors, containerId: 'preferActors' },
+            { loader: loadKeywords, containerId: 'keywordCloud' }
+        ];
+
+        dataLoaders.forEach(({ loader, containerId }) => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = '<p>로딩 중...</p>';
+                loader(container);
+            }
+        });
     }
 
-    function loadUserPreferences() {
-        const fields = ['lifeMovies', 'ratings', 'keywords', 'directors', 'actors', 'genres'];
-        fetch(`/api/user/${userEmail}/preferences?fields=${fields.join(',')}`)
+    function loadLifeMovies(container) {
+        fetch(`/api/user/${userEmail}/preferences?fields=lifeMovies`)
             .then(response => response.json())
             .then(data => {
-                if (data.lifeMovies) renderLifeMovies(data.lifeMovies, document.getElementById('lifeMovies'));
-                if (data.ratings) renderRatingDistribution(data.ratings, document.getElementById('ratingDistribution'));
-                if (data.keywords) renderKeywords(data.keywords, document.getElementById('keywordCloud'));
-                if (data.directors) renderPeople(data.directors, document.getElementById('preferDirectors'), 'crew');
-                if (data.actors) renderPeople(data.actors, document.getElementById('preferActors'), 'cast');
-                if (data.genres) renderGenres(data.genres, document.getElementById('preferGenres'));
+                if (data.lifeMovies) renderLifeMovies(data.lifeMovies, container);
             })
-            .catch(error => console.error('Error fetching user preferences:', error));
+            .catch(error => {
+                console.error('Error loading life movies:', error);
+                container.innerHTML = '<p>인생 영화를 불러오는 데 실패했습니다.</p>';
+            });
+    }
+
+    function loadRatingDistribution(container) {
+        fetch(`/api/user/${userEmail}/preferences?fields=ratings`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.ratings) renderRatingDistribution(data.ratings, container);
+            })
+            .catch(error => {
+                console.error('Error loading rating distribution:', error);
+                container.innerHTML = '<p>평가 분포를 불러오는 데 실패했습니다.</p>';
+            });
+    }
+
+    function loadKeywords(container) {
+        fetch(`/api/user/${userEmail}/preferences?fields=keywords`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.keywords) renderKeywords(data.keywords, container);
+            })
+            .catch(error => {
+                console.error('Error loading keyword:', error);
+                container.innerHTML = '<p>선호 키워드를 불러오는 데 실패했습니다.</p>';
+            });
+    }
+
+    function loadPreferDirectors(container) {
+        fetch(`/api/user/${userEmail}/preferences?fields=directors`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.directors) renderPeople(data.directors, container, 'crew');
+            })
+            .catch(error => {
+                console.error('Error loading prefer directors:', error);
+                container.innerHTML = '<p>선호 감독을 불러오는 데 실패했습니다.</p>';
+            });
+    }
+
+    function loadPreferActors(container) {
+        fetch(`/api/user/${userEmail}/preferences?fields=actors`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.actors) renderPeople(data.actors, container);
+            })
+            .catch(error => {
+                console.error('Error loading prefer actors:', error);
+                container.innerHTML = '<p>선호 배우를 불러오는 데 실패했습니다.</p>';
+            });
+    }
+
+    function loadPreferGenres(container) {
+        fetch(`/api/user/${userEmail}/preferences?fields=genres`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.genres) renderGenres(data.genres, container);
+            })
+            .catch(error => {
+                console.error('Error loading prefer genres:', error);
+                container.innerHTML = '<p>선호 장르를 불러오는 데 실패했습니다.</p>';
+            });
+    }
+
+    function loadSimilarMovies(container) {
+        fetch(`/api/user/${userEmail}/similarMovies?currentUserEmail=${currentUserEmail}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
+                } else {
+                    renderMovies(data, container);
+                    initializeSmoothScroll('similarMovies', 5);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading similar movies:', error);
+                container.innerHTML = '<p>유사한 영화를 불러오는 데 실패했습니다.</p>';
+            });
+    }
+
+    function loadDisSimilarMovies(container) {
+        fetch(`/api/user/${userEmail}/disSimilarMovies?currentUserEmail=${currentUserEmail}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
+                } else {
+                    renderMovies(data, container);
+                    initializeSmoothScroll('disSimilarMovies', 5);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading disSimilar movies:', error);
+                container.innerHTML = '<p>상반된 영화를 불러오는 데 실패했습니다.</p>';
+            });
     }
 
     // 구독 확인
@@ -218,34 +320,6 @@
         window.location.href = `/jwt-login`;
     }
 
-    function loadSimilarData() {
-        loadMovieData('similarMovies', `/api/user/${userEmail}/similarMovies`);
-    }
-
-    function loadDisSimilarData() {
-        loadMovieData('disSimilarMovies', `/api/user/${userEmail}/disSimilarMovies`);
-    }
-
-    function loadMovieData(containerId, apiUrl) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        fetch(`${apiUrl}?currentUserEmail=${currentUserEmail}`)
-            .then(response => response.json())
-            .then(data => {
-            console.log('data', data);
-                if (data.length === 0) {
-                    container.innerHTML = '<p>더 많은 평가 데이터가 필요해요!</p>';
-                } else {
-                    renderMovies(data, container);
-                    initializeSmoothScroll(containerId, 5);
-                }
-            })
-            .catch(error => {
-                console.error(`Error fetching movies for ${containerId}:`, error);
-                container.innerHTML = '<p>영화를 불러오는 데 오류가 발생했습니다</p>';
-            });
-    }
 
     // 인생 영화 리스트 토대로 포스터 보여주기
     function renderLifeMovies(movies, container) {
@@ -451,15 +525,9 @@
         const rightArrow = container.parentElement.querySelector('.arrow.right');
 
         function scroll(direction) {
-        console.log('scroll action');
-
             const itemWidth = container.querySelector('.similar-movie, .disSimilar-movie, .sim-element').offsetWidth;
             const gap = 20; // gap between items
             const scrollAmount = (itemWidth + gap) * itemsPerPage * direction;
-
-            console.log('itemWidth', itemWidth);
-            console.log('itemsPerPage', itemsPerPage);
-            console.log('direction', direction);
 
             container.scrollBy({
                 left: scrollAmount,
@@ -484,43 +552,6 @@
         rightArrow.style.visibility =
             (container.scrollLeft + container.clientWidth < container.scrollWidth) ? 'visible' : 'hidden';
     }
-
-
-
-    function initializeCarousel(carouselElement) {
-        const container = carouselElement.querySelector('.similar-movie, .disSimilar-movie');
-        const prevArrow = carouselElement.querySelector('.prev-arrow');
-        const nextArrow = carouselElement.querySelector('.next-arrow');
-        let currentIndex = 0;
-
-        function moveCarousel(direction) {
-            const movieElements = container.querySelectorAll('.sim-element');
-            const totalMovies = movieElements.length;
-            currentIndex += direction * 5;
-
-            if (currentIndex < 0) currentIndex = 0;
-            if (currentIndex >= totalMovies) currentIndex = Math.max(0, totalMovies - 5);
-
-            movieElements.forEach((element, index) => {
-                element.style.display = (index >= currentIndex && index < currentIndex + 5) ? 'block' : 'none';
-            });
-
-            updateArrowVisibility(totalMovies);
-        }
-
-        function updateArrowVisibility(totalMovies) {
-            prevArrow.style.visibility = currentIndex > 0 ? 'visible' : 'hidden';
-            nextArrow.style.visibility = currentIndex + 5 < totalMovies ? 'visible' : 'hidden';
-        }
-
-        prevArrow.addEventListener('click', () => moveCarousel(-1));
-        nextArrow.addEventListener('click', () => moveCarousel(1));
-        moveCarousel(0);
-    }
-
-
-
-
 
     function makeApiCall(url, method, data, successCallback) {
         $.ajax({
