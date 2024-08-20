@@ -72,7 +72,7 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 
     private User updateUser(User user, OAuthAttributes attributes) {
         long l = System.currentTimeMillis();
-        String nickname = "l";
+        String nickname = "" + l;
 
         user.setName(attributes.getName());
         user.setPicture(attributes.getPicture());

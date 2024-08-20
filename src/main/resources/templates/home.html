@@ -312,6 +312,7 @@
 
         const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
         const userRoleClass = review.reviewDTO.user.role;
+        const posterUrl = getImageUrl(review.movieCommonDTO.poster_path, '/images/defaultMovie.png');
 
         reviewElement.innerHTML = `
             <div class="review-header">
@@ -325,7 +326,7 @@
 
             </div>
             <div class="review-content">
-                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}" alt="${review.movieCommonDTO.title}" class="review-poster">
+                <img src="${posterUrl}" alt="${review.movieCommonDTO.title}" class="review-poster">
                 <h4>${review.movieCommonDTO.title}</h4>
                 <p class="review-text">${reviewTextWithBreaks}</p>
             </div>
@@ -355,6 +356,10 @@
         }
     }
 
+    function getImageUrl(path, defaultImage) {
+        return path ? `https://image.tmdb.org/t/p/w500${path}` : defaultImage;
+    }
+
     // 영화 리스트 생성 함수 통합
     function createMovieList(movies, containerId, type) {
         const movieListContainer = document.getElementById(containerId);
@@ -365,7 +370,7 @@
             movieItem.classList.add('movie-item');
 
             const poster = document.createElement('img');
-            poster.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+            poster.src = getImageUrl(movie.poster_path, '/images/defaultMovie.png');
             poster.alt = movie.title;
             poster.classList.add('movie-poster');
             poster.addEventListener('click', () => navigateToMovieDetails(type === 'kobis' ? movie.tmdbId : movie.id));

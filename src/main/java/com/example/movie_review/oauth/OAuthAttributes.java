@@ -35,7 +35,7 @@ public class OAuthAttributes {
                            String gender, Long age, String mbti){
 //                           List<String> preferMovies) {
         long l = System.currentTimeMillis();
-        String newNickname = "l";
+        String newNickname = "" + l;
 
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;

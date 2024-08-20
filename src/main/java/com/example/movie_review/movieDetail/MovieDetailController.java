@@ -45,7 +45,6 @@ public class MovieDetailController {
     public String movieDetail(@PathVariable Long movieId, Model model, Authentication principal) {
         try {
             MovieDetailDTO movieDetailDTO = movieDetailDTOService.getMovieDetailDTO(movieId, principal);
-            System.out.println("movieDetailDTO = " + movieDetailDTO);
             List<ReviewDTO> sortedReviews = reviewDTOService.getSortedReviews(movieDetailDTO);
 
             model.addAttribute("sortedReviews", sortedReviews);
