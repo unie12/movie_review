@@ -1,6 +1,8 @@
 package com.example.movie_review.user.api;
 
 import com.example.movie_review.dbRating.DbRatings;
+import com.example.movie_review.feedback.FeedbackRepository;
+import com.example.movie_review.feedback.FeedbackService;
 import com.example.movie_review.movieDetail.DTO.KeywordDTO;
 import com.example.movie_review.movieDetail.DTO.PreferPerson;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
@@ -13,9 +15,7 @@ import com.example.movie_review.user.service.UserActivityService;
 import com.example.movie_review.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -37,6 +37,7 @@ public class UserActivityController {
     private final Map<String, UserActivityService> activityServices;
     private final UserService userService;
     private final MovieCommonDTOService movieCommonDTOService;
+    private final FeedbackService feedbackService;
 
     /**
      * 해당 사용자의 각 카테고리별 활동 내역 리스트 보여주기
@@ -147,6 +148,22 @@ public class UserActivityController {
     public ResponseEntity<List<LifeMovie>> getOppositePreferMovies(@PathVariable String userEmail, @RequestParam String currentUserEmail) {
         return ResponseEntity.ok(getMoviesBasedOnPreference(userEmail, currentUserEmail, userService::getOppositeMovies));
     }
+
+    /**
+     * 사용자 피드백 작성
+     */
+    @PostMapping("/{userEmail}/feedback")
+    public ResponseEntity<?> saveFeedback(@PathVariable String userEmail, @RequestBody FeedbackRequest feedbackRequest) {
+        try {
+            User user = userService.getUserByEmail(userEmail);
+            feedbackService.save(user, feedbackRequest.getFeedback());
+            return ResponseEntity.ok().body("피드백이 성공적으로 저장되었습니다.");
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("피드백 저장 중 오류가 발생했습니다.");
+        }
+    }
+
 
     private List<LifeMovie> getLifeMovies(User user) {
         List<PreferredMovies> preferredMovies = user.getPreferredMovies();
@@ -284,5 +301,15 @@ class LifeMovie {
     public LifeMovie(String tid, String poster_path) {
         this.tid = tid;
         this.poster_path = poster_path;
+    }
+}
+
+@Getter @Setter
+class FeedbackRequest {
+    private String feedback;
+
+    public FeedbackRequest() {}
+    public FeedbackRequest(String feedback) {
+        this.feedback = feedback;
     }
 }

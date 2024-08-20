@@ -24,7 +24,22 @@
                 id="subscription"
                 th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"
                 th:text="${isSubscribed ? '구독 취소' : '구독'}"></button>
+
         <button th:if="${#authentication.name == userDTO.userCommonDTO.email}" id="deleteAccount">회원 탈퇴</button>
+
+        <div th:if="${#authentication.name == userDTO.userCommonDTO.email}" class="feedbackSection">
+            <button id="feedBack" class="btn btn-primary">피드백 작성</button>
+        </div>
+
+        <div id="feedbackModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>피드백 작성</h2>
+                <textarea id="feedbackText" rows="4" cols="50"></textarea>
+                <button id="submitFeedbackBtn" class="btn btn-primary">제출</button>
+            </div>
+        </div>
+
         <div class="subscription-info">
             <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscription'}">
                 <span th:text="'내가 구독한 사용자 ' +${userDTO.subscriptionCnt}"></span>
@@ -145,6 +160,10 @@
     $(document).ready(function() {
         initializeUserInfo();
         loadDataSequentially();
+
+        $('#feedBack').click(openFeedbackModal);
+        $('.close').click(closeFeedbackModal);
+        $('#submitFeedbackBtn').click(submitFeedback);
     });
 
     function initializeUserInfo() {
@@ -318,6 +337,39 @@
         localStorage.removeItem('jwtToken');
         sessionStorage.clear();
         window.location.href = `/jwt-login`;
+    }
+
+    // 피드백 모달 열기
+    function openFeedbackModal() {
+        $('#feedbackModal').css('display', 'block');
+    }
+
+    function closeFeedbackModal() {
+        $('#feedbackModal').css('display', 'none');
+    }
+
+    // 피드백 작성 및 제출 폼 만들기
+    function submitFeedback() {
+        const feedbackText = $('#feedbackText').val().trim();
+        if (feedbackText) {
+            $.ajax({
+                url: `/api/user/${userEmail}/feedback`, // 백틱 사용안하면 ${userEmail} 문자열이 그대로 전송
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ feedback: feedbackText }),
+                success: function(response) {
+                    alert('피드백이 제출되었습니다');
+                    $('#feedbackText').val(''); // 텍스트 영역 초기화
+                    closeFeedbackModal();
+                },
+                error: function(xhr, status, error) {
+                    console.error('피드백 제출 중 오류 발생:', error);
+                    alert('피드백 제출 중 오류가 발생했습니다. 다시 시도해 주세요!');
+                }
+            });
+        } else {
+            alert('피드백 내용을 입력해 주세요.');
+        }
     }
 
 
@@ -574,4 +626,10 @@
     function navigateToPerson(personId, type) {
         window.location.href = `/people/${personId}?type=${type}`;
     }
+
+    $(window).click(function(event) {
+        if (event.target == document.getElementById('feedbackModal')) {
+            closeFeedbackModal();
+        }
+    });
 </script>

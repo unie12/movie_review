@@ -2,6 +2,7 @@ package com.example.movie_review.user.domain;
 
 import com.example.movie_review.dbRating.DbRatings;
 import com.example.movie_review.comment.Comment;
+import com.example.movie_review.feedback.Feedback;
 import com.example.movie_review.heart.Heart;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.favoriteMovie.UserFavoriteMovie;
@@ -84,6 +85,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private List<UserFavoriteMovie> userFavoriteMovies = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    private List<Feedback> userFeedbacks = new ArrayList<>();
 
 
 
