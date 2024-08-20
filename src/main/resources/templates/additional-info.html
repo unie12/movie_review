@@ -177,6 +177,7 @@
     let currentPage = [[${currentPage}]];
     let query = [[${query}]];
     let loading = false;
+    let isNicknameValid = false;
 
     $(document).ready(function() {
         <!-- 사용자 데이터 가져오기 -->
@@ -193,6 +194,12 @@
             }
         });
 
+        $('#nickname').on('input', function() {
+            isNicknameValid = false;
+            $('#nickname-result').text('').css('color', '');
+            checkFormValidity();
+        });
+
         <!--닉네임 중복 확인-->
         $('#check-nickname').click(function() {
             var nickname = $('#nickname').val();
@@ -203,12 +210,16 @@
                 success: function(response) {
                     if (response) {
                         $('#nickname-result').text('사용 가능한 닉네임입니다.').css('color', 'green');
+                        isNicknameValid = true;
                     } else {
                         $('#nickname-result').text('이미 사용 중인 닉네임입니다.').css('color', 'red');
+                        isNicknameValid = false;
                     }
+                    checkFormValidity();
                 }
             });
         });
+
 
         // 이벤트 위임을 사용하여 동적으로 생성된 요소에 대한 이벤트 처리
         $('#search-results-container').on('click', '.add-favorite', function(e) {
@@ -285,8 +296,12 @@
         $('#profile-form').on('submit', function(e) {
             e.preventDefault(); // 폼 제출 방지
 
-            var formData = new FormData();
+            if (!isNicknameValid) {
+                alert('닉네임 중복 확인을 해주세요.');
+                return;
+            }
 
+            var formData = new FormData();
             formData.append('profilePicture', $('#profile-picture')[0].files[0]);
 
             var updateRequest = {
@@ -407,7 +422,8 @@
 
     // Submit 버튼 활성화 함수
     function checkFormValidity() {
-        var isValid = $('#nickname').val() && $('#gender').val() && $('#age').val() && $('#mbti').val();
+        var isValid = $('#nickname').val() && $('#gender').val() && $('#age').val() && $('#mbti').val() && isNicknameValid;
+
         $('button[type="submit"]').prop('disabled', !isValid);
     }
 
@@ -444,6 +460,7 @@
             }
         });
     }
+
 </script>
 
 </body>

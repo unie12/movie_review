@@ -232,7 +232,7 @@
         fetch(`/api/user/${userEmail}/preferences?fields=actors`)
             .then(response => response.json())
             .then(data => {
-                if (data.actors) renderPeople(data.actors, container);
+                if (data.actors) renderPeople(data.actors, container, 'cast');
             })
             .catch(error => {
                 console.error('Error loading prefer actors:', error);
