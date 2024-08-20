@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -70,11 +71,12 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
     }
 
     private User updateUser(User user, OAuthAttributes attributes) {
-        System.out.println("updateUSer picture = " + attributes.getPicture());
+        long l = System.currentTimeMillis();
+        String nickname = "l";
 
         user.setName(attributes.getName());
         user.setPicture(attributes.getPicture());
-        user.setNickname(attributes.getNickname() != null ? attributes.getNickname() : "기본 닉네임");
+        user.setNickname(attributes.getNickname() != null ? attributes.getNickname() : nickname);
         user.setGender(attributes.getGender() != null ? attributes.getGender() : "미정");
         user.setAge(attributes.getAge() != null ? attributes.getAge() : 0L);
         user.setMbti(attributes.getMbti() != null ? attributes.getMbti() : "Pretty");

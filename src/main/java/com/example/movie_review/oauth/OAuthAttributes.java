@@ -34,14 +34,15 @@ public class OAuthAttributes {
                            String email, String picture, String nickname,
                            String gender, Long age, String mbti){
 //                           List<String> preferMovies) {
-        System.out.println("OAuthAttributes picture = " + picture);
+        long l = System.currentTimeMillis();
+        String newNickname = "l";
 
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
         this.name = name;
         this.email = email;
         this.picture = picture;
-        this.nickname = nickname != null ? nickname : "기본 닉네임"; // 기본값 설정
+        this.nickname = nickname != null ? nickname : newNickname; // 기본값 설정
         this.gender = gender != null ? gender : "미정";
         this.age = age != null ? age : 0L;
         this.mbti = mbti != null ? mbti : "Pretty";
