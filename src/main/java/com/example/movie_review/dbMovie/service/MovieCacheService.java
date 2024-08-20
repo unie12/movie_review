@@ -1,16 +1,17 @@
 package com.example.movie_review.dbMovie.service;
 
 import com.example.movie_review.dbMovie.MovieCache;
-import com.example.movie_review.dbMovie.repository.MovieCacheRepository;
 import com.example.movie_review.dbMovie.MovieType;
+import com.example.movie_review.dbMovie.repository.MovieCacheRepository;
 import com.example.movie_review.kobis.BoxOfficeMovieDTO;
 import com.example.movie_review.kobis.KobisService;
+import com.example.movie_review.movieDetail.DTO.MovieUiDTO;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -134,29 +135,68 @@ public class MovieCacheService {
         return moviesWithPosters;
     }
 
-    @Cacheable(value = "popularMovies", key = "'popularMovies'")
-    public String getPopularMovies() {
-        return getMovieCache(MovieType.POPULAR);
-    }
-
-    @Cacheable(value = "trendingMovies", key = "'trendingMovies'")
-    public String getTrendingMovies() {
-        return getMovieCache(MovieType.TRENDING);
-    }
-
-    @Cacheable(value = "dailyBoxOffice", key = "'dailyBoxOffice'")
-    public String getDailyBoxOffice() {
-        return getMovieCache(MovieType.DBOM);
-    }
-
-    @Cacheable(value = "weeklyBoxOffice", key = "'weeklyBoxOffice'")
-    public String getWeeklyBoxOffice() {
-        return getMovieCache(MovieType.WBOM);
-    }
-
+//    public String getPopularMovies() {
+//        return getMovieCache(MovieType.POPULAR);
+//    }
+//
+//    public String getTrendingMovies() {
+//        return getMovieCache(MovieType.TRENDING);
+//    }
+//
+//    public String getDailyBoxOffice() {
+//        return getMovieCache(MovieType.DBOM);
+//    }
+//
+//    public String getWeeklyBoxOffice() {
+//        return getMovieCache(MovieType.WBOM);
+//    }
+//
     private String getMovieCache(MovieType movieType) {
         return movieCacheRepository.findByType(movieType)
                 .map(MovieCache::getMovieData)
                 .orElseThrow(() -> new RuntimeException(movieType + " cache not found"));
     }
+
+
+    public List<BoxOfficeMovieDTO> getBoxOfficeDTO(MovieType type) {
+        String movieCache = null;
+        if (type == MovieType.DBOM) {
+            movieCache = getMovieCache(MovieType.DBOM);
+        } else if (type == MovieType.WBOM) {
+            movieCache = getMovieCache(MovieType.WBOM);
+        }
+        try {
+            List<BoxOfficeMovieDTO> movieList = objectMapper.readValue(movieCache, new TypeReference<List<BoxOfficeMovieDTO>>() {});
+            return movieList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<MovieUiDTO> getTmdbMoviesDTO(MovieType type) {
+        String movieCache = null;
+        if (type == MovieType.POPULAR) { movieCache= getMovieCache(MovieType.POPULAR);}
+        else if(type == MovieType.TRENDING) { movieCache = getMovieCache(MovieType.TRENDING);}
+
+        try {
+            JsonNode rootNode = objectMapper.readTree(movieCache);
+            JsonNode resultNode = rootNode.get("results");
+
+            List<MovieUiDTO> movieUiDTOList = new ArrayList<>();
+            for (JsonNode movieNode : resultNode) {
+                MovieUiDTO dto = new MovieUiDTO(
+                        movieNode.get("id").asLong(),
+                        movieNode.get("title").asText(),
+                        movieNode.get("poster_path").asText()
+                );
+                movieUiDTOList.add(dto);
+            }
+            return movieUiDTOList;
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

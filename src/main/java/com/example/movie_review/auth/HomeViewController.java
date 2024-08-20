@@ -1,5 +1,6 @@
 package com.example.movie_review.auth;
 
+import com.example.movie_review.cache.CacheUpdateService;
 import com.example.movie_review.dbMovie.repository.MovieCacheRepository;
 import com.example.movie_review.dbMovie.service.MovieCacheService;
 import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
@@ -30,6 +31,7 @@ public class HomeViewController {
     private final MovieCacheService movieCacheService;
     private final UserDTOService userDTOService;
     private final UserService userService;
+    private final CacheUpdateService cacheUpdateService;
     private final MovieCacheRepository movieCacheRepository;
 
     private final ObjectMapper objectMapper;
@@ -42,12 +44,8 @@ public class HomeViewController {
 //        movieCacheService.updateWeeklyMovieCache();
 //        userService.updateUserRoles();
 
-        model.addAttribute("popularMovies", movieCacheService.getPopularMovies());
-        model.addAttribute("trendingMovies", movieCacheService.getTrendingMovies());
-        model.addAttribute("dBOM", movieCacheService.getDailyBoxOffice());
-        model.addAttribute("wBOM", movieCacheService.getWeeklyBoxOffice());
-        model.addAttribute("ratingKings", userDTOService.getWeeklyRatingUsers());
-        model.addAttribute("reviewKings", userDTOService.getWeeklyReviewUsers());
+        model.addAttribute("dailyHome", cacheUpdateService.getDailyHomeData());
+        model.addAttribute("weeklyHome", cacheUpdateService.getWeeklyHomeData());
 
         return "home";
 

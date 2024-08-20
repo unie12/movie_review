@@ -8,6 +8,7 @@ import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserSearchDTO;
+import com.example.movie_review.user.DTO.WeeklyUserDTO;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserDTOService;
 import com.example.movie_review.user.service.UserService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,6 +55,9 @@ public class HomeController {
         return ResponseEntity.ok(movies);
     }
 
+    /**
+     * 실시간 데이터 보내주기 
+     */
     @GetMapping("/home/realtime-data")
     public ResponseEntity<RealTimeData> getRealTimeData() {
         Long userCount = userService.getUserCount();
@@ -64,7 +69,9 @@ public class HomeController {
         return ResponseEntity.ok(data);
     }
 
-    // 일단 tmdbservice에서 size를 안먹으니까 10으로 직접 명시해서 처리중
+    /**
+     * tmdb 영화 검색
+     */
     @GetMapping("/search/movies")
     public ResponseEntity<Page<MovieSearchDTO>> searchMovies(
             @RequestParam String query,
@@ -73,6 +80,9 @@ public class HomeController {
         return ResponseEntity.ok(results);
     }
 
+    /**
+     * db에서 해당 query가 들어간 사용자 찾기
+     */
     @GetMapping("/search/users")
     public ResponseEntity<Page<UserSearchDTO>> searchUsers(
             @RequestParam String query,
@@ -84,6 +94,9 @@ public class HomeController {
         return ResponseEntity.ok(results);
     }
 
+    /**
+     * 디바운싱 적용 - db에 있는 관련 영화, 사용자 보여주기
+     */
     @GetMapping("/search/suggestions")
     @ResponseBody
     public ResponseEntity<List<String>> getSuggestions(

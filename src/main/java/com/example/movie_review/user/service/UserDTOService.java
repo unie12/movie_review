@@ -35,14 +35,12 @@ public class UserDTOService {
     private final DbRatingRepository dbRatingRepository;
     private final UserRepository userRepository;
 
-    @Cacheable(value = "weeklyRatingUsers", key = "'weeklyRatingUsers'")
     public List<WeeklyUserDTO> getWeeklyRatingUsers() {
         LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
         LocalDateTime endDate = LocalDateTime.now();
         return dbRatingRepository.findTopRaters(startDate, endDate);
     }
 
-    @Cacheable(value = "weeklyReviewUsers", key = "'weeklyReviewUsers'")
     public List<WeeklyUserDTO> getWeeklyReviewUsers() {
         LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
         LocalDateTime endDate = LocalDateTime.now();
@@ -262,4 +260,5 @@ public class UserDTOService {
                 .map(User::getNickname)
                 .collect(Collectors.toList());
     }
+
 }
