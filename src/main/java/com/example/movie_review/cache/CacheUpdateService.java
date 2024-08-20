@@ -29,6 +29,13 @@ public class CacheUpdateService {
         evictCache("weeklyHomepage");
     }
 
+    @Scheduled(cron ="0 0 0 * * *")
+    public void movieInfoCache() {
+        evictCache("movieBasicInfo");
+        evictCache("movieProvider");
+        evictCache("personDetails");
+    }
+
     private void evictCache(String cacheName) {
         cacheManager.getCache(cacheName).clear();
     }
