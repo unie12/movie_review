@@ -29,6 +29,6 @@ public class ExceptionManager {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String runtimeExceptionHandler(RuntimeException e) {
         e.printStackTrace();
-        return "Runtime Exception 발생!";
+        return "해당 페이지에 일시적인 오류가 발생하였습니다!";
     }
 }

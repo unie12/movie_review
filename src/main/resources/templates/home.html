@@ -249,8 +249,13 @@
         fetch(`/api/home/mbtiMovies`)
             .then(response => response.json())
             .then(movies => {
-                createMovieList(movies, 'mbtiMovieList', 'mbtiMovie');
-                initializeSmoothScroll('mbtiMovieList', 5);
+                if (movies.length > 0) {
+                    createMovieList(movies, 'mbtiMovieList', 'mbtiMovie');
+                    initializeSmoothScroll('mbtiMovieList', 5);
+                } else {
+                    document.querySelector('.movie-category').style.display = 'none'; // div를 보이게 함
+                }
+
 
             })
             .catch(error => console.error('Error fetching user preferences:', error));

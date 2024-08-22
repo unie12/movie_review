@@ -4,6 +4,8 @@ import com.example.movie_review.cache.CacheUpdateService;
 import com.example.movie_review.dbMovie.repository.MovieCacheRepository;
 import com.example.movie_review.dbMovie.service.MovieCacheService;
 import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
+import com.example.movie_review.movieDetail.domain.MovieDetails;
+import com.example.movie_review.movieDetail.service.MovieDetailService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserSearchDTO;
 import com.example.movie_review.user.service.UserDTOService;
@@ -32,22 +34,35 @@ public class HomeViewController {
     private final UserDTOService userDTOService;
     private final UserService userService;
     private final CacheUpdateService cacheUpdateService;
+    private final MovieDetailService movieDetailService;
+
     private final MovieCacheRepository movieCacheRepository;
+
 
     private final ObjectMapper objectMapper;
 
 
     @Timed(value = "home.request", description = "Time taken to return the home page")
     @GetMapping({"", "/"})
-    public String home(@CookieValue(name = "jwtToken", required = false) String token, Model model, HttpServletResponse response) throws JsonProcessingException {
-//        movieCacheService.updateDailyMovieCache();
-//        movieCacheService.updateWeeklyMovieCache();
-//        userService.updateUserRoles();
+    public String home(
+            @CookieValue(name = "jwtToken", required = false) String token,
+            Model model,
+            HttpServletResponse response,
+            Authentication auth) throws JsonProcessingException {
+        if(auth != null && !auth.getName().equals("anonymousUser")) {
+    //        movieCacheService.updateDailyMovieCache();
+    //        movieCacheService.updateWeeklyMovieCache();
+    //        userService.updateUserRoles();
 
-        model.addAttribute("dailyHome", cacheUpdateService.getDailyHomeData());
-        model.addAttribute("weeklyHome", cacheUpdateService.getWeeklyHomeData());
+            model.addAttribute("dailyHome", cacheUpdateService.getDailyHomeData());
+            model.addAttribute("weeklyHome", cacheUpdateService.getWeeklyHomeData());
 
-        return "home";
+            return "home";
+        } else {
+            model.addAttribute("backgroundMovies", movieDetailService.getRandomMoviePoster(24));
+            return "login";
+        }
+
 
 //        if (token != null && !JwtTokenUtil.isExpired(token, "my-secret-key-123123")) {
 //            try {

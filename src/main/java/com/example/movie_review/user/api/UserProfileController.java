@@ -47,7 +47,6 @@ public class UserProfileController {
         List<DbMovies> collect = updateRequest.getFavoriteMovies().stream()
                 .map(movie -> dbMovieService.findOrCreateMovie(Long.valueOf(movie.getId())))
                 .collect(Collectors.toList());
-        System.out.println("collect = " + collect);
         return ResponseEntity.ok(userProfileDTOService.updateUserProfile(userEmail, profilePicture, updateRequest));
     }
 

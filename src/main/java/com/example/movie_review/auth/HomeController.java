@@ -115,7 +115,4 @@ public class HomeController {
         return ResponseEntity.ok(suggestions.stream().limit(10).collect(Collectors.toList()));
     }
 
-
-
-
 }

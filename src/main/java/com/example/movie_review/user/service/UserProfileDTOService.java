@@ -76,15 +76,8 @@ public class UserProfileDTOService {
 
         if (profilePicture != null && !profilePicture.isEmpty()) {
             String fileDownloadUri = fileStorageService.storeFile(profilePicture);
-//            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                    .path("/downloadFile/")
-//                    .path(fileName)
-//                    .toUriString();
-//            System.out.println("fileName = " + fileName);
-//            System.out.println("fileDownloadUri = " + fileDownloadUri);
             user.setPicture(fileDownloadUri);
         }
-        System.out.println("updateRequest = " + updateRequest);
         user.update(updateRequest.getNickname(), updateRequest.getGender(), updateRequest.getAge(), updateRequest.getMbti(), user.getPicture());
 
         preferredGenresService.updatePreferredGenres(user, updateRequest.getPreferredGenreIds());

@@ -63,7 +63,6 @@ public class ReviewMovieDTOService {
         this.cachedRecentReviews = recentReviews.stream()
                 .map(this::getReviewMovieDTO)
                 .collect(Collectors.toList());
-        System.out.println("recentReviews = " + recentReviews);
     }
 
     @EventListener

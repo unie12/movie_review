@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login.css">
+
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <title>아주키노 로그인</title>
+</head>
+
+<body>
+<div>
+    <div class="logo">
+        <img scr="/images/logo.png" alt="AjouKino">
+    </div>
+
+    <div class="background-container">
+        <div th:each="poster, iterStat : ${backgroundMovies}"
+             th:class="${'poster-item size-' + (iterStat.index % 3 + 1)}">
+            <img th:src="'https://image.tmdb.org/t/p/w500' + ${poster}" class="background-poster" alt="Movie Poster">
+        </div>
+    </div>
+
+    <div class="login-box">
+        <h2 class="login-box-title">아주키노</h2>
+        <label>
+            <input type="checkbox" id="keepLoggedIn">
+            <h2 class="keep-login-content">로그인 유지</h2>
+        </label>
+        </br>
+        <a th:href="@{/oauth2/authorization/google}"
+           class="btn"
+           onclick="return handleLogin()">아주대 메일로 로그인</a>
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    function handleLogin() {
+        const keepLoggedIn = document.getElementById('keepLoggedIn').checked;
+        return true;
+    }
+
+    $(document).ready(function() {
+        $('.background-poster').each(function(index) {
+            $(this).css('animation-delay', (index * 0.2 ) + 's');
+        });
+    });
+</script>
+
+</body>
+</html>
+
