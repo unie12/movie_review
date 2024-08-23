@@ -29,16 +29,13 @@ public class OAuth2Controller {
         OAuth2User oAuth2User = (OAuth2User) auth.getPrincipal();
         String email = oAuth2User.getAttribute("email"); // 구글의 기본 식별자는 이메일입니다.
 
-        Optional<User> userOptional = userService.getOptUserByEmail(email);
-
-        if (userOptional.isEmpty()) {
+        User user = userService.getUserByEmail(email);
+        System.out.println("user = " + user);
+        // 새 사용자
+        if (user.getNickname().startsWith("temp_")) {
             // 사용자가 데이터베이스에 존재하지 않는 경우
-            // 로그인 실패 처리 또는 에러 페이지로 리다이렉트
-            return "redirect:/login-failure";
+            return "redirect:/additional-info/" + email;
         }
-
-        User user = userOptional.get();
-        // 기존 사용자 객체를 사용하여 추가 정보가 유지되도록 합니다.
 
         // 로그인 성공 -> Jwt 토큰 발급
         String secretKey = "my-secret-key-123123";

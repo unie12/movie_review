@@ -36,7 +36,10 @@ public class SecurityConfig {
                     .userInfoEndpoint(userInfo -> userInfo
                         .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
                     )
-                    .failureUrl("/") // 로그인 실패 시 이동할 URL
+                    .failureHandler((request, response, exception) -> {
+                        response.sendRedirect("/jwt-login");
+                    })
+
                 )
                 .logout(logout -> logout
                         .deleteCookies("JSESSIONID", "jwtToken")

@@ -18,16 +18,16 @@ public class MovieDetailService {
     private final MovieDetailRepository movieDetailRepository;
     private List<String> cachedPosters;
 
-    @Scheduled(fixedRate = 60 * 60 * 1000) // 60분
-    @Cacheable("randomMoviePosters")
+//    @Scheduled(fixedRate = 60 * 60 * 1000) // 60분
+//    @Cacheable("randomMoviePosters")
     public List<String> getRandomMoviePoster(int count) {
-        if(cachedPosters == null || cachedPosters.isEmpty()) {
+//        if(cachedPosters == null || cachedPosters.isEmpty()) {
             List<MovieDetails> all = movieDetailRepository.findAll();
             cachedPosters = all.stream()
                     .map(MovieDetails::getPoster_path)
                     .collect(Collectors.toList());
             Collections.shuffle(cachedPosters);
-        }
+//        }
         return cachedPosters.stream().limit(count).toList();
     }
 }

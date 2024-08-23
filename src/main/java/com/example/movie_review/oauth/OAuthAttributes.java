@@ -19,33 +19,22 @@ public class OAuthAttributes {
     private String nickname;
     private String gender;
     private Long age;
-
     private String mbti;
-//    private List<String> preferGenres;
-
-//    private List<String> preferMovies = new ArrayList<>();
-//    private String preferDirector;
-//    private String preferActor;
-
 
     @Builder
     public OAuthAttributes(Map<String, Object> attributes,
                            String nameAttributeKey, String name,
                            String email, String picture, String nickname,
-                           String gender, Long age, String mbti){
-//                           List<String> preferMovies) {
-        long l = System.currentTimeMillis();
-        String newNickname = "" + l;
-
+                           String gender, Long age, String mbti) {
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
         this.name = name;
         this.email = email;
         this.picture = picture;
-        this.nickname = nickname != null ? nickname : newNickname; // 기본값 설정
-        this.gender = gender != null ? gender : "미정";
-        this.age = age != null ? age : 0L;
-        this.mbti = mbti != null ? mbti : "Pretty";
+        this.nickname = nickname;
+        this.gender = gender;
+        this.age = age;
+        this.mbti = mbti;
     }
 
     public static OAuthAttributes of(String userNameAttributeName, Map<String, Object> attributes) {
@@ -57,10 +46,10 @@ public class OAuthAttributes {
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
                 .picture((String) attributes.get("picture"))
-                .nickname((String) attributes.get("nickname")) // 닉네임 필드 추가
-                .gender((String) attributes.get("gender")) // 성별 필드 추가
-                .age(attributes.get("age") != null ? Long.valueOf(attributes.get("age").toString()) : null) // 나이 필드 추가
-                .mbti((String) attributes.get("mbti")) // MBTI 필드 추가
+//                .nickname((String) attributes.get("nickname")) // 닉네임 필드 추가
+//                .gender((String) attributes.get("gender")) // 성별 필드 추가
+//                .age(attributes.get("age") != null ? Long.valueOf(attributes.get("age").toString()) : null) // 나이 필드 추가
+//                .mbti((String) attributes.get("mbti")) // MBTI 필드 추가
                 .attributes(attributes)
                 .nameAttributeKey(usernameAttributeName)
                 .build();
@@ -69,15 +58,10 @@ public class OAuthAttributes {
     public User toEntity() {
         return User.builder()
                 .name(name)
+                .nickname("temp_" + email.split("@")[0])
                 .email(email)
                 .picture(picture)
                 .role(UserRole.BRONZE)
-                .nickname(nickname) // 닉네임 필드 추가
-                .gender(gender)
-                .age(age)
-                .mbti(mbti)
-//                .preferGenres(preferGenres)
-//                .preferMovies(preferMovies)
                 .build();
     }
 }
