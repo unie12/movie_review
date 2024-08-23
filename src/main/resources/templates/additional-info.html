@@ -366,14 +366,6 @@
         $('#nickname, #gender, #age, #mbti').on('input', checkFormValidity);
         checkFormValidity();
 
-        $(document).on('click', 'button', function(e) {
-            console.log('Button clicked:', this.id || this.className);
-        });
-
-        $(document).on('submit', 'form', function(e) {
-            console.log('Form submitted:', this.id);
-        });
-
     });
 
     <!--    선호 장르 checkbox 선택 시, 선호 장르 리스트로 바로 옮겨주고 총 개수 제한-->
@@ -424,7 +416,7 @@
     function checkFormValidity() {
         var isValid = $('#nickname').val() && $('#gender').val() && $('#age').val() && $('#mbti').val() && isNicknameValid;
 
-        $('button[type="submit"]').prop('disabled', !isValid);
+        $('#profile-form button[type="submit"]').prop('disabled', !isValid);
     }
 
     function searchMovies() {
