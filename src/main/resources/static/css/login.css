@@ -7,16 +7,14 @@ html {
     background-color: #212222;
     overflow: hidden;
 }
-
 .logo {
     position: fixed;
-    top: 20px;
-    left: 20px;
+    top: -5%;
+    left: 10%;
     z-index: 1000;
 }
-
 .logo img {
-    width: 100px;  /* Ã«Â¡Å“ÃªÂ³Â  Ã­ÂÂ¬ÃªÂ¸Â°Ã¬â€”Â Ã«Â§Å¾ÃªÂ²Å’ Ã¬Â¡Â°Ã¬Â â€¢ */
+    width: 40%;
 }
 
 .background-container {
@@ -25,67 +23,130 @@ html {
     left: 0;
     right: 0;
     bottom: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    padding: 10px;
+    overflow: hidden;
     z-index: -1;
-
 }
 
-.poster-item {
-    overflow: hidden;
-    border-radius: 8px;
-    aspect-ratio: 2 / 3;  /* ì˜í™” í¬ìŠ¤í„°ì˜ ì¼ë°˜ì ì¸ ë¹„ìœ¨ */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+}
 
+.grid-item {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .background-poster {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+    border-radius: 8px;
     opacity: 0.3;
     transition: all 0.5s ease;
     animation: fadeInOut 10s infinite;
 }
 
-.background-poster:hover {
-    opacity: 0.7;
-    transform: scale(1.1);
-}
+ .background-poster:hover {
+     opacity: 0.7;
+     transform: scale(1.05);
+ }
 
+ @keyframes fadeInOut {
+     0%, 100% { opacity: 0.3; }
+     50% { opacity: 0.5; }
+ }
+
+ /* ÃƒÂ«Ã‚Â°Ã‹Å“ÃƒÂ¬Ã‚ÂÃ¢â‚¬ËœÃƒÂ­Ã‹Å“Ã¢â‚¬Â¢ ÃƒÂ«Ã¢â‚¬ÂÃ¢â‚¬ÂÃƒÂ¬Ã…Â¾Ã‚ÂÃƒÂ¬Ã‚ÂÃ‚Â¸ÃƒÂ¬Ã‚ÂÃ¢â‚¬Å¾ ÃƒÂ¬Ã…â€œÃ¢â‚¬Å¾ÃƒÂ­Ã¢â‚¬Â¢Ã…â€œ ÃƒÂ«Ã‚Â¯Ã‚Â¸ÃƒÂ«Ã¢â‚¬ÂÃ¢â‚¬ÂÃƒÂ¬Ã¢â‚¬â€œÃ‚Â´ ÃƒÂ¬Ã‚Â¿Ã‚Â¼ÃƒÂ«Ã‚Â¦Ã‚Â¬ */
+ @media (max-width: 1200px) {
+     .grid {
+         grid-template-columns: repeat(4, 1fr);
+         grid-template-rows: repeat(6, 1fr);
+     }
+ }
+
+ @media (max-width: 768px) {
+     .grid {
+         grid-template-columns: repeat(3, 1fr);
+         grid-template-rows: repeat(8, 1fr);
+     }
+ }
+
+ @media (max-width: 480px) {
+     .grid {
+         grid-template-columns: repeat(2, 1fr);
+         grid-template-rows: repeat(12, 1fr);
+     }
+ }
 @keyframes fadeInOut {
     0%, 100% { opacity: 0.3; }
     50% { opacity: 0.5; }
 }
-
 .login-box {
-    height: 300px;
-    background-color: #000000;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 15px;
     box-shadow: 0 0 20px rgba(255,255,255,0.1);
     text-align: center;
     z-index: 10;
-    opacity: 0.8;
+    width: 300px;  /* 고정 너비 설정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-.login-box-title {
-    color: #4d71a2;
+
+.login-box-logo {
+    width: 80%;  /* 로고 크기 조정 */
+    margin-bottom: 1.5rem;  /* 로고 아래 여백 추가 */
 }
-.keep-login-content {
-    color: #ffffff;
-}
+
 .btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #4285F4;
+    background: linear-gradient(45deg, #4285F4, #34A853);
+    border: none;
+    padding: 12px 24px;
     color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    margin-top: 1rem;
-    transition: background-color 0.3s ease;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-top: 1.5rem;  /* 버튼 위 여백 추가 */
+    width: 80%;  /* 버튼 너비 설정 */
+    font-size: 1rem;  /* 글자 크기 조정 */
 }
 
 .btn:hover {
-    background-color: #3367D6;
+    background: linear-gradient(45deg, #34A853, #4285F4);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
+}
+
+.checkbox {
+    margin-top: 1rem;
+}
+
+.keep-login-content {
+    color: #ffffff;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* 체크박스 스타일링 */
+input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+@keyframes zoom {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
 }

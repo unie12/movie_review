@@ -9,30 +9,35 @@
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
     <title>아주키노 로그인</title>
 </head>
-
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
 <body>
 <div>
     <div class="logo">
-        <img scr="/images/logo.png" alt="AjouKino">
+        <img src="/images/logo.png" alt="AjouKino">
     </div>
 
     <div class="background-container">
-        <div th:each="poster, iterStat : ${backgroundMovies}"
-             th:class="${'poster-item size-' + (iterStat.index % 3 + 1)}">
-            <img th:src="'https://image.tmdb.org/t/p/w500' + ${poster}" class="background-poster" alt="Movie Poster">
+        <div class="grid">
+            <div th:each="poster : ${backgroundMovies}" class="grid-item">
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${poster}" class="background-poster" alt="Movie Poster">
+            </div>
         </div>
     </div>
 
     <div class="login-box">
-        <h2 class="login-box-title">아주키노</h2>
-        <label>
-            <input type="checkbox" id="keepLoggedIn">
-            <h2 class="keep-login-content">로그인 유지</h2>
-        </label>
-        </br>
+        <img src="/images/logo.png" alt="AjouKino" class="login-box-logo">
+
         <a th:href="@{/oauth2/authorization/google}"
            class="btn"
            onclick="return handleLogin()">아주대 메일로 로그인</a>
+
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" id="keepLoggedIn">
+                <span class="keep-login-content">로그인 유지</span>
+            </label>
+        </div>
+
     </div>
 
 </div>
@@ -45,11 +50,11 @@
         return true;
     }
 
-    $(document).ready(function() {
-        $('.background-poster').each(function(index) {
-            $(this).css('animation-delay', (index * 0.2 ) + 's');
-        });
+$(document).ready(function() {
+    $('.background-poster').each(function(index) {
+        $(this).css('animation-delay', (index * 0.2) + 's');
     });
+});
 </script>
 
 </body>
