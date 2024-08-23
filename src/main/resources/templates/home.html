@@ -244,6 +244,7 @@
     }
 
     function loadMbtiPreferMovies() {
+        const mbtiMovieContainer = document.querySelector('.movie-category:has(#mbtiMovieList)');
         if (!document.getElementById('mbtiMovieList')) return;
 
         fetch(`/api/home/mbtiMovies`)
@@ -252,13 +253,16 @@
                 if (movies.length > 0) {
                     createMovieList(movies, 'mbtiMovieList', 'mbtiMovie');
                     initializeSmoothScroll('mbtiMovieList', 5);
+                    mbtiMovieContainer.style.display = 'block'; // 영화가 있으면 보이게 함
                 } else {
                     document.querySelector('.movie-category').style.display = 'none'; // div를 보이게 함
+                    mbtiMovieContainer.style.display = 'none'; // 영화가 있으면 보이게 함
                 }
-
-
             })
-            .catch(error => console.error('Error fetching user preferences:', error));
+            .catch(error => {
+                console.error('Error fetching user preferences:', error);
+                mbtiMovieContainer.style.display = 'none'; // 에러 발생 시 숨김
+            });
     }
 
     function initializeInfoIcons() {

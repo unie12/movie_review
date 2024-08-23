@@ -9,7 +9,9 @@
 <body>
     <div th:fragment="bodyHeader">
         <nav class="navbar">
-            <a href="/jwt-login" class="navbar-brand">아주키노</a>
+            <a href="/jwt-login" class="navbar-brand">
+                <img src="/images/logo.png" alt="AjouKino" class="logo">
+            </a>
             <form class="navbar-search" th:action="@{/jwt-login/search?searchType=${searchType}}" method="get">
                 <select id="searchType" name="searchType">
                     <option value="movieTitle">영화 제목</option>

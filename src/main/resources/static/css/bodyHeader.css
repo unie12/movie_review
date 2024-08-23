@@ -1,33 +1,29 @@
 body {
-    padding-top: 90px; /* navbar 높이 + 여분 */
+    padding-top: 90px;
 }
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    background-color: #D4EAFB;
+    background-color: #ebf2ff;
     color: white;
     padding: 10px 200px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
-    height: 70px; /* 네비게이션 바 높이 증가 */
+    height: 70px;
 }
 .navbar a {
     color: white;
     text-decoration: none;
 }
-.navbar-brand {
-    font-size: 28px;
-    font-weight: bold;
-}
 .navbar .navbar-brand {
     color: #5CC4F8;
 }
 .navbar-search {
-    flex-grow: 0.5; /* 검색창 너비 조절 */
+    flex-grow: 0.5; /* ê²€ìƒ‰ì°½ ë„ˆë¹„ ì¡°ì ˆ */
     margin: 0 20px;
     display: flex;
 }
@@ -47,6 +43,10 @@ body {
 }
 .navbar-links > * {
     margin-left: 15px;
+}
+.logo {
+    width: 150px;
+    height: 150px;
 }
 .btn {
     padding: 8px 15px;
@@ -83,7 +83,7 @@ body {
     top: 100%;
     left: 0;
     right: 0;
-    background-color: white;  /* 흰색 배경 */
+    background-color: white;
     border: 1px solid #ddd;
     border-top: none;
     z-index: 1000;
@@ -92,7 +92,7 @@ body {
 #searchSuggestions div {
     padding: 10px;
     cursor: pointer;
-    color: black;  /* 검은색 텍스트 */
+    color: black;
 }
 #searchSuggestions div:hover, #searchSuggestions div.active {
     background-color: #f0f0f0;
