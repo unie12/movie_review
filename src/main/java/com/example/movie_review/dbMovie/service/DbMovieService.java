@@ -32,6 +32,7 @@ public class DbMovieService {
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
 
+    @Transactional
     public DbMovies findOrCreateMovie(Long movieId) {
         return dbMovieRepository.findByTmdbIdWithLock(movieId)
             .orElseGet(() -> {

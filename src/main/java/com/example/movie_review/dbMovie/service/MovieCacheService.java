@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class MovieCacheService {
         updateBoxOfficeCache(MovieType.WBOM);
     }
 
+    @Transactional
     private void updateBoxOfficeCache(MovieType movieType) {
         try {
             String movieData;
@@ -64,6 +66,7 @@ public class MovieCacheService {
 
     }
 
+    @Transactional
     private void updateTmdbCache(MovieType movieType) {
         try {
             String movieData;

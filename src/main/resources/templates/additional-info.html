@@ -3,7 +3,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="/css/bodyHeader.css">
-<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <style>
         .container {
             position: relative; /* container 요소에 position: relative; 추가 */
@@ -326,6 +327,7 @@
                 success: function(response) {
                     alert('프로필이 업데이트되었습니다');
                     location.reload();
+                    window.location.href = '/jwt-login'; // JWT 로그인 페이지로 리다이렉트
                 },
                 error: function(xhr, status, error) {
                     alert('프로필 업데이트에 실패했습니다: ' + error);

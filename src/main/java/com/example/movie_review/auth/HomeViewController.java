@@ -50,8 +50,8 @@ public class HomeViewController {
             HttpServletResponse response,
             Authentication auth) throws JsonProcessingException {
         if(auth != null && !auth.getName().equals("anonymousUser")) {
-    //        movieCacheService.updateDailyMovieCache();
-    //        movieCacheService.updateWeeklyMovieCache();
+//            movieCacheService.updateDailyMovieCache();
+//            movieCacheService.updateWeeklyMovieCache();
     //        userService.updateUserRoles();
 
             model.addAttribute("dailyHome", cacheUpdateService.getDailyHomeData());

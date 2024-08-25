@@ -30,7 +30,6 @@ public class OAuth2Controller {
         String email = oAuth2User.getAttribute("email"); // 구글의 기본 식별자는 이메일입니다.
 
         User user = userService.getUserByEmail(email);
-        System.out.println("user = " + user);
         // 새 사용자
         if (user.getNickname().startsWith("temp_")) {
             // 사용자가 데이터베이스에 존재하지 않는 경우
