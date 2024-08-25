@@ -33,8 +33,12 @@ public class DbMovieService {
     private final ObjectMapper objectMapper;
 
     public DbMovies findOrCreateMovie(Long movieId) {
-        return dbMovieRepository.findByTmdbId(movieId)
-            .orElseGet(() -> createMovieFromTmdb(movieId));
+        return dbMovieRepository.findByTmdbIdWithLock(movieId)
+            .orElseGet(() -> {
+                // 더블 체킹
+                return dbMovieRepository.findByTmdbId(movieId)
+                    .orElseGet(() -> createMovieFromTmdb(movieId));
+            });
     }
 
     @Transactional
