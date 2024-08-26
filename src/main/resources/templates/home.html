@@ -6,6 +6,7 @@
     <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="/css/homeStyle.css">
     <link rel="stylesheet" href="/css/bodyHeader.css">
+    <link rel="stylesheet" href="/css/loading.css">
 
     <title>아주키노</title>
 
@@ -14,6 +15,19 @@
 <script th:src="@{'/js/search.js'}"></script>
 
 <body>
+<script src="/js/loading.js"></script>
+<script>
+    LoadingManager.show();
+
+    window.addEventListener('load', function() {
+        LoadingManager.waitForImages().then(() => {
+            LoadingManager.hide();
+            document.getElementById('movie-content').style.display = 'block';
+            initializePageContent();
+        });
+    });
+</script>
+
 <div th:replace="fragments/bodyHeader :: bodyHeader" />
 <div class="container">
     <div class="jumbotron">
@@ -345,7 +359,7 @@
             </div>
             <div class="review-content">
                 <img src="${posterUrl}" alt="${review.movieCommonDTO.title}" class="review-poster">
-                <p>${review.movieCommonDTO.title}</p>
+                <p class="movie-title">${review.movieCommonDTO.title}</p>
                 <p class="review-text">${reviewTextWithBreaks}</p>
             </div>
             <div class="review-footer">
@@ -413,7 +427,7 @@
 
                 const audiAcc = document.createElement('p');
                 audiAcc.classList.add('movie-info');
-                audiAcc.innerHTML = `누적 관객<br>${formatNumber(movie.audiAcc)}명`;
+                audiAcc.innerHTML = `누적 관객 ${formatNumber(movie.audiAcc)}명`;
 
                 movieItem.appendChild(rank);
                 movieItem.appendChild(audiAcc);

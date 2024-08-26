@@ -1,6 +1,5 @@
 .container {
-    padding: 10px 5vw;
-    max-width: 1400px;
+    padding: 10px 15vw;
     margin: 0 auto;
 }
 .sections {
@@ -47,6 +46,7 @@
     position: relative;
     overflow: hidden;
     width: 100%;
+    padding: 0 20px;  /* í™”ì‚´í‘œë¥¼ ìœ„í•œ ê³µê°„ í™•ë³´ */
 }
 
 .movie-list {
@@ -55,6 +55,9 @@
     padding: 0;
     margin: 0;
     gap: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
 }
 
 .movie-item {
@@ -65,7 +68,7 @@
 
 .movie-poster {
     width: 100%;
-    height: 400px;
+    height: 350px;
     object-fit: cover;
     cursor: pointer;
     border-radius: 8px;
@@ -77,11 +80,12 @@
 
 
 .movie-title {
-    margin-top: 10px;
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 .movie-info {
     margin-top: 5px;
@@ -135,7 +139,7 @@
 
 .arrow {
     position: absolute;
-    top: 40%;
+    top: 50%;
     transform: translateY(-50%);
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
@@ -144,14 +148,27 @@
     cursor: pointer;
     z-index: 10;
     border-radius: 50%;
+    width: 40px;  /* ë„ˆë¹„ ì§€ì • */
+    height: 40px;  /* ë†’ì´ ì§€ì • */
+    display: flex;  /* ë‚´ë¶€ í…ìŠ¤íŠ¸ ì¤‘ì•™ ì •ë ¬ì„ ìœ„í•´ */
+    align-items: center;
+    justify-content: center;
 }
 
 .arrow.left {
-    left: 10px;
+    left: -10px;  /* ì»¨í…Œì´ë„ˆ ì™¼ìª½ ë°”ê¹¥ìœ¼ë¡œ ì´ë™ */
 }
 
 .arrow.right {
-    right: 10px;
+    right: -10px;  /* ì»¨í…Œì´ë„ˆ ì˜¤ë¥¸ìª½ ë°”ê¹¥ìœ¼ë¡œ ì´ë™ */
+}
+
+.arrow.left {
+    left: 0;
+}
+
+.arrow.right {
+    right: 0;
 }
 .review-header {
     display: flex;
@@ -234,8 +251,8 @@
 .heart-value {
     background-color: #fadbd8;
 }
-.user-rating-container { /* í‰ì  ìš”ì†Œë¥¼ ìœ„í•œ ì»¨í…Œì´ë„ˆ */
-    margin-left: auto; /* ìžë™ìœ¼ë¡œ ì™¼ìª½ ë§ˆì§„ì„ ì£¼ì–´ ì˜¤ë¥¸ìª½ ì •ë ¬ */
+.user-rating-container { /* Ã­Ââ€°Ã¬Â Â Ã¬Å¡â€Ã¬â€ Å’Ã«Â¥Â¼ Ã¬Å“â€žÃ­â€¢Å“ Ã¬Â»Â¨Ã­â€¦Å’Ã¬ÂÂ´Ã«â€žË† */
+    margin-left: auto; /* Ã¬Å¾ÂÃ«Ââ„¢Ã¬Å“Â¼Ã«Â¡Å“ Ã¬â„¢Â¼Ã¬ÂªÂ½ Ã«Â§Ë†Ã¬Â§â€žÃ¬Ââ€ž Ã¬Â£Â¼Ã¬â€“Â´ Ã¬ËœÂ¤Ã«Â¥Â¸Ã¬ÂªÂ½ Ã¬Â â€¢Ã«Â Â¬ */
 }
 
 .movie-list, .popular-reviews {
@@ -252,7 +269,7 @@
 
 
 
-/* ê° ì¹´í…Œê³ ë¦¬ ë³„ ì„¤ëª…í•´ì£¼ëŠ” ë¬¼ìŒí‘œ */
+/* ÃªÂ°Â Ã¬Â¹Â´Ã­â€¦Å’ÃªÂ³Â Ã«Â¦Â¬ Ã«Â³â€ž Ã¬â€žÂ¤Ã«Âªâ€¦Ã­â€¢Â´Ã¬Â£Â¼Ã«Å â€ Ã«Â¬Â¼Ã¬ÂÅ’Ã­â€˜Å“ */
 .info-icon {
     font-size: 0.8em;
     color: #888;
@@ -278,7 +295,7 @@
     opacity: 0;
     transition: opacity 0.3s;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    font-size: 0.9em;
+    font-size: 1.1em;
     line-height: 1.4;
     pointer-events: none;
 }

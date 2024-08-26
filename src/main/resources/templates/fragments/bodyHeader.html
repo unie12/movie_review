@@ -9,47 +9,49 @@
 <body>
     <div th:fragment="bodyHeader">
         <nav class="navbar">
-            <a href="/jwt-login" class="navbar-brand">
-                <img src="/images/logo.png" alt="AjouKino" class="logo">
-            </a>
-            <form class="navbar-search" th:action="@{/jwt-login/search?searchType=${searchType}}" method="get">
-                <select id="searchType" name="searchType">
-                    <option value="movieTitle">영화 제목</option>
-                    <option value="userNickname">사용자 이름</option>
-                </select>
-                <input type="text" id="searchInput" name="query" placeholder="영화 제목 또는 사용자 닉네임을 입력하세요">
-                <div id="searchSuggestions" class="suggestions"></div>
-                <button type="submit" class="btn btn-primary">검색</button>
-            </form>
-            <div class="navbar-links">
-                <!-- 로그인 전 -->
-                <a th:if="${#authentication.name == 'anonymousUser'}"
-                   th:href="@{/oauth2/authorization/google}"
-                   class="btn btn-primary" role="button">로그인</a>
-
-                <!-- 로그인 후 -->
-                <a th:if="${#authentication.name != 'anonymousUser'}"
-                   th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-info">
-                    <i class="fas fa-user"></i>
-                    <span>유저 정보</span>
+            <div class="navbar-content">
+                <a href="/jwt-login" class="navbar-brand">
+                    <img src="/images/logo.png" alt="AjouKino" class="logo">
                 </a>
-
-<!--                삭제 예정-->
-                <a th:if="${#authentication.name != 'anonymousUser'}"
-                   th:href="@{'/additional-info' + '/' + ${#authentication.name}}"
-                   class="btn btn-info">추가 정보</a>
-
-
-                <a th:href="@{'/patch-notes'}"
-                   class="btn btn-info">패치 노트</a>
-
-                <form th:if="${#authentication.name != 'anonymousUser'}"
-                      th:action="@{/api/logout}"
-                      method="post"
-                      style="display: inline;">
-                    <button type="submit" class="btn btn-primary">로그아웃</button>
+                <form class="navbar-search" th:action="@{/jwt-login/search?searchType=${searchType}}" method="get">
+                    <select id="searchType" name="searchType">
+                        <option value="movieTitle">영화 제목</option>
+                        <option value="userNickname">사용자 이름</option>
+                    </select>
+                    <input type="text" id="searchInput" name="query" placeholder="영화 제목 또는 사용자 닉네임을 입력하세요">
+                    <div id="searchSuggestions" class="suggestions"></div>
+                    <button type="submit" class="btn btn-primary">검색</button>
                 </form>
+                <div class="navbar-links">
+                    <!-- 로그인 전 -->
+                    <a th:if="${#authentication.name == 'anonymousUser'}"
+                       th:href="@{/oauth2/authorization/google}"
+                       class="btn btn-primary" role="button">로그인</a>
 
+                    <!-- 로그인 후 -->
+                    <a th:if="${#authentication.name != 'anonymousUser'}"
+                       th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-info">
+                        <i class="fas fa-user"></i>
+                        <span>유저 정보</span>
+                    </a>
+
+    <!--                삭제 예정-->
+                    <a th:if="${#authentication.name != 'anonymousUser'}"
+                       th:href="@{'/additional-info' + '/' + ${#authentication.name}}"
+                       class="btn btn-info">추가 정보</a>
+
+
+                    <a th:href="@{'/patch-notes'}"
+                       class="btn btn-info">패치 노트</a>
+
+                    <form th:if="${#authentication.name != 'anonymousUser'}"
+                          th:action="@{/api/logout}"
+                          method="post"
+                          style="display: inline;">
+                        <button type="submit" class="btn btn-primary">로그아웃</button>
+                    </form>
+
+                </div>
             </div>
         </nav>
     </div>
