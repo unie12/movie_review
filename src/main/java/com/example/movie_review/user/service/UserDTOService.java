@@ -38,13 +38,13 @@ public class UserDTOService {
     public List<WeeklyUserDTO> getWeeklyRatingUsers() {
         LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
         LocalDateTime endDate = LocalDateTime.now();
-        return dbRatingRepository.findTopRaters(startDate, endDate);
+        return dbRatingRepository.findTopRaters(startDate, endDate).stream().limit(5).collect(Collectors.toList());
     }
 
     public List<WeeklyUserDTO> getWeeklyReviewUsers() {
         LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
         LocalDateTime endDate = LocalDateTime.now();
-        return reviewRepository.findTopReviewers(startDate, endDate);
+        return reviewRepository.findTopReviewers(startDate, endDate).stream().limit(5).collect(Collectors.toList());
     }
 
     public UserCommonDTO getUserCommonDTO(User user) {

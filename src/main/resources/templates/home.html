@@ -17,62 +17,28 @@
 <div th:replace="fragments/bodyHeader :: bodyHeader" />
 <div class="container">
     <div class="jumbotron">
-        <!--        <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary me-2 active" role="button">Google Login</a>-->
-
-        <div th:if="${#authentication.name == 'anonymousUser'}">
-            <h3>로그인 되어있지 않습니다!</h3>
-        </div>
-        <div th:if="${#authentication.name != 'anonymousUser'}">
-            <h3>[[${#authentication.name}]]님 환영합니다!</h3>
-            <!--            <a th:href="@{'/info/' + ${#authentication.name}}" class="btn btn-primary">유저 정보</a>-->
-        </div>
 
         <div class="sections">
+
             <div class="section">
-                <h3>이번 주 평가왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyRatingKing"></i></h3>
-                <ul>
-                    <li th:each="user : ${weeklyHome.ratingKing}">
-                        <div>
-                            <a th:href="@{'/info/' + ${user.userCommonDTO.email}}">
-                                <img th:src="${user.userCommonDTO.picture}" alt="User Picture" class="user-picture">
-                            </a>
-                            <strong th:text="${user.userCommonDTO.nickname}"
-                                    th:style="'color: ' + ${user.userCommonDTO.role.color}"></strong>
-                            <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
-                        </div>
-                        <div>
-                            <span th:text="'평가 수: ' + ${user.weeklyRatingCount}"></span>
-                            <!--                    <span th:text="'리뷰 수: ' + ${user.weeklyReviewCount}"></span>-->
-                        </div>
-                    </li>
-                </ul>
+                <div class="data-section">
+                    <p class="week-title">이번 주 평가왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyRatingKing"></i></p>
+                    <div id="ratingKingChart" class="king-chart"></div>
+                </div>
             </div>
 
             <div class="section">
-                <h3>이번 주 리뷰왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyReviewKing"></i></h3>
-                <ul>
-                    <li th:each="user : ${weeklyHome.reviewKing}">
-                        <div>
-                            <a th:href="@{'/info/' + ${user.userCommonDTO.email}}">
-                                <img th:src="${user.userCommonDTO.picture}" alt="User Picture" class="user-picture">
-                            </a>
-                            <strong th:text="${user.userCommonDTO.nickname}"
-                                    th:style="'color: ' + ${user.userCommonDTO.role.color}"></strong>
-                            <!--                    <span th:text="' (' + ${user.userCommonDTO.email} + ')'"></span>-->
-                        </div>
-                        <div>
-                            <!--                    <span th:text="'평가 수: ' + ${user.weeklyRatingCount}"></span>-->
-                            <span th:text="'리뷰 수: ' + ${user.weeklyReviewCount}"></span>
-                        </div>
-                    </li>
-                </ul>
+                <div class="data-section">
+                    <p class="week-title">이번 주 리뷰왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyReviewKing"></i></p>
+                    <div id="reviewKingChart" class="king-chart"></div>
+                </div>
             </div>
 
             <div class="section">
                 <div class="data-section">
                     <p>유저 수: <span id="userCount">0</span></p>
-                    <p>총 평점 수: <span id="totalRatings">0</span></p>
                     <p>총 리뷰 수: <span id="totalReviews">0</span></p>
+                    <p>총 평점 수: <span id="totalRatings">0</span></p>
                     <div id="ratingDistribution" class="rating-distribution">
 <!--                        전체 사용자들의 평가 분포 보여주기-->
                     </div>
@@ -82,7 +48,7 @@
 
         <div class="popular-container">
             <div class="reviews-header">
-                <h2>인기 리뷰 <i class="fas fa-question-circle info-icon" data-info-key="popularReviews"></i></h2>
+                <p class="category-title">인기 리뷰 <i class="fas fa-question-circle info-icon" data-info-key="popularReviews"></i></p>
                 <div>
                     <button class="btn btn-secondary" id="refreshReviewsBtn">새로고침</button>
                     <button class="btn btn-primary" id="viewAllBtn">전체 보기</button>
@@ -99,9 +65,8 @@
 
 
 
-
         <div class="movie-category">
-            <h2 class="category-title">오늘 아주대의 인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="ajouPopular"></i></h2>
+            <p class="category-title">오늘 아주대의 인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="ajouPopular"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
                 <ul class="movie-list" id="ajouPopularList" style="overflow-x: auto; white-space: nowrap;">
@@ -113,7 +78,7 @@
 
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <div class="movie-category">
-                <h2 class="category-title">나와 같은 mbti 사용자의 선호 영화 <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i></h2>
+                <p class="category-title">나와 같은 mbti 사용자의 선호 영화 <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i></p>
                 <div class="movie-list-container">
                     <button class="arrow left">&#9664;</button>
                     <ul class="movie-list" id="mbtiMovieList" style="overflow-x: auto; white-space: nowrap;">
@@ -126,7 +91,7 @@
 
 
         <div class="movie-category" th:if="${dailyHome.dailyBoxOffice}">
-            <h2 class="category-title">일별 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i></h2>
+            <p class="category-title">일별 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
                 <ul class="movie-list" id="dBOMList" style="overflow-x: auto; white-space: nowrap;">
@@ -137,7 +102,7 @@
         </div>
 
         <div class="movie-category" th:if="${weeklyHome.weeklyBoxOffice}">
-            <h2 class="category-title">주간 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i></h2>
+            <p class="category-title">주간 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
                 <ul class="movie-list" id="wBOMList" style="overflow-x: auto; white-space: nowrap;">
@@ -148,7 +113,7 @@
         </div>
 
         <div class="movie-category" th:if="${dailyHome.tmdbPopular}">
-            <h2 class="category-title">인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i></h2>
+            <p class="category-title">인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left" >&#9664;</button>
                 <ul class="movie-list" id="popularMovieList" style="overflow-x: auto; white-space: nowrap;">
@@ -159,7 +124,7 @@
         </div>
 
         <div class="movie-category" th:if="${dailyHome.tmdbTrend}">
-            <h2 class="category-title">트렌딩 영화 <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i></h2>
+            <p class="category-title">트렌딩 영화 <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left" >&#9664;</button>
                 <ul class="movie-list" id="trendingMovieList" style="overflow-x: auto; white-space: nowrap;">
@@ -202,6 +167,7 @@
         getRealTimeData();
         setInterval(getRealTimeData, 60000);
         initializeInfoIcons();
+        renderKingCharts();
 
         loadHomeReviews();
         loadAjouPopularMovies();
@@ -219,12 +185,12 @@
     function initializeMovieSmoothScrolls() {
         const movieLists = ['dBOMList', 'wBOMList', 'popularMovieList', 'trendingMovieList', 'ajouPopularList', 'mbtiMovieList'];
         movieLists.forEach(listId => {
-            initializeSmoothScroll(listId, 5);
+            initializeSmoothScroll(listId, '.movie-item');
         });
     }
 
     function initializeReviewSmoothScroll() {
-        initializeSmoothScroll('popularReviews', 3);
+        initializeSmoothScroll('popularReviews', '.review-card');
     }
 
     function loadAjouPopularMovies() {
@@ -234,7 +200,7 @@
                 if (movies.length > 0) {
                     createMovieList(movies, 'ajouPopularList', 'ajouPop');
                     document.querySelector('.movie-category').style.display = 'block'; // div를 보이게 함
-                    initializeSmoothScroll('ajouPopularList', 5);
+                    initializeSmoothScroll('ajouPopularList', '.movie-item');
 
                 } else {
                     document.querySelector('.movie-category').style.display = 'none'; // div를 보이게 함
@@ -252,7 +218,7 @@
             .then(movies => {
                 if (movies.length > 0) {
                     createMovieList(movies, 'mbtiMovieList', 'mbtiMovie');
-                    initializeSmoothScroll('mbtiMovieList', 5);
+                    initializeSmoothScroll('mbtiMovieList', '.movie-item');
                     mbtiMovieContainer.style.display = 'block'; // 영화가 있으면 보이게 함
                 } else {
                     document.querySelector('.movie-category').style.display = 'none'; // div를 보이게 함
@@ -288,6 +254,49 @@
         });
     }
 
+    function renderKingCharts() {
+        renderKingChart('ratingKingChart', weeklyHome.ratingKing, 'weeklyRatingCount');
+        renderKingChart('reviewKingChart', weeklyHome.reviewKing, 'weeklyReviewCount');
+    }
+
+    function renderKingChart(containerId, data, countProperty) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      const maxCount = Math.max(...data.map(user => user[countProperty]));
+
+      data.forEach((user, index) => {
+        const barWrapper = document.createElement('div');
+        barWrapper.className = 'king-bar-wrapper';
+
+        const bar = document.createElement('div');
+        bar.className = 'king-bar';
+        const height = (user[countProperty] / maxCount) * 180;
+        bar.style.height = '0px';  // 초기 높이를 0으로 설정
+        bar.style.backgroundColor = user[countProperty] === maxCount ? '#ff4500' : '#007bff';
+        bar.title = `${user[countProperty]}개`;
+
+
+        const profile = document.createElement('div');
+        profile.className = 'king-profile';
+        profile.innerHTML = `
+          <img src="${user.userCommonDTO.picture}" alt="${user.userCommonDTO.nickname}"
+          onclick="navigateToUser('${user.userCommonDTO.email}')">
+          <p style="color: ${user.userCommonDTO.role.color}">${user.userCommonDTO.nickname}</p>
+        `;
+
+        barWrapper.appendChild(bar);
+        barWrapper.appendChild(profile);
+        container.appendChild(barWrapper);
+
+        // 애니메이션 적용
+        setTimeout(() => {
+          bar.style.height = `${height}px`;
+          bar.style.animationPlayState = 'running';
+        }, 50);
+      });
+    }
+
     function loadHomeReviews() {
         fetch('/api/reviews/home-reviews')
             .then(response => response.json())
@@ -298,7 +307,7 @@
                 reviews.forEach((review) => {
                     const reviewElement = createReviewCard(review);
                     container.appendChild(reviewElement);
-                    initializeSmoothScroll('popularReviews', 3);
+                    initializeSmoothScroll('popularReviews', '.review-card');
                 });
             });
     }
@@ -307,7 +316,7 @@
         fetch('/api/reviews/refresh-cache', {method: 'POST' })
             .then(() => {
                 loadHomeReviews();
-                initializeSmoothScroll('popularReviews', 3);
+                initializeSmoothScroll('popularReviews', '.review-card');
 
             });
     }
@@ -336,7 +345,7 @@
             </div>
             <div class="review-content">
                 <img src="${posterUrl}" alt="${review.movieCommonDTO.title}" class="review-poster">
-                <h4>${review.movieCommonDTO.title}</h4>
+                <p>${review.movieCommonDTO.title}</p>
                 <p class="review-text">${reviewTextWithBreaks}</p>
             </div>
             <div class="review-footer">
@@ -414,10 +423,17 @@
         });
     }
 
-    function initializeSmoothScroll(containerId, itemsPerPage) {
+    function initializeSmoothScroll(containerId, itemsPerPageSelector) {
         const container = document.getElementById(containerId);
         const leftArrow = container.parentElement.querySelector('.arrow.left');
         const rightArrow = container.parentElement.querySelector('.arrow.right');
+
+        function getItemsPerPage() {
+            // 화면 너비에 따라 아이템 수 결정
+            if (window.innerWidth < 768) return 2;
+            if (window.innerWidth < 1024) return 3;
+            return 5;
+        }
 
         function updateArrowVisibility() {
             leftArrow.style.visibility = container.scrollLeft > 0 ? 'visible' : 'hidden';
@@ -426,8 +442,9 @@
         }
 
         function scroll(direction) {
-            const itemWidth = container.querySelector('.movie-item, .review-card').offsetWidth;
+            const itemWidth = container.querySelector(itemsPerPageSelector).offsetWidth;
             const gap = 20; // gap between items
+            const itemsPerPage = getItemsPerPage();
             const scrollAmount = (itemWidth + gap) * itemsPerPage * direction;
             container.scrollBy({
                 left: scrollAmount,
@@ -438,8 +455,8 @@
         leftArrow.onclick = () => scroll(-1);
         rightArrow.onclick = () => scroll(1);
 
-
         container.addEventListener('scroll', updateArrowVisibility);
+        window.addEventListener('resize', updateArrowVisibility);
 
         // 초기 화살표 상태 설정
         updateArrowVisibility();
@@ -530,7 +547,7 @@
             barContainer.querySelectorAll('.bar').forEach(bar => {
                 bar.style.animationPlayState = 'running';
             });
-        }, 50);
+        }, 100);
     }
 
     function goToReview(reviewId, filter) {
@@ -539,6 +556,10 @@
 
     function navigateToMovieDetails(movieId) {
         window.location.href = '/contents/' + movieId;
+    }
+
+    function navigateToUser(email) {
+        window.location.href = '/info/' + email;
     }
 
 </script>

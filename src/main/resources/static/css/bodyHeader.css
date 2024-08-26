@@ -6,9 +6,12 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    background-color: #ebf2ff;
+    background-color: white;
     color: white;
-    padding: 10px 200px;
+    padding: 10px 5vw;
+    max-width: 1400px;
+    margin: 0 auto;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -96,6 +99,30 @@ body {
 }
 #searchSuggestions div:hover, #searchSuggestions div.active {
     background-color: #f0f0f0;
+}
+
+@media (max-width: 1200px) {
+    .movie-item {
+        flex: 0 0 calc(25% - 1.5vw);
+    }
+}
+
+@media (max-width: 992px) {
+    .movie-item {
+        flex: 0 0 calc(33.333% - 1.33vw);
+    }
+}
+
+@media (max-width: 768px) {
+    .movie-item {
+        flex: 0 0 calc(50% - 1vw);
+    }
+}
+
+@media (max-width: 576px) {
+    .movie-item {
+        flex: 0 0 100%;
+    }
 }
 
 .ADMIN { color: #CCCCFF; }
