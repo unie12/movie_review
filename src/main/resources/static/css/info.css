@@ -1,7 +1,7 @@
 .container {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 10px 200px;
+    padding: 10px 15vw;
 }
 .user-info-box, .activity-box, .life-movies-box, .rating-distribution-box, .prefer-keyword-box, .prefer-director-box, .prefer-actor-box, .prefer-genre-box, .similar-movie-box, .disSimilar-movie-box {
     background-color: #f8f9fa;

@@ -35,8 +35,8 @@
                 <div class="backdrop-container">
                     <img th:src="'https://image.tmdb.org/t/p/original' + ${movieDTO.basicInfo.backdrop_path}" class="backdrop_poster">
                     <div class="movie-info-overlay">
-                        <h2 th:text="${movieDTO.basicInfo.title}"></h2>
-                        <h5 th:text="${movieDTO.basicInfo.original_title}"></h5>
+                        <h1 th:text="${movieDTO.basicInfo.title}"></h1>
+                        <h4 th:text="${movieDTO.basicInfo.original_title}"></h4>
                         <p><strong>개봉일:</strong> <span th:text="${movieDTO.basicInfo.release_date}"></span></p>
                     </div>
                 </div>

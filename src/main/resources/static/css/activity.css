@@ -1,6 +1,6 @@
 .container {
     position: relative; /* container 요소에 position: relative; 추가 */
-    padding: 10px 200px;
+    padding: 10px 15vw;
 }
 .activity-container {
     margin-top: 20px;
