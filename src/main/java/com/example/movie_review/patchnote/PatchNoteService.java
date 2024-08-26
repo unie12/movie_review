@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -61,13 +63,14 @@ public class PatchNoteService {
         String[] parts = content.split("---", 3);
         Map<String, String> metadata = parseMetadata(parts[1]);
 
-        String htmlContent = renderer.render(parser.parse(parts[2].trim()));
+        List<PatchNoteSection> sections = parseSections(parts[2].trim());
         return new PatchNote(
                 metadata.get("version"),
                 LocalDate.parse(metadata.get("date")),
                 LocalDate.parse(metadata.getOrDefault("modify", metadata.get("date"))),
                 metadata.get("title"),
-                htmlContent
+                metadata.get("thumbnail"),
+                sections
         );
     }
 
@@ -95,6 +98,37 @@ public class PatchNoteService {
             }
         }
         return metadata;
+    }
+
+    private List<PatchNoteSection> parseSections(String content) {
+        List<PatchNoteSection> sections = new ArrayList<>();
+        String[] sectionStrings = content.split("# ");
+        for (String section : sectionStrings) {
+            if (!section.trim().isEmpty()) {
+                String[] lines = section.trim().split("\n", 2);
+                String title = lines[0].trim();
+                String sectionContent = lines[1].trim();
+
+                String imageUrl = null;
+                if (sectionContent.startsWith("![")) {
+                    String[] contentParts = sectionContent.split("\n", 2);
+                    imageUrl = extractImageUrl(contentParts[0]);
+                    sectionContent = contentParts[1].trim();
+                }
+
+                sections.add(new PatchNoteSection(title, imageUrl, renderer.render(parser.parse(sectionContent))));
+            }
+        }
+        return sections;
+    }
+
+    private String extractImageUrl(String imageMd) {
+        Pattern pattern = Pattern.compile("!\\[.*?\\]\\((.*?)\\)");
+        Matcher matcher = pattern.matcher(imageMd);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 
 }

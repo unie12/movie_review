@@ -7,25 +7,70 @@
     <title>패치노트 목록</title>
     <style>
         .container {
-            position: relative; /* container 요소에 position: relative; 추가 */
-            padding: 10px 200px;
+            position: relative;
+            padding: 10px 15vw;
+        }
+        .patch-notes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .patch-note-card {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .patch-note-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .patch-note-title {
+            color: #333;
+            font-weight: bold;
+            font-size: 25px;
+        }
+        .patch-note-version {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .patch-note-thumbnail {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .patch-note-card:hover .patch-note-thumbnail {
+            transform: scale(1.1);
+        }
+        .patch-note-content {
+            padding: 15px;
         }
     </style>
 </head>
 <script th:src="@{'/js/search.js'}"></script>
 
 <body>
-    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+<div th:replace="fragments/bodyHeader :: bodyHeader" />
 
-    <div class="container">
-        <h1>패치노트 목록</h1>
-        <ul>
-            <li th:each="note : ${patchNotes}">
-                <a th:href="@{'/patch-notes/' + ${note.version}}" th:text="${note.title + ' (' + note.version + ')'}"></a>
-            </li>
-        </ul>
-
-        <div th:replace="fragments/footer :: footer" />
+<div class="container">
+    <h1>패치노트 목록</h1>
+    <div class="patch-notes-grid">
+        <div th:each="note : ${patchNotes}"
+             class="patch-note-card"
+             th:onclick="'window.location.href=\'' + @{'/patch-notes/' + ${note.version}} + '\''">
+            <img th:if="${note.thumbnailUrl}" th:src="${note.thumbnailUrl}" class="patch-note-thumbnail" alt="Patch Note Thumbnail">
+            <div class="patch-note-content">
+                <div class="patch-note-title" th:text="${note.title}"></div>
+                <div class="patch-note-version" th:text="${'버전: ' + note.version}"></div>
+            </div>
+        </div>
     </div>
+
+    <div th:replace="fragments/footer :: footer" />
+</div>
 </body>
 </html>

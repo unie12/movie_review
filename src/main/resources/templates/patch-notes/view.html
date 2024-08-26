@@ -8,26 +8,52 @@
 
     <style>
         .container {
-            position: relative; /* container 요소에 position: relative; 추가 */
-            padding: 10px 200px;
+            position: relative;
+            padding: 10px 15vw;
+        }
+        .patch-note-section {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .patch-note-section h2 {
+            background-color: #e9ecef;
+            padding: 10px;
+            margin: 0;
+        }
+        .patch-note-section-content {
+            padding: 15px;
+        }
+        .patch-note-section img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
 <script th:src="@{'/js/search.js'}"></script>
 
 <body>
-    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+<div th:replace="fragments/bodyHeader :: bodyHeader" />
 
-    <div class="container">
-        <h1 th:text="${patchNote.title}"></h1>
-        <p>버전: <span th:text="${patchNote.version}"></span></p>
-        <p>배포일: <span th:text="${patchNote.releaseDate}"></span></p>
-        <p>최종 수정일: <span th:text="${patchNote.lastModified}"></span></p>
-        <div th:utext="${patchNote.content}"></div>
-        <a href="/patch-notes">목록으로 돌아가기</a>
+<div class="container">
+    <h1 th:text="${patchNote.title}"></h1>
+    <p>버전: <span th:text="${patchNote.version}"></span></p>
+    <p>배포일: <span th:text="${patchNote.releaseDate}"></span></p>
+    <p>최종 수정일: <span th:text="${patchNote.lastModified}"></span></p>
 
-
-        <div th:replace="fragments/footer :: footer" />
+    <div th:each="section : ${patchNote.sections}" class="patch-note-section">
+        <h2 th:text="${section.title}"></h2>
+        <div class="patch-note-section-content">
+            <img th:if="${section.imageUrl}" th:src="${section.imageUrl}" alt="Section image">
+            <div th:utext="${section.content}"></div>
+        </div>
     </div>
+
+    <a href="/patch-notes">목록으로 돌아가기</a>
+
+    <div th:replace="fragments/footer :: footer" />
+</div>
 </body>
 </html>

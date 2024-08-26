@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter @Setter
 @NoArgsConstructor
@@ -16,5 +17,7 @@ public class PatchNote {
     private LocalDate releaseDate;
     private LocalDate lastModified;
     private String title;
-    private String content;
+    private String thumbnailUrl;
+
+    private List<PatchNoteSection> sections;
 }
