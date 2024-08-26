@@ -33,9 +33,16 @@
                     <i class="fas fa-user"></i>
                     <span>유저 정보</span>
                 </a>
+
+<!--                삭제 예정-->
                 <a th:if="${#authentication.name != 'anonymousUser'}"
                    th:href="@{'/additional-info' + '/' + ${#authentication.name}}"
                    class="btn btn-info">추가 정보</a>
+
+
+                <a th:href="@{'/patch-notes'}"
+                   class="btn btn-info">패치 노트</a>
+
                 <form th:if="${#authentication.name != 'anonymousUser'}"
                       th:action="@{/api/logout}"
                       method="post"

@@ -25,6 +25,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/jwt-login", "/oauth2/**", "/api/**", "/css/**", "/js/**", "/images/**", "/uploads/**", "/oauth2-login").permitAll()
+                        .requestMatchers("/api/patch-notes/refresh").hasRole("ADMIN")
                         .anyRequest().authenticated() // 나머지 요청들은 모두 인증 절차 수행해야 함
                 )
 

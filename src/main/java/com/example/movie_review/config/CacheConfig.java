@@ -22,7 +22,9 @@ public class CacheConfig {
                 "personDetails",
                 "dailyHomePage",
                 "weeklyHomePage",
-                "randomMoviePosters"
+                "randomMoviePosters",
+                "patchNotes",
+                "patchNote"
         );
         cacheManager.setAsyncCacheMode(true); // 비동기 처리
         cacheManager.setCaffeine(caffeineCacheBuilder());
