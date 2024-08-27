@@ -345,6 +345,15 @@ public class TmdbService {
                 .map(this::extractLatestTrailerKey);
     }
 
+    public Mono<List<String>> getMovieImages(Long movieTId) {
+        return webClient.get()
+                .uri("/movie/{movieId}/images?api_key={api_key}&include_image_language=null", movieTId, apikey)
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(this::parseImageUrls);
+    }
+
+
     @Transactional
     public void addMovieKeywords(Long movieTId, MovieDetails movieDetails) {
         webClient.get()
@@ -375,6 +384,26 @@ public class TmdbService {
                         e.printStackTrace();
                     }
                 });
+    }
+
+    private List<String> parseImageUrls(String response) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response);
+            JsonNode resultNode = rootNode.path("backdrops");
+
+            List<String> images = new ArrayList<>();
+            int count = 0;
+            for (JsonNode result : resultNode) {
+                if (count >= 10) break; // 10개 이미지를 가져오면 루프 종료
+                String filePath = result.path("file_path").asText();
+                images.add(filePath);
+                count++;
+            }
+            return images;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unexpected response", e);
+        }
     }
 
     private String extractLatestTrailerKey(String response) {

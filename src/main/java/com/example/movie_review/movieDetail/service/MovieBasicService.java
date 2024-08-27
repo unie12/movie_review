@@ -60,6 +60,7 @@ public class MovieBasicService {
         }
 
         List<MovieCommonDTO> recommendedMovies = movieCommonDTOService.getRecommendMovies(movieTId);
+        List<String> images = tmdbService.getMovieImages(movieTId).block();
 
         return MovieBasicInfo.builder()
                 .id(dbMovie.getId())
@@ -83,6 +84,7 @@ public class MovieBasicService {
                 .tmdb_ratingCnt(movieDetails.getVote_count())
                 .recommendMovies(recommendedMovies)
                 .youtubeLink(youtubeLink)
+                .images(images)
                 .build();
     }
 

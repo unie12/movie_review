@@ -169,6 +169,28 @@
                         <a th:href="@{'/contents/' + ${movieDTO.basicInfo.tId} + '/reviews'}" class="btn btn-lg btn-info">전체 리뷰 보기</a>
                     </p>
 
+                    <!-- 영화 관련 사진-->
+                    <div class="backdrops-images">
+                        <h3>관련 사진</h3>
+                        <div class="image-slider">
+                            <button id="prevImageBtn" class="slider-btn">&lt;</button>
+                            <div class="image-grid">
+                                <div th:each="image, iterStat : ${movieDTO.basicInfo.images}"
+                                     th:class="${iterStat.index < 3 ? 'image-card' : 'image-card hidden'}"
+                                     th:attr="data-index=${iterStat.index}">
+                                    <img th:src="'https://image.tmdb.org/t/p/w500' + ${image}" alt="Movie Image">
+                                </div>
+                            </div>
+                            <button id="nextImageBtn" class="slider-btn">&gt;</button>
+                        </div>
+                    </div>
+
+                    <!-- 이미지 모달-->
+                    <div id="imageModal" class="modal">
+                        <span class="close">&times;</span>
+                        <img class="modal-content" id="modalImage">
+                    </div>
+
                     <!-- 추천 영화 목록 -->
                     <div class="recommended-movies">
                         <h3>추천 영화</h3>
@@ -193,227 +215,281 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-function initializePageContent() {
-    const favoriteButton = document.getElementById('favoriteButton');
-    if (favoriteButton) {
-        const movieId = favoriteButton.dataset.movieId;
-        const modal = document.getElementById("reviewModal");
-        const actorList = {
-            currentIndex: 0,
-            actorsPerPage: 8,
-            actors: document.querySelectorAll('.actor'),
-            list: document.querySelector('.actor-list'),
-            prevButton: document.getElementById('prevButton'),
-            nextButton: document.getElementById('nextButton')
-        };
-        initializeActorList(actorList);
-        initializeStarRating(movieId);
-        initializeFavoriteButton(movieId);
-        initializeReviewFunctionality(movieId, modal);
-        initializeLikeButtons();
-    } else {
-        console.error('Favorite button not found');
-    }
-}
-
-function initializeActorList(actorList) {
-    updateActorVisibility(actorList);
-    actorList.prevButton.addEventListener('click', () => changeActorPage(-1, actorList));
-    actorList.nextButton.addEventListener('click', () => changeActorPage(1, actorList));
-    actorList.actors.forEach(actor => {
-        actor.addEventListener('click', function() {
-            redirectToPerson(this.dataset.actorId, 'cast');
-        });
-    });
-}
-
-function updateActorVisibility(actorList) {
-    actorList.actors.forEach((actor, index) => {
-        const isVisible = index >= actorList.currentIndex * actorList.actorsPerPage &&
-                          index < (actorList.currentIndex + 1) * actorList.actorsPerPage;
-        actor.style.display = isVisible ? 'block' : 'none';
-    });
-}
-
-function changeActorPage(direction, actorList) {
-    const newIndex = actorList.currentIndex + direction;
-    if (newIndex >= 0 && newIndex * actorList.actorsPerPage < actorList.actors.length) {
-        actorList.currentIndex = newIndex;
-        updateActorVisibility(actorList);
-    }
-}
-
-function initializeStarRating(movieId) {
-    const starRating = document.getElementById('starRating');
-    const stars = starRating.getElementsByClassName('star');
-    const selectedRating = document.querySelector('#selectedRating span');
-
-    function setRating(rating) {
-        selectedRating.textContent = rating || '0';
-        Array.from(stars).forEach(star => {
-            star.classList.toggle('full', parseFloat(star.dataset.rating) <= rating);
-        });
-    }
-
-    function loadRating() {
-        fetch(`/api/movie/rating/${movieId}`)
-            .then(response => response.json())
-            .then(data => setRating(data.rating))
-            .catch(error => console.error('Error:', error));
-    }
-
-    function saveOrDeleteRating(rating) {
-        fetch(`/api/movie/rating/${movieId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({rating: rating})
-        })
-        .then(response => response.json())
-        .then(data => setRating(data.deleted ? 0 : data.rating))
-        .catch(error => console.error('Error:', error));
-    }
-
-    loadRating();
-
-    Array.from(stars).forEach(star => {
-        star.addEventListener('click', function() {
-            const rating = parseFloat(this.dataset.rating);
-            const currentRating = parseFloat(selectedRating.textContent);
-            saveOrDeleteRating(rating === currentRating ? 0 : rating);
-        });
-    });
-}
-
-function initializeFavoriteButton(movieId) {
-    $('#favoriteButton').click(function() {
-        var isFavorite = $(this).hasClass('active');
-
-        $.ajax({
-            url: '/api/movie/favorite',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ movieId: movieId, favorite: !isFavorite }),
-            success: function(response) {
-                if (response.success) {
-                    $('#favoriteButton').toggleClass('active', response.isFavorite);
-                }
-            },
-            error: function(xhr, status, error) {
-                if(xhr.status === 401) {
-                    window.location.href = '/oauth2/authorization/google';
-                } else {
-                    console.error('Error:', error);
-                }
-            }
-        });
-    });
-}
-
-function loadReview(movieId) {
-    $.ajax({
-        url: '/api/movie/' + movieId + '/review',
-        type: 'GET',
-        success: function(response) {
-            if (response.review) {
-                var formattedReview = response.review.replace(/\n/g, '<br>');
-                $('#reviewDisplayText').html(formattedReview);
-                $('#reviewDisplay').show();
-                $('#writeReviewBtn').hide();
-                $('#spoilerCheck').prop('checked', response.spoiler);
-            } else {
-                $('#reviewDisplay').hide();
-                $('#writeReviewBtn').show();
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error:', error);
+    function initializePageContent() {
+        const favoriteButton = document.getElementById('favoriteButton');
+        if (favoriteButton) {
+            const movieId = favoriteButton.dataset.movieId;
+            const modal = document.getElementById("reviewModal");
+            const actorList = {
+                currentIndex: 0,
+                actorsPerPage: 8,
+                actors: document.querySelectorAll('.actor'),
+                list: document.querySelector('.actor-list'),
+                prevButton: document.getElementById('prevButton'),
+                nextButton: document.getElementById('nextButton')
+            };
+            initializeActorList(actorList);
+            initializeStarRating(movieId);
+            initializeFavoriteButton(movieId);
+            initializeReviewFunctionality(movieId, modal);
+            initializeLikeButtons();
+            initializeImagesSlider();
+        } else {
+            console.error('Favorite button not found');
         }
-    });
-}
+    }
 
-function initializeReviewFunctionality(movieId, modal) {
-    loadReview(movieId);  // 페이지 로드 시 리뷰 불러오기
-    $('#writeReviewBtn, #editReviewBtn').click(function() {
-        $('#modalTitle').text(this.id === 'writeReviewBtn' ? '리뷰 작성' : '리뷰 수정');
-        $('#reviewText').val(this.id === 'editReviewBtn' ?
-            $('#reviewDisplayText').html().replace(/<br>/g, '\n') : '');
-        modal.style.display = "block";
-    });
+    function initializeImagesSlider() {
+        const imageCards = document.querySelectorAll('.image-card');
+        const prevBtn = document.getElementById('prevImageBtn');
+        const nextBtn = document.getElementById('nextImageBtn');
+        let currentIndex = 0;
 
-    $('.close').click(() => modal.style.display = "none");
+        function updateImageVisibility() {
+            imageCards.forEach((card, index) => {
+                card.classList.toggle('hidden', index < currentIndex || index >= currentIndex + 3);
+            });
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex >= imageCards.length - 3;
+        }
 
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateImageVisibility();
+            }
+        });
 
-    window.onclick = function(event) {
-        if (event.target == modal) {
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < imageCards.length - 3) {
+                currentIndex++;
+                updateImageVisibility();
+            }
+        });
+
+        updateImageVisibility();
+
+                const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        const closeBtn = modal.querySelector('.close');
+
+        imageCards.forEach(card => {
+            const img = card.querySelector('img');
+            img.addEventListener('click', function() {
+                modal.style.display = "block";
+                modalImg.src = this.src.replace('/w500', '/original');
+            });
+        });
+
+        closeBtn.onclick = function() {
             modal.style.display = "none";
         }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     }
 
-    $('#saveReviewBtn').click(function() {
+    function initializeActorList(actorList) {
+        updateActorVisibility(actorList);
+        actorList.prevButton.addEventListener('click', () => changeActorPage(-1, actorList));
+        actorList.nextButton.addEventListener('click', () => changeActorPage(1, actorList));
+        actorList.actors.forEach(actor => {
+            actor.addEventListener('click', function() {
+                redirectToPerson(this.dataset.actorId, 'cast');
+            });
+        });
+    }
+
+    function updateActorVisibility(actorList) {
+        actorList.actors.forEach((actor, index) => {
+            const isVisible = index >= actorList.currentIndex * actorList.actorsPerPage &&
+                              index < (actorList.currentIndex + 1) * actorList.actorsPerPage;
+            actor.style.display = isVisible ? 'block' : 'none';
+        });
+    }
+
+    function changeActorPage(direction, actorList) {
+        const newIndex = actorList.currentIndex + direction;
+        if (newIndex >= 0 && newIndex * actorList.actorsPerPage < actorList.actors.length) {
+            actorList.currentIndex = newIndex;
+            updateActorVisibility(actorList);
+        }
+    }
+
+    function initializeStarRating(movieId) {
+        const starRating = document.getElementById('starRating');
+        const stars = starRating.getElementsByClassName('star');
+        const selectedRating = document.querySelector('#selectedRating span');
+
+        function setRating(rating) {
+            selectedRating.textContent = rating || '0';
+            Array.from(stars).forEach(star => {
+                star.classList.toggle('full', parseFloat(star.dataset.rating) <= rating);
+            });
+        }
+
+        function loadRating() {
+            fetch(`/api/movie/rating/${movieId}`)
+                .then(response => response.json())
+                .then(data => setRating(data.rating))
+                .catch(error => console.error('Error:', error));
+        }
+
+        function saveOrDeleteRating(rating) {
+            fetch(`/api/movie/rating/${movieId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({rating: rating})
+            })
+            .then(response => response.json())
+            .then(data => setRating(data.deleted ? 0 : data.rating))
+            .catch(error => console.error('Error:', error));
+        }
+
+        loadRating();
+
+        Array.from(stars).forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseFloat(this.dataset.rating);
+                const currentRating = parseFloat(selectedRating.textContent);
+                saveOrDeleteRating(rating === currentRating ? 0 : rating);
+            });
+        });
+    }
+
+    function initializeFavoriteButton(movieId) {
+        $('#favoriteButton').click(function() {
+            var isFavorite = $(this).hasClass('active');
+
+            $.ajax({
+                url: '/api/movie/favorite',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ movieId: movieId, favorite: !isFavorite }),
+                success: function(response) {
+                    if (response.success) {
+                        $('#favoriteButton').toggleClass('active', response.isFavorite);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    if(xhr.status === 401) {
+                        window.location.href = '/oauth2/authorization/google';
+                    } else {
+                        console.error('Error:', error);
+                    }
+                }
+            });
+        });
+    }
+
+    function loadReview(movieId) {
         $.ajax({
             url: '/api/movie/' + movieId + '/review',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                movieId: movieId,
-                review: $('#reviewText').val(),
-                spoiler: $('#spoilerCheck').is(':checked')
-            }),
+            type: 'GET',
             success: function(response) {
-                modal.style.display = "none";
-                loadReview(movieId);
+                if (response.review) {
+                    var formattedReview = response.review.replace(/\n/g, '<br>');
+                    $('#reviewDisplayText').html(formattedReview);
+                    $('#reviewDisplay').show();
+                    $('#writeReviewBtn').hide();
+                    $('#spoilerCheck').prop('checked', response.spoiler);
+                } else {
+                    $('#reviewDisplay').hide();
+                    $('#writeReviewBtn').show();
+                }
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
             }
         });
-    });
+    }
 
-    $('#deleteReviewBtn').click(function() {
-        if (confirm('정말로 리뷰를 삭제하시겠습니까?')) {
+    function initializeReviewFunctionality(movieId, modal) {
+        loadReview(movieId);  // 페이지 로드 시 리뷰 불러오기
+        $('#writeReviewBtn, #editReviewBtn').click(function() {
+            $('#modalTitle').text(this.id === 'writeReviewBtn' ? '리뷰 작성' : '리뷰 수정');
+            $('#reviewText').val(this.id === 'editReviewBtn' ?
+                $('#reviewDisplayText').html().replace(/<br>/g, '\n') : '');
+            modal.style.display = "block";
+        });
+
+        $('.close').click(() => modal.style.display = "none");
+
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        $('#saveReviewBtn').click(function() {
             $.ajax({
                 url: '/api/movie/' + movieId + '/review',
-                type: 'DELETE',
-                success: function() {
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    movieId: movieId,
+                    review: $('#reviewText').val(),
+                    spoiler: $('#spoilerCheck').is(':checked')
+                }),
+                success: function(response) {
+                    modal.style.display = "none";
                     loadReview(movieId);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
                 }
             });
-        }
-    });
-}
+        });
 
-function initializeLikeButtons() {
-    $('.like-button').click(function() {
-        const reviewId = $(this).data('review-id');
-        const $button = $(this)
-
-        $.ajax({
-            url: '/api/review/heart/' + reviewId,
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active') }),
-            success: function(response) {
-                $button.toggleClass('active', response.heart);
-                $button.find('.like-count').text(response.updateHeartCnt);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
+        $('#deleteReviewBtn').click(function() {
+            if (confirm('정말로 리뷰를 삭제하시겠습니까?')) {
+                $.ajax({
+                    url: '/api/movie/' + movieId + '/review',
+                    type: 'DELETE',
+                    success: function() {
+                        loadReview(movieId);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
             }
         });
-    });
-}
+    }
 
-function toggleSpoiler(button) {
-    const spoilerText = button.nextElementSibling;
-    const isHidden = spoilerText.style.display === "none";
-    spoilerText.style.display = isHidden ? "block" : "none";
-    button.textContent = isHidden ? "스포일러 숨기기" : "스포일러 보기";
-}
+    function initializeLikeButtons() {
+        $('.like-button').click(function() {
+            const reviewId = $(this).data('review-id');
+            const $button = $(this)
 
-function redirectToPerson(personId, type) {
-    window.location.href = `/people/${personId}?type=${type}`;
-}
+            $.ajax({
+                url: '/api/review/heart/' + reviewId,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({reviewId: reviewId, heart: !$button.hasClass('active') }),
+                success: function(response) {
+                    $button.toggleClass('active', response.heart);
+                    $button.find('.like-count').text(response.updateHeartCnt);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    }
+
+    function toggleSpoiler(button) {
+        const spoilerText = button.nextElementSibling;
+        const isHidden = spoilerText.style.display === "none";
+        spoilerText.style.display = isHidden ? "block" : "none";
+        button.textContent = isHidden ? "스포일러 숨기기" : "스포일러 보기";
+    }
+
+    function redirectToPerson(personId, type) {
+        window.location.href = `/people/${personId}?type=${type}`;
+    }
 </script>

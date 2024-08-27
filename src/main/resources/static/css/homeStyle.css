@@ -120,6 +120,7 @@
     overflow-x: hidden;
     scroll-behavior: smooth;
     gap: 20px;
+    overflow: hidden; /* hover 시 컨테이너 넘지 않게*/
 }
 
 .review-card {

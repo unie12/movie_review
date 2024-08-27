@@ -33,5 +33,6 @@ public class MovieBasicInfo {
     private String youtubeLink;
 
     private List<MovieCommonDTO> recommendMovies;
+    private List<String> images;
 
 }
