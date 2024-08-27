@@ -275,8 +275,6 @@
     }
 
     function initializeImageModal() {
-    console.log('start imagemodal');
-
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImage');
         const closeBtn = modal.querySelector('.image-close');
@@ -294,13 +292,12 @@
             modal.style.display = "none";
         }
 
-        window.onclick = function(event) {
-            console.log('end imagemodal');
-
+       // 모달 바깥 클릭 시 닫기
+        window.addEventListener('click', function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
-        }
+        });
     }
 
     function initializeSliders() {
