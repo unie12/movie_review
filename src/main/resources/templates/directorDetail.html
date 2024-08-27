@@ -34,6 +34,9 @@
         .actorDetail p {
             white-space: pre-line;
         }
+        .movie-poster {
+            cursor: pointer;
+        }
     </style>
 
     <title>감독 검색 결과</title>
@@ -58,7 +61,8 @@
                 <tbody>
                 <tr th:each="crew : ${pagedCrew}">
                     <td><span th:text="${crew.release_date}"></span></td>
-                    <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${crew.poster_path}" th:alt="${crew.title}"
+                    <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${crew.poster_path}"
+                             th:alt="${crew.title}" class="movie-poster"
                              th:attr="onclick=|redirectToMovie(${crew.id})|"></td>
                     <td><h3 th:text="${crew.title}"></h3></td>
                     <td><p th:utext="${#strings.replace(crew.job, '\n', '<br>')}"></p></td>

@@ -102,9 +102,9 @@
                 <div class="person-section">
                     <!-- 감독 정보 -->
                     <p><strong>감독:</strong></p>
-                    <div class="director" th:each="director : ${movieDTO.basicInfo.directors}">
-                        <img th:src="'https://image.tmdb.org/t/p/w500' + ${director.profile_path}"
-                             th:attr="onclick=|redirectToPerson(${director.id}, 'crew')|">
+                    <div class="director" th:each="director : ${movieDTO.basicInfo.directors}"
+                         th:attr="data-director-id=${director.id}, data-director-type='crew'">
+                        <img th:src="'https://image.tmdb.org/t/p/w500' + ${director.profile_path}">
                         <span th:text="${director.name}"></span>
                     </div>
 
@@ -114,7 +114,7 @@
                         <button class="slider-btn prev">&#9664;</button>
                         <button class="slider-btn next">&#9654;</button>
                         <div class="slider-content actor">
-                            <div class="slider-item actor" th:each="actor : ${movieDTO.basicInfo.actors}" th:attr="data-actor-id=${actor.id}">
+                            <div class="slider-item actor" th:each="actor : ${movieDTO.basicInfo.actors}" th:attr="data-actor-id=${actor.id}, data-actor-type='cast'">
                                 <img th:src="'https://image.tmdb.org/t/p/w500' + ${actor.profile_path}" class="actor-img">
                                 <div class="actor-info">
                                     <span class="actor-name" th:text="${actor.name}"></span>
@@ -237,6 +237,7 @@
             initializeFavoriteButton(movieId);
             initializeReviewFunctionality(movieId, modal);
             initializeLikeButtons();
+            initializePersonRedirect();
         } else {
             console.error('Favorite button not found');
         }
@@ -322,6 +323,27 @@
         imageSlider.initialize();
 
     }
+
+    function initializePersonRedirect() {
+        const directorItems = document.querySelectorAll('.director');
+        directorItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const directorId = this.getAttribute('data-director-id');
+                const directorType = this.getAttribute('data-director-type');
+                redirectToPerson(directorId, directorType);
+            });
+        });
+
+        const actorItems = document.querySelectorAll('.slider-item.actor');
+        actorItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const actorId = this.getAttribute('data-actor-id');
+                const actorType = this.getAttribute('data-actor-type');
+                redirectToPerson(actorId, actorType);
+            });
+        });
+    }
+
 
 
     function initializeStarRating(movieId) {

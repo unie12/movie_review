@@ -33,6 +33,9 @@
             width: 150px;
             height: auto;
         }
+        .movie-poster {
+            cursor: pointer;
+        }
     </style>
 
     <title>배우 검색 결과</title>
@@ -57,7 +60,8 @@
                 <tbody>
                 <tr th:each="cast : ${pagedCast}">
                     <td><span th:text="${cast.release_date}"></span></td>
-                    <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${cast.poster_path}" th:alt="${cast.title}"
+                    <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${cast.poster_path}"
+                             th:alt="${cast.title}" class="movie-poster"
                         th:attr="onclick=|redirectToMovie(${cast.id})|"></td>
                     <td><h3 th:text="${cast.title}"></h3></td>
                     <td><p th:text="${cast.character}"></p></td>
