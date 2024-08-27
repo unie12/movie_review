@@ -2,6 +2,7 @@ package com.example.movie_review.user.view;
 
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.subscription.SubscriptionService;
+import com.example.movie_review.user.DTO.UserCommonDTO;
 import com.example.movie_review.user.DTO.UserDTO;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.CategoryService;
@@ -64,11 +65,13 @@ public class UserActivityViewController {
         if (service == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category");
         }
+        User user = userService.getUserByEmail(userEmail);
+        UserCommonDTO userDTO = userDTOService.getUserCommonDTO(user);
 
 //        UserActivityDTO activityDTO = service.getUserActivity(userEmail, "default", 0, 20);
 //        model.addAttribute("activities", ((UserActivityDTOAdapter) activityDTO).getOriginalDTO());
         model.addAttribute("category", category);
-        model.addAttribute("userEmail", userEmail);
+        model.addAttribute("user", userDTO);
         model.addAttribute("pageTitle", categoryService.getCategoryTitle(category));
         model.addAttribute("emptyMessage", categoryService.getEmptyMessage(category));
         model.addAttribute("defaultSort", categoryService.getDefaultSort(category));

@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/css/bodyHeader.css">
     <link rel="stylesheet" href="/css/activity.css">
-    <title th:text="${pageTitle}">사용자 활동</title>
+    <title th:text="${user.nickname} + '님' + ${pageTitle}">사용자 활동</title>
 </head>
 <script th:src="@{'/js/search.js'}"></script>
 
@@ -13,7 +13,7 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
     <h2 th:text="${pageTitle}">사용자 활동</h2>
-    <a th:href="@{'/info/' + ${userEmail}}">사용자 정보로 돌아가기</a>
+    <a th:href="@{'/info/' + ${user.email}}">사용자 정보로 돌아가기</a>
 
     <br>
 
@@ -44,7 +44,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/user-activity/common-activity.js"></script>
 <script th:inline="javascript">
-    var userEmail = /*[[${userEmail}]]*/ '';
+    var userEmail = /*[[${user.email}]]*/ '';
     var category = /*[[${category}]]*/ '';
     var defaultSort = /*[[${defaultSort}]]*/ '';
 </script>
