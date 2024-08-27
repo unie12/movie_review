@@ -395,7 +395,7 @@ public class TmdbService {
             List<String> images = new ArrayList<>();
             int count = 0;
             for (JsonNode result : resultNode) {
-                if (count >= 10) break; // 10개 이미지를 가져오면 루프 종료
+                if (count >= 15) break; // 10개 이미지를 가져오면 루프 종료
                 String filePath = result.path("file_path").asText();
                 images.add(filePath);
                 count++;

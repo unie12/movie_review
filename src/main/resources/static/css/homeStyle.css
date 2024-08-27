@@ -79,6 +79,12 @@
     transform: scale(1.1);
 }
 
+.data-header {
+     display: flex;
+     justify-content: space-between; /* 제목과 버튼 사이에 공간을 분배 */
+     align-items: center; /* 세로 가운데 정렬 */
+ }
+
 
 .movie-title {
     font-weight: bold;
@@ -319,7 +325,7 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    height: 220px;
+    height: 25vh;
     padding: 20px 0;
 }
 .bar-container {
@@ -378,7 +384,7 @@
     gap: 10px;
     padding: 10px;
     justify-content: space-around;
-    margin-top: 25%;
+    margin-top: 10%;
 }
 
 .king-bar-wrapper {

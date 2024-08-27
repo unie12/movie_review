@@ -11,6 +11,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CacheUpdateService {
@@ -44,8 +46,8 @@ public class CacheUpdateService {
     public DailyHomeDTO getDailyHomeData() {
         return new DailyHomeDTO(
                 movieCacheService.getBoxOfficeDTO(MovieType.DBOM),
-                movieCacheService.getTmdbMoviesDTO(MovieType.POPULAR),
-                movieCacheService.getTmdbMoviesDTO(MovieType.TRENDING)
+                movieCacheService.getTmdbMoviesDTO(MovieType.POPULAR).stream().limit(20).collect(Collectors.toList()),
+                movieCacheService.getTmdbMoviesDTO(MovieType.TRENDING).stream().limit(20).collect(Collectors.toList())
         );
     }
 

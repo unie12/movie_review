@@ -34,7 +34,7 @@
             <div class="movie-detail" th:if="${movieDTO}">
                 <div class="backdrop-container">
                     <div class="backdrop-content">
-                        <img th:src="'https://image.tmdb.org/t/p/original' + ${movieDTO.basicInfo.backdrop_path}" class="backdrop_poster">
+<!--                        <img th:src="'https://image.tmdb.org/t/p/original' + ${movieDTO.basicInfo.backdrop_path}" class="backdrop_poster">-->
                         <div th:each="image, iterStat : ${movieDTO.basicInfo.images}"
                              class="backdrop-item"
                              th:attr="data-index=${iterStat.index}">

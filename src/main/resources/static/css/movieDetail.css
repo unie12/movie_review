@@ -14,11 +14,12 @@
     height: 80vh; /* 또는 원하는 높이 */
     margin-left: calc(-50vw + 50%);
     overflow: hidden;
+    margin-top: -10px;
 }
 .backdrop-item {
     width: 100%;
     opacity: 0; /* 기본적으로 투명하게 설정 */
-    transition: opacity 0.5s ease; /* 부드러운 전환 효과 */
+    transition: opacity 1.0s ease; /* 부드러운 전환 효과 */
 }
 
 .backdrop-item.active {
