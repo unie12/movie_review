@@ -433,9 +433,9 @@
 
 .king-profile p {
     margin: 5px 0 0;
-    font-size: 12px;
+    font-size: 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 60px;
+    max-width: 50px;
 }

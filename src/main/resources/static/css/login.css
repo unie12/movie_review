@@ -10,7 +10,7 @@ html {
 .logo {
     position: fixed;
     top: -5%;
-    left: 10%;
+    left: 15%;
     z-index: 1000;
 }
 .logo img {

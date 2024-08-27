@@ -50,9 +50,9 @@
 
             <div class="section">
                 <div class="data-header">
-                    <p>전체 유저: <span id="userCount">0개</span></p>
-                    <p>전체 리뷰: <span id="totalReviews">0개</span></p>
-                    <p>전체 평점: <span id="totalRatings">0개</span></p>
+                    <p>전체 유저: <span id="userCount">0</span>명</p>
+                    <p>전체 리뷰: <span id="totalReviews">0</span>개</p>
+                    <p>전체 평점: <span id="totalRatings">0</span>개</p>
                 </div>
                 <div id="ratingDistribution" class="rating-distribution">
                     <!-- 전체 사용자들의 평가 분포 보여주기-->
@@ -181,7 +181,6 @@
         getRealTimeData();
         setInterval(getRealTimeData, 60000);
         initializeInfoIcons();
-        renderKingCharts();
 
         loadHomeReviews();
         loadAjouPopularMovies();
@@ -289,7 +288,6 @@
         bar.style.height = '0px';  // 초기 높이를 0으로 설정
         bar.style.backgroundColor = user[countProperty] === maxCount ? '#ff4500' : '#007bff';
         bar.title = `${user[countProperty]}개`;
-
 
         const profile = document.createElement('div');
         profile.className = 'king-profile';
@@ -523,13 +521,25 @@
 
     function updateRealTimeData(data) {
         if (data && typeof data === 'object') {
-            animateValue('userCount', $('#userCount').text(), data.userCount || 0, 800);
-            animateValue('totalRatings', $('#totalRatings').text(), data.totalRatings || 0, 800);
-            animateValue('totalReviews', $('#totalReviews').text(), data.totalReviews || 0, 800);
+            updateCountWithSuffix('userCount', data.userCount);
+            updateCountWithSuffix('totalRatings', data.totalRatings);
+            updateCountWithSuffix('totalReviews', data.totalReviews);
+
             renderRatingDistribution(data.ratingDistribution);
+
+            // 주간 왕 차트 업데이트
+            renderKingChart('ratingKingChart', data.weeklyRatingKing, 'weeklyRatingCount');
+            renderKingChart('reviewKingChart', data.weeklyReviewKing, 'weeklyReviewCount');
         } else {
             console.error('Invalid data received:', data);
         }
+    }
+
+    function updateCountWithSuffix(id, value) {
+        const element = document.getElementById(id);
+        const currentValue = parseInt(element.textContent.replace(/[^0-9]/g, '')) || 0;
+        animateValue(id, currentValue, value, 800);
+        element.textContent = value;
     }
 
     function getRealTimeData() {

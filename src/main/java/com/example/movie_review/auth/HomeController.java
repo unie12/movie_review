@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -64,8 +65,10 @@ public class HomeController {
         Long totalRatings = dbRatingService.getTotalRatings();
         Long totalReviews = reviewService.getTotalReviews();
         Map<Double, Long> ratings = dbRatingService.getTotalRatingsDistribution();
+        List<WeeklyUserDTO> weeklyRatingKing = userDTOService.getWeeklyRatingUsers();
+        List<WeeklyUserDTO> weeklyReviewKing = userDTOService.getWeeklyReviewUsers();
 
-        RealTimeData data = new RealTimeData(userCount, totalRatings, totalReviews, ratings);
+        RealTimeData data = new RealTimeData(userCount, totalRatings, totalReviews, ratings, weeklyRatingKing, weeklyReviewKing);
         return ResponseEntity.ok(data);
     }
 

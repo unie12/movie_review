@@ -14,13 +14,13 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class WeeklyHomeDTO {
-    private List<WeeklyUserDTO> reviewKing;
-    private List<WeeklyUserDTO> ratingKing;
+//    private List<WeeklyUserDTO> reviewKing;
+//    private List<WeeklyUserDTO> ratingKing;
     private List<BoxOfficeMovieDTO> weeklyBoxOffice;
 
-    public WeeklyHomeDTO(List<WeeklyUserDTO> reviewKing, List<WeeklyUserDTO> ratingKing, List<BoxOfficeMovieDTO> weeklyBoxOffice) {
-        this.reviewKing = reviewKing;
-        this.ratingKing = ratingKing;
+    public WeeklyHomeDTO(List<BoxOfficeMovieDTO> weeklyBoxOffice) {
+//        this.reviewKing = reviewKing;
+//        this.ratingKing = ratingKing;
         this.weeklyBoxOffice = weeklyBoxOffice;
     }
 }
