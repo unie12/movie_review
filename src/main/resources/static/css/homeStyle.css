@@ -164,13 +164,6 @@
     right: -10px;
 }
 
-.arrow.left {
-    left: 0;
-}
-
-.arrow.right {
-    right: 0;
-}
 .review-header {
     display: flex;
     align-items: center;
