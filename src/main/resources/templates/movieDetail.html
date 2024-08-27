@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/loading.css">
     <link rel="stylesheet" href="/css/movieDetail.css">
 
-    <title>영화 상세정보</title>
+    <title th:text="${movieDTO.basicInfo.title} + '- AjouKino'">영화 상세정보</title>
     <meta charset="UTF-8">
 </head>
 <script th:src="@{'/js/search.js'}"></script>
@@ -16,15 +16,15 @@
 <body>
     <script src="/js/loading.js"></script>
     <script>
-        LoadingManager.show();
+    LoadingManager.show();
 
-        window.addEventListener('load', function() {
-            LoadingManager.waitForImages().then(() => {
-                LoadingManager.hide();
-                document.getElementById('movie-content').style.display = 'block';
-                initializePageContent();
-            });
+    window.addEventListener('load', function() {
+        LoadingManager.waitForImages().then(() => {
+            LoadingManager.hide();
+            document.getElementById('movie-content').style.display = 'block';
+            initializePageContent();
         });
+    });
     </script>
 
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
@@ -33,7 +33,14 @@
         <div id="movie-content" style="display: none;">
             <div class="movie-detail" th:if="${movieDTO}">
                 <div class="backdrop-container">
-                    <img th:src="'https://image.tmdb.org/t/p/original' + ${movieDTO.basicInfo.backdrop_path}" class="backdrop_poster">
+                    <div class="backdrop-content">
+                        <img th:src="'https://image.tmdb.org/t/p/original' + ${movieDTO.basicInfo.backdrop_path}" class="backdrop_poster">
+                        <div th:each="image, iterStat : ${movieDTO.basicInfo.images}"
+                             class="backdrop-item"
+                             th:attr="data-index=${iterStat.index}">
+                            <img th:src="'https://image.tmdb.org/t/p/original' + ${image}" class="backdrop_poster">
+                        </div>
+                    </div>
                     <div class="movie-info-overlay">
                         <h1 th:text="${movieDTO.basicInfo.title}"></h1>
                         <h4 th:text="${movieDTO.basicInfo.original_title}"></h4>
@@ -81,7 +88,7 @@
                 <!-- 사용자 리뷰 섹션 -->
                 <div class="review-section">
                     <div id="reviewSection">
-                        <h3>리뷰</h3>
+                        <h2>리뷰</h2>
                         <div id="reviewDisplay" style="display:none;">
                             <p id="reviewDisplayText"></p>
                             <button id="editReviewBtn" class="btn btn-secondary">수정</button>
@@ -103,18 +110,18 @@
 
                     <!-- 배우 정보 -->
                     <p><strong>주요 출연:</strong></p>
-                    <div class="actor-slider">
-                        <button id="prevButton">이전</button>
-                        <div class="actor-list" id="actorList">
-                            <div class="actor" th:each="actor : ${movieDTO.basicInfo.actors}" th:attr="data-actor-id=${actor.id}">
-                                <img th:src="'https://image.tmdb.org/t/p/w500' + ${actor.profile_path}">
-                                <div>
-                                    <span th:text="${actor.name}"></span>
-                                    <p th:text="${actor.character_name}"></p>
+                    <div class="slider-container" id="actorSlider">
+                        <button class="slider-btn prev">&#9664;</button>
+                        <button class="slider-btn next">&#9654;</button>
+                        <div class="slider-content actor">
+                            <div class="slider-item actor" th:each="actor : ${movieDTO.basicInfo.actors}" th:attr="data-actor-id=${actor.id}">
+                                <img th:src="'https://image.tmdb.org/t/p/w500' + ${actor.profile_path}" class="actor-img">
+                                <div class="actor-info">
+                                    <span class="actor-name" th:text="${actor.name}"></span>
+                                    <p class="actor-role" th:text="${actor.character_name}"></p>
                                 </div>
                             </div>
                         </div>
-                        <button id="nextButton">다음</button>
                     </div>
                 </div>
 
@@ -136,8 +143,12 @@
 
                 <!-- 리뷰 리스트 -->
                 <div class="review-section">
-                    <h3>영화 리뷰 <span th:text="'(총 ' + ${movieDTO.reviewCnt} + '개)'"></span></h3>
-
+                    <div class="review-header">
+                        <h2>영화 리뷰 <span th:text="'(총 ' + ${movieDTO.reviewCnt} + '개)'"></span></h2>
+                        <p>
+                            <a th:href="@{'/contents/' + ${movieDTO.basicInfo.tId} + '/reviews'}" class="btn btn-lg btn-info">전체 리뷰 보기</a>
+                        </p>
+                    </div>
                     <div class="review-grid">
                         <div th:each="reviewDTO : ${sortedReviews}" class="review-card">
 
@@ -165,47 +176,45 @@
                             </div>
                         </div>
                     </div>
-                    <p>
-                        <a th:href="@{'/contents/' + ${movieDTO.basicInfo.tId} + '/reviews'}" class="btn btn-lg btn-info">전체 리뷰 보기</a>
-                    </p>
+                </div>
 
-                    <!-- 영화 관련 사진-->
-                    <div class="backdrops-images">
-                        <h3>관련 사진</h3>
-                        <div class="image-slider">
-                            <button id="prevImageBtn" class="slider-btn">&lt;</button>
-                            <div class="image-grid">
-                                <div th:each="image, iterStat : ${movieDTO.basicInfo.images}"
-                                     th:class="${iterStat.index < 3 ? 'image-card' : 'image-card hidden'}"
-                                     th:attr="data-index=${iterStat.index}">
-                                    <img th:src="'https://image.tmdb.org/t/p/w500' + ${image}" alt="Movie Image">
-                                </div>
-                            </div>
-                            <button id="nextImageBtn" class="slider-btn">&gt;</button>
-                        </div>
-                    </div>
-
-                    <!-- 이미지 모달-->
-                    <div id="imageModal" class="modal">
-                        <span class="close">&times;</span>
-                        <img class="modal-content" id="modalImage">
-                    </div>
-
-                    <!-- 추천 영화 목록 -->
-                    <div class="recommended-movies">
-                        <h3>추천 영화</h3>
-                        <div class="movie-grid">
-                            <div th:each="movie : ${movieDTO.basicInfo.recommendMovies}" class="movie-card">
-                                <a th:href="@{'/contents/' + ${movie.id}}">
-                                    <div class="poster-container">
-                                        <img th:src="@{'https://image.tmdb.org/t/p/w200' + ${movie.poster_path}}" alt="Movie Poster" class="movie-poster">
-                                    </div>
-                                    <h4 th:text="${movie.title}" class="movie-title"></h4>
-                                </a>
+                <!-- 영화 관련 사진-->
+                <div class="backdrops-images">
+                    <h2>관련 사진</h2>
+                    <div class="slider-container" id="imageSlider">
+                        <button class="slider-btn prev">&#9664;</button>
+                        <button class="slider-btn next">&#9654;</button>
+                        <div class="slider-content backdrop">
+                            <div th:each="image, iterStat : ${movieDTO.basicInfo.images}"
+                                 class="slider-item image-card"
+                                 th:attr="data-index=${iterStat.index}">
+                                <img th:src="'https://image.tmdb.org/t/p/w500' + ${image}" alt="Movie Image">
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- 이미지 모달-->
+                <div id="imageModal" class="image-modal">
+                    <span class="image-close">&times;</span>
+                    <img class="image-modal-content" id="modalImage">
+                </div>
+
+                <!-- 추천 영화 목록 -->
+                <div class="recommended-movies">
+                    <h2>추천 영화</h2>
+                    <div class="movie-grid">
+                        <div th:each="movie : ${movieDTO.basicInfo.recommendMovies}" class="movie-card">
+                            <a th:href="@{'/contents/' + ${movie.id}}">
+                                <div class="poster-container">
+                                    <img th:src="@{'https://image.tmdb.org/t/p/w200' + ${movie.poster_path}}" alt="Movie Poster" class="movie-poster">
+                                </div>
+                                <h4 th:text="${movie.title}" class="movie-title"></h4>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <div th:replace="fragments/footer :: footer" />
@@ -220,58 +229,58 @@
         if (favoriteButton) {
             const movieId = favoriteButton.dataset.movieId;
             const modal = document.getElementById("reviewModal");
-            const actorList = {
-                currentIndex: 0,
-                actorsPerPage: 8,
-                actors: document.querySelectorAll('.actor'),
-                list: document.querySelector('.actor-list'),
-                prevButton: document.getElementById('prevButton'),
-                nextButton: document.getElementById('nextButton')
-            };
-            initializeActorList(actorList);
+
+            initializeBackdrop();
+            initializeSliders();
+            initializeImageModal();
             initializeStarRating(movieId);
             initializeFavoriteButton(movieId);
             initializeReviewFunctionality(movieId, modal);
             initializeLikeButtons();
-            initializeImagesSlider();
         } else {
             console.error('Favorite button not found');
         }
     }
 
-    function initializeImagesSlider() {
-        const imageCards = document.querySelectorAll('.image-card');
-        const prevBtn = document.getElementById('prevImageBtn');
-        const nextBtn = document.getElementById('nextImageBtn');
-        let currentIndex = 0;
+    class BackdropSlider {
+        constructor(container) {
+            this.container = container;
+            this.images = Array.from(container.querySelectorAll('.backdrop-item'));
+            this.currentIndex = 0;
+            this.totalImages = this.images.length;
 
-        function updateImageVisibility() {
-            imageCards.forEach((card, index) => {
-                card.classList.toggle('hidden', index < currentIndex || index >= currentIndex + 3);
-            });
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex >= imageCards.length - 3;
+            this.images[this.currentIndex].classList.add('active');
+            this.startAutoSlide();
         }
 
-        prevBtn.addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateImageVisibility();
-            }
-        });
+        updateVisibility() {
+            this.images.forEach((image, index) => {
+                image.classList.remove('active'); // 모든 이미지에서 active 클래스 제거
+            });
+            this.images[this.currentIndex].classList.add('active'); // 현재 인덱스 이미지에 active 클래스 추가
+        }
 
-        nextBtn.addEventListener('click', () => {
-            if (currentIndex < imageCards.length - 3) {
-                currentIndex++;
-                updateImageVisibility();
-            }
-        });
+        startAutoSlide() {
+            setInterval(() => {
+                this.currentIndex = (this.currentIndex + 1) % this.totalImages; // 다음 이미지로 이동
+                this.updateVisibility();
+            }, 2500); // 2.5초마다 변경
+        }
+    }
 
-        updateImageVisibility();
+    function initializeBackdrop() {
+        const backdropSlider = new BackdropSlider(
+            document.querySelector('.backdrop-container')
+        );
+    }
 
-                const modal = document.getElementById('imageModal');
+    function initializeImageModal() {
+    console.log('start imagemodal');
+
+        const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImage');
-        const closeBtn = modal.querySelector('.close');
+        const closeBtn = modal.querySelector('.image-close');
+        const imageCards = document.querySelectorAll('.image-card');
 
         imageCards.forEach(card => {
             const img = card.querySelector('img');
@@ -286,38 +295,37 @@
         }
 
         window.onclick = function(event) {
+            console.log('end imagemodal');
+
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         }
     }
 
-    function initializeActorList(actorList) {
-        updateActorVisibility(actorList);
-        actorList.prevButton.addEventListener('click', () => changeActorPage(-1, actorList));
-        actorList.nextButton.addEventListener('click', () => changeActorPage(1, actorList));
-        actorList.actors.forEach(actor => {
-            actor.addEventListener('click', function() {
-                redirectToPerson(this.dataset.actorId, 'cast');
-            });
-        });
+    function initializeSliders() {
+        const actorSlider = new Slider(
+            document.querySelector('#actorSlider'),
+            document.querySelectorAll('#actorSlider .slider-item'),
+            12  // actorsPerPage
+        );
+
+        const imageSlider = new Slider(
+            document.querySelector('#imageSlider'),
+            document.querySelectorAll('#imageSlider .slider-item'),
+            3  // imagesPerPage
+        );
+
+        document.querySelector('#actorSlider .next').addEventListener('click', () => actorSlider.next());
+        document.querySelector('#actorSlider .prev').addEventListener('click', () => actorSlider.prev());
+        document.querySelector('#imageSlider .next').addEventListener('click', () => imageSlider.next());
+        document.querySelector('#imageSlider .prev').addEventListener('click', () => imageSlider.prev());
+
+        actorSlider.initialize();
+        imageSlider.initialize();
+
     }
 
-    function updateActorVisibility(actorList) {
-        actorList.actors.forEach((actor, index) => {
-            const isVisible = index >= actorList.currentIndex * actorList.actorsPerPage &&
-                              index < (actorList.currentIndex + 1) * actorList.actorsPerPage;
-            actor.style.display = isVisible ? 'block' : 'none';
-        });
-    }
-
-    function changeActorPage(direction, actorList) {
-        const newIndex = actorList.currentIndex + direction;
-        if (newIndex >= 0 && newIndex * actorList.actorsPerPage < actorList.actors.length) {
-            actorList.currentIndex = newIndex;
-            updateActorVisibility(actorList);
-        }
-    }
 
     function initializeStarRating(movieId) {
         const starRating = document.getElementById('starRating');
@@ -491,5 +499,47 @@
 
     function redirectToPerson(personId, type) {
         window.location.href = `/people/${personId}?type=${type}`;
+    }
+
+    class Slider {
+        constructor(container, items, perPage) {
+            this.container = container;
+            this.items = Array.from(items);
+            this.perPage = perPage;
+            this.currentIndex = 0;
+            this.totalItems = this.items.length;
+            this.totalPages = Math.ceil(this.totalItems / this.perPage);
+            this.content = this.container.querySelector('.slider-content');
+        }
+
+        updateVisibility() {
+            this.items.forEach((item, index) => {
+                const isVisible = index >= this.currentIndex * this.perPage && index < (this.currentIndex + 1) * this.perPage;
+                item.style.display = isVisible ? 'flex' : 'none';
+            });
+
+            const prevBtn = this.container.querySelector('.prev');
+            const nextBtn = this.container.querySelector('.next');
+            prevBtn.style.display = this.currentIndex > 0 ? 'block' : 'none';
+            nextBtn.style.display = this.currentIndex < this.totalPages - 1 ? 'block' : 'none';
+        }
+
+        next() {
+            if (this.currentIndex < this.totalPages - 1) {
+                this.currentIndex++;
+                this.updateVisibility();
+            }
+        }
+
+        prev() {
+            if (this.currentIndex > 0) {
+                this.currentIndex--;
+                this.updateVisibility();
+            }
+        }
+
+        initialize() {
+            this.updateVisibility();
+        }
     }
 </script>
