@@ -71,7 +71,7 @@
             <div class="reviews-container">
                 <button class="arrow left">&#9664;</button>
                 <button class="arrow right">&#9654;</button>
-                <div id="popularReviews" class="popular-reviews" style="overflow-x: auto; white-space: nowrap;">
+                <div id="popularReviews" class="popular-reviews">
                     <!-- 리뷰 카드들이 여기에 추가될 예정 -->
                 </div>
             </div>
@@ -83,7 +83,7 @@
             <p class="category-title">오늘 아주대의 인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="ajouPopular"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
-                <ul class="movie-list" id="ajouPopularList" style="overflow-x: auto; white-space: nowrap;">
+                <ul class="movie-list" id="ajouPopularList">
                     <!-- 오늘 아주대의 인기 영화 동적으로 보여주기 -->
                 </ul>
                 <button class="arrow right">&#9654;</button>
@@ -95,7 +95,7 @@
                 <p class="category-title">나와 같은 mbti 사용자의 선호 영화 <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i></p>
                 <div class="movie-list-container">
                     <button class="arrow left">&#9664;</button>
-                    <ul class="movie-list" id="mbtiMovieList" style="overflow-x: auto; white-space: nowrap;">
+                    <ul class="movie-list" id="mbtiMovieList">
                         <!-- 현재 로그인한 사용자의 mbti와 똑같은 다른 사용자의 선호 영화 동적으로 보여주기 -->
                     </ul>
                     <button class="arrow right">&#9654;</button>
@@ -108,7 +108,7 @@
             <p class="category-title">일별 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
-                <ul class="movie-list" id="dBOMList" style="overflow-x: auto; white-space: nowrap;">
+                <ul class="movie-list" id="dBOMList">
 <!--                    일별 박스오피스 동적 생성-->
                 </ul>
                 <button class="arrow right">&#9654;</button>
@@ -119,7 +119,7 @@
             <p class="category-title">주간 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
-                <ul class="movie-list" id="wBOMList" style="overflow-x: auto; white-space: nowrap;">
+                <ul class="movie-list" id="wBOMList">
 <!--                    주간 박스오피스 동적 생성-->
                 </ul>
                 <button class="arrow right">&#9654;</button>
@@ -130,7 +130,7 @@
             <p class="category-title">인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left" >&#9664;</button>
-                <ul class="movie-list" id="popularMovieList" style="overflow-x: auto; white-space: nowrap;">
+                <ul class="movie-list" id="popularMovieList">
 <!--                    tmdb 인기 영화 동적 생성-->
                 </ul>
                 <button class="arrow right">&#9654;</button>
@@ -141,7 +141,7 @@
             <p class="category-title">트렌딩 영화 <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i></p>
             <div class="movie-list-container">
                 <button class="arrow left" >&#9664;</button>
-                <ul class="movie-list" id="trendingMovieList" style="overflow-x: auto; white-space: nowrap;">
+                <ul class="movie-list" id="trendingMovieList">
 <!--                    tmdb 트렌딩 영화 동적 생성-->
                 </ul>
                 <button class="arrow right">&#9654;</button>
@@ -450,9 +450,17 @@
         }
 
         function updateArrowVisibility() {
-            leftArrow.style.visibility = container.scrollLeft > 0 ? 'visible' : 'hidden';
-            rightArrow.style.visibility =
-                (container.scrollLeft + container.clientWidth < container.scrollWidth) ? 'visible' : 'hidden';
+            // 브라우저의 다음 렌더링 사이클에서 계산 수행
+            requestAnimationFrame(() => {
+                const scrollLeft = container.scrollLeft;
+                const scrollWidth = container.scrollWidth;
+                const clientWidth = container.clientWidth;
+
+                leftArrow.style.visibility = scrollLeft > 0 ? 'visible' : 'hidden';
+                rightArrow.style.visibility =
+                    Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1 ? 'visible' : 'hidden';
+                    // 부동소수점 오차 고려 (-1)
+            });
         }
 
         function scroll(direction) {
@@ -469,8 +477,17 @@
         leftArrow.onclick = () => scroll(-1);
         rightArrow.onclick = () => scroll(1);
 
-        container.addEventListener('scroll', updateArrowVisibility);
-        window.addEventListener('resize', updateArrowVisibility);
+        // 스크롤 이벤트가 끝난 후에만 화살표 가시성 업데이트 -> 불필요한 계산 줄임
+        let scrollTimeout;
+        container.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(updateArrowVisibility, 100);
+        });
+
+        window.addEventListener('resize', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(updateArrowVisibility, 100);
+        });
 
         // 초기 화살표 상태 설정
         updateArrowVisibility();

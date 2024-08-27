@@ -5,14 +5,14 @@
 .sections {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 1vw;
+    margin-bottom: 3vw;
     margin-top: 1vw;
+    gap: 10px;
 }
 
 .section {
     flex: 1;
-    margin: 0 1vw;
-    padding: 2vw;
+    padding: 1vw;
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #f9f9f9;
@@ -44,9 +44,9 @@
 
 .movie-list-container {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     width: 100%;
-    padding: 0 20px;
+    margin-bottom: 5vw;
 }
 
 .movie-list {
@@ -58,6 +58,7 @@
     overflow-x: auto;
     scrollbar-width: none;  /* Firefox */
     -ms-overflow-style: none;  /* IE and Edge */
+    -webkit-overflow-scrolling: touch;
 }
 
 .movie-item {
@@ -107,24 +108,29 @@
     position: relative;
     max-width: 100%;
     margin: 0 auto;
-    padding: 20px;
-    overflow: hidden;
+    overflow: visible;
+    margin-bottom: 3vw;
 }
 
 .reviews-container {
     position: relative;
 }
-
+.reviews-header {
+    display: flex;
+    justify-content: space-between; /* 제목과 버튼 사이에 공간을 분배 */
+    align-items: center; /* 세로 가운데 정렬 */
+}
 .popular-reviews {
     display: flex;
     overflow-x: hidden;
     scroll-behavior: smooth;
-    gap: 20px;
+    gap: 27px;
     overflow: hidden; /* hover 시 컨테이너 넘지 않게*/
 }
 
 .review-card {
     flex: 0 0 calc(33.333% - 20px);
+    width: calc(33.333% - 20px);  /* 추가 */
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
@@ -157,11 +163,11 @@
 }
 
 .arrow.left {
-    left: -10px;
+    left: -15px;
 }
 
 .arrow.right {
-    right: -10px;
+    right: -15px;
 }
 
 .review-header {
@@ -409,6 +415,7 @@
 .king-profile {
     margin-top: 10px;
     text-align: center;
+    cursor: pointer;
 }
 
 .king-profile img {
