@@ -50,7 +50,6 @@
                           style="display: inline;">
                         <button type="submit" class="btn btn-primary">로그아웃</button>
                     </form>
-
                 </div>
             </div>
         </nav>
@@ -58,45 +57,3 @@
 </body>
 
 </html>
-
-
-
-
-
-function renderRatingDistribution(distribution) {
-    const container = document.getElementById('ratingDistribution');
-    container.innerHTML = '';
-
-    const maxCount = Math.max(...Object.values(distribution));
-    const barContainer = document.createElement('div');
-    barContainer.className = 'bar-container';
-
-    Object.entries(distribution).forEach(([rating, count]) => {
-        const barWrapper = document.createElement('div');
-        barWrapper.className = 'bar-wrapper';
-
-        const bar = document.createElement('div');
-        const height = count > 0 ? (count / maxCount) * 180 : 0;
-        bar.className = 'bar';
-        bar.style.setProperty('--target-height', `${height}px`);
-        bar.style.backgroundColor = count === maxCount ? '#ff4500' : '#007bff';
-        bar.title = `${count}개`;
-
-        const ratingLabel = document.createElement('div');
-        ratingLabel.className = 'rating-label';
-        ratingLabel.textContent = rating;
-
-        barWrapper.appendChild(bar);
-        barWrapper.appendChild(ratingLabel);
-
-        barContainer.appendChild(barWrapper);
-    });
-    container.appendChild(barContainer);
-
-// 애니메이션 시작을 위한 지연
-    setTimeout(() => {
-        barContainer.querySelectorAll('.bar').forEach(bar => {
-            bar.style.animationPlayState = 'running';
-        });
-    }, 50);
-}
