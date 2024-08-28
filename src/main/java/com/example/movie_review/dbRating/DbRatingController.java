@@ -1,5 +1,6 @@
 package com.example.movie_review.dbRating;
 
+import com.example.movie_review.review.service.ReviewMovieDTOService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @RequestMapping("/api/movie/rating")
 public class DbRatingController {
     private final DbRatingService dbRatingService;
+    private final ReviewMovieDTOService reviewMovieDTOService;
 
     /**
      * 해당 영화에 대한 해당 유저의 평점 보여주기
@@ -52,10 +54,12 @@ public class DbRatingController {
 
             if(dbRating.isPresent() && request.getRating() == 0) {
                 dbRatingService.deleteDbRating(movieId, email);
+                reviewMovieDTOService.updateReviewCache();
                 return ResponseEntity.ok(new DbRatingResponse(movieId, 0.0, true));
             }
             else {
                 DbRatings dbRatings = dbRatingService.saveOrUpdateRating(movieId, email, request.getRating());
+                reviewMovieDTOService.updateReviewCache();
                 return ResponseEntity.ok(new DbRatingResponse(movieId, request.getRating(), false));
             }
         } catch (Exception e) {

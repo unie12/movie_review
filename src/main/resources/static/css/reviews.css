@@ -39,13 +39,12 @@
     display: flex;
     align-items: center;
 }
+.user-rating-container {
+    margin-left: auto;
+}
 .user-rating {
     color: #f39c12;
-    border: 1px solid #f39c12;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.9em;
-    margin-left: auto;
+    border-color: #f39c12;
 }
 .user-rating, .user-heart {
     display: inline-block;
@@ -169,4 +168,28 @@
 .upload-date {
     color: #777;
     font-size: 0.9em;
+}
+
+/* 별점 표시 */
+.star-rating {
+    font-size: 1.2em;
+    color: #ddd;
+    position: relative;
+    display: inline-block;
+    margin-right: 5px;
+}
+.star-rating .fill-stars {
+    color: #FFD700;
+    padding: 0;
+    position: absolute;
+    z-index: 1;
+    display: block;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.star-rating .empty-stars {
+    padding: 0;
+    display: block;
 }

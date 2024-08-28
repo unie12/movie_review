@@ -344,6 +344,8 @@
         const userRoleClass = review.reviewDTO.user.role;
         const posterUrl = getImageUrl(review.movieCommonDTO.poster_path, '/images/defaultMovie.png');
 
+        const starRating = createStarRating(rating);
+
         reviewElement.innerHTML = `
             <div class="review-header">
                 <div class="user-info">
@@ -351,7 +353,7 @@
                     <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
                 </div>
                 <div class="user-rating-container">
-                    <span class="user-rating">${rating}</span>
+                    ${starRating}
                 </div>
 
             </div>
@@ -372,6 +374,27 @@
         });
 
         return reviewElement;
+    }
+
+    function createStarRating(rating) {
+        if (rating === '평가 없음') {
+            return '<span class="user-rating">평가 없음</span>';
+        }
+        const ratingValue = parseFloat(rating);
+        const fullStars = Math.floor(ratingValue);
+        const decimalPart = ratingValue - fullStars;
+        const fillWidth = (fullStars + decimalPart) * 20; // 20% per star
+
+        return `
+            <div class="star-rating" title="${rating}">
+                <div class="fill-stars" style="width: ${fillWidth}%;">
+                    <span>★★★★★</span>
+                </div>
+                <div class="empty-stars">
+                    <span>★★★★★</span>
+                </div>
+            </div>
+        `;
     }
 
 

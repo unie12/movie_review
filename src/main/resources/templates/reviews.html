@@ -33,7 +33,9 @@
                                     th:style="'color: ' + ${review.reviewDTO.user.role.color}"></span>
                                 <span class="upload-date" th:attr="data-upload-date=${review.reviewDate}"></span>
                             </div>
-                            <span class="user-rating"><span class="rating-value" th:text="${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span></span>
+                            <div class="user-rating-container">
+                                <span class="user-rating" th:text="${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -91,9 +93,32 @@
             attachEventListeners();
             updateRelativeTimes();
             setInterval(updateRelativeTimes, 60000);
+            updateInitialStarRatings();
 
             document.querySelectorAll('.spoiler-toggle').forEach(button => {
                 button.addEventListener('click', toggleSpoiler);
+            });
+        }
+
+        function updateInitialStarRatings() {
+            document.querySelectorAll('.review-card').forEach(card => {
+                const ratingElement = card.querySelector('.user-rating');
+                if (ratingElement) {
+                    const rating = ratingElement.textContent.trim();
+                    const starRating = createStarRating(rating);
+                    const ratingContainer = card.querySelector('.user-rating-container');
+                    if (ratingContainer) {
+                        ratingContainer.innerHTML = starRating;
+                    } else {
+                        const userInfo = card.querySelector('.user-info');
+                        if (userInfo) {
+                            const newRatingContainer = document.createElement('div');
+                            newRatingContainer.className = 'user-rating-container';
+                            newRatingContainer.innerHTML = starRating;
+                            userInfo.appendChild(newRatingContainer);
+                        }
+                    }
+                }
             });
         }
 
@@ -155,178 +180,202 @@
                 });
         }
 
-         function createReviewCard(review) {
-            const reviewElement = document.createElement('div');
-            reviewElement.className = 'review-card';
-            const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
-            const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
-            const isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
-            const userRoleClass = review.reviewDTO.user.role;
+    function createReviewCard(review) {
+        const reviewElement = document.createElement('div');
+        reviewElement.className = 'review-card';
+        const rating = review.reviewDTO.userRating ? review.reviewDTO.userRating.toFixed(1) : '평가 없음';
+        const reviewTextWithBreaks = review.reviewDTO.review.text.replace(/\n/g, '<br>');
+        const isActive = review.reviewDTO.likedByCurrentUser ? 'active' : '';
+        const userRoleClass = review.reviewDTO.user.role;
+        const starRating = createStarRating(rating);
 
-            const spoilerContent = review.reviewDTO.spoiler
-                ? `<div class="spoiler-content">
-                 <button class="spoiler-toggle">스포일러 보기</button>
-                 <p class="spoiler-text" style="display: none;">${reviewTextWithBreaks}</p>
-               </div>`
-            : `<p class="card-text">${reviewTextWithBreaks}</p>`;
+        const spoilerContent = review.reviewDTO.spoiler
+            ? `<div class="spoiler-content">
+             <button class="spoiler-toggle">스포일러 보기</button>
+             <p class="spoiler-text" style="display: none;">${reviewTextWithBreaks}</p>
+           </div>`
+        : `<p class="card-text">${reviewTextWithBreaks}</p>`;
 
-            reviewElement.innerHTML = `
-                <div class="review-header">
-                   <img src="${review.reviewDTO.user.picture}"
-                        alt="${review.reviewDTO.user.nickname}"
-                        onclick="navigateToUser('${review.reviewDTO.user.email}')"
-                        class="user-picture">
-                    <div class="user-content">
-                        <div class="user-info">
-                            <div class="user-details">
-                                <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
-                                <span class="upload-date" data-upload-date="${review.reviewDate}"></span>
-                            </div>
-                            <span class="user-rating">평점: <span class="rating-value">${rating}</span></span>
+        reviewElement.innerHTML = `
+            <div class="review-header">
+               <img src="${review.reviewDTO.user.picture}"
+                    alt="${review.reviewDTO.user.nickname}"
+                    onclick="navigateToUser('${review.reviewDTO.user.email}')"
+                    class="user-picture">
+                <div class="user-content">
+                    <div class="user-info">
+                        <div class="user-details">
+                            <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
+                            <span class="upload-date" data-upload-date="${review.reviewDate}"></span>
+                        </div>
+                        <div class="user-rating-container">
+                            ${starRating}
                         </div>
                     </div>
                 </div>
-                <div class="review-divider"></div>
-                <div class="review-content">
-                    <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
-                        alt="${review.movieCommonDTO.title}" class="movie-poster"
-                        onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
-                    <div class="review-text-content">
-                        <h4>${review.movieCommonDTO.title}</h4>
-                        ${spoilerContent}
-                    </div>
+            </div>
+            <div class="review-divider"></div>
+            <div class="review-content">
+                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
+                    alt="${review.movieCommonDTO.title}" class="movie-poster"
+                    onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
+                <div class="review-text-content">
+                    <h4>${review.movieCommonDTO.title}</h4>
+                    ${spoilerContent}
                 </div>
-                <div class="review-footer">
-                    <a href="#" class="like-count" data-review-id="${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count">${review.reviewDTO.heartCnt}</span>
-                </div>
-                <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.reviewDTO.review.id}">
-                    <i class="fas fa-heart"></i> 좋아요
-                </button>
-            `;
+            </div>
+            <div class="review-footer">
+                <a href="#" class="like-count" data-review-id="${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count">${review.reviewDTO.heartCnt}</span>
+            </div>
+            <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.reviewDTO.review.id}">
+                <i class="fas fa-heart"></i> 좋아요
+            </button>
+        `;
 
-            const uploadDateElement = reviewElement.querySelector('.upload-date');
-            uploadDateElement.textContent = formatRelativeTime(review.reviewDate);
+        const uploadDateElement = reviewElement.querySelector('.upload-date');
+        uploadDateElement.textContent = formatRelativeTime(review.reviewDate);
 
-            const spoilerToggle = reviewElement.querySelector('.spoiler-toggle');
-            if (spoilerToggle) {
-                spoilerToggle.addEventListener('click', toggleSpoiler);
-            }
-            return reviewElement;
+        const spoilerToggle = reviewElement.querySelector('.spoiler-toggle');
+        if (spoilerToggle) {
+            spoilerToggle.addEventListener('click', toggleSpoiler);
         }
+        return reviewElement;
+    }
+
+    function createStarRating(rating) {
+        if (rating === '평가 없음') {
+            return '<span class="user-rating">평가 없음</span>';
+        }
+        const ratingValue = parseFloat(rating);
+        const fullStars = Math.floor(ratingValue);
+        const decimalPart = ratingValue - fullStars;
+        const fillWidth = (fullStars + decimalPart) * 20; // 20% per star
+
+        return `
+            <div class="star-rating" title="${rating}">
+                <div class="fill-stars" style="width: ${fillWidth}%;">
+                    <span>★★★★★</span>
+                </div>
+                <div class="empty-stars">
+                    <span>★★★★★</span>
+                </div>
+            </div>
+        `;
+    }
 
 
-        function attachLikeEvents(element) {
-            element.querySelector('.like-button').addEventListener('click', function() {
-                const reviewId = this.dataset.reviewId;
-                const isActive = this.classList.contains('active');
+    function attachLikeEvents(element) {
+        element.querySelector('.like-button').addEventListener('click', function() {
+            const reviewId = this.dataset.reviewId;
+            const isActive = this.classList.contains('active');
 
-                fetch(`/api/review/heart/${reviewId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({reviewId: reviewId, heart: !isActive}),
-                })
+            fetch(`/api/review/heart/${reviewId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({reviewId: reviewId, heart: !isActive}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.classList.toggle('active', data.heart);
+                element.querySelector('.heart-count').textContent = data.updateHeartCnt;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
+
+    function attachLikeCountEvents(element) {
+        element.querySelector('.like-count').addEventListener('click', function(e) {
+            e.preventDefault();
+            openLikeModal(this.dataset.reviewId);
+        });
+    }
+
+    function openLikeModal(reviewId) {
+        let page = 0;
+        const size = 10;
+        const userList = document.getElementById('likeUserList');
+        userList.innerHTML = '';
+
+        function loadLikes() {
+            fetch(`/api/review/${reviewId}/likes?page=${page}&size=${size}`)
                 .then(response => response.json())
                 .then(data => {
-                    this.classList.toggle('active', data.heart);
-                    element.querySelector('.heart-count').textContent = data.updateHeartCnt;
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        }
-
-        function attachLikeCountEvents(element) {
-            element.querySelector('.like-count').addEventListener('click', function(e) {
-                e.preventDefault();
-                openLikeModal(this.dataset.reviewId);
-            });
-        }
-
-        function openLikeModal(reviewId) {
-            let page = 0;
-            const size = 10;
-            const userList = document.getElementById('likeUserList');
-            userList.innerHTML = '';
-
-            function loadLikes() {
-                fetch(`/api/review/${reviewId}/likes?page=${page}&size=${size}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        data.content.forEach(user => {
-                            userList.innerHTML += `
-                                <li>
-                                    <a href="/info/${user.email}">
-                                        <img src="${user.picture}" alt="${user.nickname}" class="user-picture">
-                                    </a>
-                                    <span>${user.nickname}</span>
-                                </li>
-                            `;
-                        });
-                        page++;
-                        if (data.last) {
-                            userList.removeEventListener('scroll', handleScroll);
-                        }
+                    data.content.forEach(user => {
+                        userList.innerHTML += `
+                            <li>
+                                <a href="/info/${user.email}">
+                                    <img src="${user.picture}" alt="${user.nickname}" class="user-picture">
+                                </a>
+                                <span>${user.nickname}</span>
+                            </li>
+                        `;
                     });
-            }
-
-            function handleScroll() {
-                if (userList.scrollTop + userList.clientHeight >= userList.scrollHeight - 5) {
-                    loadLikes();
-                }
-            }
-
-            userList.addEventListener('scroll', handleScroll);
-            loadLikes();
-            document.getElementById('likeModal').style.display = 'block';
+                    page++;
+                    if (data.last) {
+                        userList.removeEventListener('scroll', handleScroll);
+                    }
+                });
         }
 
-        function formatRelativeTime(dateString) {
-            const now = new Date();
-            const uploadDate = new Date(dateString);
-            const diffInMilliseconds = now - uploadDate;
-            const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
-            const diffInHours = Math.floor(diffInMinutes / 60);
-            const diffInDays = Math.floor(diffInHours / 24);
-
-            if (diffInMinutes < 60) {
-                return `${diffInMinutes}분 전`;
-            } else if (diffInHours < 24) {
-                return `${diffInHours}시간 전`;
-            } else {
-                return `${diffInDays}일 전`;
+        function handleScroll() {
+            if (userList.scrollTop + userList.clientHeight >= userList.scrollHeight - 5) {
+                loadLikes();
             }
         }
 
-        function updateRelativeTimes() {
-            document.querySelectorAll('.upload-date').forEach(element => {
-                const dateString = element.getAttribute('data-upload-date');
-                element.textContent = formatRelativeTime(dateString);
-            });
+        userList.addEventListener('scroll', handleScroll);
+        loadLikes();
+        document.getElementById('likeModal').style.display = 'block';
+    }
+
+    function formatRelativeTime(dateString) {
+        const now = new Date();
+        const uploadDate = new Date(dateString);
+        const diffInMilliseconds = now - uploadDate;
+        const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        const diffInDays = Math.floor(diffInHours / 24);
+
+        if (diffInMinutes < 60) {
+            return `${diffInMinutes}분 전`;
+        } else if (diffInHours < 24) {
+            return `${diffInHours}시간 전`;
+        } else {
+            return `${diffInDays}일 전`;
         }
+    }
 
-        function toggleSpoiler(event) {
-            const button = event.target;
-            const spoilerText = button.nextElementSibling;
+    function updateRelativeTimes() {
+        document.querySelectorAll('.upload-date').forEach(element => {
+            const dateString = element.getAttribute('data-upload-date');
+            element.textContent = formatRelativeTime(dateString);
+        });
+    }
 
-            if (spoilerText && spoilerText.classList.contains('spoiler-text')) {
-                const isHidden = spoilerText.style.display === 'none' || spoilerText.style.display === '';
-                spoilerText.style.display = isHidden ? 'block' : 'none';
-                button.textContent = isHidden ? '스포일러 숨기기' : '스포일러 보기';
-            }
+    function toggleSpoiler(event) {
+        const button = event.target;
+        const spoilerText = button.nextElementSibling;
+
+        if (spoilerText && spoilerText.classList.contains('spoiler-text')) {
+            const isHidden = spoilerText.style.display === 'none' || spoilerText.style.display === '';
+            spoilerText.style.display = isHidden ? 'block' : 'none';
+            button.textContent = isHidden ? '스포일러 숨기기' : '스포일러 보기';
         }
+    }
 
-        function navigateToMovieDetails(movieId) {
-           window.location.href = '/contents/' + movieId;
-        }
+    function navigateToMovieDetails(movieId) {
+       window.location.href = '/contents/' + movieId;
+    }
 
-        function navigateToUser(email) {
-            window.location.href = '/info/' + email;
-        }
+    function navigateToUser(email) {
+        window.location.href = '/info/' + email;
+    }
 
-        // 초기 리뷰에 대해 이벤트 연결
-        document.addEventListener('DOMContentLoaded', initPage);
+    // 초기 리뷰에 대해 이벤트 연결
+    document.addEventListener('DOMContentLoaded', initPage);
 
-    </script>
-    </body>
-    </html>
+</script>
+</body>
+</html>
