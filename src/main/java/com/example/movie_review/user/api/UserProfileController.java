@@ -10,6 +10,7 @@ import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserProfileDTO;
 import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
 import com.example.movie_review.user.domain.PreferredMovies;
+import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.PreferredMoviesService;
 import com.example.movie_review.user.service.UserProfileDTOService;
 import com.example.movie_review.user.service.UserService;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,8 +54,9 @@ public class UserProfileController {
     }
 
     @GetMapping("/check-nickname")
-    public ResponseEntity<Boolean> checkNicknameAvailability(@RequestParam String nickname) {
-        return ResponseEntity.ok(userProfileDTOService.isNicknameAvailable(nickname));
+    public ResponseEntity<Boolean> checkNicknameAvailability(@RequestParam String nickname, Authentication auth) {
+        User user = userService.getUserByEmail(auth.getName());
+        return ResponseEntity.ok(userProfileDTOService.isNicknameAvailable(nickname, user));
     }
 
 //    @GetMapping("/search-movies")

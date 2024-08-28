@@ -1,0 +1,80 @@
+.container {
+    position: relative;
+    padding: 10px 15vw;
+}
+.search-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+#search-results-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 500px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+#search-results li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#search-results li:last-child {
+    border-bottom: none;
+}
+.movie-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.movie-poster {
+    width: 50px; /* 원하는 크기로 설정 */
+    height: auto;
+    margin-right: 10px;
+}
+.movie-details {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.remove-favorite {
+    float: right;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.add-favorite {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.remove-favorite {
+    background-color: #dc3545;
+}
+#close-search-results {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.user-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}

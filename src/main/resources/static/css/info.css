@@ -128,8 +128,15 @@
 }
 .movie-poster {
     width: 100%;
-    height: auto;
-    border-radius: 5px;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    object-position: center;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+.movie-poster:hover {
+    transform: scale(1.1);
 }
 
 
@@ -240,6 +247,7 @@
     min-height: 50px;
     object-fit: cover;
     border-radius: 50%;
+    cursor: pointer;
 }
 .person-info {
     margin-top: 10px;

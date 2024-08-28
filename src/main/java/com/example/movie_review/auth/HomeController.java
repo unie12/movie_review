@@ -20,10 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,7 +40,8 @@ public class HomeController {
     @GetMapping("/home/ajouPopularMovies")
     public ResponseEntity<List<MoviePopularityDTO>> getAjouPopularMovies() {
         List<MoviePopularityDTO> movies = movieCommonDTOService.getAjouPopularMovies();
-        return ResponseEntity.ok(movies);
+        Collections.shuffle(movies);
+        return ResponseEntity.ok(movies.stream().limit(20).collect(Collectors.toList()));
     }
 
     /**
@@ -53,7 +51,8 @@ public class HomeController {
     public ResponseEntity<List<MovieCommonDTO>> getSameMbtiMovies(Authentication auth) {
         User user = userService.getUserByEmail(auth.getName());
         List<MovieCommonDTO> movies = movieCommonDTOService.getSameMbtiMovies(user);
-        return ResponseEntity.ok(movies);
+        Collections.shuffle(movies);
+        return ResponseEntity.ok(movies.stream().limit(20).collect(Collectors.toList()));
     }
 
     /**

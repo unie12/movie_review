@@ -13,6 +13,7 @@ import com.example.movie_review.user.domain.PreferredMovies;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,7 +95,10 @@ public class UserProfileDTOService {
         return getUserProfileDTO(userEmail);
     }
 
-    public Boolean isNicknameAvailable(String nickname) {
+    public Boolean isNicknameAvailable(String nickname, User user) {
+        if (nickname.equals(user.getNickname())) {
+            return true;
+        }
         return userRepository.findByNickname(nickname) == null;
     }
 
