@@ -272,41 +272,41 @@
         renderKingChart('reviewKingChart', weeklyHome.reviewKing, 'weeklyReviewCount');
     }
 
-    function renderKingChart(containerId, data, countProperty) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = '';
+    function renderKingChart(containerId, data, countProperty, time) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
 
-      const maxCount = Math.max(...data.map(user => user[countProperty]));
+        const maxCount = Math.max(...data.map(user => user[countProperty]));
 
-      data.forEach((user, index) => {
-        const barWrapper = document.createElement('div');
-        barWrapper.className = 'king-bar-wrapper';
+        data.forEach((user, index) => {
+            const barWrapper = document.createElement('div');
+            barWrapper.className = 'king-bar-wrapper';
 
-        const bar = document.createElement('div');
-        bar.className = 'king-bar';
-        const height = (user[countProperty] / maxCount) * 180;
-        bar.style.height = '0px';  // 초기 높이를 0으로 설정
-        bar.style.backgroundColor = user[countProperty] === maxCount ? '#ff4500' : '#007bff';
-        bar.title = `${user[countProperty]}개`;
+            const bar = document.createElement('div');
+            bar.className = 'king-bar';
+            const height = (user[countProperty] / maxCount) * 180;
+            bar.style.height = '0px';  // 초기 높이를 0으로 설정
+            bar.style.backgroundColor = user[countProperty] === maxCount ? '#ff4500' : '#007bff';
+            bar.title = `${user[countProperty]}개`;
 
-        const profile = document.createElement('div');
-        profile.className = 'king-profile';
-        profile.innerHTML = `
-          <img src="${user.userCommonDTO.picture}" alt="${user.userCommonDTO.nickname}"
-          onclick="navigateToUser('${user.userCommonDTO.email}')">
-          <p style="color: ${user.userCommonDTO.role.color}">${user.userCommonDTO.nickname}</p>
-        `;
+            const profile = document.createElement('div');
+            profile.className = 'king-profile';
+            profile.innerHTML = `
+              <img src="${user.userCommonDTO.picture}" alt="${user.userCommonDTO.nickname}"
+              onclick="navigateToUser('${user.userCommonDTO.email}')">
+              <p style="color: ${user.userCommonDTO.role.color}">${user.userCommonDTO.nickname}</p>
+            `;
 
-        barWrapper.appendChild(bar);
-        barWrapper.appendChild(profile);
-        container.appendChild(barWrapper);
+            barWrapper.appendChild(bar);
+            barWrapper.appendChild(profile);
+            container.appendChild(barWrapper);
 
-        // 애니메이션 적용
-        setTimeout(() => {
-          bar.style.height = `${height}px`;
-          bar.style.animationPlayState = 'running';
-        }, 50);
-      });
+            // 애니메이션 적용
+            setTimeout(() => {
+              bar.style.height = `${height}px`;
+              bar.style.animationPlayState = 'running';
+            }, 50);
+        });
     }
 
     function loadHomeReviews() {
@@ -528,8 +528,9 @@
             renderRatingDistribution(data.ratingDistribution);
 
             // 주간 왕 차트 업데이트
-            renderKingChart('ratingKingChart', data.weeklyRatingKing, 'weeklyRatingCount');
-            renderKingChart('reviewKingChart', data.weeklyReviewKing, 'weeklyReviewCount');
+            renderKingChart('ratingKingChart', data.weeklyRatingKing, 'weeklyRatingCount', data.nextResetTime);
+            renderKingChart('reviewKingChart', data.weeklyReviewKing, 'weeklyReviewCount', data.nextResetTime);
+
         } else {
             console.error('Invalid data received:', data);
         }
@@ -538,7 +539,7 @@
     function updateCountWithSuffix(id, value) {
         const element = document.getElementById(id);
         const currentValue = parseInt(element.textContent.replace(/[^0-9]/g, '')) || 0;
-        animateValue(id, currentValue, value, 800);
+        animateValue(id, currentValue, value, 1200);
         element.textContent = value;
     }
 

@@ -31,12 +31,12 @@ body {
 .navbar-search input {
     flex-grow: 1;
     padding: 8px;
-    font-size: 16px;
+    font-size: 90%;
 }
 .navbar-search button {
     margin-left: 10px;
     padding: 8px 15px;
-    font-size: 16px;
+    font-size: 90%;
 }
 .navbar-links {
     display: flex;
@@ -51,7 +51,7 @@ body {
 }
 .btn {
     padding: 8px 15px;
-    font-size: 16px;
+    font-size: 90%;
     border: none;
     border-radius: 5px;
     cursor: pointer;

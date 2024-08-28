@@ -82,8 +82,8 @@ html {
 
  @media (max-width: 480px) {
      .grid {
-         grid-template-columns: repeat(2, 1fr);
-         grid-template-rows: repeat(12, 1fr);
+         grid-template-columns: repeat(4, 1fr);
+         grid-template-rows: repeat(6, 1fr);
      }
  }
 @keyframes fadeInOut {
