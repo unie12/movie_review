@@ -10,9 +10,4 @@ public class MovieReviewApplication {
 		SpringApplication.run(MovieReviewApplication.class, args);
 	}
 
-//	@Bean
-//	Hibernate5JakartaModule hibernate5JakartaModule() {
-//		return new Hibernate5JakartaModule();
-//	}
-
 }

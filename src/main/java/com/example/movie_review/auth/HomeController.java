@@ -10,6 +10,7 @@ import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserSearchDTO;
 import com.example.movie_review.user.DTO.WeeklyUserDTO;
 import com.example.movie_review.user.domain.User;
+import com.example.movie_review.user.service.RealTimeDataService;
 import com.example.movie_review.user.service.UserDTOService;
 import com.example.movie_review.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,11 +31,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HomeController {
     private final UserService userService;
-    private final ReviewService reviewService;
-    private final DbRatingService dbRatingService;
     private final TmdbService tmdbService;
     private final UserDTOService userDTOService;
     private final MovieCommonDTOService movieCommonDTOService;
+    private final RealTimeDataService realTimeDataService;
 
 
     /**
@@ -61,14 +61,8 @@ public class HomeController {
      */
     @GetMapping("/home/realtime-data")
     public ResponseEntity<RealTimeData> getRealTimeData() {
-        Long userCount = userService.getUserCount();
-        Long totalRatings = dbRatingService.getTotalRatings();
-        Long totalReviews = reviewService.getTotalReviews();
-        Map<Double, Long> ratings = dbRatingService.getTotalRatingsDistribution();
-        List<WeeklyUserDTO> weeklyRatingKing = userDTOService.getWeeklyRatingUsers();
-        List<WeeklyUserDTO> weeklyReviewKing = userDTOService.getWeeklyReviewUsers();
+        RealTimeData data = realTimeDataService.getRealTimeData();
 
-        RealTimeData data = new RealTimeData(userCount, totalRatings, totalReviews, ratings, weeklyRatingKing, weeklyReviewKing);
         return ResponseEntity.ok(data);
     }
 

@@ -54,8 +54,8 @@ public class CacheUpdateService {
     @Cacheable(value = "weeklyHomePage", key = "'weeklyHomePage'")
     public WeeklyHomeDTO getWeeklyHomeData() {
         return new WeeklyHomeDTO(
-                userDTOService.getWeeklyReviewUsers(),
-                userDTOService.getWeeklyRatingUsers(),
+//                userDTOService.getWeeklyReviewUsers(),
+//                userDTOService.getWeeklyRatingUsers(),
                 movieCacheService.getBoxOfficeDTO(MovieType.WBOM)
         );
     }

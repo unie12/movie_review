@@ -81,6 +81,10 @@ dependencies {
 
 	// 마크 다운 관련
 	implementation 'com.vladsch.flexmark:flexmark-all:0.64.8'
+
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
 tasks.named('test') {

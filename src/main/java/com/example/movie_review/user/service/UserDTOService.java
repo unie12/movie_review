@@ -11,7 +11,6 @@ import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
 import java.text.DecimalFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,16 +37,34 @@ public class UserDTOService {
     private final UserRepository userRepository;
 
     public List<WeeklyUserDTO> getWeeklyRatingUsers() {
-        LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
-        LocalDateTime endDate = LocalDateTime.now();
-        return dbRatingRepository.findTopRaters(startDate, endDate).stream().limit(5).collect(Collectors.toList());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = getLastMondayNineAM(now);
+        return dbRatingRepository.findTopRaters(startDate, now).stream().limit(5).collect(Collectors.toList());
     }
 
     public List<WeeklyUserDTO> getWeeklyReviewUsers() {
-        LocalDateTime startDate = LocalDateTime.now().minusWeeks(1);
-        LocalDateTime endDate = LocalDateTime.now();
-        return reviewRepository.findTopReviewers(startDate, endDate).stream().limit(5).collect(Collectors.toList());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = getLastMondayNineAM(now);
+        return reviewRepository.findTopReviewers(startDate, now).stream().limit(5).collect(Collectors.toList());
     }
+
+    private LocalDateTime getLastMondayNineAM(LocalDateTime dateTime) {
+        return dateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .withHour(9)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+    }
+
+    public LocalDateTime getNextMondayNineAM() {
+        return LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                .withHour(9)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+    }
+
+
 
     public UserCommonDTO getUserCommonDTO(User user) {
         UserCommonDTO.UserCommonDTOBuilder userCommonDTo = UserCommonDTO.builder()
