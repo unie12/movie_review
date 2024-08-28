@@ -12,7 +12,7 @@
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
-    <h2 th:text="${pageTitle}">사용자 활동</h2>
+    <h2 th:text="${user.nickname} + '님' + ${pageTitle}">사용자 활동</h2>
     <a th:href="@{'/info/' + ${user.email}}">사용자 정보로 돌아가기</a>
 
     <br>

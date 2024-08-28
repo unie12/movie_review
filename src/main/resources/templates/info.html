@@ -16,58 +16,62 @@
 
     <!-- 사용자 정보  -->
     <div class="user-info-box">
-        <img th:src="${userDTO.userCommonDTO.picture}" alt="User Picture" class="user-picture">
-        <span th:text="${userDTO.userCommonDTO.nickname}" class="user-nickname"
-              th:style="'color: ' + ${userDTO.userCommonDTO.role.color}">
-        </span>
-        <button th:if="${#authentication.name != userDTO.userCommonDTO.email}"
-                id="subscription"
-                th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"
-                th:text="${isSubscribed ? '구독 취소' : '구독'}"></button>
-
-        <button th:if="${#authentication.name == userDTO.userCommonDTO.email}" id="deleteAccount">회원 탈퇴</button>
-
-        <div th:if="${#authentication.name == userDTO.userCommonDTO.email}" class="feedbackSection">
-            <button id="feedBack" class="btn btn-primary">피드백 작성</button>
-        </div>
-
-        <div id="feedbackModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>피드백 작성</h2>
-                <textarea id="feedbackText" rows="4" cols="50"></textarea>
-                <button id="submitFeedbackBtn" class="btn btn-primary">제출</button>
+        <div class="user-info-left">
+            <img th:src="${userDTO.userCommonDTO.picture}" alt="User Picture" class="user-picture">
+            <div class="user-details">
+            <span th:text="${userDTO.userCommonDTO.nickname}" class="user-nickname"
+                  th:style="'color: ' + ${userDTO.userCommonDTO.role.color}">
+            </span>
+                <div class="subscription-info">
+                    <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscription'}">
+                        <span th:text="'내가 구독한 사용자 ' +${userDTO.subscriptionCnt}"></span>
+                    </a>
+                    <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscriber'}">
+                        <span th:text="'나를 구독한 사용자 ' + ${userDTO.subscriberCnt}"></span>
+                    </a>
+                </div>
             </div>
         </div>
-
-        <div class="subscription-info">
-            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscription'}">
-                <span th:text="'내가 구독한 사용자 ' +${userDTO.subscriptionCnt}"></span>
-            </a>
-            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscriber'}">
-                <span th:text="'나를 구독한 사용자 ' + ${userDTO.subscriberCnt}"></span>
-            </a>
+        <div class="user-info-right">
+            <button th:if="${#authentication.name != userDTO.userCommonDTO.email}"
+                    id="subscription"
+                    th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"
+                    th:text="${isSubscribed ? '구독 취소' : '구독'}"></button>
+            <button th:if="${#authentication.name == userDTO.userCommonDTO.email}" id="feedBack" class="btn btn-primary">피드백 작성</button>
+            <button th:if="${#authentication.name == userDTO.userCommonDTO.email}" id="deleteAccount" class="btn btn-danger">회원 탈퇴</button>
         </div>
     </div>
 
     <!-- 사용자 활동 내역-->
     <div class="activity-box">
         <h2>사용자 활동 내역</h2>
-        <div class="activity-item">
-            <h3 th:text="'즐겨찾기 영화 (' + ${userDTO.favoriteCnt} + '개)'"></h3>
-            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/favorite'}">즐겨찾기 영화 보기</a>
+        <div class="activity-grid">
+            <div class="activity-item">
+                <h3 th:text="'즐겨찾기 영화 (' + ${userDTO.favoriteCnt} + '개)'"></h3>
+                <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/favorite'}">즐겨찾기 영화 보기</a>
+            </div>
+            <div class="activity-item">
+                <h3 th:text="'리뷰 작성한 영화 (' + ${userDTO.reviewCnt} + '개)'"></h3>
+                <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/review'}">리뷰 작성한 영화 보기</a>
+            </div>
+            <div class="activity-item">
+                <h3 th:text="'평점 매긴 영화 (' + ${userDTO.ratingCnt} + '개)'"></h3>
+                <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/rating'}">평점 매긴 보기</a>
+            </div>
+            <div class="activity-item">
+                <h3 th:text="'좋아요 누른 리뷰 (' + ${userDTO.heartCnt} + '개)'"></h3>
+                <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
+            </div>
         </div>
-        <div class="activity-item">
-            <h3 th:text="'리뷰 작성한 영화 (' + ${userDTO.reviewCnt} + '개)'"></h3>
-            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/review'}">리뷰 작성한 영화 보기</a>
-        </div>
-        <div class="activity-item">
-            <h3 th:text="'평점 매긴 영화 (' + ${userDTO.ratingCnt} + '개)'"></h3>
-            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/rating'}">평점 매긴 보기</a>
-        </div>
-        <div class="activity-item">
-            <h3 th:text="'좋아요 누른 리뷰 (' + ${userDTO.heartCnt} + '개)'"></h3>
-            <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/heart'}">좋아요 누른 리뷰 보기</a>
+    </div>
+
+    <!-- 피드백 모달-->
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>피드백 작성</h2>
+            <textarea id="feedbackText" rows="4" cols="50"></textarea>
+            <button id="submitFeedbackBtn" class="btn btn-primary">제출</button>
         </div>
     </div>
 
