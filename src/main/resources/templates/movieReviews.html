@@ -5,157 +5,8 @@
 <!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/css/bodyHeader.css">
+    <link rel="stylesheet" href="/css/movieReviews.css">
     <meta charset="UTF-8">
-    <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .card-body {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .review-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .star-rating {
-            color: gold;
-        }
-        .like-button {
-            cursor: pointer;
-        }
-        .like-button.active {
-            background-color: #007bff;
-            color: white;
-        }
-        .user-rating, .user-heart {
-            display: inline-block;
-            padding: 2px 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
-            font-size: 0.9em;
-        }
-        .rating-value, .heart-value {
-            font-weight: bold;
-            background-color: #f0f0f0;
-            padding: 1px 5px;
-            border-radius: 3px;
-            margin-left: 5px;
-        }
-        .user-rating {
-            color: #f39c12;
-            border: 1px solid #f39c12;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-size: 0.9em;
-            margin-left: auto;
-        }
-        .user-heart {
-            color: #e74c3c;
-            border-color: #e74c3c;
-        }
-        .rating-value {
-            background-color: #fdebd0;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .user-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .user-list li {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .user-list img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-        .user-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .user-details {
-            display: flex;
-            align-items: center;
-        }
-        .user-picture {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-        .user-nickname {
-            font-weight: bold;
-        }
-        .user-rating {
-            font-weight: bold;
-        }
-        .review-footer {
-            display: flex;
-            align-items: center;
-        }
-        .like-count {
-            margin-left: 10px;
-        }
-        .spoiler-warning {
-            color: red;
-            font-weight: bold;
-        }
-
-        .spoiler-toggle {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-
-        .spoiler-text {
-            margin-top: 10px;
-        }
     </style>
 
     <title>영화 전체 리뷰</title>
@@ -177,6 +28,10 @@
 
     <div id="reviewList">
 <!--        리뷰 리스트 동적 생성-->
+    </div>
+
+    <div id="noReviewsMessage" style="display: none;">
+        <p>해당 영화에 리뷰가 존재하지 않습니다! 리뷰를 작성해 주세요!</p>
     </div>
 
     <div id="likeModal" class="modal">
@@ -203,6 +58,17 @@
         fetch(`/api/movie/${movieTId}/reviews?page=${currentPage}&sort=${currentSort}`)
             .then(response => response.json())
             .then(data => {
+                if (data.content.length ===0 && currentPage === 0) {
+                    noReviewsMessage.style.display = 'block';
+                    loadMore.style.display = 'none';
+                    return;
+                }
+
+                if (currentPage === 0) {
+                    reviewList.innerHTML = '';
+                }
+                noReviewsMessage.style.display = 'none';
+
                 const reviewList = document.getElementById('reviewList');
 
                 data.content.forEach(review => {

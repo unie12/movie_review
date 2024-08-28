@@ -40,7 +40,7 @@ function loadActivities(append = true) {
 
             isLoading = false;
 
-            if (currentPage === 1 && activityItems.length === 0) {
+            if (currentPage === 0 && activityItems.length === 0) {
                 $('#empty-message').show();
                 $('#activity-container').hide();
             }
