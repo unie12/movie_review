@@ -5,6 +5,7 @@ import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.movieDetail.DTO.MovieDTO;
 import com.example.movie_review.movieDetail.service.MovieDetailDTOService;
+import com.example.movie_review.review.service.ReviewMovieDTOService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserProfileDTO;
 import com.example.movie_review.user.DTO.UserProfileUpdateRequest;

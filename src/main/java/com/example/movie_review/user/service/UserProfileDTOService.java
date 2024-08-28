@@ -6,6 +6,7 @@ import com.example.movie_review.genre.PreferredGenres;
 import com.example.movie_review.genre.PreferredGenresService;
 import com.example.movie_review.movieDetail.DTO.GenreDto;
 import com.example.movie_review.movieDetail.DTO.MovieDTO;
+import com.example.movie_review.review.service.ReviewMovieDTOService;
 import com.example.movie_review.user.DTO.UserProfileDTO;
 import com.example.movie_review.user.DTO.UserProfileUpdateRequest;
 import com.example.movie_review.user.domain.PreferredMovies;
@@ -13,6 +14,7 @@ import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,6 +30,8 @@ public class UserProfileDTOService {
     private final UserService userService;
     private final PreferredGenresService preferredGenresService;
     private final PreferredMoviesService preferredMoviesService;
+    private final ReviewMovieDTOService reviewMovieDTOService;
+
 
     private final GenresRepository genresRepository;
     private final UserRepository userRepository;
@@ -71,6 +75,7 @@ public class UserProfileDTOService {
                 .build();
     }
 
+    @Transactional
     public UserProfileDTO updateUserProfile(String userEmail, MultipartFile profilePicture, UserProfileUpdateRequest updateRequest) {
         User user = userService.getUserByEmail(userEmail);
 
@@ -84,6 +89,7 @@ public class UserProfileDTOService {
         preferredMoviesService.updatePreferredMovies(user, updateRequest.getFavoriteMovies());
 
         userRepository.save(user);
+        reviewMovieDTOService.updateReviewCache();
 
         return getUserProfileDTO(userEmail);
     }

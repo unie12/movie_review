@@ -20,6 +20,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -56,7 +57,6 @@ public class ReviewMovieDTOService {
         this.cachedPopularReviews = popularReviews.stream()
                 .map(this::getReviewMovieDTO)
                 .collect(Collectors.toList());
-        System.out.println("popularReviews = " + popularReviews);
         Collections.shuffle(cachedPopularReviews);
 
         List<Review> recentReviews = reviewRepository.findRecentReviews();
