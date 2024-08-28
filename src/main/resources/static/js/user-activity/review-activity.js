@@ -29,6 +29,7 @@ window.activityHandlers.review = {
         var element = $('<div>').addClass('review-card');
         var scoreText = review.reviewDTO.userRating !== null ? review.reviewDTO.userRating : '미정';
         var likedClass = review.reviewDTO.likedByCurrentUser ? 'active' : '';
+        var starRating = createStarRating(scoreText);
 
         var ajouRatingAvg = review.movieCommonDTO.ajou_rating;
         var ajouRatingCnt = review.movieCommonDTO.ajou_rating_cnt;
@@ -56,7 +57,9 @@ window.activityHandlers.review = {
                             <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
                             <span class="upload-date" data-upload-date=${review.reviewDate}></span>
                         </div>
-                        <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
+                        <div class="user-rating-container">
+                            ${starRating}
+                        </div>
                     </div>
                     <p class="review-text">${reviewTextWithBreaks}</p>
                 </div>

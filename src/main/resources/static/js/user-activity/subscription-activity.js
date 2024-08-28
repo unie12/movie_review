@@ -29,7 +29,7 @@ window.activityHandlers.subscription = {
             <a href="/info/${item.userCommonDTO.email}">
                 <img src="${item.userCommonDTO.picture}" alt="${item.userCommonDTO.nickname}" class="user-picture">
             </a>
-            <p class="user-nickname ${userRoleClass}">${item.userCommonDTO.nickname}</p>
+            <p class="subscription-nickname ${userRoleClass}">${item.userCommonDTO.nickname}</p>
         `);
     }
 }

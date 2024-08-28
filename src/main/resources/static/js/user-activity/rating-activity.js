@@ -30,15 +30,17 @@ window.activityHandlers.rating = {
 
         var element = $('<div>').addClass('activity-item');
         var scoreText = item.score !== null ? item.score : '미정';
+        var starRating = createStarRating(scoreText);
+
 
         element.html(`
             <img src="https://image.tmdb.org/t/p/w500${item.movie.poster_path}"
                  alt="${item.title}"
                  onclick="navigateToMovieDetails(${item.movie.tid})">
             <p class="activity-title">${item.movie.title}</p>
-            <span class="user-rating">평점: <span class="rating-value">${scoreText}</span></span>
-            <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
-
+            <div class="user-rating-container">
+                ${starRating}
+            </div>
         `);
 
         return element;

@@ -64,18 +64,19 @@
                     return;
                 }
 
+                const reviewList = document.getElementById('reviewList');
+
                 if (currentPage === 0) {
                     reviewList.innerHTML = '';
                 }
                 noReviewsMessage.style.display = 'none';
-
-                const reviewList = document.getElementById('reviewList');
 
                 data.content.forEach(review => {
                     const rating = review.userRating ? review.userRating.toFixed(1) : '평가 없음';
                     const isActive = review.likedByCurrentUser ? 'active' : '';
                     const reviewTextWithBreaks = review.review.text.replace(/\n/g, '<br>');
                     const userRoleClass = review.user.role;
+                    const starRating = createStarRating(rating);
 
                      const spoilerContent = review.spoiler
                         ? `<div class="spoiler-content">
@@ -94,7 +95,9 @@
                                         </a>
                                         <span class="user-nickname ${userRoleClass}">${review.user.nickname}</span>
                                     </div>
-                                    <span class="user-rating">평점 <span class="rating-value">${rating}</span></span>
+                                    <div class="user-rating-container">
+                                        ${starRating}
+                                    </div>
                                 </div>
                                 <hr>
                                 ${spoilerContent}
@@ -116,6 +119,27 @@
                 attachLikeCountEvents();
                 attachSpoilerEvents();
             });
+    }
+
+    function createStarRating(rating) {
+        if (rating === '평가 없음') {
+            return '<span class="user-rating">평가 없음</span>';
+        }
+        const ratingValue = parseFloat(rating);
+        const fullStars = Math.floor(ratingValue);
+        const decimalPart = ratingValue - fullStars;
+        const fillWidth = (fullStars + decimalPart) * 20; // 20% per star
+
+        return `
+            <div class="star-rating" title="${rating}">
+                <div class="fill-stars" style="width: ${fillWidth}%;">
+                    <span>★★★★★</span>
+                </div>
+                <div class="empty-stars">
+                    <span>★★★★★</span>
+                </div>
+            </div>
+        `;
     }
 
     function attachLikeEvents() {

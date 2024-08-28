@@ -99,6 +99,11 @@
     font-weight: bold;
     margin-right: 10px;
 }
+.subscription-nickname, .subscriber-nickname {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+}
 .rating-value, .heart-value {
     font-weight: bold;
     background-color: #f0f0f0;
@@ -221,4 +226,31 @@
     height: 30px;
     border-radius: 50%;
     margin-right: 10px;
+}
+
+/* 별점 표시 */
+.user-rating-container {
+    margin-left: auto;
+}
+.star-rating {
+    font-size: 1.2em;
+    color: #ddd;
+    position: relative;
+    display: inline-block;
+    margin-right: 5px;
+}
+.star-rating .fill-stars {
+    color: #FFD700;
+    padding: 0;
+    position: absolute;
+    z-index: 1;
+    display: block;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.star-rating .empty-stars {
+    padding: 0;
+    display: block;
 }

@@ -112,6 +112,28 @@ function navigateToUser(email) {
     window.location.href = '/info/' + email;
 }
 
+function createStarRating(rating) {
+    if (rating === '평가 없음') {
+        return '<span class="user-rating">평가 없음</span>';
+    }
+    const ratingValue = parseFloat(rating);
+    const fullStars = Math.floor(ratingValue);
+    const decimalPart = ratingValue - fullStars;
+    const fillWidth = (fullStars + decimalPart) * 20; // 20% per star
+
+    return `
+        <div class="star-rating" title="${rating}">
+            <div class="fill-stars" style="width: ${fillWidth}%;">
+                <span>★★★★★</span>
+            </div>
+            <div class="empty-stars">
+                <span>★★★★★</span>
+            </div>
+        </div>
+    `;
+}
+
+
 $(document).ready(function() {
     initializedActivityList();
     loadSortOptions();
