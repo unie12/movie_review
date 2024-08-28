@@ -43,18 +43,19 @@
                     </div>
                     <div class="movie-info-overlay">
                         <h1 th:text="${movieDTO.basicInfo.title}"></h1>
-                        <h4 th:text="${movieDTO.basicInfo.original_title}"></h4>
+                        <h4>
+                            <span th:text="${movieDTO.basicInfo.original_title}"></span>
+                            <span class="separator">ㆍ</span>
+                            <span th:text="${movieDTO.basicInfo.runtime} + '분'"></span>
+                        </h4>
                         <p><strong>개봉일:</strong> <span th:text="${movieDTO.basicInfo.release_date}"></span></p>
+                        <p><strong>장르:</strong> <span th:each="genre : ${movieDTO.basicInfo.genres}" th:text="'[' + ${genre} + ']' + ' ' "></span></p>
                     </div>
                 </div>
 
                 <div class="movie-content">
                     <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.basicInfo.poster_path}" class="movie_poster">
-<!--                    <img th:src="'https://image.tmdb.org/t/p/original' + ${movieDTO.basicInfo.backdrop_path}" class="backdrop_poster">-->
-
                     <div class="movie-details">
-                        <p><strong>장르:</strong> <span th:each="genre : ${movieDTO.basicInfo.genres}" th:text="'[' + ${genre} + ']' + ' ' "></span></p>
-                        <p><span th:text="${movieDTO.basicInfo.runtime} + '분'"></span></p>
                         <!-- 바로가기 버튼 -->
                         <a th:if="${movieDTO.basicInfo.watchProvider}" th:href="${movieDTO.basicInfo.watchProvider}" class="btn btn-info" role="button" target="_blank" rel="noopener noreferrer">영화 바로가기</a>
 
@@ -66,7 +67,7 @@
                             <i class="fas fa-heart"></i>
                         </button>
 
-                        <p><strong>tmdb 기준 평균 평점:</strong> <span th:text="${movieDTO.basicInfo.tmdb_ratingAvg} + ' (' + ${movieDTO.basicInfo.tmdb_ratingCnt} + '표)'"></span></p>
+<!--                        <p><strong>tmdb 기준 평균 평점:</strong> <span th:text="${movieDTO.basicInfo.tmdb_ratingAvg} + ' (' + ${movieDTO.basicInfo.tmdb_ratingCnt} + '표)'"></span></p>-->
                         <p><strong>아주대 학생 평균 평점:</strong> <span th:text="${movieDTO.ajou_ratingAvg} + ' (' + ${movieDTO.ajou_ratingCnt} + '표)'"></span></p>
 
                         <!-- 별점 시스템 -->
@@ -104,7 +105,7 @@
                     <p><strong>감독:</strong></p>
                     <div class="director" th:each="director : ${movieDTO.basicInfo.directors}"
                          th:attr="data-director-id=${director.id}, data-director-type='crew'">
-                        <img th:src="'https://image.tmdb.org/t/p/w500' + ${director.profile_path}">
+                        <img th:src="${director.profile_path != null ? 'https://image.tmdb.org/t/p/w500' + director.profile_path : '/images/defaultPerson.png'}" class="actor-img">
                         <span th:text="${director.name}"></span>
                     </div>
 
@@ -115,7 +116,7 @@
                         <button class="slider-btn next">&#9654;</button>
                         <div class="slider-content actor">
                             <div class="slider-item actor" th:each="actor : ${movieDTO.basicInfo.actors}" th:attr="data-actor-id=${actor.id}, data-actor-type='cast'">
-                                <img th:src="'https://image.tmdb.org/t/p/w500' + ${actor.profile_path}" class="actor-img">
+                                <img th:src="${actor.profile_path != null ? 'https://image.tmdb.org/t/p/w500' + actor.profile_path : '/images/defaultPerson.png'}" class="actor-img">
                                 <div class="actor-info">
                                     <span class="actor-name" th:text="${actor.name}"></span>
                                     <p class="actor-role" th:text="${actor.character_name}"></p>

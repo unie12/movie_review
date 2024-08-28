@@ -161,8 +161,12 @@
     text-align: center;
 }
 .person-image {
-    width: 130px;
-    height: 130px;
+    width: calc(7vw - 10px);
+    height: calc(7vw - 10px);
+    max-width: 150px;
+    max-height: 150px;
+    min-width: 50px;
+    min-height: 50px;
     object-fit: cover;
     border-radius: 50%;
 }

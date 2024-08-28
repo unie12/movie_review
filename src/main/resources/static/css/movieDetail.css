@@ -25,31 +25,40 @@
 .backdrop-item.active {
     opacity: 1; /* 현재 활성화된 이미지만 보이도록 */
 }
-
 .backdrop_poster {
     position: absolute;
-    top: -10%; /* 상단에 맞춤 */
-    left: 50%;
-    transform: translateX(-50%);
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto; /* 높이를 자동으로 설정 */
-    min-height: 100%; /* 최소 높이를 컨테이너 높이로 설정 */
+    height: 100%;
     object-fit: cover;
-    object-position: center top; /* 상단 중앙을 기준으로 크롭 */
 }
 .movie-info-overlay {
-    position: relative; /* 위치를 상대적으로 설정 */
-    top: 550px;
+    position: absolute;
+    bottom: 10%;
+    left: 15%;
     color: white;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-    left: 15vw; /* 좌측 여백 유지 */
+    z-index: 10;
 }
 
 .movie-info-overlay h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
+    font-size: calc(1.6vw + 10px);
+    margin-bottom: 0.5vw;
 }
 
+.movie-info-overlay h4 {
+    font-size: calc(0.8vw + 10px);
+    margin-bottom: 1vw;
+}
+
+.movie-info-overlay p {
+    font-size: calc(0.5vw + 10px);
+}
+
+.separator {
+    margin: 0 0.5vw;
+}
 .movie-content {
     display: flex;
     margin-top: 10px;
