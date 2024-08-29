@@ -85,7 +85,7 @@ public class UserProfileDTOService {
             String fileDownloadUri = fileStorageService.storeFile(profilePicture);
             user.setPicture(fileDownloadUri);
         }
-        user.update(updateRequest.getNickname(), updateRequest.getGender(), updateRequest.getAge(), updateRequest.getMbti(), user.getPicture(), updateRequest.getDepartment());
+        user.update(updateRequest.getNickname(), updateRequest.getGender(), updateRequest.getAge(), updateRequest.getMbti(), updateRequest.getDepartment(), user.getPicture());
 
         preferredGenresService.updatePreferredGenres(user, updateRequest.getPreferredGenreIds());
         preferredMoviesService.updatePreferredMovies(user, updateRequest.getFavoriteMovies());

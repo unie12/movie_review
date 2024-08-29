@@ -13,6 +13,7 @@ public class UserProfileUpdateRequest {
     private Long age;
     private String gender;
     private String mbti;
+    private String department;
     private List<Long> preferredGenreIds;
     private List<MovieDTO> favoriteMovies;
 }
