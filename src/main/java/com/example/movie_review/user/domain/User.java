@@ -51,6 +51,7 @@ public class User {
     private String gender;
     private Long age;
     private String mbti;
+    private String department;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -132,11 +133,12 @@ public class User {
         return this.role.getKey();
     }
 
-    public User update(String nickname, String gender, Long age, String mbti, String picture) {
+    public User update(String nickname, String gender, Long age, String mbti, String department, String picture) {
         this.nickname = nickname != null ? nickname : this.nickname;
         this.gender = gender != null ? gender : this.gender;
         this.age = age != null ? age : this.age;
         this.mbti = mbti != null ? mbti : this.mbti;
+        this.department = department != null ? department : this.department;
         this.picture = picture != null ? picture : this.picture;
         return this;
     }

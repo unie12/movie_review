@@ -78,3 +78,24 @@
     margin-right: 10px;
     object-fit: cover;
 }
+
+.form-section {
+            display: none;
+        }
+.form-section.active {
+    display: block;
+}
+.progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.progress-step {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ddd;
+}
+.progress-step.active {
+    background-color: #007bff;
+}

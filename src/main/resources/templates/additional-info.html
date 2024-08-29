@@ -3,30 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/additional-info.css">
 
     <title>사용자 추가 정보 입력</title>
-    <style>
-        .form-section {
-            display: none;
-        }
-        .form-section.active {
-            display: block;
-        }
-        .progress-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .progress-step {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #ddd;
-        }
-        .progress-step.active {
-            background-color: #007bff;
-        }
-    </style>
 </head>
 <!--<script th:src="@{'/js/search.js'}"></script>-->
 
@@ -44,12 +23,15 @@
         <div class="progress-step"></div>
         <div class="progress-step"></div>
     </div>
-    <form id="profile-form" enctype="multipart/form-data">
+    <form id="profile-form" enctype="multipart/form-data" th:if="${isNewUser}">
         <div class="form-section active" id="section-1">
             <label for="nickname">닉네임:</label>
             <input type="text" id="nickname" name="nickname" th:value="${userProfile.nickname}" required>
             <button type="button" id="check-nickname" th:if="${isNewUser}">중복 확인</button>
             <span id="nickname-result"></span>
+
+            <label for="nickname">학과:</label>
+            <input type="text" id="department" name="department" th:value="${userProfile.department}" placeholder="정확한 학과 이름을 기재해주세요" required>
         </div>
 
         <div class="form-section" id="section-2">
@@ -125,7 +107,6 @@
             <button type="submit" id="submit-btn" style="display:none;">제출</button>
         </div>
     </form>
-    <div th:replace="fragments/footer :: footer" />
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -154,6 +135,7 @@
                 $('#gender').val(response.gender);
                 $('#age').val(response.age);
                 $('#mbti').val(response.mbti);
+                $('#department').val(response.department);
                 $('#favorite-movies').val(response.favoriteMovies);
                 $('#favorite-genres').val(response.userPreferredGenreIds);
             }
@@ -209,7 +191,7 @@
         $('#profile-form').on('submit', handleFormSubmit);
         $('#next-btn').click(nextSection);
         $('#prev-btn').click(prevSection);
-        $('#nickname, #gender, #age, #mbti').on('input', checkFormValidity);
+        $('#nickname, #gender, #age, #mbti, #department').on('input', checkFormValidity);
     }
 
     function showSection(sectionNumber) {
@@ -319,7 +301,7 @@
 
     // Submit 버튼 활성화 함수
     function checkFormValidity() {
-        var isValid = $('#nickname').val() && $('#gender').val() && $('#age').val() && $('#mbti').val() && isNicknameValid;
+        var isValid = $('#nickname').val() && $('#gender').val() && $('#age').val() && $('#mbti').val() && $('#department').val() && isNicknameValid;
 
         $('#profile-form button[type="submit"]').prop('disabled', !isValid);
     }
@@ -423,6 +405,7 @@
             gender: $('#gender').val(),
             age: parseInt($('#age').val()),
             mbti: $('#mbti').val(),
+            department: $('#department').val(),
             preferredGenreIds: JSON.parse($('#favorite-genres-input').val()),
             favoriteMovies: JSON.parse($('#favorite-movies-input').val())
         };

@@ -52,7 +52,7 @@ public class HomeViewController {
         if(auth != null && !auth.getName().equals("anonymousUser")) {
 //            movieCacheService.updateDailyMovieCache();
 //            movieCacheService.updateWeeklyMovieCache();
-    //        userService.updateUserRoles();
+//            userService.updateUserRoles();
 
             model.addAttribute("dailyHome", cacheUpdateService.getDailyHomeData());
             model.addAttribute("weeklyHome", cacheUpdateService.getWeeklyHomeData());

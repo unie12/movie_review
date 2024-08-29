@@ -56,6 +56,7 @@ public class UserProfileDTOService {
                 .age(user.getAge())
                 .gender(user.getGender())
                 .mbti(user.getMbti())
+                .department(user.getDepartment())
                 .tmdbGenres(filteredGenres.stream().map(this::convertToGenreDTO).collect(Collectors.toList()))
                 .userPreferredGenreIds(userPreferredGenres.stream().map(PreferredGenres::getGenreId).collect(Collectors.toList()))
                 .favoriteMovies(userPreferredMovies.stream().map(this::convertToMovieDTO).collect(Collectors.toList()))
@@ -84,7 +85,7 @@ public class UserProfileDTOService {
             String fileDownloadUri = fileStorageService.storeFile(profilePicture);
             user.setPicture(fileDownloadUri);
         }
-        user.update(updateRequest.getNickname(), updateRequest.getGender(), updateRequest.getAge(), updateRequest.getMbti(), user.getPicture());
+        user.update(updateRequest.getNickname(), updateRequest.getGender(), updateRequest.getAge(), updateRequest.getMbti(), user.getPicture(), updateRequest.getDepartment());
 
         preferredGenresService.updatePreferredGenres(user, updateRequest.getPreferredGenreIds());
         preferredMoviesService.updatePreferredMovies(user, updateRequest.getFavoriteMovies());

@@ -102,7 +102,7 @@ public class MovieCommonDTOService {
 
         List<DbMovies> movies = users.stream()
                 .flatMap(user -> user.getDbRatings().stream()
-                        .filter(r -> r.getScore() >= 3.4)
+                        .filter(r -> r.getScore() >= 3.5)
                         .map(DbRatings::getDbMovies))
                 .distinct()
                 .toList();

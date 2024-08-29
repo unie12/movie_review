@@ -17,6 +17,7 @@ public class UserProfileDTO {
     private Long age;
     private String gender;
     private String mbti;
+    private String department;
     private List<GenreDto> tmdbGenres;
     private List<Long> userPreferredGenreIds;
     private List<MovieDTO> favoriteMovies;
