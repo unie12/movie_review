@@ -3,6 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/css/additional-info.css">
 
     <title>사용자 추가 정보 입력</title>
@@ -16,95 +19,125 @@
         <h1>사용자 정보를 재업데이트 하는 기능은 아직 존재하지 않습니다! 뒤로 가기 해주세요!</h1>
     </div>
 
-    <h2>추가 정보 입력</h2>
+<!--    <div class="progress-indicator">-->
+<!--        <div class="progress-step active"></div>-->
+<!--        <div class="progress-step"></div>-->
+<!--        <div class="progress-step"></div>-->
+<!--        <div class="progress-step"></div>-->
+<!--    </div>-->
     <div class="progress-indicator">
-        <div class="progress-step active"></div>
-        <div class="progress-step"></div>
-        <div class="progress-step"></div>
-        <div class="progress-step"></div>
+        <div class="progress-step" data-step="1"><img src="/images/popcorn-icon.png" alt="Step 1"></div>
+        <div class="progress-step" data-step="2"><img src="/images/popcorn-icon.png" alt="Step 2"></div>
+        <div class="progress-step" data-step="3"><img src="/images/popcorn-icon.png" alt="Step 3"></div>
+        <div class="progress-step" data-step="4"><img src="/images/popcorn-icon.png" alt="Step 4"></div>
     </div>
+
     <form id="profile-form" enctype="multipart/form-data" th:if="${isNewUser}">
         <div class="form-section active" id="section-1">
-            <label for="nickname">닉네임:</label>
-            <input type="text" id="nickname" name="nickname" th:value="${userProfile.nickname}" required>
-            <button type="button" id="check-nickname" th:if="${isNewUser}">중복 확인</button>
-            <span id="nickname-result"></span>
+            <h2>기본 정보 입력</h2>
+            <div class="input-group">
+                <label for="nickname">닉네임</label>
+                <input type="text" id="nickname" name="nickname" required>
+                <button type="button" id="check-nickname" class="button check-button"><i class="fas fa-check-circle"></i> 중복 확인</button>
+                <span id="nickname-result"></span>
+            </div>
 
-            <label for="nickname">학과:</label>
-            <input type="text" id="department" name="department" th:value="${userProfile.department}" placeholder="정확한 학과 이름을 기재해주세요" required>
+            <div class="input-group">
+                <label for="department">학과</label>
+                <input type="text" id="department" name="department" placeholder="정확한 학과 이름을 기재해주세요! ex) 소프트웨어학과" required>
+            </div>
         </div>
 
         <div class="form-section" id="section-2">
+            <h2>기본 정보 입력</h2>
             <img id="profile-preview" th:src="${userProfile.picture}" alt="프로필 사진" class="user-picture">
-            <label for="profile-picture">프로필 사진:</label>
-            <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
+            <div class="input-group">
+                <label for="profile-picture">프로필 사진</label>
+                <div class="file-input-wrapper">
+                    <button class="button file-button"><i class="fas fa-upload"></i> 파일 선택</button>
+                    <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
+                </div>
+            </div>
 
-            <label for="gender">성별:</label>
-            <select id="gender" name="gender" required>
-                <option value="">선택하세요</option>
-                <option value="남자" th:selected="${userProfile.gender == '남자'}">남자</option>
-                <option value="여자" th:selected="${userProfile.gender == '여자'}">여자</option>
-            </select>
+            <div class="input-group">
+                <label for="gender">성별</label>
+                <div class="option-buttons" id="gender-buttons">
+                    <button type="button" class="option-button" data-value="남자">남자</button>
+                    <button type="button" class="option-button" data-value="여자">여자</button>
+                </div>
+                <input type="hidden" id="gender" name="gender" required>
+            </div>
 
-            <label for="age">Age:</label>
-            <input type="number" id="age" name="age" th:value="${userProfile.age}" required>
+            <div class="input-group">
+                <label for="age">나이</label>
+                <input type="number" id="age" name="age" placeholder="ex) 24" required>
+            </div>
 
-            <label for="mbti">MBTI:</label>
-            <select id="mbti" name="mbti" required>
-                <option value="INTJ" th:selected="${userProfile.mbti == 'INTJ'}">INTJ</option>
-                <option value="INTP" th:selected="${userProfile.mbti == 'INTP'}">INTP</option>
-                <option value="ENTJ" th:selected="${userProfile.mbti == 'ENTJ'}">ENTJ</option>
-                <option value="ENTP" th:selected="${userProfile.mbti == 'ENTP'}">ENTP</option>
-                <option value="INFJ" th:selected="${userProfile.mbti == 'INFJ'}">INFJ</option>
-                <option value="INFP" th:selected="${userProfile.mbti == 'INFP'}">INFP</option>
-                <option value="ENFJ" th:selected="${userProfile.mbti == 'ENFJ'}">ENFJ</option>
-                <option value="ENFP" th:selected="${userProfile.mbti == 'ENFP'}">ENFP</option>
-                <option value="ISTJ" th:selected="${userProfile.mbti == 'ISTJ'}">ISTJ</option>
-                <option value="ISFJ" th:selected="${userProfile.mbti == 'ISFJ'}">ISFJ</option>
-                <option value="ESTJ" th:selected="${userProfile.mbti == 'ESTJ'}">ESTJ</option>
-                <option value="ESFJ" th:selected="${userProfile.mbti == 'ESFJ'}">ESFJ</option>
-                <option value="ISTP" th:selected="${userProfile.mbti == 'ISTP'}">ISTP</option>
-                <option value="ISFP" th:selected="${userProfile.mbti == 'ISFP'}">ISFP</option>
-                <option value="ESTP" th:selected="${userProfile.mbti == 'ESTP'}">ESTP</option>
-                <option value="ESFP" th:selected="${userProfile.mbti == 'ESFP'}">ESFP</option>
-            </select>
+            <div class="input-group">
+                <label for="mbti">MBTI</label>
+                <div class="option-buttons" id="mbti-buttons">
+                    <button type="button" class="option-button" data-value="INTJ">INTJ</button>
+                    <button type="button" class="option-button" data-value="INTP">INTP</button>
+                    <button type="button" class="option-button" data-value="ENTJ">ENTJ</button>
+                    <button type="button" class="option-button" data-value="ENTP">ENTP</button>
+                    <button type="button" class="option-button" data-value="INFJ">INFJ</button>
+                    <button type="button" class="option-button" data-value="INFP">INFP</button>
+                    <button type="button" class="option-button" data-value="ENFJ">ENFJ</button>
+                    <button type="button" class="option-button" data-value="ENFP">ENFP</button>
+                    <button type="button" class="option-button" data-value="ISTJ">ISTJ</button>
+                    <button type="button" class="option-button" data-value="ISFJ">ISFJ</button>
+                    <button type="button" class="option-button" data-value="ESTJ">ESTJ</button>
+                    <button type="button" class="option-button" data-value="ESFJ">ESFJ</button>
+                    <button type="button" class="option-button" data-value="ISTP">ISTP</button>
+                    <button type="button" class="option-button" data-value="ISFP">ISFP</button>
+                    <button type="button" class="option-button" data-value="ESTP">ESTP</button>
+                    <button type="button" class="option-button" data-value="ESFP">ESFP</button>
+                </div>
+                <input type="hidden" id="mbti" name="mbti" required>
+            </div>
         </div>
-
 
         <div class="form-section" id="section-3">
             <h2>나의 인생 영화 (최대 5개)</h2>
-            <div class="search-container">
-                <input type="text" id="query" name="query" placeholder="영화 검색">
-                <button type="button" id="search-button">검색</button>
-                <div id="search-results-container" style="display:none;">
-                    <button type="button" id="close-search-results">닫기</button>
-                    <ul id="search-results"></ul>
-                </div>
+            <div class="input-group">
+                <input type="text" id="query" name="query" placeholder="영화 제목으로 검색해보세요!">
+                <button type="button" id="search-button" class="button search-button"><i class="fas fa-search"></i> 검색</button>
             </div>
+            <div id="search-results-container" style="display:none;">
+                <button type="button" id="close-search-results">닫기</button>
+                <ul id="search-results"></ul>
+            </div>
+
             <ul id="favorite-movies"></ul>
             <input type="hidden" id="favorite-movies-input" name="favoriteMovies">
         </div>
 
         <div class="form-section" id="section-4">
             <h2>선호 장르 선택 (최대 5개)</h2>
-            <div id="genre-selection">
-                <ul>
-                    <li th:each="genre : ${userProfile.tmdbGenres}">
-                        <input type="checkbox" name="preferredGenres" th:value="${genre.id}" th:text="${genre.name}"
-                               th:checked="${userProfile.userPreferredGenreIds.contains(genre.id)}"
-                               onchange="updateFavoriteGenres(this)"/>
-                    </li>
-                </ul>
+            <div class="option-buttons" id="genre-buttons">
+                <!-- Genre buttons will be dynamically added here -->
             </div>
-            <h2>선호 장르 목록 (최대 5개)</h2>
-            <ul id="favorite-genres"></ul>
+
+<!--            <div id="genre-selection">-->
+<!--                <ul>-->
+<!--                    <li th:each="genre : ${userProfile.tmdbGenres}">-->
+<!--                        <input type="checkbox" name="preferredGenres" th:value="${genre.id}" th:text="${genre.name}"-->
+<!--                               th:checked="${userProfile.userPreferredGenreIds.contains(genre.id)}"-->
+<!--                               onchange="updateFavoriteGenres(this)"/>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </div>-->
+
+            <ul id="favorite-genres">
+
+            </ul>
             <input type="hidden" id="favorite-genres-input" name="favoriteGenres">
         </div>
 
         <div class="form-navigation">
-            <button type="button" id="prev-btn" style="display:none;">이전</button>
-            <button type="button" id="next-btn">다음</button>
-            <button type="submit" id="submit-btn" style="display:none;">제출</button>
+            <button type="button" id="prev-btn" class="button secondary-button" style="display:none;"><i class="fas fa-chevron-left"></i> 이전</button>
+            <button type="button" id="next-btn" class="button primary-button">다음 <i class="fas fa-chevron-right"></i></button>
+            <button type="submit" id="submit-btn" class="button primary-button"><i class="fas fa-check"></i> 제출</button>
         </div>
     </form>
 </div>
@@ -112,9 +145,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
     let userEmail = /*[[${userProfile.email}]]*/ '';
-    let currentPage = [[${currentPage}]];
     let query = [[${query}]];
-    let loading = false;
     let isNewUser = /*[[${isNewUser}]]*/ false;
     let isNicknameValid = !isNewUser; // 기존 사용자의 경우 닉네임은 이미 유효함
     let currentSection = 1;
@@ -124,6 +155,8 @@
         initializeForm();
         setupEventListeners();
         showSection(1);
+        loadGenreButtons();
+        updateProgressIndicator();
     });
 
     function initializeForm() {
@@ -140,9 +173,6 @@
                 $('#favorite-genres').val(response.userPreferredGenreIds);
             }
         });
-
-        loadFavoriteMovies();
-        loadFavoriteGenres();
     }
 
     function loadFavoriteMovies() {
@@ -180,18 +210,50 @@
     function setupEventListeners() {
         $('#nickname').on('input', handleNicknameInput);
         $('#check-nickname').click(checkNickname);
-        $('#search-results-container').on('click', '.add-favorite', addFavoriteMovie);
         $(document).on('click', '.remove-favorite', removeFavorite);
+        $(document).click(hideSearchResultsOnOutsideClick);
+        $('#search-results-container').on('click', '.add-favorite', addFavoriteMovie);
         $('#search-button').on('click', searchMovies);
+        $('.search-container').click(stopPropagation);
         $('#query').on('keypress', handleSearchKeypress);
         $('#close-search-results').click(hideSearchResults);
-        $(document).click(hideSearchResultsOnOutsideClick);
-        $('.search-container').click(stopPropagation);
         $('#profile-picture').change(handleProfilePictureChange);
         $('#profile-form').on('submit', handleFormSubmit);
         $('#next-btn').click(nextSection);
         $('#prev-btn').click(prevSection);
-        $('#nickname, #gender, #age, #mbti, #department').on('input', checkFormValidity);
+
+        $('#gender-buttons, #mbti-buttons').on('click', '.option-button', handleOptionButtonClick);
+        $('#genre-buttons').on('click', '.option-button', handleGenreButtonClick);
+    }
+
+    function handleOptionButtonClick() {
+        const $this = $(this);
+        const $parent = $this.parent();
+        const $hiddenInput = $parent.siblings('input[type="hidden"]');
+
+        $parent.find('.option-button').removeClass('selected');
+        $this.addClass('selected');
+        $hiddenInput.val($this.data('value'));
+    }
+
+    function handleGenreButtonClick() {
+        const $this = $(this);
+        const genreId = $this.data('id');
+        const genreName = $this.text();
+
+        if ($this.hasClass('selected')) {
+            $this.removeClass('selected');
+            removeFavoriteGenre(genreId);
+            console.log('Genre removed:', genreName);
+        } else {
+            if ($('#favorite-genres li').length < 5) {
+                $this.addClass('selected');
+                addFavoriteGenre(genreId, genreName);
+                console.log('Genre added:', genreName);
+            } else {
+                alert('최대 5개의 장르만 선택할 수 있습니다.');
+            }
+        }
     }
 
     function showSection(sectionNumber) {
@@ -210,14 +272,18 @@
     function updateProgressIndicator() {
         $('.progress-step').removeClass('active');
         for (let i = 1; i <= currentSection; i++) {
-            $(`.progress-step:nth-child(${i})`).addClass('active');
+            $(`.progress-step[data-step="${i}"]`).addClass('active');
         }
     }
 
     function nextSection() {
         if (currentSection < totalSections) {
-            currentSection++;
-            showSection(currentSection);
+            if (checkSectionValidity(currentSection)) {
+                currentSection++;
+                showSection(currentSection);
+            } else {
+                alert("현재 섹션의 모든 필드를 올바르게 입력해주세요.");
+            }
         }
     }
 
@@ -228,10 +294,64 @@
         }
     }
 
+    function checkSectionValidity(section) {
+        switch(section) {
+            case 1:
+                return $('#nickname').val() && isNicknameValid && $('#department').val();
+            case 2:
+                return $('#gender').val() && $('#age').val() && $('#mbti').val();
+            case 3:
+                return $('#favorite-movies li').length > 0;
+            case 4:
+                return $('#favorite-genres li').length > 0;
+            default:
+                return true;
+        }
+    }
+
+    function handleOptionButtonClick() {
+        const $this = $(this);
+        const $parent = $this.parent();
+        const $hiddenInput = $parent.siblings('input[type="hidden"]');
+
+        $parent.find('.option-button').removeClass('selected');
+        $this.addClass('selected');
+        $hiddenInput.val($this.data('value'));
+    }
+
+    function loadGenreButtons() {
+        // 서버에서 장르 목록을 가져와 버튼으로 생성
+        $.ajax({
+            url: '/api/genres',
+            type: 'GET',
+            success: function(genres) {
+                const $genreButtons = $('#genre-buttons');
+                genres.forEach(function(genre) {
+                    $genreButtons.append(`<button type="button" class="option-button" data-id="${genre.id}">${genre.name}</button>`);
+                });
+            }
+        });
+    }
+
+    function addFavoriteGenre(genreId, genreName) {
+        if ($('#favorite-genres li[data-id="' + genreId + '"]').length === 0) {
+            $('#favorite-genres').append(`<li data-id="${genreId}" class="genre-name">${genreName}</li>`);
+            updateFavoriteGenresInput();
+        } else {
+            console.log('이미 추가된 장르입니다.');
+        }
+    }
+
+    function removeFavoriteGenre(genreId) {
+        $(`#favorite-genres li[data-id="${genreId}"]`).remove();
+        $(`#genre-buttons .option-button[data-id="${genreId}"]`).removeClass('selected');
+        updateFavoriteGenresInput();
+    }
+
+
     function handleNicknameInput() {
         isNicknameValid = false;
         $('#nickname-result').text('').css('color', '');
-        checkFormValidity();
     }
 
     function checkNickname() {
@@ -248,41 +368,19 @@
                     $('#nickname-result').text('이미 사용 중인 닉네임입니다.').css('color', 'red');
                     isNicknameValid = false;
                 }
-                checkFormValidity();
             }
         });
     }
 
 
 
-    <!--    선호 장르 checkbox 선택 시, 선호 장르 리스트로 바로 옮겨주고 총 개수 제한-->
-    function updateFavoriteGenres(checkbox) {
-        var genreId = parseInt($(checkbox).val());  // 문자열을 정수로 변환
-        var genreName = $(checkbox).parent().text().trim();
-        var favoriteGenreList = $('#favorite-genres');
-
-        if($(checkbox).is(':checked')) {
-            if (favoriteGenreList.children().length < 5) {
-                favoriteGenreList.append('<li data-id="' + genreId + '">' + genreName + '</li>');
-            } else {
-                alert('최대 5개의 장르만 선택할 수 있습니다');
-                $(checkbox).prop('checked', false);
-            }
-        } else {
-            favoriteGenreList.find('li[data-id="' + genreId + '"]').remove();
-        }
-        updateFavoriteGenresInput();
-    }
-
     <!--사용자 선호 장르 ID 목록을 HTML input요소에 JSON 형태로 저장-->
     function updateFavoriteGenresInput() {
         var favoriteGenres = $('#favorite-genres li').map(function() {
-            return parseInt($(this).data('id'));  // 문자열을 정수로 변환
+            return $(this).data('id');
         }).get();
-
-        console.log('update: ', favoriteGenres);
-
         $('#favorite-genres-input').val(JSON.stringify(favoriteGenres));
+        console.log('updatefavoritegenreInput');
     }
 
     <!--해당 사용자의 선호 영화 리스트 JSON 타입으로 저장-->
@@ -301,9 +399,49 @@
 
     // Submit 버튼 활성화 함수
     function checkFormValidity() {
-        var isValid = $('#nickname').val() && $('#gender').val() && $('#age').val() && $('#mbti').val() && $('#department').val() && isNicknameValid;
+        var isValid = true;
+        var errorMessages = [];
 
-        $('#profile-form button[type="submit"]').prop('disabled', !isValid);
+        if (!$('#nickname').val()) {
+            isValid = false;
+            errorMessages.push("닉네임을 입력해주세요.");
+        }
+        if (!$('#gender').val()) {
+            isValid = false;
+            errorMessages.push("성별을 선택해주세요.");
+        }
+        if (!$('#age').val()) {
+            isValid = false;
+            errorMessages.push("나이를 입력해주세요.");
+        }
+        if (!$('#mbti').val()) {
+            isValid = false;
+            errorMessages.push("MBTI를 선택해주세요.");
+        }
+        if (!$('#department').val()) {
+            isValid = false;
+            errorMessages.push("학과를 입력해주세요.");
+        }
+        if (!isNicknameValid) {
+            isValid = false;
+            errorMessages.push("닉네임 중복 확인을 해주세요.");
+        }
+        if ($('#favorite-movies li').length === 0) {
+            isValid = false;
+            errorMessages.push("최소 1개의 영화를 선택해주세요.");
+        }
+        if ($('#favorite-genres li').length === 0) {
+            isValid = false;
+            errorMessages.push("최소 1개의 장르를 선택해주세요.");
+        }
+
+        $('#submit-btn').prop('disabled', !isValid);
+
+        if (!isValid) {
+            alert("다음 항목을 확인해주세요:\n" + errorMessages.join("\n"));
+        }
+
+        return isValid;
     }
 
     function searchMovies() {
@@ -392,8 +530,7 @@
 
     function handleFormSubmit(e) {
         e.preventDefault();
-        if (!isNicknameValid) {
-            alert('닉네임 중복 확인을 해주세요.');
+        if (!checkFormValidity) {
             return;
         }
 
