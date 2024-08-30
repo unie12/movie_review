@@ -175,3 +175,11 @@
     padding: 0;
     display: block;
 }
+
+.sort-category {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-bottom: 3%;
+}

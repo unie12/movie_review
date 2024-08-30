@@ -12,14 +12,19 @@
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
-    <h2 th:text="${user.nickname} + '님' + ${pageTitle}">사용자 활동</h2>
-    <a th:href="@{'/info/' + ${user.email}}">사용자 정보로 돌아가기</a>
+<!--    <a th:href="@{'/info/' + ${user.email}}" class="back-link">-->
+<!--        <i class="fas fa-arrow-left"></i> 뒤로 가기-->
+<!--    </a>-->
+    <a href="#" onclick="goBack(); return false;" class="back-link">
+        <i class="fas fa-arrow-left"></i> 뒤로 가기
+    </a>
 
-    <br>
-
-    <select id="sorting" name="sorting">
-        <!-- 정렬 옵션은 JavaScript로 동적 생성 -->
-    </select>
+    <div class="activity-header">
+        <h2 th:text="${user.nickname} + '님' + ${pageTitle}">사용자 활동</h2>
+        <select id="sorting" name="sorting" class="sort-category">
+            <!-- 정렬 옵션은 JavaScript로 동적 생성 -->
+        </select>
+    </div>
 
     <div id="activity-container">
         <div id="activity-list" class="activity-grid">

@@ -38,6 +38,8 @@
 <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
 <div class="container">
+    <a href="/patch-notes">목록으로 돌아가기</a>
+
     <h1 th:text="${patchNote.title}"></h1>
     <p>버전: <span th:text="${patchNote.version}"></span></p>
     <p>배포일: <span th:text="${patchNote.releaseDate}"></span></p>
@@ -50,9 +52,6 @@
             <div th:utext="${section.content}"></div>
         </div>
     </div>
-
-    <a href="/patch-notes">목록으로 돌아가기</a>
-
     <div th:replace="fragments/footer :: footer" />
 </div>
 </body>

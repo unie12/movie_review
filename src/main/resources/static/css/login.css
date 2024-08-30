@@ -52,7 +52,6 @@ html {
     border-radius: 8px;
     opacity: 0.3;
     transition: all 0.5s ease;
-    animation: fadeInOut 10s infinite;
 }
 
  .background-poster:hover {

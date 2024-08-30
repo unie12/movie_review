@@ -56,7 +56,6 @@ function setFavoriteButtonListeners() {
         var $button = $(this);
         var movieId = $(this).data('activity-id');
         var isFavorite = $(this).hasClass('active');
-        console.log('movieId, isFavorite', movieId, isFavorite);
 
         $.ajax({
             url: '/api/movie/favorite',

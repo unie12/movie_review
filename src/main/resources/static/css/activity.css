@@ -1,5 +1,5 @@
 .container {
-    position: relative; /* container 요소에 position: relative; 추가 */
+    position: relative;
     padding: 10px 15vw;
 }
 .activity-container {
@@ -8,21 +8,19 @@
 
 .fav-rat-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 10px;
     list-style-type: none;
-    padding: 20px 40px;
 }
 .activity-item {
-    text-align: center;
     width: 100%;
 }
 .activity-item img {
-    width: 200px;
-    height: 275px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2/3;
     object-fit: cover;
     cursor: pointer;
-    max-width: 100%;
 }
 .activity-title {
     font-size: 0.9em;
@@ -33,6 +31,7 @@
     white-space: nowrap;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: -5px;
 }
 
 /* 리뷰 및 좋아요 스타일 */
@@ -50,35 +49,47 @@
     height: 100%;
 }
 .review-header {
-    display: flex;
-    padding: 15px;
+    padding: 10px;
+    margin-top: -2%;
+    margin-bottom: -1%;
+}
+.user-rating-container{
+    margin-left: auto;
 }
 .poster-container {
-    width: 150px;
+    flex-shrink: 0;
+    width: calc(8vw + 16px);
+    margin-right: 5px;
     padding: 10px;
 }
 .poster-container img {
     width: 100%;
-    height: 200px;
-    object-fit: cover;
+    height: auto;
     border-radius: 4px;
+    aspect-ratio: 2 / 3;
 }
 .movie-title {
     font-weight: bold;
     margin-top: 10px;
     font-size: 0.9em;
-    text-align: center;
+    text-align: left; /* 제목 왼쪽 정렬 */
 }
 .review-content {
     flex: 1;
     display: flex;
+    overflow: hidden;
+}
+.review-text-container {
+    display: flex;
     flex-direction: column;
+    flex: 1;
+    overflow: hidden;
 }
 .user-info {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-top: 3%;
 }
 .user-details {
     display: flex;
@@ -134,14 +145,22 @@
     font-size: 0.9em;
     line-height: 1.6;
     overflow-y: auto;
+    word-wrap: break-word;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #ddd; /* 구분선 스타일 */
+    margin: 10px 0; /* 구분선 간격 추가 */
 }
 
 .review-footer {
-    border-top: 1px solid #ddd;
-    padding: 15px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; /* 평점과 좋아요 버튼을 양쪽에 배치 */
+    align-items: center; /* 수직 정렬 */
+    padding: 10px;
+    margin-top: -2%;
+    margin-bottom: -1%;
 }
 .like-container {
     display: flex;
@@ -149,21 +168,39 @@
 }
 
 .like-button {
-    margin-right: 10px;
+    background: none;
+    border: none;
+    color: #777;
+    cursor: pointer;
+    margin-right: 5px;
 }
 
 .heart-count {
     font-weight: bold;
+    margin-left: 5px;
 }
 .like-button.active {
-    background-color: #e74c3c;
-    color: white;
+    color: #e74c3c;
 }
 .like-button.active .heart-value {
     background-color: white;
     color: #e74c3c;
 }
+.like-count {
+    text-decoration: none;
+    color: #777;
+}
 
+.favorite {
+    background: none;
+    border: none;
+    color: #777;
+    cursor: pointer;
+    margin-right: 5px;
+}
+.favorite.active {
+    color: #e74c3c;
+}
 /* 구독자 스타일 */
 .subscription-container {
     display: flex;
@@ -253,4 +290,25 @@
 .star-rating .empty-stars {
     padding: 0;
     display: block;
+}
+.sort-category {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    margin-bottom: 20px;
+}
+.back-link i {
+    margin-right: 5px;
+}
+.activity-header {
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }

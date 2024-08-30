@@ -43,34 +43,39 @@ window.activityHandlers.review = {
 
         element.html(`
             <div class="review-header">
+                <div class="user-info">
+                    <div class="user-details">
+                        <img src="${review.reviewDTO.user.picture}" alt="User Picture" class="user-picture"
+                        onclick="navigateToUser('${review.reviewDTO.user.email}')">
+                        <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
+                        <span class="upload-date" data-upload-date=${review.reviewDate}></span>
+                    </div>
+                    <div class="user-rating-container">
+                        ${starRating}
+                    </div>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="review-content">
                 <div class="poster-container">
                     <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
                          alt="${review.movieCommonDTO.title}"
                          onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
-                    <p class="movie-title">${review.movieCommonDTO.title}</p>
                 </div>
-                <div class="review-content">
-                    <div class="user-info">
-                        <div class="user-details">
-                            <img src="${review.reviewDTO.user.picture}" alt="User Picture" class="user-picture"
-                            onclick="navigateToUser('${review.reviewDTO.user.email}')">
-                            <span class="user-nickname ${userRoleClass}">${review.reviewDTO.user.nickname}</span>
-                            <span class="upload-date" data-upload-date=${review.reviewDate}></span>
-                        </div>
-                        <div class="user-rating-container">
-                            ${starRating}
-                        </div>
-                    </div>
+                <div class="review-text-container">
+                    <p class="movie-title">${review.movieCommonDTO.title}</p>
                     <p class="review-text">${reviewTextWithBreaks}</p>
                 </div>
             </div>
+            <hr class="divider">
             <div class="review-footer">
                 <p><strong>아주대 평점:</strong> <span>${ajouRatingText}</span></p>
                 <div class="like-container">
-                    <button class="btn btn-outline-primary like-button ${isActive}" data-review-id="${review.reviewDTO.review.id}">
+                    <button class="btn btn-outline-primary like-button ${isActive}"
+                        data-review-id="${review.reviewDTO.review.id}">
                         <i class="fas fa-heart"></i>
                     </button>
-                    <a href="#" class="like-count" data-review-id="${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count">${review.reviewDTO.heartCnt}</span>
+                    <a href="#" class="like-count" data-review-id="${review.reviewDTO.review.id}">좋아요 </a> <span class="heart-count"> ${review.reviewDTO.heartCnt}</span>
                 </div>
             </div>
         `);
@@ -84,8 +89,6 @@ window.activityHandlers.review = {
 function setupLikeButtons() {
 //    $('.like-button').click(function() {
     $('#activity-list').off('click', '.like-button').on('click', '.like-button', function() {
-        console.log('Like button clicked', new Date().toISOString());
-
         var reviewId = $(this).data('review-id');
         var $button = $(this);
         var isLiked = $button.hasClass('active');

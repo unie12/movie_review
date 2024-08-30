@@ -156,7 +156,6 @@
 
 <!--            사용자 이름 기준 검색-->
             <div th:if="${searchType == 'userNickname'}" class="userSearch">
-                <h2>search type <span th:text="${searchType}"></span></h2>
                 <div class="user-grid">
                     <div th:each="result: ${searchResults.content}" class="user-item">
                         <a th:href="@{'/info/' + ${result.user.email}}">

@@ -66,6 +66,10 @@ function updateScrollListener() {
     }
 }
 
+function goBack() {
+    window.history.back();
+}
+
 function initializedActivityList() {
     var $activityList = $('#activity-list');
     switch(category) {

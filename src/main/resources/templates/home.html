@@ -80,7 +80,10 @@
 
 
         <div class="movie-category">
-            <p class="category-title">오늘 아주대의 인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="ajouPopular"></i></p>
+            <div class="category-header">
+                <p class="category-title">오늘 아주대의 인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="ajouPopular"></i></p>
+                <span class="section-info" id="ajouPopularListInfo">1 / 1</span>
+            </div>
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
                 <ul class="movie-list" id="ajouPopularList">
@@ -92,7 +95,10 @@
 
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <div class="movie-category">
-                <p class="category-title">나와 같은 mbti 사용자의 선호 영화 <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i></p>
+                <div class="category-header">
+                    <p class="category-title">나와 같은 mbti 사용자의 선호 영화 <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i></p>
+                    <span class="section-info" id="mbtiMovieListInfo">1 / 1</span>
+                </div>
                 <div class="movie-list-container">
                     <button class="arrow left">&#9664;</button>
                     <ul class="movie-list" id="mbtiMovieList">
@@ -105,18 +111,24 @@
 
 
         <div class="movie-category" th:if="${dailyHome.dailyBoxOffice}">
-            <p class="category-title">일별 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i></p>
+            <div class="category-header">
+                <p class="category-title">일별 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i></p>
+                <span class="section-info" id="dBOMListInfo">1 / 1</span>
+            </div>
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
                 <ul class="movie-list" id="dBOMList">
-<!--                    일별 박스오피스 동적 생성-->
+                    <!-- 일별 박스오피스 동적 생성 -->
                 </ul>
                 <button class="arrow right">&#9654;</button>
             </div>
         </div>
 
         <div class="movie-category" th:if="${weeklyHome.weeklyBoxOffice}">
-            <p class="category-title">주간 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i></p>
+            <div class="category-header">
+                <p class="category-title">주간 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i></p>
+                <span class="section-info" id="wBOMListInfo">1 / 1</span>
+            </div>
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
                 <ul class="movie-list" id="wBOMList">
@@ -127,7 +139,10 @@
         </div>
 
         <div class="movie-category" th:if="${dailyHome.tmdbPopular}">
-            <p class="category-title">인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i></p>
+            <div class="category-header">
+                <p class="category-title">인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i></p>
+                <span class="section-info" id="popularMovieListInfo">1 / 1</span>
+            </div>
             <div class="movie-list-container">
                 <button class="arrow left" >&#9664;</button>
                 <ul class="movie-list" id="popularMovieList">
@@ -138,7 +153,10 @@
         </div>
 
         <div class="movie-category" th:if="${dailyHome.tmdbTrend}">
-            <p class="category-title">트렌딩 영화 <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i></p>
+            <div class="category-header">
+                <p class="category-title">트렌딩 영화 <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i></p>
+                <span class="section-info" id="trendingMovieListInfo">1 / 1</span>
+            </div>
             <div class="movie-list-container">
                 <button class="arrow left" >&#9664;</button>
                 <ul class="movie-list" id="trendingMovieList">
@@ -214,7 +232,7 @@
                     createMovieList(movies, 'ajouPopularList', 'ajouPop');
                     document.querySelector('.movie-category').style.display = 'block'; // div를 보이게 함
                     initializeSmoothScroll('ajouPopularList', '.movie-item');
-
+                    updateSectionInfo('ajouPopularList');
                 } else {
                     document.querySelector('.movie-category').style.display = 'none'; // div를 보이게 함
                 }
@@ -233,6 +251,7 @@
                     createMovieList(movies, 'mbtiMovieList', 'mbtiMovie');
                     initializeSmoothScroll('mbtiMovieList', '.movie-item');
                     mbtiMovieContainer.style.display = 'block'; // 영화가 있으면 보이게 함
+                    updateSectionInfo('mbtiMovieList');
                 } else {
                     document.querySelector('.movie-category').style.display = 'none'; // div를 보이게 함
                     mbtiMovieContainer.style.display = 'none'; // 영화가 있으면 보이게 함
@@ -355,8 +374,8 @@
                 <div class="user-rating-container">
                     ${starRating}
                 </div>
-
             </div>
+
             <div class="review-content">
                 <img src="${posterUrl}" alt="${review.movieCommonDTO.title}" class="review-poster">
                 <p class="movie-title">${review.movieCommonDTO.title}</p>
@@ -400,10 +419,22 @@
 
     function initializeMovieLists(dailyHome, weeklyHome) {
         try {
-            if (dailyHome && dailyHome.dailyBoxOffice) { createMovieList(dailyHome.dailyBoxOffice, 'dBOMList', 'kobis'); }
-            if (weeklyHome && weeklyHome.weeklyBoxOffice) { createMovieList(weeklyHome.weeklyBoxOffice, 'wBOMList', 'kobis'); }
-            if (dailyHome && dailyHome.tmdbPopular) { createMovieList(dailyHome.tmdbPopular, 'popularMovieList', 'tmdb'); }
-            if (dailyHome && dailyHome.tmdbTrend) { createMovieList(dailyHome.tmdbTrend, 'trendingMovieList', 'tmdb'); }
+            if (dailyHome && dailyHome.dailyBoxOffice) {
+                createMovieList(dailyHome.dailyBoxOffice, 'dBOMList', 'kobis');
+                updateSectionInfo('dBOMList');
+            }
+            if (weeklyHome && weeklyHome.weeklyBoxOffice) {
+                createMovieList(weeklyHome.weeklyBoxOffice, 'wBOMList', 'kobis');
+                updateSectionInfo('wBOMList');
+            }
+            if (dailyHome && dailyHome.tmdbPopular) {
+                createMovieList(dailyHome.tmdbPopular, 'popularMovieList', 'tmdb');
+                updateSectionInfo('popularMovieList');
+            }
+            if (dailyHome && dailyHome.tmdbTrend) {
+                createMovieList(dailyHome.tmdbTrend, 'trendingMovieList', 'tmdb');
+                updateSectionInfo('trendingMovieList');
+            }
         } catch (error) {
             console.error('Error initializing movie lists:', error);
         }
@@ -458,17 +489,67 @@
         });
     }
 
+    function updateSectionInfo(containerId) {
+        const container = document.getElementById(containerId);
+        const items = container.querySelectorAll('.movie-item');
+        const itemsPerPage = getItemsPerPage();
+        const totalItems = items.length;
+        const totalSections = Math.ceil(totalItems / itemsPerPage);
+
+        const infoElement = document.getElementById(containerId + 'Info');
+
+        function updateInfo() {
+            const scrollLeft = container.scrollLeft;
+            const containerWidth = container.clientWidth;
+            const itemWidth = items[0].offsetWidth;
+            const itemsPerContainer = Math.floor(containerWidth / itemWidth);
+
+            // 현재 섹션 계산
+            let currentSection = Math.floor(scrollLeft / containerWidth) + 1;
+
+            // 마지막 섹션에서 보이는 아이템 수 계산
+            const itemsInLastSection = totalItems % itemsPerContainer || itemsPerContainer;
+
+            // 마지막 섹션인 경우 조정
+            if (currentSection === totalSections && itemsInLastSection < itemsPerContainer) {
+                const scrollThreshold = (totalSections - 1) * containerWidth +
+                                        (itemsInLastSection * itemWidth) / 2;
+                if (scrollLeft >= scrollThreshold) {
+                    currentSection = totalSections;
+                } else {
+                    currentSection = totalSections - 1;
+                }
+            }
+
+            currentSection = Math.min(currentSection, totalSections);
+
+            if (infoElement) {
+                infoElement.textContent = `${currentSection} / ${totalSections}`;
+            }
+        }
+
+        if (infoElement) {
+            updateInfo(); // Initial update
+        }
+
+        container.addEventListener('scroll', updateInfo);
+
+        // Update on window resize
+        window.addEventListener('resize', () => {
+            // Recalculate itemsPerPage and totalSections
+            const newItemsPerPage = getItemsPerPage();
+            const newTotalSections = Math.ceil(totalItems / newItemsPerPage);
+
+            if (newTotalSections !== totalSections) {
+                updateInfo();
+            }
+        });
+    }
+
     function initializeSmoothScroll(containerId, itemsPerPageSelector) {
         const container = document.getElementById(containerId);
         const leftArrow = container.parentElement.querySelector('.arrow.left');
         const rightArrow = container.parentElement.querySelector('.arrow.right');
-
-        function getItemsPerPage() {
-            // 화면 너비에 따라 아이템 수 결정
-            if (window.innerWidth < 768) return 2;
-            if (window.innerWidth < 1024) return 3;
-            return 5;
-        }
 
         function updateArrowVisibility() {
             // 브라우저의 다음 렌더링 사이클에서 계산 수행
@@ -493,6 +574,7 @@
                 left: scrollAmount,
                 behavior: 'smooth'
             });
+            updateSectionInfo(containerId);
         }
 
         leftArrow.onclick = () => scroll(-1);
@@ -512,6 +594,13 @@
 
         // 초기 화살표 상태 설정
         updateArrowVisibility();
+    }
+
+    function getItemsPerPage() {
+        // 화면 너비에 따라 아이템 수 결정
+        if (window.innerWidth < 768) return 2;
+        if (window.innerWidth < 1024) return 3;
+        return 5;
     }
 
 
