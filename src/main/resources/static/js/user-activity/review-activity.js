@@ -27,7 +27,7 @@ window.activityHandlers.review = {
 
     createReviewElement: function(review) {
         var element = $('<div>').addClass('review-card');
-        var scoreText = review.reviewDTO.userRating !== null ? review.reviewDTO.userRating : '미정';
+        var scoreText = review.reviewDTO.userRating !== null ? review.reviewDTO.userRating : '평가 없음';
         var likedClass = review.reviewDTO.likedByCurrentUser ? 'active' : '';
         var starRating = createStarRating(scoreText);
 

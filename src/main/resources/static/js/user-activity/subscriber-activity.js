@@ -25,11 +25,19 @@ window.activityHandlers.subscriber = {
     createActivityElement: function(item) {
         var userRoleClass = item.userCommonDTO.role;
 
-        return $('<div>').addClass('user-info').html(`
+        return $('<div>').addClass('subs-card').html(`
             <a href="/info/${item.userCommonDTO.email}">
-                <img src="${item.userCommonDTO.picture}" alt="${item.userCommonDTO.nickname}" class="user-picture">
+                <img src="${item.userCommonDTO.picture}" alt="${item.userCommonDTO.nickname}" class="subs-picture">
             </a>
-            <p class="subscriber-nickname ${userRoleClass}">${item.userCommonDTO.nickname}</p>
+            <div class="subs-info">
+                <div class="subs-nickname">${item.userCommonDTO.nickname}</div>
+                <div class="subs-cnt">구독자 ${item.subscriptionCnt}명</div>
+                <div class="subs-date">구독일 ${this.formatDate(item.subscriptionDate)}</div>
+            </div>
         `);
+    },
+    formatDate: function(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
     }
 }

@@ -9,8 +9,8 @@ html {
 }
 .logo {
     position: fixed;
-    top: -5%;
-    left: 15%;
+    top: 1%;
+    left: 14%;
     z-index: 1000;
 }
 .logo img {
@@ -109,10 +109,10 @@ html {
 }
 
 .login-box-logo {
-    width: 80%;  /* 로고 크기 조정 */
-    margin-bottom: 1.5rem;  /* 로고 아래 여백 추가 */
+    width: 80%;
+    margin-bottom: 7.5rem;
+    margin-top: 1em;
 }
-
 .btn {
     background: linear-gradient(45deg, #4285F4, #34A853);
     border: none;

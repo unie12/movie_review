@@ -54,7 +54,8 @@ function loadActivities(append = true) {
 }
 
 function scrollHandler() {
-    if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
+    const scrollThreshold = 50; // 픽셀 단위로 스크롤 임계값 설정
+    if ($(document).height() - ($(window).scrollTop() + $(window).height()) < scrollThreshold) {
         loadActivities(true);
     }
 }

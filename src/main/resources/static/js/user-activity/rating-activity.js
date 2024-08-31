@@ -29,17 +29,21 @@ window.activityHandlers.rating = {
         var ajouRatingText = ajouRatingAvg + ' (' + ajouRatingCnt + '표)';
 
         var element = $('<div>').addClass('activity-item');
-        var scoreText = item.score !== null ? item.score : '미정';
+        var scoreText = item.score !== null ? item.score : '평가 없음';
         var starRating = createStarRating(scoreText);
 
 
         element.html(`
-            <img src="https://image.tmdb.org/t/p/w500${item.movie.poster_path}"
-                 alt="${item.title}"
-                 onclick="navigateToMovieDetails(${item.movie.tid})">
-            <p class="activity-title">${item.movie.title}</p>
-            <div class="user-rating-container">
-                ${starRating}
+            <div class="fav-poster-container">
+                <img src="https://image.tmdb.org/t/p/w500${item.movie.poster_path}"
+                     alt="${item.title}"
+                     onclick="navigateToMovieDetails(${item.movie.tid})">
+                <div class="fav-poster-overlay">
+                    <div class="rat-user-rating">${starRating}</div>
+                </div>
+            </div>
+            <div class="fav-movie-info">
+                <p class="movie-title">${item.movie.title}</p>
             </div>
         `);
 

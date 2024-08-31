@@ -312,3 +312,149 @@
     align-items: center;
     margin-bottom: 20px;
 }
+
+
+.fav-poster-container {
+    position: relative;
+    width: 100%;
+    padding-top: 150%; /* 2:3 aspect ratio */
+    overflow: hidden;
+}
+
+.fav-poster-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s;
+}
+
+.fav-poster-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.fav-poster-container:hover .fav-poster-overlay {
+    opacity: 1;
+}
+
+.fav-poster-container:hover img {
+    opacity: 0.7;
+}
+
+.favorite-button, .rat-user-rating {
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.favorite-button.active {
+    color: red;
+}
+
+.movie-info {
+    margin-top: 10px;
+}
+
+.movie-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.ajou-rating {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.unfavorite-confirm {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    z-index: 20;
+}
+
+.undo-button {
+    background-color: white;
+    color: red;
+    border: none;
+    padding: 5px 10px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.rat-user-rating {
+    color: #f39c12;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.9em;
+}
+
+.subscription-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+.subs-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    width: 150px;  /* 카드의 너비 지정 */
+    margin: 10px;  /* 카드 간 간격 */
+}
+
+.subs-card:hover {
+    transform: translateY(-5px);
+}
+
+.subs-picture {
+    width: 100%;
+    height: 50%;
+    object-fit: cover;
+}
+
+.subs-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.subs-nickname {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.subs-cnt, .subs-date {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+#activity-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
