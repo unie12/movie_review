@@ -15,7 +15,7 @@ function loadActivities(append = true) {
             category: category,
             sort: sortOption,
             page: currentPage,
-            size: 9
+            size: 13
         },
         success: function(response) {
             let activityItems = response.favoriteMovies || response.reviews || response.ratings || response.subscriptionDTOs || [];
@@ -27,7 +27,7 @@ function loadActivities(append = true) {
                     console.error('Handler not found for category:', category);
                 }
                 currentPage++;
-                if(activityItems.length < 9) {
+                if(activityItems.length < 13) {
                     hasMoreData = false;
                 }
             } else {

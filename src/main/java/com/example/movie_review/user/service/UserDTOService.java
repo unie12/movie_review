@@ -72,6 +72,7 @@ public class UserDTOService {
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .picture(user.getPicture())
+                .mbti(user.getMbti())
                 .role(user.getRole());
 
         return userCommonDTo.build();
@@ -83,13 +84,7 @@ public class UserDTOService {
 
         List<SubscriptionInfo> subscriptionInfos = user.getSubscribers().stream()
                 .map(sub -> SubscriptionInfo.builder()
-                        .userCommonDTO(UserCommonDTO.builder()
-                                .id(sub.getSubscriber().getId())
-                                .email(sub.getSubscriber().getEmail())
-                                .nickname(sub.getSubscriber().getNickname())
-                                .picture(sub.getSubscriber().getPicture())
-                                .role(sub.getSubscriber().getRole())
-                                .build())
+                        .userCommonDTO(getUserCommonDTO(sub.getSubscriber()))
                         .subscriptionDate(sub.getSubscriptionDate())
                         .subscriptionCnt(sub.getSubscriber().getSubscriberCount())
 
@@ -109,13 +104,7 @@ public class UserDTOService {
 
         List<SubscriptionInfo> subscriptionInfos = user.getSubscriptions().stream()
                 .map(sub -> SubscriptionInfo.builder()
-                        .userCommonDTO(UserCommonDTO.builder()
-                                .id(sub.getSubscribed().getId())
-                                .email(sub.getSubscribed().getEmail())
-                                .nickname(sub.getSubscribed().getNickname())
-                                .picture(sub.getSubscribed().getPicture())
-                                .role(sub.getSubscribed().getRole())
-                                .build())
+                        .userCommonDTO(getUserCommonDTO(sub.getSubscribed()))
                         .subscriptionDate(sub.getSubscriptionDate())
                         .subscriptionCnt(sub.getSubscribed().getSubscriberCount())
 

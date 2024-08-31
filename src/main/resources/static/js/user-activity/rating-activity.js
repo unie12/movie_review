@@ -43,7 +43,7 @@ window.activityHandlers.rating = {
                 </div>
             </div>
             <div class="fav-movie-info">
-                <p class="movie-title">${item.movie.title}</p>
+                <p class="rat-movie-title">${item.movie.title}</p>
             </div>
         `);
 

@@ -18,11 +18,11 @@ public interface DbRatingRepository extends JpaRepository<DbRatings, Long> {
     Optional<DbRatings> findByUserIdAndDbMoviesId(Long userId, Long movieId);
 
     @Query("SELECT new com.example.movie_review.user.DTO.WeeklyUserDTO(" +
-            "new com.example.movie_review.user.DTO.UserCommonDTO(u.id, u.email, u.nickname, u.picture, u.role), " +
+            "new com.example.movie_review.user.DTO.UserCommonDTO(u.id, u.email, u.nickname, u.picture, u.mbti, u.role), " +
             "COUNT(r), true) " +
             "FROM DbRatings r JOIN r.user u " +
             "WHERE r.uploadRating BETWEEN :startDate AND :endDate " +
-            "GROUP BY u.id, u.email, u.nickname, u.picture, u.role " +
+            "GROUP BY u.id, u.email, u.nickname, u.picture, u.mbti, u.role " +
             "ORDER BY COUNT(r) DESC")
     List<WeeklyUserDTO> findTopRaters(LocalDateTime startDate, LocalDateTime endDate);
 

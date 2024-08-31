@@ -301,6 +301,7 @@
             fetch(`/api/review/${reviewId}/likes?page=${page}&size=${size}`)
                 .then(response => response.json())
                 .then(data => {
+                console.log('data', data);
                     data.content.forEach(user => {
                         userList.innerHTML += `
                             <li>

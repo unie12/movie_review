@@ -1,6 +1,6 @@
 .container {
-    padding: 0; /* 컨테이너의 패딩을 제거 */
-    max-width: 100%; /* 최대 너비를 100%로 설정 */
+    padding: 0;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -11,19 +11,19 @@
 .backdrop-container {
     position: relative;
     width: 99.5vw;
-    height: 80vh; /* 또는 원하는 높이 */
+    height: 80vh;
     margin-left: calc(-50vw + 50%);
     overflow: hidden;
     margin-top: -10px;
 }
 .backdrop-item {
     width: 100%;
-    opacity: 0; /* 기본적으로 투명하게 설정 */
-    transition: opacity 1.0s ease; /* 부드러운 전환 효과 */
+    opacity: 0;
+    transition: opacity 1.0s ease;
 }
 
 .backdrop-item.active {
-    opacity: 1; /* 현재 활성화된 이미지만 보이도록 */
+    opacity: 1;
 }
 .backdrop_poster {
     position: absolute;
@@ -61,10 +61,37 @@
 }
 .movie-content {
     display: flex;
-    margin-top: 10px;
-    padding: 0 15vw; /* 좌우 여백 유지 */
+    margin-top: 20px;
+    padding: 0 15vw;
+}
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.rating-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
 }
 
+.rating-info p {
+    margin: 0;
+}
+.user-review-section {
+    margin-bottom: 15px;
+}
+
+.movie-overview {
+    margin-top: 15px;
+}
+
+.movie-overview p {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
 .movie_poster {
     width: 30%;
     height: auto;
@@ -73,50 +100,8 @@
 
 .movie-details {
     flex: 1;
-}
-
-/* 반응형 스타일 */
-@media screen and (max-width: 1200px) {
-    .movie-info-overlay h1 {
-        font-size: 2em;
-    }
-
-    .movie-content {
-        flex-direction: column;
-    }
-
-    .movie_poster {
-        width: 50%;
-        margin: 0 auto 20px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .backdrop-container {
-        height: 40vh;
-    }
-
-    .movie-info-overlay h1 {
-        font-size: 1.5em;
-    }
-
-    .movie_poster {
-        width: 70%;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .backdrop-container {
-        height: 30vh;
-    }
-
-    .movie-info-overlay h1 {
-        font-size: 1.2em;
-    }
-
-    .movie_poster {
-        width: 90%;
-    }
+    display: flex;
+    flex-direction: column;
 }
 
 .director {
@@ -161,7 +146,7 @@
     display: none;
 }
 
-/* ë¦¬ë·° ëª¨ë‹¬ ì„¤ì • */
+
 .modal {
     display: none;
     position: fixed;
@@ -220,10 +205,13 @@ textarea {
     margin-bottom: 15px;
 }
 
-.review-section, .person-section, .backdrops-images, .recommended-movies, .user-review-section {
+.review-section, .person-section, .backdrops-images, .recommended-movies{
     margin-top: 20px;
     margin-bottom: 20px;
     padding: 10px 15vw;
+}
+.person-section {
+    margin-top: 10%;
 }
 .review-grid {
     display: grid;
@@ -241,17 +229,11 @@ textarea {
     overflow: hidden;
     min-height: 200px;
 }
-.review-content {
-    flex-grow: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 10;
-    -webkit-box-orient: vertical;
+
+.review-content p {
     word-wrap: break-word;
-    font-size: 1.0em;
-    line-height: 1.3;
-    color: #7b7d7d
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 .review-actions {
     display: flex;
@@ -295,7 +277,7 @@ textarea {
     color: #ffd700;
 }
 .star-rating .star.active::after {
-    content: "â˜…";
+    content: "Ã¢Ëœâ€¦";
     position: absolute;
     left: 0;
     top: 0;
@@ -359,8 +341,8 @@ textarea {
 }
 .divider {
     border: none;
-    border-top: 1px solid #ddd; /* 구분선 스타일 */
-    margin: -5px 0; /* 구분선 간격 추가 */
+    border-top: 1px solid #ddd;
+    margin: -5px 0;
 }
 .movie-poster {
     position: absolute;
@@ -380,12 +362,25 @@ textarea {
     white-space: nowrap;
 }
 
+
 @media screen and (max-width: 1200px) {
     .movie-grid {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     }
     .review-grid {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    .movie-info-overlay h1 {
+        font-size: 2em;
+    }
+
+    .movie-content {
+        flex-direction: column;
+    }
+
+    .movie_poster {
+        width: 50%;
+        margin: 0 auto 20px;
     }
 }
 
@@ -402,6 +397,29 @@ textarea {
     .modal-content {
         width: 95%;
         margin: 10vh auto;
+    }
+    .backdrop-container {
+        height: 40vh;
+    }
+
+    .movie-info-overlay h1 {
+        font-size: 1.5em;
+    }
+
+    .movie-content {
+        flex-direction: column;
+        padding: 0 5vw;
+    }
+
+    .movie_poster {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .action-buttons,
+    .rating-info {
+        flex-direction: column;
     }
 }
 
@@ -420,6 +438,17 @@ textarea {
         height: 100%;
         margin: 0;
         border-radius: 0;
+    }
+    .backdrop-container {
+        height: 30vh;
+    }
+
+    .movie-info-overlay h1 {
+        font-size: 1.2em;
+    }
+
+    .movie_poster {
+        width: 90%;
     }
 }
 
@@ -487,7 +516,6 @@ textarea {
     right: 10px;
 }
 
-/* 이미지 모달 스타일 */
 .image-modal {
     display: none;
     position: fixed;
@@ -525,7 +553,6 @@ textarea {
     cursor: pointer;
 }
 
-/* slider 관련*/
 .slider-container {
     position: relative;
     width: 100%;
@@ -616,18 +643,16 @@ textarea {
     background-color: #aab7b8;
 }
 
-/* 액터 슬라이더 특정 스타일 */
 #actorSlider .slider-item {
     --items-per-page: 12;
 }
 
-/* 이미지 슬라이더 특정 스타일 */
 #imageSlider .slider-item {
     --items-per-page: 3;
 }
 
 .review-header {
     display: flex;
-    justify-content: space-between; /* 제목과 버튼 사이에 공간을 분배 */
-    align-items: center; /* 세로 가운데 정렬 */
+    justify-content: space-between;
+    align-items: center;
 }

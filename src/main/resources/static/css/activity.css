@@ -153,7 +153,8 @@
     line-height: 1.6;
     overflow-y: auto;
     word-wrap: break-word;
-    color: #7b7d7d
+    color: #7b7d7d;
+    margin-right: 10px;
 }
 
 .divider {
@@ -331,7 +332,16 @@
     margin-bottom: 20px;
 }
 
-
+.fav-movie-title, .rat-movie-title {
+    text-align: center;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    white-space: nowrap; /* 줄바꿈 방지 */
+}
 .fav-poster-container {
     position: relative;
     width: 100%;
@@ -390,11 +400,6 @@
 
 .movie-info {
     margin-top: 10px;
-}
-
-.movie-title {
-    font-weight: bold;
-    margin-bottom: -5px;
 }
 
 .ajou-rating {

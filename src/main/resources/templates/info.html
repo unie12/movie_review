@@ -19,9 +19,10 @@
         <div class="user-info-left">
             <img th:src="${userDTO.userCommonDTO.picture}" alt="User Picture" class="user-picture">
             <div class="user-details">
-            <span th:text="${userDTO.userCommonDTO.nickname}" class="user-nickname"
-                  th:style="'color: ' + ${userDTO.userCommonDTO.role.color}">
-            </span>
+                <span th:text="${userDTO.userCommonDTO.nickname}" class="user-nickname"
+                      th:style="'color: ' + ${userDTO.userCommonDTO.role.color}">
+                </span>
+                <span th:text="${userDTO.userCommonDTO.mbti}" class="user-mbti"></span>
                 <div class="subscription-info">
                     <a th:href="@{'/info/' + ${userDTO.userCommonDTO.email} + '/subscription'}">
                         <span th:text="'내가 구독한 사용자 ' +${userDTO.subscriptionCnt}"></span>

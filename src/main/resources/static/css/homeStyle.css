@@ -104,7 +104,8 @@
     text-overflow: ellipsis;
     margin-top: 5px;
     margin-bottom: 5px;
-    font-size: calc(0.6vw + 5px);
+    font-size: 0.9em;
+    white-space: nowrap; /* 줄바꿈 방지 */
 }
 .movie-info {
     margin-top: 5px;
@@ -187,7 +188,9 @@
 .arrow.right {
     right: -15px;
 }
-
+.arrow:hover {
+    background-color: #aab7b8;
+}
 .review-header {
     display: flex;
     align-items: center;

@@ -48,7 +48,7 @@ public class UserActivityController {
             @RequestParam String category,
             @RequestParam(defaultValue = "createdAt_desc") String sort,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "9") int size,
+            @RequestParam(defaultValue = "13") int size,
             Authentication auth) {
 
         UserActivityService service = activityServices.get(category);

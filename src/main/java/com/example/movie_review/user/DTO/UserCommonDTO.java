@@ -14,13 +14,15 @@ public class UserCommonDTO {
     private String email;
     private String nickname;
     private String picture;
+    private String mbti;
     private UserRole role;
 
-    public UserCommonDTO(Long id, String email, String nickname, String picture, UserRole role) {
+    public UserCommonDTO(Long id, String email, String nickname, String picture, String mbti, UserRole role) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.picture = picture;
+        this.mbti = mbti;
         this.role = role;
     }
 }
