@@ -28,7 +28,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
     }
 
     @Override
-    public Page<ReviewDTO> findReviewByMovieId(Long movieId, Pageable pageable, String sortBy, Sort.Direction direction) {
+    public Page<ReviewDTO> findReviewByDbMoviesId(Long movieId, Pageable pageable, String sortBy, Sort.Direction direction) {
         JPAQuery<ReviewDTO> query = queryFactory
                 .select(Projections.constructor(ReviewDTO.class,
                         Expressions.asNumber(0.0).as("userRating"), // userRating은 나중에 설정
@@ -46,7 +46,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
                         Expressions.asBoolean(false).as("spoiler"))) // 이것도 boolean 값 어떻게 설정해놓지?
                 .from(review)
                 .leftJoin(review.user, user)
-                .where(review.dbMovies.movieDetails.id.eq(movieId));
+                .where(review.dbMovies.id.eq(movieId));
 
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sortBy, direction);
         if (orderSpecifier != null) {
@@ -61,7 +61,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
         JPAQuery<Long> countQuery = queryFactory
                 .select(review.count())
                 .from(review)
-                .where(review.dbMovies.movieDetails.id.eq(movieId));
+                .where(review.dbMovies.id.eq(movieId));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }

@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 public interface ReviewRepositoryCustom {
-    Page<ReviewDTO> findReviewByMovieId(Long movieId, Pageable pageable, String sortBy, Sort.Direction direction);
+    Page<ReviewDTO> findReviewByDbMoviesId(Long movieId, Pageable pageable, String sortBy, Sort.Direction direction);
 }
