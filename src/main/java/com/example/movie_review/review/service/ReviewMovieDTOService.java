@@ -142,6 +142,7 @@ public class ReviewMovieDTOService {
         Collections.shuffle(mixedReviews);
         
         return mixedReviews.stream()
+                .filter(review -> !review.getReviewDTO().isSpoiler())
                 .distinct()
                 .limit(count)
                 .map(this::addFilterInfo)
@@ -248,7 +249,7 @@ public class ReviewMovieDTOService {
         String sortBy = sort.split(",")[0];
 
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<ReviewDTO> reviewDTOS = reviewRepository.findReviewByMovieId(movieId, pageRequest, sortBy, direction);
+        Page<ReviewDTO> reviewDTOS = reviewRepository.findReviewByDbMoviesId(movieId, pageRequest, sortBy, direction);
 
         return reviewDTOS.map(dto -> {
             Double userRating = dbRatingService.getDbRating(dto.getUser().getEmail(), movieId)
