@@ -10,6 +10,13 @@
     padding: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+.card-text {
+    flex: 1;
+    font-size: 0.9em;
+    line-height: 1.6;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
 .review-header {
     display: flex;
     align-items: center;
@@ -19,16 +26,31 @@
     color: gold;
 }
 .like-button {
+    background: none;
+    border: none;
+    color: #777;
     cursor: pointer;
+    margin-right: 5px;
+}
+
+.heart-count {
+    font-weight: bold;
+    margin-left: 5px;
 }
 .like-button.active {
-    background-color: #007bff;
-    color: white;
+    color: #e74c3c;
+}
+.like-button.active .heart-value {
+    background-color: white;
+    color: #e74c3c;
+}
+.like-count {
+    text-decoration: none;
+    color: #777;
 }
 .user-rating, .user-heart {
     display: inline-block;
     padding: 2px 8px;
-    border: 1px solid #ddd;
     border-radius: 4px;
     margin-right: 10px;
     font-size: 0.9em;
@@ -42,7 +64,6 @@
 }
 .user-rating {
     color: #f39c12;
-    border: 1px solid #f39c12;
     border-radius: 4px;
     padding: 2px 8px;
     font-size: 0.9em;
@@ -122,15 +143,8 @@
 .user-nickname {
     font-weight: bold;
 }
-.user-rating {
-    font-weight: bold;
-}
 .review-footer {
-    display: flex;
-    align-items: center;
-}
-.like-count {
-    margin-left: 10px;
+    text-align: right;
 }
 .spoiler-warning {
     color: red;
@@ -182,4 +196,9 @@
     border-radius: 4px;
     font-size: 14px;
     margin-bottom: 3%;
+}
+.divider {
+    border: none;
+    border-top: 1px solid #ddd; /* 구분선 스타일 */
+    margin: 10px 0; /* 구분선 간격 추가 */
 }

@@ -39,8 +39,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="review-divider"></div>
-
+                <hr class="divider">
                 <div class="review-content">
                     <a th:href="@{'/contents/' + ${review.movieCommonDTO.tId}}">
                         <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
@@ -54,7 +53,7 @@
                         </div>
                     </div>
                 </div>
-
+                <hr class="divider">
                 <div class="review-footer">
                     <button class="btn btn-outline-primary like-button" th:classappend="${review.reviewDTO.isLikedByCurrentUser ? 'active' : ''}" th:attr="data-review-id=${review.reviewDTO.review.id}">
                         <i class="fas fa-heart"></i>

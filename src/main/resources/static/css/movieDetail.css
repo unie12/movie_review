@@ -233,6 +233,7 @@
 .user-info {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin-bottom: 10px;
 }
 .user-picture {
@@ -245,6 +246,7 @@
 .user-nickname {
     font-weight: bold;
     margin-right: 10px;
+    margin-right: auto;
 }
 .user-rating {
     color: #f39c12;
@@ -274,6 +276,28 @@
     color: #ffd700;
 }
 
+.star-rating {
+    font-size: 1.2em;
+    color: #ddd;
+    position: relative;
+    display: inline-block;
+    margin-right: 5px;
+}
+.star-rating .fill-stars {
+    color: #FFD700;
+    padding: 0;
+    position: absolute;
+    z-index: 1;
+    display: block;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.star-rating .empty-stars {
+    padding: 0;
+    display: block;
+}
 /* ë¦¬ë·° ì¢‹ì•„ìš” ëª¨ì–‘ */
 .like-button {
     background-color: white;
@@ -309,7 +333,11 @@
     position: relative;
     overflow: hidden;
 }
-
+.divider {
+    border: none;
+    border-top: 1px solid #ddd; /* 구분선 스타일 */
+    margin: -5px 0; /* 구분선 간격 추가 */
+}
 .movie-poster {
     position: absolute;
     top: 0;

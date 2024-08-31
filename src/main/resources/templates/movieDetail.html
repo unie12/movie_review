@@ -162,8 +162,11 @@
                                 <span th:text="${reviewDTO.user.nickname}" class="user-nickname"
                                       th:style="'color: ' + ${reviewDTO.user.role.color}">
                                 </span>
-                                <span class="user-rating">평점: <span th:text="${reviewDTO.userRating ?: '미정'}"></span></span>
+                                <div class="user-rating" th:attr="data-rating=${reviewDTO.userRating ?: '평가 없음'}">
+                                    <span th:text="${reviewDTO.userRating ?: '평가 없음'}"></span>
+                                </div>
                             </div>
+                            <hr class="divider">
                             <div class="review-content">
                                 <p th:if="${!reviewDTO.spoiler}" th:utext="${#strings.abbreviate(reviewDTO.review.text, 100)}"></p>
                                 <div th:if="${reviewDTO.spoiler}" class="spoiler-content">
@@ -241,6 +244,7 @@
             initializeReviewFunctionality(movieId, modal);
             initializeLikeButtons();
             initializePersonRedirect();
+            initializeStarRatings(); // 새로 추가된 부분
         } else {
             console.error('Favorite button not found');
         }
@@ -517,6 +521,35 @@
         const isHidden = spoilerText.style.display === "none";
         spoilerText.style.display = isHidden ? "block" : "none";
         button.textContent = isHidden ? "스포일러 숨기기" : "스포일러 보기";
+    }
+
+    function createStarRating(rating) {
+        if (rating === '평가 없음') {
+            return '<span class="user-rating">평가 없음</span>';
+        }
+        const ratingValue = parseFloat(rating);
+        const fullStars = Math.floor(ratingValue);
+        const decimalPart = ratingValue - fullStars;
+        const fillWidth = (fullStars + decimalPart) * 20; // 20% per star
+
+        return `
+            <div class="star-rating" title="${rating}">
+                <div class="fill-stars" style="width: ${fillWidth}%;">
+                    <span>★★★★★</span>
+                </div>
+                <div class="empty-stars">
+                    <span>★★★★★</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function initializeStarRatings() {
+        const userRatingElements = document.querySelectorAll('.user-rating');
+        userRatingElements.forEach(element => {
+            const rating = element.dataset.rating;
+            element.innerHTML = createStarRating(rating);
+        });
     }
 
     function redirectToPerson(personId, type) {

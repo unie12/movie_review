@@ -40,10 +40,10 @@ window.activityHandlers.favorite = {
                 </div>
             </div>
             <div class="fav-movie-info">
-                <p class="fav-movie-title">${item.movieCommonDTO.title}</p>
+                <p class="movie-title">${item.movieCommonDTO.title}</p>
             </div>
             <div class="unfavorite-confirm" style="display:none;">
-                <p>좋아요 해제 중...</p>
+                <p class="undo-text">좋아요 해제 중...</p>
                 <button class="undo-button">실행 취소</button>
             </div>
         `);

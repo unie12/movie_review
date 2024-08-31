@@ -67,6 +67,8 @@
     height: auto;
     border-radius: 4px;
     aspect-ratio: 2 / 3;
+    cursor: pointer;
+
 }
 .movie-title {
     font-weight: bold;
@@ -105,6 +107,7 @@
     border-radius: 50%;
     margin-right: 10px;
     object-fit: cover;
+    cursor: pointer;
 }
 .user-nickname {
     font-weight: bold;
@@ -329,6 +332,7 @@
     height: 100%;
     object-fit: cover;
     transition: opacity 0.3s;
+    cursor: pointer;
 }
 
 .fav-poster-overlay {
@@ -394,7 +398,10 @@
     text-align: center;
     z-index: 20;
 }
-
+.undo-text {
+    margin-bottom: 1px;
+    margin-top: -3px;
+}
 .undo-button {
     background-color: white;
     color: red;
@@ -451,10 +458,4 @@
     font-size: 0.9em;
     color: #666;
     margin-top: 5px;
-}
-
-#activity-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
 }
