@@ -16,7 +16,12 @@
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
-    <a th:href="@{'/contents/' + ${movieTId}}">뒤로 가기</a>
+<!--    <a th:href="@{'/contents/' + ${movieTId}}">뒤로 가기</a>-->
+
+    <a href="#" onclick="goBack(); return false;" class="back-link">
+        <i class="fas fa-arrow-left"></i> 뒤로 가기
+    </a>
+
     <h1 class="my-4">영화 리뷰</h1>
 
     <select id="sorting" name="sort" class="sort-category">
@@ -58,6 +63,7 @@
         fetch(`/api/movie/${movieTId}/reviews?page=${currentPage}&sort=${currentSort}`)
             .then(response => response.json())
             .then(data => {
+                console.log('data', data);
                 if (data.content.length ===0 && currentPage === 0) {
                     noReviewsMessage.style.display = 'block';
                     loadMore.style.display = 'none';
@@ -223,10 +229,14 @@
                     this.textContent = '스포일러 숨기기';
                 } else {
                     spoilerText.style.display = 'none';
-                    this.textContent = '스포일러 보기';
+                    this.textContent = '스포일러 포함';
                 }
             });
         });
+    }
+
+    function goBack() {
+       window.history.back();
     }
 
 

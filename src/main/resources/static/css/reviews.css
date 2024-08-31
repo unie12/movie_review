@@ -7,11 +7,16 @@
     margin-bottom: 1vh;
 }
 .review-card {
+    background-color: #f8f9fa;
     border: 1px solid #ddd;
     border-radius: 8px;
     margin-bottom: 20px;
     padding: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.review-card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
 }
 .review-header {
     display: flex;
@@ -57,8 +62,31 @@
     border-top: 1px solid #ddd; /* êµ¬ë¶„ì„  ìŠ¤íƒ€ì¼ */
     margin-top: -3px;
 }
+.spoiler-warning {
+    color: red;
+    font-weight: bold;
+}
+.spoiler-content {
+    margin-top: 10px;
+}
+.spoiler-toggle {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: red;
+}
+
+.spoiler-text {
+    margin-top: 10px;
+}
 .review-content {
     display: flex;
+}
+.review-text-content p {
+    color: #7b7d7d
+    font-size: 0.9em;
+    line-height: 1.6;
 }
 .movie-poster {
     width: calc(8vw - 10px);
@@ -76,8 +104,14 @@
 .movie-poster:hover{
     transform: scale(1.1);
 }
-.review-text-content {
-    flex-grow: 1;
+.review-text-content{
+    overflow: hidden;
+    word-wrap: break-word;
+}
+.review-text-content p {
+    font-size: 1.0em;
+    line-height: 1.2;
+    color: #7b7d7d
 }
 .review-text-content h4 {
     margin-top: 0;
@@ -88,6 +122,9 @@
     font-size: 0.9em;
     color: #666;
 }
+.review-movie-title {
+    margin-bottom: -5px;
+}
 .active {
     font-weight: bold;
     color: red;
@@ -97,7 +134,6 @@
     border: none;
     color: #777;
     cursor: pointer;
-    margin-right: 5px;
 }
 
 .heart-count {
@@ -147,6 +183,14 @@
     border: 1px solid #888;
     width: 80%;
     max-width: 500px;
+}
+.modal li img{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    cursor: pointer;
 }
 .close {
     color: #aaa;

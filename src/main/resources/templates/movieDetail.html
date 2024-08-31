@@ -89,16 +89,14 @@
                 </div>
 
                 <!-- 사용자 리뷰 섹션 -->
-                <div class="review-section">
-                    <div id="reviewSection">
-                        <h2>리뷰</h2>
-                        <div id="reviewDisplay" style="display:none;">
-                            <p id="reviewDisplayText"></p>
-                            <button id="editReviewBtn" class="btn btn-secondary">수정</button>
-                            <button id="deleteReviewBtn" class="btn btn-danger">삭제</button>
-                        </div>
-                        <button id="writeReviewBtn" class="btn btn-primary" style="display:none;">리뷰 작성</button>
+                <div id="reviewSection" class="user-review-section">
+                    <h3>내 리뷰</h3>
+                    <div id="reviewDisplay" style="display:none;">
+                        <p id="reviewDisplayText"></p>
+                        <button id="editReviewBtn" class="btn btn-secondary">수정</button>
+                        <button id="deleteReviewBtn" class="btn btn-danger">삭제</button>
                     </div>
+                    <button id="writeReviewBtn" class="btn btn-primary" style="display:none;">리뷰 작성</button>
                 </div>
 
 
@@ -135,7 +133,7 @@
                         <span class="close">&times;</span>
                         <h2 id="modalTitle">리뷰 작성</h2>
                         <textarea id="reviewText" rows="4" cols="50"></textarea>
-                        <div>
+                        <div class="checkbox-container">
                             <input type="checkbox" id="spoilerCheck">
                             <label for="spoilerCheck">스포일러 포함</label>
                         </div>
@@ -154,7 +152,6 @@
                     </div>
                     <div class="review-grid">
                         <div th:each="reviewDTO : ${sortedReviews}" class="review-card">
-
                             <div class="user-info">
                                 <a th:href="@{'/info/' + ${reviewDTO.user.email}}">
                                     <img th:src="${reviewDTO.user.picture}" alt="User Picture" class="user-picture">
@@ -168,9 +165,9 @@
                             </div>
                             <hr class="divider">
                             <div class="review-content">
-                                <p th:if="${!reviewDTO.spoiler}" th:utext="${#strings.abbreviate(reviewDTO.review.text, 100)}"></p>
+                                <p th:if="${!reviewDTO.spoiler}" th:utext="${#strings.abbreviate(reviewDTO.review.text, 300)}"></p>
                                 <div th:if="${reviewDTO.spoiler}" class="spoiler-content">
-                                    <button class="spoiler-toggle" onclick="toggleSpoiler(this)">스포일러 보기</button>
+                                    <button class="spoiler-toggle" onclick="toggleSpoiler(this)">스포일러 포함</button>
                                     <p class="spoiler-text" style="display: none;" th:utext="${reviewDTO.review.text}"></p>
                                 </div>
                             </div>
@@ -244,7 +241,7 @@
             initializeReviewFunctionality(movieId, modal);
             initializeLikeButtons();
             initializePersonRedirect();
-            initializeStarRatings(); // 새로 추가된 부분
+            initializeStarRatings();
         } else {
             console.error('Favorite button not found');
         }
@@ -520,7 +517,7 @@
         const spoilerText = button.nextElementSibling;
         const isHidden = spoilerText.style.display === "none";
         spoilerText.style.display = isHidden ? "block" : "none";
-        button.textContent = isHidden ? "스포일러 숨기기" : "스포일러 보기";
+        button.textContent = isHidden ? "스포일러 숨기기" : "스포일러 포함";
     }
 
     function createStarRating(rating) {

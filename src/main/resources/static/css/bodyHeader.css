@@ -66,6 +66,9 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
+.btn:hover {
+    background-color: #0056b3;
+}
 .btn-primary {
     background-color: #A4AFB1;
     color: white;

@@ -45,10 +45,10 @@
                         <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
                     </a>
                     <div class="review-text-content">
-                        <h4 th:text="${review.movieCommonDTO.title}"></h4>
-                        <p th:if="${!review.reviewDTO.spoiler}" th:utext="${#strings.abbreviate(review.reviewDTO.review.text, 100)}"></p>
+                        <h4  th:text="${review.movieCommonDTO.title}" class="review-movie-title"></h4>
+                        <p th:if="${!review.reviewDTO.spoiler}" th:utext="${#strings.abbreviate(review.reviewDTO.review.text, 1000)}"></p>
                         <div th:if="${review.reviewDTO.spoiler}" class="spoiler-content">
-                            <button class="spoiler-toggle">스포일러 보기</button>
+                            <button class="spoiler-toggle">스포일러 포함</button>
                             <p class="spoiler-text" style="display: none;" th:utext="${review.reviewDTO.review.text}"></p>
                         </div>
                     </div>
@@ -190,7 +190,7 @@
 
         const spoilerContent = review.reviewDTO.spoiler
             ? `<div class="spoiler-content">
-             <button class="spoiler-toggle">스포일러 보기</button>
+             <button class="spoiler-toggle">스포일러 포함</button>
              <p class="spoiler-text" style="display: none;">${reviewTextWithBreaks}</p>
            </div>`
         : `<p class="card-text">${reviewTextWithBreaks}</p>`;
@@ -219,7 +219,7 @@
                     alt="${review.movieCommonDTO.title}" class="movie-poster"
                     onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
                 <div class="review-text-content">
-                    <h4>${review.movieCommonDTO.title}</h4>
+                    <h4 class="review-movie-title">${review.movieCommonDTO.title}</h4>
                     ${spoilerContent}
                 </div>
             </div>
@@ -360,7 +360,7 @@
         if (spoilerText && spoilerText.classList.contains('spoiler-text')) {
             const isHidden = spoilerText.style.display === 'none' || spoilerText.style.display === '';
             spoilerText.style.display = isHidden ? 'block' : 'none';
-            button.textContent = isHidden ? '스포일러 숨기기' : '스포일러 보기';
+            button.textContent = isHidden ? '스포일러 숨기기' : '스포일러 포함';
         }
     }
 

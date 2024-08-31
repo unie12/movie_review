@@ -1,0 +1,106 @@
+.container {
+    position: relative;
+    padding: 10px 15vw;
+}
+.movieSearch {
+    margin-top: 20px;
+}
+.movieSearch table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+    margin-bottom: 20px;
+}
+.movieSearch th, .movieSearch td {
+    padding: 15px;
+    text-align: left;
+    vertical-align: middle;
+}
+.movieSearch th {
+    background-color: #f2f2f2;
+    border-bottom: 2px solid #ddd;
+}
+.movieSearch tr {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+.movieSearch tr:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.movieSearch img {
+    width: 100px;
+    height: auto;
+<!--            height: 150px;-->
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.movieSearch img:hover {
+    transform: scale(1.05);
+}
+.movieSearch .title {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.movieSearch .release-date {
+    color: #666;
+}
+.movieSearch .rating {
+    font-weight: bold;
+    color: #ffa500;
+}
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.user-item:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.user-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.user-nickname {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.subscription-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #A4AFB1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.subscription-btn:hover {
+    background-color: #0056b3;
+}
