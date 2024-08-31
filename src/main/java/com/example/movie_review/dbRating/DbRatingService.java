@@ -57,10 +57,8 @@ public class DbRatingService {
     public void deleteDbRating(Long movieId, String email) {
         User user = userService.getUserByEmail(email);
         DbMovies dbMovie = dbMovieService.getDbMovieById(movieId);
-        DbRatings dbRatings = dbRatingRepository.findByDbMoviesAndUser(dbMovie, user)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user dbMovie"));
-
-        dbRatingRepository.delete(dbRatings);
+        dbRatingRepository.findByDbMoviesAndUser(dbMovie, user)
+                .ifPresent(dbRatingRepository::delete);
     }
 
 

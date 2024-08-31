@@ -70,12 +70,20 @@
                         <div class="rating-info">
                             <p><strong>아주대 평점:</strong> <span th:text="${movieDTO.ajou_ratingAvg} + ' (' + ${movieDTO.ajou_ratingCnt} + '표)'"></span></p>
                             <div id="starRating" class="star-rating">
-                                <span class="star" data-rating="0.5">☆</span><span class="star" data-rating="1">☆</span>
-                                <span class="star" data-rating="1.5">☆</span><span class="star" data-rating="2">☆</span>
-                                <span class="star" data-rating="2.5">☆</span><span class="star" data-rating="3">☆</span>
-                                <span class="star" data-rating="3.5">☆</span><span class="star" data-rating="4">☆</span>
-                                <span class="star" data-rating="4.5">☆</span><span class="star" data-rating="5">☆</span>
+                                <div class="fill-stars">
+                                    <span>★★★★★</span>
+                                </div>
+                                <div class="empty-stars">
+                                    <span>★★★★★</span>
+                                </div>
                             </div>
+<!--                            <div id="starRating" class="star-rating">-->
+<!--                                <span class="star" data-rating="0.5">☆</span><span class="star" data-rating="1">☆</span>-->
+<!--                                <span class="star" data-rating="1.5">☆</span><span class="star" data-rating="2">☆</span>-->
+<!--                                <span class="star" data-rating="2.5">☆</span><span class="star" data-rating="3">☆</span>-->
+<!--                                <span class="star" data-rating="3.5">☆</span><span class="star" data-rating="4">☆</span>-->
+<!--                                <span class="star" data-rating="4.5">☆</span><span class="star" data-rating="5">☆</span>-->
+<!--                            </div>-->
                             <p id="selectedRating">나의 평점: <span>0</span></p>
                         </div>
 
@@ -347,20 +355,28 @@
 
     function initializeStarRating(movieId) {
         const starRating = document.getElementById('starRating');
-        const stars = starRating.getElementsByClassName('star');
         const selectedRating = document.querySelector('#selectedRating span');
+        const fillStars = starRating.querySelector('.fill-stars');
+        let currentRating = 0;
+        let tempRating = 0;
 
-        function setRating(rating) {
+        function setRating(rating, isTemp = false) {
+            if (isTemp) {
+                tempRating = rating;
+            } else {
+                currentRating = rating;
+            }
             selectedRating.textContent = rating || '0';
-            Array.from(stars).forEach(star => {
-                star.classList.toggle('full', parseFloat(star.dataset.rating) <= rating);
-            });
+            fillStars.style.width = `${(rating / 5) * 100}%`;
         }
 
         function loadRating() {
             fetch(`/api/movie/rating/${movieId}`)
                 .then(response => response.json())
-                .then(data => setRating(data.rating))
+                .then(data => {
+                    setRating(data.rating);
+                    tempRating = data.rating;
+                })
                 .catch(error => console.error('Error:', error));
         }
 
@@ -371,18 +387,43 @@
                 body: JSON.stringify({rating: rating})
             })
             .then(response => response.json())
-            .then(data => setRating(data.deleted ? 0 : data.rating))
+            .then(data => {
+                if (data.deleted) {
+                    setRating(0);
+                    tempRating = 0;
+                } else {
+                    setRating(data.rating);
+                    tempRating = data.rating;
+                }
+            })
             .catch(error => console.error('Error:', error));
         }
 
         loadRating();
 
-        Array.from(stars).forEach(star => {
-            star.addEventListener('click', function() {
-                const rating = parseFloat(this.dataset.rating);
-                const currentRating = parseFloat(selectedRating.textContent);
-                saveOrDeleteRating(rating === currentRating ? 0 : rating);
-            });
+        starRating.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const width = rect.width;
+            let rating = Math.ceil((x / width) * 10) / 2;
+            setRating(rating, true);
+        });
+
+        starRating.addEventListener('mouseleave', function() {
+            setRating(currentRating);
+        });
+
+        starRating.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const width = rect.width;
+            let newRating = Math.ceil((x / width) * 10) / 2;
+
+            if (newRating === currentRating) {
+                saveOrDeleteRating(0); // 현재 평점과 같은 값을 클릭하면 삭제 요청
+            } else {
+                saveOrDeleteRating(newRating);
+            }
         });
     }
 
@@ -520,12 +561,10 @@
             return '<span class="user-rating">평가 없음</span>';
         }
         const ratingValue = parseFloat(rating);
-        const fullStars = Math.floor(ratingValue);
-        const decimalPart = ratingValue - fullStars;
-        const fillWidth = (fullStars + decimalPart) * 20; // 20% per star
+        const fillWidth = (ratingValue / 5) * 100; // Convert to percentage
 
         return `
-            <div class="star-rating" title="${rating}">
+            <div class="star-rating-list" title="${rating}">
                 <div class="fill-stars" style="width: ${fillWidth}%;">
                     <span>★★★★★</span>
                 </div>
