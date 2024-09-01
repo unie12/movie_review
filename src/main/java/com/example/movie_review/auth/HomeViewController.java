@@ -54,6 +54,7 @@ public class HomeViewController {
 //            movieCacheService.updateWeeklyMovieCache();
 //            userService.updateUserRoles();
 
+            model.addAttribute("currentUser", userService.getUserMovieInfo(userService.getUserByEmail(auth.getName())));
             model.addAttribute("dailyHome", cacheUpdateService.getDailyHomeData());
             model.addAttribute("weeklyHome", cacheUpdateService.getWeeklyHomeData());
 

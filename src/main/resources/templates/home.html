@@ -96,7 +96,10 @@
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <div class="movie-category">
                 <div class="category-header">
-                    <p class="category-title">나와 같은 mbti 사용자의 선호 영화 <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i></p>
+                    <p class="category-title">
+                        <span th:text="${currentUser.mbti}"></span> 사용자들의 선호 영화
+                        <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i>
+                    </p>
                     <span class="section-info" id="mbtiMovieListInfo">1 / 1</span>
                 </div>
                 <div class="movie-list-container">
@@ -112,7 +115,10 @@
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <div class="movie-category">
                 <div class="category-header">
-                    <p class="category-title">나와 같은 학과 사용자의 선호 영화 <i class="fas fa-question-circle info-icon" data-info-key="departmentMovie"></i></p>
+                    <p class="category-title">
+                        <span th:text="${currentUser.department}"></span> 사용자들의 선호 영화
+                        <i class="fas fa-question-circle info-icon" data-info-key="departmentMovie"></i>
+                    </p>
                     <span class="section-info" id="departmentMovieListInfo">1 / 1</span>
                 </div>
                 <div class="movie-list-container">

@@ -50,8 +50,8 @@ public class ReviewMovieDTOService {
      */
     @Scheduled(fixedRate = 18000000) // 30분
     public void updateReviewCache() {
-        LocalDateTime startDate = LocalDateTime.now().minusDays(30);
-        int minHeartCont = 0;
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        int minHeartCont = 1;
 
         List<Review> popularReviews = reviewRepository.findPopularReviewsWithMinHearts(minHeartCont, startDate);
         this.cachedPopularReviews = popularReviews.stream()

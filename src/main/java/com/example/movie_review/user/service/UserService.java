@@ -11,6 +11,7 @@ import com.example.movie_review.movieDetail.domain.Crew;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
 import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
 import com.example.movie_review.review.event.ReviewEvent;
+import com.example.movie_review.user.DTO.UserMovieInfoDTO;
 import com.example.movie_review.user.UserRole;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.repository.UserRepository;
@@ -333,5 +334,12 @@ public class UserService {
                 .filter(r -> r.getScore() <= filter)
                 .map(DbRatings::getDbMovies)
                 .collect(Collectors.toList());
+    }
+
+    public UserMovieInfoDTO getUserMovieInfo(User user) {
+        return UserMovieInfoDTO.builder()
+                .mbti(user.getMbti())
+                .department(user.getDepartment())
+                .build();
     }
 }
