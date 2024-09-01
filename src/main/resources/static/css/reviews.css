@@ -3,9 +3,7 @@
     margin: 0 auto;
     padding: 20px;
 }
-.category {
-    margin-bottom: 1vh;
-}
+
 .review-card {
     background-color: #f8f9fa;
     border: 1px solid #ddd;
@@ -254,4 +252,28 @@
 .star-rating .empty-stars {
     padding: 0;
     display: block;
+}
+
+.filter-tabs {
+    width: 22%;
+    display: flex;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 5px;
+    margin-bottom: 20px;
+
+}
+.filter-tabs a {
+    text-decoration: none;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 15px;
+    transition: background-color 0.3s, color 0.3s;
+}
+.filter-tabs a.active {
+    background-color: #4285f4;
+    color: white;
+}
+.filter-tabs a:not(.active):hover {
+    background-color: #e0e0e0;
 }
