@@ -56,6 +56,17 @@ public class HomeController {
     }
 
     /**
+     * 현재 사용자와 동일한 학과인 다른 사용자의 선호 영화
+     */
+    @GetMapping("/home/departmentMovies")
+    public ResponseEntity<List<MovieCommonDTO>> getSameDepartmentMovies(Authentication auth) {
+        User user = userService.getUserByEmail(auth.getName());
+        List<MovieCommonDTO> movies = movieCommonDTOService.getSameDepartmentMovies(user);
+        Collections.shuffle(movies);
+        return ResponseEntity.ok(movies.stream().limit(20).collect(Collectors.toList()));
+    }
+
+    /**
      * 실시간 데이터 보내주기 
      */
     @GetMapping("/home/realtime-data")

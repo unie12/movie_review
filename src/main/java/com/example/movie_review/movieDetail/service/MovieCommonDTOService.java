@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,7 +86,7 @@ public class MovieCommonDTOService {
      * 특정 시간 (일단 하루) 동안 아주대 사람들의 찜, 평가, 리뷰 수가 많은 영화 반환
      */
     public List<MoviePopularityDTO> getAjouPopularMovies() {
-        LocalDateTime startDate = LocalDateTime.now().minusHours(24 );
+        LocalDateTime startDate = LocalDateTime.now().minusHours(24);
         double minRating = 3.4;
 
         return dbMovieRepositoryCustom.findAjouPopularMovies(startDate, minRating);
@@ -93,22 +94,42 @@ public class MovieCommonDTOService {
 
     /**
      * 동일한 mbti 사용자의 선호 영화
-     * 평가 높은것만으로 판단하자?
+     * 현재 rating만 가지고 판단
      */
     public List<MovieCommonDTO> getSameMbtiMovies(User currentUser) {
         List<User> users = userRepository.findByMbti(currentUser.getMbti()).stream()
                 .filter(user -> !user.getId().equals(currentUser.getId()))
                 .toList();
 
-        List<DbMovies> movies = users.stream()
+        Map<DbMovies, Long> movies = users.stream()
                 .flatMap(user -> user.getDbRatings().stream()
                         .filter(r -> r.getScore() >= 3.5)
                         .map(DbRatings::getDbMovies))
-                .distinct()
+                .collect(Collectors.groupingBy(movie -> movie, Collectors.counting()));
+
+        return movies.entrySet().stream()
+                .sorted(Map.Entry.<DbMovies, Long>comparingByValue().reversed())
+                .map(entry -> getMovieCommonDTO(entry.getKey(), entry.getKey().getMovieDetails()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 동일한 학과 사용자의 선호 영화
+     */
+    public List<MovieCommonDTO> getSameDepartmentMovies(User currentUser) {
+        List<User> users = userRepository.findByDepartment(currentUser.getDepartment()).stream()
+                .filter(user -> !user.getId().equals(currentUser.getId()))
                 .toList();
 
-        return movies.stream()
-                .map(movie -> getMovieCommonDTO(movie, movie.getMovieDetails()))
+        Map<DbMovies, Long> movies = users.stream()
+                .flatMap(user -> user.getDbRatings().stream()
+                        .filter(r -> r.getScore() >= 3.5)
+                        .map(DbRatings::getDbMovies))
+                .collect(Collectors.groupingBy(movie -> movie, Collectors.counting()));
+
+        return movies.entrySet().stream()
+                .sorted(Map.Entry.<DbMovies, Long>comparingByValue().reversed())
+                .map(entry -> getMovieCommonDTO(entry.getKey(), entry.getKey().getMovieDetails()))
                 .collect(Collectors.toList());
     }
 }
