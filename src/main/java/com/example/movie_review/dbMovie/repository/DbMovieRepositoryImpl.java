@@ -25,7 +25,7 @@ public class DbMovieRepositoryImpl implements DbMovieRepositoryCustom {
     }
 
     @Override
-    public List<MoviePopularityDTO> findAjouPopularMovies(LocalDateTime startDate, double minRating) {
+    public List<MoviePopularityDTO> findPopularMoviesByUserGroup(List<Long> userIds, LocalDateTime startDate, double minRating) {
         QDbMovies m = QDbMovies.dbMovies;
         QMovieDetails md = QMovieDetails.movieDetails;
         QUserFavoriteMovie f = QUserFavoriteMovie.userFavoriteMovie;
@@ -49,9 +49,9 @@ public class DbMovieRepositoryImpl implements DbMovieRepositoryCustom {
                 // 테이블 간의 조인 정의, DbMovies를 기준으로 조인 조건에 따라(startDate)
                 .from(m)
                 .join(m.movieDetails, md)
-                .leftJoin(m.favoritedByUsers, f).on(f.favoriteDate.goe(startDate))
-                .leftJoin(m.dbRatings, r).on(r.uploadRating.goe(startDate))
-                .leftJoin(m.reviews, rev).on(rev.uploadDate.goe(startDate))
+                .leftJoin(m.favoritedByUsers, f).on(f.favoriteDate.goe(startDate), f.user.id.in(userIds))
+                .leftJoin(m.dbRatings, r).on(r.uploadRating.goe(startDate), r.user.id.in(userIds))
+                .leftJoin(m.reviews, rev).on(rev.uploadDate.goe(startDate), rev.user.id.in(userIds))
                 // 결과를 세 가지 변수로 그룹화
                 .groupBy(m.id, md.poster_path, md.title)
                 // 평균 평점이 minRatung 이상이고 최근 활동인 경우

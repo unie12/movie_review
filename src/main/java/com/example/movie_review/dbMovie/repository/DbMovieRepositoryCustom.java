@@ -6,5 +6,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DbMovieRepositoryCustom {
-    List<MoviePopularityDTO> findAjouPopularMovies(LocalDateTime startDate, double minRating);
+    List<MoviePopularityDTO> findPopularMoviesByUserGroup(List<Long> userIds, LocalDateTime startDate, double minRating);
 }

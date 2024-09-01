@@ -18,6 +18,7 @@ import com.example.movie_review.user.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -84,52 +85,50 @@ public class MovieCommonDTOService {
 
     /**
      * 특정 시간 (일단 하루) 동안 아주대 사람들의 찜, 평가, 리뷰 수가 많은 영화 반환
+     * 1시간마다 캐시 갱신
      */
+    @Cacheable(value = "ajouPopularMovies", key = "'ajou_' + T(java.time.LocalDateTime).now().format(T(java.time.format.DateTimeFormatter).ofPattern('yyyyMMddHH'))", unless = "#result.isEmpty()")
     public List<MoviePopularityDTO> getAjouPopularMovies() {
-        LocalDateTime startDate = LocalDateTime.now().minusHours(24);
-        double minRating = 3.4;
+        List<Long> userIds = userRepository.findAll().stream()
+                .map(User::getId)
+                .toList();
 
-        return dbMovieRepositoryCustom.findAjouPopularMovies(startDate, minRating);
+        LocalDateTime startDate = LocalDateTime.now().minusHours(48);
+        double minRating = 3.5;
+
+        return dbMovieRepositoryCustom.findPopularMoviesByUserGroup(userIds, startDate, minRating);
     }
 
     /**
      * 동일한 mbti 사용자의 선호 영화
      * 현재 rating만 가지고 판단
      */
-    public List<MovieCommonDTO> getSameMbtiMovies(User currentUser) {
-        List<User> users = userRepository.findByMbti(currentUser.getMbti()).stream()
-                .filter(user -> !user.getId().equals(currentUser.getId()))
-                .toList();
-
-        Map<DbMovies, Long> movies = users.stream()
-                .flatMap(user -> user.getDbRatings().stream()
-                        .filter(r -> r.getScore() >= 3.5)
-                        .map(DbRatings::getDbMovies))
-                .collect(Collectors.groupingBy(movie -> movie, Collectors.counting()));
-
-        return movies.entrySet().stream()
-                .sorted(Map.Entry.<DbMovies, Long>comparingByValue().reversed())
-                .map(entry -> getMovieCommonDTO(entry.getKey(), entry.getKey().getMovieDetails()))
+    @Cacheable(value = "mbtiPopularMovies", key = "'mbti_' + #currentUser.getMbti() + '_' + T(java.time.LocalDateTime).now().format(T(java.time.format.DateTimeFormatter).ofPattern('yyyyMMddHH'))", unless = "#result.isEmpty()")
+    public List<MoviePopularityDTO> getSameMbtiMovies(User currentUser) {
+        List<Long> userIds = userRepository.findByMbti(currentUser.getMbti()).stream()
+//                .filter(user -> !user.getId().equals(currentUser.getId()))
+                .map(User::getId)
                 .collect(Collectors.toList());
+
+        LocalDateTime startDate = LocalDateTime.now().minusHours(48);
+        double minRating = 3.5;
+
+        return dbMovieRepositoryCustom.findPopularMoviesByUserGroup(userIds, startDate, minRating);
     }
 
     /**
      * 동일한 학과 사용자의 선호 영화
      */
-    public List<MovieCommonDTO> getSameDepartmentMovies(User currentUser) {
-        List<User> users = userRepository.findByDepartment(currentUser.getDepartment()).stream()
-                .filter(user -> !user.getId().equals(currentUser.getId()))
-                .toList();
-
-        Map<DbMovies, Long> movies = users.stream()
-                .flatMap(user -> user.getDbRatings().stream()
-                        .filter(r -> r.getScore() >= 3.5)
-                        .map(DbRatings::getDbMovies))
-                .collect(Collectors.groupingBy(movie -> movie, Collectors.counting()));
-
-        return movies.entrySet().stream()
-                .sorted(Map.Entry.<DbMovies, Long>comparingByValue().reversed())
-                .map(entry -> getMovieCommonDTO(entry.getKey(), entry.getKey().getMovieDetails()))
+    @Cacheable(value = "departmentPopularMovies", key = "'dept_' + #currentUser.getDepartment() + '_' + T(java.time.LocalDateTime).now().format(T(java.time.format.DateTimeFormatter).ofPattern('yyyyMMddHH'))", unless = "#result.isEmpty()")
+    public List<MoviePopularityDTO> getSameDepartmentMovies(User currentUser) {
+        List<Long> userIds = userRepository.findByDepartment(currentUser.getDepartment()).stream()
+//                .filter(user -> !user.getId().equals(currentUser.getId()))
+                .map(User::getId)
                 .collect(Collectors.toList());
+
+        LocalDateTime startDate = LocalDateTime.now().minusHours(48);
+        double minRating = 3.5;
+
+        return dbMovieRepositoryCustom.findPopularMoviesByUserGroup(userIds, startDate, minRating);
     }
 }

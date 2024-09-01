@@ -48,9 +48,9 @@ public class HomeController {
      * 현재 사용자와 동일한 mbti를 가진 다른 사용자의 선호 영화
      */
     @GetMapping("/home/mbtiMovies")
-    public ResponseEntity<List<MovieCommonDTO>> getSameMbtiMovies(Authentication auth) {
+    public ResponseEntity<List<MoviePopularityDTO>> getSameMbtiMovies(Authentication auth) {
         User user = userService.getUserByEmail(auth.getName());
-        List<MovieCommonDTO> movies = movieCommonDTOService.getSameMbtiMovies(user);
+        List<MoviePopularityDTO> movies = movieCommonDTOService.getSameMbtiMovies(user);
         Collections.shuffle(movies);
         return ResponseEntity.ok(movies.stream().limit(20).collect(Collectors.toList()));
     }
@@ -59,9 +59,9 @@ public class HomeController {
      * 현재 사용자와 동일한 학과인 다른 사용자의 선호 영화
      */
     @GetMapping("/home/departmentMovies")
-    public ResponseEntity<List<MovieCommonDTO>> getSameDepartmentMovies(Authentication auth) {
+    public ResponseEntity<List<MoviePopularityDTO>> getSameDepartmentMovies(Authentication auth) {
         User user = userService.getUserByEmail(auth.getName());
-        List<MovieCommonDTO> movies = movieCommonDTOService.getSameDepartmentMovies(user);
+        List<MoviePopularityDTO> movies = movieCommonDTOService.getSameDepartmentMovies(user);
         Collections.shuffle(movies);
         return ResponseEntity.ok(movies.stream().limit(20).collect(Collectors.toList()));
     }

@@ -271,7 +271,7 @@
             .then(response => response.json())
             .then(movies => {
                 if (movies.length > 0) {
-                    createMovieList(movies, 'mbtiMovieList', 'movieCommon');
+                    createMovieList(movies, 'mbtiMovieList', 'mbtiPop');
                     initializeSmoothScroll('mbtiMovieList', '.movie-item');
                     mbtiMovieContainer.style.display = 'block'; // 영화가 있으면 보이게 함
                     updateSectionInfo('mbtiMovieList');
@@ -294,7 +294,7 @@
             .then(response => response.json())
             .then(movies => {
                 if (movies.length > 0) {
-                    createMovieList(movies, 'departmentMovieList', 'movieCommon');
+                    createMovieList(movies, 'departmentMovieList', 'departmentPop');
                     initializeSmoothScroll('departmentMovieList', '.movie-item');
                     departmentMovieContainer.style.display = 'block'; // 영화가 있으면 보이게 함
                     updateSectionInfo('departmentMovieList');

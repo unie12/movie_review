@@ -24,7 +24,10 @@ public class CacheConfig {
                 "weeklyHomePage",
                 "randomMoviePosters",
                 "patchNotes",
-                "patchNote"
+                "patchNote",
+                "ajouPopularMovies",
+                "mbtiPopularMovies",
+                "departmentPopularMovies"
         );
         cacheManager.setAsyncCacheMode(true); // 비동기 처리
         cacheManager.setCaffeine(caffeineCacheBuilder());
