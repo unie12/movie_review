@@ -50,8 +50,13 @@
     color: #e74c3c;
 }
 .like-count {
+    font-size: 16px;
     text-decoration: none;
     color: #777;
+}
+.like-count:hover {
+    font-weight: bold;
+    color: black;
 }
 .user-rating, .user-heart {
     display: inline-block;
@@ -126,9 +131,12 @@
     margin: 0 auto;
 }
 
-.user-list {
-    list-style-type: none;
+user-list {
+    max-height: calc(35vh - 100px); /* 모달 컨텐츠 높이에서 여유 공간을 뺀 값 */
+    overflow-y: auto;
     padding: 0;
+    margin: 0;
+    list-style-type: none;
 }
 .user-list li {
     display: flex;

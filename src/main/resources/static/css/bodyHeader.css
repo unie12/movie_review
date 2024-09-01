@@ -136,6 +136,31 @@ body {
     }
 }
 
+#likeUserList::-webkit-scrollbar {
+    width: 10px;
+}
+#likeUserList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+#likeUserList::-webkit-scrollbar-thumb {
+    background: rgb(0 74 173 / 50%);
+    border-radius: 10px;
+}
+
+#reviewText::-webkit-scrollbar {
+    width: 10px;
+}
+#reviewText::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+#reviewText::-webkit-scrollbar-thumb {
+    background: rgb(0 74 173 / 50%);
+    border-radius: 10px;
+}
+
+
 .ADMIN { color: #CCCCFF; }
 .USER { color: #000000; }
 .BRONZE { color: #000000; }

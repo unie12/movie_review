@@ -72,7 +72,6 @@
     border-radius: 4px;
     aspect-ratio: 2 / 3;
     cursor: pointer;
-
 }
 .movie-title {
     font-weight: bold;
@@ -197,8 +196,13 @@
     color: #e74c3c;
 }
 .like-count {
+    font-size: 16px;
     text-decoration: none;
     color: #777;
+}
+.like-count:hover {
+    font-weight: bold;
+    color: black;
 }
 
 .favorite {
@@ -270,9 +274,12 @@
     text-decoration: none;
     cursor: pointer;
 }
-.user-list {
-    list-style-type: none;
+user-list {
+    max-height: calc(35vh - 100px); /* 모달 컨텐츠 높이에서 여유 공간을 뺀 값 */
+    overflow-y: auto;
     padding: 0;
+    margin: 0;
+    list-style-type: none;
 }
 .user-list li {
     display: flex;

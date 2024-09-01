@@ -1,183 +1,185 @@
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title th:text="${currentFilter} + '리뷰'">전체 리뷰</title>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <link rel="stylesheet" href="/css/bodyHeader.css">
-        <link rel="stylesheet" href="/css/reviews.css">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${currentFilter} + '리뷰'">전체 리뷰</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/bodyHeader.css">
+    <link rel="stylesheet" href="/css/reviews.css">
 
-    </head>
-    <script th:src="@{'/js/search.js'}"></script>
+</head>
+<script th:src="@{'/js/search.js'}"></script>
 
-    <body>
-    <div class="container">
-        <div th:replace="fragments/bodyHeader :: bodyHeader" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
-        <div class="category">
-            <a th:href="@{/reviews(filter='popular')}" th:class="${currentFilter == 'popular' ? 'active' : ''}">인기순</a>
-            <a th:href="@{/reviews(filter='recently')}" th:class="${currentFilter == 'recently' ? 'active' : ''}">최신순</a>
-        </div>
+    <div class="filter-tabs">
+        <a th:href="@{/reviews(filter='popular')}" th:class="${currentFilter == 'popular' ? 'active' : ''}">인기순</a>
+        <a th:href="@{/reviews(filter='recently')}" th:class="${currentFilter == 'recently' ? 'active' : ''}">최신순</a>
+    </div>
 
-        <div id="reviewList">
-            <div th:each="review : ${reviews}" th:id="'review-' + ${review.reviewDTO.review.id}" class="review-card" th:classappend="${review.reviewDTO.review.id == highlightReviewId} ? 'highlighted' : ''">
-                <div class="review-header">
-                    <a th:href="@{'/info/' + ${review.reviewDTO.user.email}}">
-                        <img th:src="${review.reviewDTO.user.picture}" th:alt="${review.reviewDTO.user.nickname}" class="user-picture">
-                    </a>
-                    <div class="user-content">
-                        <div class="user-info">
-                            <div class="user-details">
-                                <span class="user-nickname" th:text="${review.reviewDTO.user.nickname}"
-                                    th:style="'color: ' + ${review.reviewDTO.user.role.color}"></span>
-                                <span class="upload-date" th:attr="data-upload-date=${review.reviewDate}"></span>
-                            </div>
-                            <div class="user-rating-container">
-                                <span class="user-rating" th:text="${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span>
-                            </div>
+    <div id="reviewList">
+        <div th:each="review : ${reviews}" th:id="'review-' + ${review.reviewDTO.review.id}" class="review-card" th:classappend="${review.reviewDTO.review.id == highlightReviewId} ? 'highlighted' : ''">
+            <div class="review-header">
+                <a th:href="@{'/info/' + ${review.reviewDTO.user.email}}">
+                    <img th:src="${review.reviewDTO.user.picture}" th:alt="${review.reviewDTO.user.nickname}" class="user-picture">
+                </a>
+                <div class="user-content">
+                    <div class="user-info">
+                        <div class="user-details">
+                            <span class="user-nickname" th:text="${review.reviewDTO.user.nickname}"
+                                th:style="'color: ' + ${review.reviewDTO.user.role.color}"></span>
+                            <span class="upload-date" th:attr="data-upload-date=${review.reviewDate}"></span>
+                        </div>
+                        <div class="user-rating-container">
+                            <span class="user-rating" th:text="${review.reviewDTO.userRating != null ? #numbers.formatDecimal(review.reviewDTO.userRating, 1, 1) : '평가 없음'}"></span>
                         </div>
                     </div>
                 </div>
-                <hr class="divider">
-                <div class="review-content">
+            </div>
+            <hr class="divider">
+            <div class="review-content">
+                <div class="poster-container">
                     <a th:href="@{'/contents/' + ${review.movieCommonDTO.tId}}">
                         <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
                     </a>
-                    <div class="review-text-content">
-                        <h4  th:text="${review.movieCommonDTO.title}" class="review-movie-title"></h4>
-                        <p th:if="${!review.reviewDTO.spoiler}" th:utext="${#strings.abbreviate(review.reviewDTO.review.text, 1000)}"></p>
-                        <div th:if="${review.reviewDTO.spoiler}" class="spoiler-content">
-                            <button class="spoiler-toggle">스포일러 포함</button>
-                            <p class="spoiler-text" style="display: none;" th:utext="${review.reviewDTO.review.text}"></p>
-                        </div>
+                </div>
+                <div class="review-text-content">
+                    <h4  th:text="${review.movieCommonDTO.title}" class="review-movie-title"></h4>
+                    <p th:if="${!review.reviewDTO.spoiler}" th:utext="${#strings.abbreviate(review.reviewDTO.review.text, 1000)}"></p>
+                    <div th:if="${review.reviewDTO.spoiler}" class="spoiler-content">
+                        <button class="spoiler-toggle">스포일러 포함</button>
+                        <p class="spoiler-text" style="display: none;" th:utext="${review.reviewDTO.review.text}"></p>
                     </div>
                 </div>
-                <hr class="divider">
-                <div class="review-footer">
-                    <button class="btn btn-outline-primary like-button" th:classappend="${review.reviewDTO.isLikedByCurrentUser ? 'active' : ''}" th:attr="data-review-id=${review.reviewDTO.review.id}">
-                        <i class="fas fa-heart"></i>
-                    </button>
-                    <a href="javascript:void(0)" class="like-count" th:attr="data-review-id=${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count" th:text="${review.heartCnt}"></span>
-                </div>
+            </div>
+            <hr class="divider">
+            <div class="review-footer">
+                <button class="btn btn-outline-primary like-button" th:classappend="${review.reviewDTO.isLikedByCurrentUser ? 'active' : ''}" th:attr="data-review-id=${review.reviewDTO.review.id}">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <a href="javascript:void(0)" class="like-count" th:attr="data-review-id=${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count" th:text="${review.heartCnt}"></span>
             </div>
         </div>
-
-        <div id="likeModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>좋아요를 누른 사용자</h2>
-                <ul id="likeUserList" class="user-list"></ul>
-            </div>
-        </div>
-
-        <div id="loading" style="display: none;">Loading...</div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script th:inline="javascript">
-        var currentPage = /*[[${currentPage}]]*/ 0;
-        var totalPages = /*[[${totalPages}]]*/ 1;
-        var currentFilter = /*[[${currentFilter}]]*/ 'popular';
-        var loading = false;
-        var highlightReviewId = /*[[${highlightReviewId}]]*/ null;
+    <div id="likeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>좋아요를 누른 사용자</h2>
+            <ul id="likeUserList" class="user-list"></ul>
+        </div>
+    </div>
 
-        function initPage() {
-            if (highlightReviewId) {
-                const element = document.getElementById('review-' + highlightReviewId);
-                if (element) {
-                    element.scrollIntoView({behavior: "smooth", block: "center"});
-                }
+    <div id="loading" style="display: none;">Loading...</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    var currentPage = /*[[${currentPage}]]*/ 0;
+    var totalPages = /*[[${totalPages}]]*/ 1;
+    var currentFilter = /*[[${currentFilter}]]*/ 'popular';
+    var loading = false;
+    var highlightReviewId = /*[[${highlightReviewId}]]*/ null;
+
+    function initPage() {
+        if (highlightReviewId) {
+            const element = document.getElementById('review-' + highlightReviewId);
+            if (element) {
+                element.scrollIntoView({behavior: "smooth", block: "center"});
             }
-            attachEventListeners();
-            updateRelativeTimes();
-            setInterval(updateRelativeTimes, 60000);
-            updateInitialStarRatings();
-
-            document.querySelectorAll('.spoiler-toggle').forEach(button => {
-                button.addEventListener('click', toggleSpoiler);
-            });
         }
+        attachEventListeners();
+        updateRelativeTimes();
+        setInterval(updateRelativeTimes, 60000);
+        updateInitialStarRatings();
 
-        function updateInitialStarRatings() {
-            document.querySelectorAll('.review-card').forEach(card => {
-                const ratingElement = card.querySelector('.user-rating');
-                if (ratingElement) {
-                    const rating = ratingElement.textContent.trim();
-                    const starRating = createStarRating(rating);
-                    const ratingContainer = card.querySelector('.user-rating-container');
-                    if (ratingContainer) {
-                        ratingContainer.innerHTML = starRating;
-                    } else {
-                        const userInfo = card.querySelector('.user-info');
-                        if (userInfo) {
-                            const newRatingContainer = document.createElement('div');
-                            newRatingContainer.className = 'user-rating-container';
-                            newRatingContainer.innerHTML = starRating;
-                            userInfo.appendChild(newRatingContainer);
-                        }
+        document.querySelectorAll('.spoiler-toggle').forEach(button => {
+            button.addEventListener('click', toggleSpoiler);
+        });
+    }
+
+    function updateInitialStarRatings() {
+        document.querySelectorAll('.review-card').forEach(card => {
+            const ratingElement = card.querySelector('.user-rating');
+            if (ratingElement) {
+                const rating = ratingElement.textContent.trim();
+                const starRating = createStarRating(rating);
+                const ratingContainer = card.querySelector('.user-rating-container');
+                if (ratingContainer) {
+                    ratingContainer.innerHTML = starRating;
+                } else {
+                    const userInfo = card.querySelector('.user-info');
+                    if (userInfo) {
+                        const newRatingContainer = document.createElement('div');
+                        newRatingContainer.className = 'user-rating-container';
+                        newRatingContainer.innerHTML = starRating;
+                        userInfo.appendChild(newRatingContainer);
                     }
                 }
-            });
-        }
+            }
+        });
+    }
 
-        function attachEventListeners() {
-            document.querySelectorAll('.review-card').forEach(card => {
-                attachLikeEvents(card);
-                attachLikeCountEvents(card);
-            });
+    function attachEventListeners() {
+        document.querySelectorAll('.review-card').forEach(card => {
+            attachLikeEvents(card);
+            attachLikeCountEvents(card);
+        });
 
-            document.querySelectorAll('.spoiler-toggle').forEach(button => {
-                button.addEventListener('click', toggleSpoiler);
-            });
+        document.querySelectorAll('.spoiler-toggle').forEach(button => {
+            button.addEventListener('click', toggleSpoiler);
+        });
 
-            document.querySelector('.close').addEventListener('click', () => {
+        document.querySelector('.close').addEventListener('click', () => {
+            document.getElementById('likeModal').style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target.id === 'likeModal') {
                 document.getElementById('likeModal').style.display = 'none';
-            });
+            }
+        });
 
-            window.addEventListener('click', (event) => {
-                if (event.target.id === 'likeModal') {
-                    document.getElementById('likeModal').style.display = 'none';
-                }
-            });
-
-            window.addEventListener('scroll', () => {
-                if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-                    loadMoreReviews();
-                }
-            });
-        }
+        window.addEventListener('scroll', () => {
+            if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                loadMoreReviews();
+            }
+        });
+    }
 
 
-        function loadMoreReviews() {
-            if (loading || currentPage >= totalPages - 1) return;
+    function loadMoreReviews() {
+        if (loading || currentPage >= totalPages - 1) return;
 
-            loading = true;
-            document.getElementById('loading').style.display = 'block';
+        loading = true;
+        document.getElementById('loading').style.display = 'block';
 
-            fetch(`/api/reviews?filter=${currentFilter}&page=${currentPage + 1}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.content.forEach(review => {
-                        const newReviewCard = createReviewCard(review);
-                        document.getElementById('reviewList').appendChild(newReviewCard);
-                        attachLikeEvents(newReviewCard);
-                        attachLikeCountEvents(newReviewCard);
-                    });
-                    currentPage++;
-                    loading = false;
-                    document.getElementById('loading').style.display = 'none';
+        fetch(`/api/reviews?filter=${currentFilter}&page=${currentPage + 1}`)
+            .then(response => response.json())
+            .then(data => {
+                data.content.forEach(review => {
+                    const newReviewCard = createReviewCard(review);
+                    document.getElementById('reviewList').appendChild(newReviewCard);
+                    attachLikeEvents(newReviewCard);
+                    attachLikeCountEvents(newReviewCard);
                 });
-        }
+                currentPage++;
+                loading = false;
+                document.getElementById('loading').style.display = 'none';
+            });
+    }
 
-        function refreshReviews() {
-            $.post('/api/reviews/refresh-cache')
-                .done(function() {
-                    $('#reviewList').empty();
-                    currentPage = 0;
-                    loadMoreReviews();
-                });
-        }
+    function refreshReviews() {
+        $.post('/api/reviews/refresh-cache')
+            .done(function() {
+                $('#reviewList').empty();
+                currentPage = 0;
+                loadMoreReviews();
+            });
+    }
 
     function createReviewCard(review) {
         const reviewElement = document.createElement('div');
@@ -320,7 +322,7 @@
         }
 
         function handleScroll() {
-            if (userList.scrollTop + userList.clientHeight >= userList.scrollHeight - 5) {
+            if (userList.scrollTop + userList.clientHeight >= userList.scrollHeight - 1) {
                 loadLikes();
             }
         }

@@ -48,7 +48,7 @@ public class ReviewMovieDTOService {
     /**
      * Review Cache 업데이트
      */
-    @Scheduled(fixedRate = 144000000) // 4시간
+    @Scheduled(fixedRate = 18000000) // 30분
     public void updateReviewCache() {
         LocalDateTime startDate = LocalDateTime.now().minusDays(30);
         int minHeartCont = 0;
