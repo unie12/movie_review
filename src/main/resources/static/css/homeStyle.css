@@ -184,11 +184,11 @@
 }
 
 .arrow.left {
-    left: -15px;
+    left: -20px;
 }
 
 .arrow.right {
-    right: -15px;
+    right: -20px;
 }
 .arrow:hover {
     background-color: #aab7b8;

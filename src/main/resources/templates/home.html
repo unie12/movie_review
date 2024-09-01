@@ -265,7 +265,7 @@
             .then(response => response.json())
             .then(movies => {
                 if (movies.length > 0) {
-                    createMovieList(movies, 'mbtiMovieList', 'mbtiMovie');
+                    createMovieList(movies, 'mbtiMovieList', 'movieCommon');
                     initializeSmoothScroll('mbtiMovieList', '.movie-item');
                     mbtiMovieContainer.style.display = 'block'; // 영화가 있으면 보이게 함
                     updateSectionInfo('mbtiMovieList');
@@ -288,7 +288,7 @@
             .then(response => response.json())
             .then(movies => {
                 if (movies.length > 0) {
-                    createMovieList(movies, 'departmentMovieList', 'departmentMovie');
+                    createMovieList(movies, 'departmentMovieList', 'movieCommon');
                     initializeSmoothScroll('departmentMovieList', '.movie-item');
                     departmentMovieContainer.style.display = 'block'; // 영화가 있으면 보이게 함
                     updateSectionInfo('departmentMovieList');
@@ -496,10 +496,9 @@
             poster.src = getImageUrl(movie.poster_path, '/images/defaultMovie.png');
             poster.alt = movie.title;
             poster.classList.add('movie-poster');
-            poster.addEventListener('click', () => navigateToMovieDetails(type === 'kobis' ? movie.tmdbId : movie.id));
 
             poster.addEventListener('click', () => {
-                const movieId = type === 'mbtiMovie' ? movie.tid : (type === 'kobis' ? movie.tmdbId : movie.id);
+                const movieId = type === 'movieCommon' ? movie.tid : (type === 'kobis' ? movie.tmdbId : movie.id);
                 navigateToMovieDetails(movieId);
             });
 
