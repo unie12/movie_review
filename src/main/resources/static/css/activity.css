@@ -76,7 +76,7 @@
 }
 .movie-title {
     font-weight: bold;
-    margin-top: 10px;
+    margin-bottom: -5px;
     font-size: 0.9em;
     text-align: left; /* 제목 왼쪽 정렬 */
 }
@@ -182,7 +182,9 @@
     color: #777;
     cursor: pointer;
 }
-
+.like-button:hover{
+    color: red;
+}
 .heart-count {
     font-weight: bold;
     margin-left: 5px;
@@ -372,6 +374,7 @@
     align-items: center;
     opacity: 0;
     transition: opacity 0.3s;
+    cursor: pointer;
 }
 
 .fav-poster-container:hover .fav-poster-overlay {
@@ -390,10 +393,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
     z-index: 10;
 }
-
+.favorite-button:hover {
+    transform: scale(1.1);
+}
+.rat-user-rating {
+    cursor: default;
+}
 .favorite-button.active {
     color: red;
 }

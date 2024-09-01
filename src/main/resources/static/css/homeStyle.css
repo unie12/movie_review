@@ -199,10 +199,10 @@
 .user-picture {
     width: calc(8vw - 8px);
     height: calc(8vw - 8px);
-    max-width: 50px;
-    max-height: 50px;
-    min-width: 25px;
-    min-height: 25px;
+    max-width: 40px;
+    max-height: 40px;
+    min-width: 20px;
+    min-height: 20px;
     border-radius: 50%;
     margin-right: 10px;
     object-fit: cover;
@@ -253,13 +253,14 @@
     font-weight: bold;
     margin-right: 10px;
     flex-grow: 1;
-    margin-bottom: 5px;
-    font-size: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: calc(0.5vw + 6px);
 }
 .user-rating, .user-heart {
     display: inline-block;
     padding: 2px 8px;
-    border: 1px solid #ddd;
     border-radius: 4px;
     margin-right: 10px;
     font-size: 0.9em;
@@ -484,7 +485,7 @@
 
 /* 별점 표시 */
 .star-rating {
-    font-size: 1.2em;
+    font-size: calc(0.6vw + 8px);
     color: #ddd;
     position: relative;
     display: inline-block;

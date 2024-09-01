@@ -35,7 +35,9 @@
     color: #777;
     cursor: pointer;
 }
-
+.like-button:hover{
+    color: red;
+}
 .heart-count {
     font-weight: bold;
     margin-left: 5px;

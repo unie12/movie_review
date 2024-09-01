@@ -21,6 +21,7 @@
 .review-header {
     display: flex;
     padding: 5px;
+    margin-top: -10px;
 }
 .user-picture {
     width: 50px;
@@ -38,7 +39,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 .user-details {
     display: flex;
@@ -117,7 +118,7 @@
     margin-top: 0;
 }
 .review-footer {
-    margin-top: 5px;
+    margin-bottom: -5px;
     text-align: right;
     font-size: 0.9em;
     color: #666;
@@ -135,7 +136,9 @@
     color: #777;
     cursor: pointer;
 }
-
+.like-button:hover{
+    color: red;
+}
 .heart-count {
     font-weight: bold;
     margin-left: 5px;

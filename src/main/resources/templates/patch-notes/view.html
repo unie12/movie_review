@@ -30,6 +30,16 @@
             max-width: 100%;
             height: auto;
         }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .back-link i {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <script th:src="@{'/js/search.js'}"></script>
@@ -38,7 +48,9 @@
 <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
 <div class="container">
-    <a href="/patch-notes">목록으로 돌아가기</a>
+    <a href="/patch-notes" class="back-link">
+        <i class="fas fa-arrow-left"></i> 뒤로 가기
+    </a>
 
     <h1 th:text="${patchNote.title}"></h1>
     <p>버전: <span th:text="${patchNote.version}"></span></p>

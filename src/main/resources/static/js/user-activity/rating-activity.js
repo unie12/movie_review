@@ -34,10 +34,9 @@ window.activityHandlers.rating = {
 
 
         element.html(`
-            <div class="fav-poster-container">
+            <div class="fav-poster-container" onclick="navigateToMovieDetails(${item.movie.tid})">
                 <img src="https://image.tmdb.org/t/p/w500${item.movie.poster_path}"
-                     alt="${item.title}"
-                     onclick="navigateToMovieDetails(${item.movie.tid})">
+                     alt="${item.title}">
                 <div class="fav-poster-overlay">
                     <div class="rat-user-rating">${starRating}</div>
                 </div>

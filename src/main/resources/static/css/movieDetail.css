@@ -67,7 +67,7 @@
 .action-buttons {
     display: flex;
     gap: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 .rating-info {
     display: flex;
@@ -81,10 +81,6 @@
 }
 .user-review-section {
     margin-bottom: 15px;
-}
-
-.movie-overview {
-    margin-top: 15px;
 }
 
 .movie-overview p {
@@ -123,6 +119,9 @@
     font-size: 24px;
     color: #ccc;
     cursor: pointer;
+}
+.favorite:hover {
+    color: red;
 }
 .favorite.active {
     color: red;
@@ -228,6 +227,11 @@ textarea {
     height: 300px;
     overflow: hidden;
     min-height: 200px;
+}
+#reviewText {
+    font-size: 1.0em;
+    line-height: 1.3;
+    color: #7b7d7d
 }
 
 .review-content {
@@ -654,6 +658,12 @@ textarea {
 }
 .slider-btn:hover {
     background-color: #aab7b8;
+}
+.btn:hover {
+    background-color: #0056b3;
+}
+.btn-info:hover {
+    background-color: #0056b3;
 }
 
 #actorSlider .slider-item {
