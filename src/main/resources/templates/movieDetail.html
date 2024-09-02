@@ -57,7 +57,9 @@
                 </div>
 
                 <div class="movie-content">
-                    <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.basicInfo.poster_path}" class="movie_poster">
+                    <div class="main-poster-container">
+                        <img th:src="'https://image.tmdb.org/t/p/w500' + ${movieDTO.basicInfo.poster_path}">
+                    </div>
                     <div class="movie-details">
                         <div class="action-buttons">
                             <button id="favoriteButton" th:attr="data-movie-id=${movieDTO.basicInfo.id}" th:class="${movieDTO.isFavorite} ? 'favorite active' : 'favorite'">
@@ -100,6 +102,13 @@
                         <div class="movie-overview">
                             <p><strong><span th:text="${movieDTO.basicInfo.tagline}"></span></strong></p>
                             <p><span th:text="${movieDTO.basicInfo.overview}"></span></p>
+
+                            <div class="keyword-container">
+                                <div th:each="keyword : ${movieDTO.basicInfo.keywords}">
+                                    <span class="keyword-item" th:text="${keyword}"></span>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

@@ -35,4 +35,6 @@ public class MovieBasicInfo {
     private List<MovieCommonDTO> recommendMovies;
     private List<String> images;
 
+    private List<String> keywords;
+
 }

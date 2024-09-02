@@ -9,6 +9,7 @@ import com.example.movie_review.movieDetail.DTO.DirectorDTO;
 import com.example.movie_review.movieDetail.DTO.MovieBasicInfo;
 import com.example.movie_review.movieDetail.domain.Crew;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
+import com.example.movie_review.movieDetail.domain.MovieKeyword;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -85,6 +86,7 @@ public class MovieBasicService {
                 .recommendMovies(recommendedMovies)
                 .youtubeLink(youtubeLink)
                 .images(images)
+                .keywords(movieDetails.getMovieKeywords().stream().map(keyword -> keyword.getKeyword().getName()).limit(20).collect(Collectors.toList()))
                 .build();
     }
 
