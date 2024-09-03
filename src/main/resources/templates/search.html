@@ -100,7 +100,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data.content.length > 0) {
-                    console.log('Remain data');
                     if (searchType === 'movieTitle') {
                         appendMovieResults(data.content);
                     } else if (searchType === 'userNickname') {
@@ -113,7 +112,6 @@
                         removeScrollListener();
                     }
                 } else {
-                    console.log('Finish data');
                     // 모든 결과 로드 완료
                     removeScrollListener();
                 }

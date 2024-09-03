@@ -215,16 +215,19 @@
                     </div>
                 </div>
             </div>
-            <div class="review-divider"></div>
+            <hr class="divider">
             <div class="review-content">
-                <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
+                <div class="poster-container">
+                    <img src="https://image.tmdb.org/t/p/w500${review.movieCommonDTO.poster_path}"
                     alt="${review.movieCommonDTO.title}" class="movie-poster"
                     onclick="navigateToMovieDetails(${review.movieCommonDTO.tid})">
+                </div>
                 <div class="review-text-content">
                     <h4 class="review-movie-title">${review.movieCommonDTO.title}</h4>
                     ${spoilerContent}
                 </div>
             </div>
+            <hr class="divider">
             <div class="review-footer">
                 <a href="#" class="like-count" data-review-id="${review.reviewDTO.review.id}">좋아요</a> <span class="heart-count">${review.reviewDTO.heartCnt}</span>
             </div>

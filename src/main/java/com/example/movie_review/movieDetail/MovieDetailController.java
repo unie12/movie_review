@@ -62,7 +62,7 @@ public class MovieDetailController {
             @PathVariable Long personId,
             @RequestParam String type,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "12") int size,
             Model model) {
         String actorDetailsJson = tmdbService.getPersonDetails(personId).block();
 
@@ -85,7 +85,7 @@ public class MovieDetailController {
                 List<ActorDetails.Cast> pagedCast = sortedCast.subList(start, end);
 
 //                actorDetails.setCast(sortedCast);
-                model.addAttribute("actorDetails", actorDetails);
+//                model.addAttribute("actorDetails", actorDetails);
                 model.addAttribute("pagedCast", pagedCast);
                 model.addAttribute("currentPage", page);
                 model.addAttribute("totalPages", (int) Math.ceil((double) sortedCast.size() / size));
@@ -95,7 +95,7 @@ public class MovieDetailController {
             else if("crew".equals(type)){
                 Map<Integer, ActorDetails.Crew> crewMap = new HashMap<>();
                 for (ActorDetails.Crew crew : actorDetails.getCrew()) {
-                    if ("movie".equals(crew.getMedia_type())) {
+                    if ("movie".equals(crew.getMedia_type()) && !crew.getJob().equals("Thanks")) {
                         int movieId = crew.getId();
                         if (crewMap.containsKey(movieId)) {
                             ActorDetails.Crew existingCrew = crewMap.get(movieId);
@@ -114,7 +114,6 @@ public class MovieDetailController {
                 int end = Math.min(start + size, sortedCrew.size());
                 List<ActorDetails.Crew> pagedCrew = sortedCrew.subList(start, end);
 
-                model.addAttribute("directorDetails", actorDetails);
                 model.addAttribute("pagedCrew", pagedCrew);
                 model.addAttribute("currentPage", page);
                 model.addAttribute("totalPages", (int) Math.ceil((double) sortedCrew.size() / size));
