@@ -116,7 +116,7 @@ public class HomeViewController {
             model.addAttribute("searchResults", searchResults);
         } else if(searchType.equals("userNickname")) {
             String currentEmail = auth != null ? auth.getName() : null;
-            Page<UserSearchDTO> searchResults = userDTOService.searchUsers(query, page, 10, currentEmail);
+            Page<UserSearchDTO> searchResults = userDTOService.searchUsers(query, page, 20, currentEmail);
             model.addAttribute("searchResults", searchResults);
         }
 

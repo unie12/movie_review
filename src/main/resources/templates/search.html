@@ -22,49 +22,34 @@
     </div>
 
     <div th:unless="${searchResults.empty}">
-<!--            영화 제목 기준 검색-->
-        <div th:if="${searchType == 'movieTitle'}" class="movieSearch">
-            <table>
-                <thead>
-                <tr>
-                    <th>포스터</th>
-                    <th>제목</th>
-                    <th>개봉일</th>
-                    <th>평점</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="result : ${searchResults.content}">
-                    <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${result.poster_path}" th:alt="${result.title}"
-                             th:attr="onclick=|redirectToMovie(${result.id})|"></td>
-                    <td><h3 th:text="${result.title}"></h3></td>
-                    <td><span th:text="${result.release_date}"></span></td>
-                    <td><span th:utext="${result.vote_average} + '<br>' + '(' + ${result.vote_count} + '표)'"></span></td>
-                </tr>
-                </tbody>
-            </table>
+        <div th:if="${searchType == 'movieTitle'}" class="movie-grid">
+            <div th:each="result : ${searchResults.content}" class="movie-item">
+                <img th:src="'https://image.tmdb.org/t/p/w500' + ${result.poster_path}"
+                     th:alt="${result.title}" class="movie-poster"
+                     th:attr="onclick=|redirectToMovie(${result.id})|">
+                <div class="movie-info">
+                    <h3 th:text="${result.title}" class="movie-title"></h3>
+                    <p th:text="${result.release_date}" class="movie-release-date"></p>
+                </div>
+            </div>
         </div>
 
-<!--            사용자 이름 기준 검색-->
-        <div th:if="${searchType == 'userNickname'}" class="userSearch">
-            <div class="user-grid">
-                <div th:each="result: ${searchResults.content}" class="user-item">
-                    <a th:href="@{'/info/' + ${result.user.email}}">
-                        <img th:src="${result.user.picture}" th:alt="${result.user.nickname}" class="user-avatar">
-                    </a>
-                    <div class="user-info">
-                        <h3 th:text="${result.user.nickname}" class="user-nickname" th:style="'color: ' + ${result.user.role.color}"></h3>
-                        <button th:if="${#authentication.name != result.user.email}"
-                                class="subscription-btn"
-                                th:class="${result.isSubscribed ? 'subscription-btn btn-danger' : 'subscription-btn btn-secondary'}"
-                                th:text="${result.isSubscribed ? '구독 취소' : '구독'}"
-                                th:data-email="${result.user.email}"></button>
-                    </div>
+        <div th:if="${searchType == 'userNickname'}" class="user-grid">
+            <div th:each="result: ${searchResults.content}" class="user-item">
+                <a th:href="@{'/info/' + ${result.user.email}}">
+                    <img th:src="${result.user.picture}" th:alt="${result.user.nickname}" class="user-avatar">
+                </a>
+                <div class="user-info">
+                    <h3 th:text="${result.user.nickname}" class="user-nickname" th:style="'color: ' + ${result.user.role.color}"></h3>
+                    <button th:if="${#authentication.name != result.user.email}"
+                            class="subscription-btn"
+                            th:classappend="${result.isSubscribed ? 'active' : ''}"
+                            th:text="${result.isSubscribed ? '구독 취소' : '구독'}"
+                            th:data-email="${result.user.email}"></button>
                 </div>
             </div>
         </div>
     </div>
-
     <div th:replace="fragments/footer :: footer" />
 </div>
 
@@ -97,9 +82,9 @@
 
     function updateButtonState(btn, isSubscribed) {
         if(isSubscribed) {
-            btn.text('구독 취소').removeClass('btn-secondary').addClass('btn-danger');
+            btn.text('구독 취소').addClass('active');
         } else {
-            btn.text('구독').removeClass('btn-danger').addClass('btn-secondary');
+            btn.text('구독').removeClass('active');
         }
     }
 
@@ -109,8 +94,7 @@
 
         let apiUrl = searchType === 'movieTitle'
             ? `/api/search/movies?query=${query}&page=${currentPage + 1}`
-            : `/api/search/users?query=${query}&page=${currentPage + 1}&size=10`
-        console.log('apiUrl', apiUrl);
+            : `/api/search/users?query=${query}&page=${currentPage + 1}&size=20`
 
         fetch(apiUrl)
             .then(response => response.json())
@@ -141,32 +125,41 @@
     }
 
     function appendMovieResults(results) {
-        const tbody = document.querySelector('.movieSearch table tbody');
+        const movieGrid = document.querySelector('.movie-grid');
         results.forEach(movie => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}"
-                         onclick="redirectToMovie(${movie.id})"></td>
-                <td><h3>${movie.title}</h3></td>
-                <td><span>${movie.release_date}</span></td>
-                <td><span>${movie.vote_average}<br>(${movie.vote_count}표)</span></td>
+            const movieItem = document.createElement('div');
+            movieItem.className = 'movie-item';
+            movieItem.innerHTML = `
+                <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
+                     alt="${movie.title}" class="movie-poster"
+                     onclick="redirectToMovie(${movie.id})">
+                <div class="movie-info">
+                    <h3 class="movie-title">${movie.title}</h3>
+                    <p class="movie-release-date">${movie.release_date}</p>
+                </div>
             `;
-            tbody.appendChild(row);
+            movieGrid.appendChild(movieItem);
         });
     }
 
     function appendUserResults(results) {
         const userGrid = document.querySelector('.user-grid');
-        results.forEach(user => {
+        results.forEach(result => {
             const userItem = document.createElement('div');
             userItem.className = 'user-item';
+            const isCurrentUser = result.user.email === /*[[${#authentication.name}]]*/ 'currentUserEmail';
             userItem.innerHTML = `
-                <a href="/info/${user.email}">
-                    <img src="${user.picture}" alt="${user.nickname}" class="user-avatar">
+                <a href="/info/${result.user.email}">
+                    <img src="${result.user.picture}" alt="${result.user.nickname}" class="user-avatar">
                 </a>
                 <div class="user-info">
-                    <h3 class="user-nickname">${user.nickname}</h3>
-                    <button class="subscribe-btn">구독</button>
+                    <h3 class="user-nickname" style="color: ${result.user.role.color}">${result.user.nickname}</h3>
+                    ${!isCurrentUser ? `
+                        <button class="subscription-btn ${result.isSubscribed ? 'active' : ''}"
+                                data-email="${result.user.email}">
+                            ${result.isSubscribed ? '구독 취소' : '구독'}
+                        </button>
+                    ` : ''}
                 </div>
             `;
             userGrid.appendChild(userItem);
@@ -179,7 +172,6 @@
 
     function handleScroll() {
         if(isBottom()) {
-            console.log('scroll bottom');
             loadMoreResults();
         }
     }
