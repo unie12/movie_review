@@ -4,39 +4,11 @@
 <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/css/bodyHeader.css">
+    <link rel="stylesheet" href="/css/personDetail.css">
 
 <head>
 <!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <meta charset="UTF-8">
-    <style>
-        .container {
-            position: relative;
-            padding: 10px 15vw;
-        }
-        .actorDetail table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .actorDetail th, .actorDetail td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .actorDetail th {
-            background-color: #f2f2f2;
-        }
-
-        .actorDetail img {
-            width: 150px;
-            height: auto;
-        }
-        .movie-poster {
-            cursor: pointer;
-        }
-    </style>
 
     <title>배우 검색 결과</title>
 </head>
@@ -46,29 +18,48 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
     <div class="jumbotron">
-        <div class="actorDetail" th:if="${actorDetails}">
-            <table>
-                <thead>
-                <tr>
-                    <th>개봉일</th>
-                    <th>포스터</th>
-                    <th>제목</th>
-                    <th>역할</th>
-                    <th>평가</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="cast : ${pagedCast}">
-                    <td><span th:text="${cast.release_date}"></span></td>
-                    <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${cast.poster_path}"
+        <div class="actorDetail">
+<!--            <table>-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>개봉일</th>-->
+<!--                    <th>포스터</th>-->
+<!--                    <th>제목</th>-->
+<!--                    <th>역할</th>-->
+
+<!--                    <th>평가</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr th:each="cast : ${pagedCast}">-->
+<!--                    <td><span th:text="${cast.release_date}"></span></td>-->
+<!--                    <td><img th:src="'https://image.tmdb.org/t/p/w500' + ${cast.poster_path}"-->
+<!--                             th:alt="${cast.title}" class="movie-poster"-->
+<!--                        th:attr="onclick=|redirectToMovie(${cast.id})|"></td>-->
+<!--                    <td><h3 th:text="${cast.title}"></h3></td>-->
+<!--                    <td><p th:text="${cast.character}"></p></td>-->
+<!--                    <td><span th:utext="${cast.vote_average} + '<br>' + '(' + ${cast.vote_count} + '표)'"></span></td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+
+            <div class="movie-grid">
+                <div th:each="cast : ${pagedCast}" class="movie-item">
+                    <div class="movie-poster-container" th:attr="onclick=|redirectToMovie(${cast.id})|">
+                        <img th:src="'https://image.tmdb.org/t/p/w500' + ${cast.poster_path}"
                              th:alt="${cast.title}" class="movie-poster"
-                        th:attr="onclick=|redirectToMovie(${cast.id})|"></td>
-                    <td><h3 th:text="${cast.title}"></h3></td>
-                    <td><p th:text="${cast.character}"></p></td>
-                    <td><span th:utext="${cast.vote_average} + '<br>' + '(' + ${cast.vote_count} + '표)'"></span></td>
-                </tr>
-                </tbody>
-            </table>
+                             th:attr="onclick=|redirectToMovie(${cast.id})|">
+                        <div class="person-overlay">
+                            <p class="overlay-content" th:text="${cast.character}"></p>
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 th:text="${cast.title}" class="movie-title"></h3>
+                        <p th:text="${cast.release_date}" class="movie-release-date"></p>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="pagination">
                 <a th:if="${currentPage > 1}" th:href="@{/people/{personId}(personId=${personId}, type='cast', page=${currentPage - 1})}">이전</a>
