@@ -147,7 +147,8 @@
                     <div class="modal-content">
                         <span class="close">&times;</span>
                         <h2 id="modalTitle">리뷰 작성</h2>
-                        <textarea id="reviewText" rows="4" cols="50"></textarea>
+                        <textarea id="reviewText" rows="4" cols="50" maxlength="500"></textarea>
+                        <div id="charCount">0 / 500</div>
                         <div class="checkbox-container">
                             <input type="checkbox" id="spoilerCheck">
                             <label for="spoilerCheck">스포일러 포함</label>
@@ -180,7 +181,7 @@
                             </div>
                             <hr class="divider">
                             <div class="review-content">
-                                <p th:if="${!reviewDTO.spoiler}" th:utext="${#strings.abbreviate(reviewDTO.review.text, 300)}"></p>
+                                <p th:if="${!reviewDTO.spoiler}" th:utext="${reviewDTO.review.text}"></p>
                                 <div th:if="${reviewDTO.spoiler}" class="spoiler-content">
                                     <button class="spoiler-toggle" onclick="toggleSpoiler(this)">스포일러 포함</button>
                                     <p class="spoiler-text" style="display: none;" th:utext="${reviewDTO.review.text}"></p>
@@ -284,7 +285,7 @@
             setInterval(() => {
                 this.currentIndex = (this.currentIndex + 1) % this.totalImages; // 다음 이미지로 이동
                 this.updateVisibility();
-            }, 2500); // 2.5초마다 변경
+            }, 2000); // 2초마다 변경
         }
     }
 
@@ -476,7 +477,6 @@
                     $('#writeReviewBtn').hide();
                     $('#spoilerCheck').prop('checked', response.spoiler);
                 } else {
-                    $('#reviewDisplay').hide();
                     $('#writeReviewBtn').show();
                 }
             },
@@ -487,20 +487,44 @@
     }
 
     function initializeReviewFunctionality(movieId, modal) {
+        let savedReview = '';
+        let savedSpoilerCheck = false;
+
         loadReview(movieId);  // 페이지 로드 시 리뷰 불러오기
+
         $('#writeReviewBtn, #editReviewBtn').click(function() {
             $('#modalTitle').text(this.id === 'writeReviewBtn' ? '리뷰 작성' : '리뷰 수정');
-            $('#reviewText').val(this.id === 'editReviewBtn' ?
-                $('#reviewDisplayText').html().replace(/<br>/g, '\n') : '');
+            $('#reviewText').val(savedReview || (this.id === 'editReviewBtn' ? $('#reviewDisplayText').html().replace(/<br>/g, '\n') : ''));
+            $('#spoilerCheck').prop('checked', savedSpoilerCheck);
+            updateCharCount();
             modal.style.display = "block";
         });
 
-        $('.close').click(() => modal.style.display = "none");
-
+        $('.close').click(() => {
+            savedReview = $('#reviewText').val();
+            savedSpoilerCheck = $('#spoilerCheck').is(':checked');
+            modal.style.display = "none"
+        });
 
         window.onclick = function(event) {
             if (event.target == modal) {
+                savedReview = $('#reviewText').val();
+                savedSpoilerCheck = $('#spoilerCheck').is(':checked');
                 modal.style.display = "none";
+            }
+        }
+
+        $('#reviewText').on('input', updateCharCount);
+
+        function updateCharCount() {
+            const maxLength = 500;
+            const currentLength = $('#reviewText').val().length;
+            $('#charCount').text(`${currentLength} / ${maxLength}`);
+
+            if (currentLength === maxLength) {
+                $('#charCount').addClass('max-reached');
+            } else {
+                $('#charCount').removeClass('max-reached');
             }
         }
 
@@ -516,6 +540,8 @@
                 }),
                 success: function(response) {
                     modal.style.display = "none";
+                    savedReview = '';
+                    savedSpoilerCheck = false;
                     loadReview(movieId);
                 },
                 error: function(xhr, status, error) {
