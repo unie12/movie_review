@@ -1,20 +1,23 @@
+body {
+    margin: 0;
+}
+
 .container {
     padding: 0;
     max-width: 100%;
     margin: 0 auto;
 }
 
-.movie-detail {
-    position: relative;
-}
-
 .backdrop-container {
-    position: relative;
-    width: 99.5vw;
-    height: 80vh;
-    margin-left: calc(-50vw + 50%);
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
     overflow: hidden;
-    margin-top: -10px;
+    z-index: -1;
+}
+.other-content {
+    margin-top: -5%;
 }
 .backdrop-item {
     width: 100%;
@@ -35,7 +38,7 @@
 }
 .movie-info-overlay {
     position: absolute;
-    bottom: 10%;
+    bottom: 20%;
     left: 15%;
     color: white;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
@@ -61,8 +64,8 @@
 }
 .movie-content {
     display: flex;
-    margin-top: 5%;
-    padding: 0 15vw;
+        margin-top: 5%;
+    margin-bottom: 10%;
 }
 .action-buttons {
     display: flex;
@@ -82,7 +85,9 @@
 .user-review-section {
     margin-bottom: 15px;
 }
-
+.review-section {
+    margin-bottom: 10%;
+}
 .movie-overview p {
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -204,13 +209,17 @@ textarea {
     margin-bottom: 15px;
 }
 
-.review-section, .person-section, .backdrops-images, .recommended-movies{
-    margin-top: 5%;
-    margin-bottom: 5%;
+.other-content{
     padding: 10px 15vw;
+    background-color: white;
+}
+.scrollable-content {
+    position: relative;
+    z-index: 1;
+    background-color: #fff;
 }
 .person-section {
-    margin-top: 3%;
+    margin-bottom: 10%;
 }
 .review-grid {
     display: grid;
@@ -591,6 +600,7 @@ textarea {
     position: relative;
     width: 100%;
     overflow: visible;
+    margin-bottom: 10%;
 }
 
 .slider-content {
@@ -704,12 +714,15 @@ textarea {
   gap: 10px;
   margin-top: 1rem;
 }
-
+.scrollable-content {
+    /* 기존 스타일 */
+    transition: transform 0.3s ease-out;
+}
 .keyword-item {
   background-color: #f0f0f0;
   padding: 5px 10px;
   border-radius: 5px;
-  font-size: 0.9rem;
+    font-size: calc(0.5vw + 8px);
   cursor: pointer;
   transition: background-color 0.3s ease;
 }

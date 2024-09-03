@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -35,6 +34,7 @@
 
         <div id="movie-content" style="display: none;">
             <div class="movie-detail" th:if="${movieDTO}">
+
                 <div class="backdrop-container">
                     <div class="backdrop-content">
 <!--                        <img th:src="'https://image.tmdb.org/t/p/original' + ${movieDTO.basicInfo.backdrop_path}" class="backdrop_poster">-->
@@ -55,6 +55,8 @@
                         <p><strong>장르:</strong> <span th:each="genre : ${movieDTO.basicInfo.genres}" th:text="'[' + ${genre} + ']' + ' ' "></span></p>
                     </div>
                 </div>
+
+                <div class="other-content scrollable-content">
 
                 <div class="movie-content">
                     <div class="main-poster-container">
@@ -229,6 +231,7 @@
                             </a>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
