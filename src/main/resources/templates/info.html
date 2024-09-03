@@ -95,7 +95,10 @@
     <!--    ~님과 나의 유사한 활동 내역 영화(좋은 평가, 찜 목록 겹)-->
     <div th:if="${#authentication.name != userDTO.userCommonDTO.email}">
         <div class="similar-movie-box section-container">
-            <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님이 재밌게 본 영화'"></h3>
+            <h3>
+                <span class="current-user" th:text="${currentUser}"></span>님과
+                <span class="visited-user" th:text="${userDTO.userCommonDTO.nickname}"></span>님이 재밌게 본 영화
+            </h3>
             <div class="similar-movie-carousel">
                 <button class="arrow left">&lt;</button>
                 <div id="similarMovies" class="similar-movie">
@@ -109,7 +112,10 @@
     <!--    ~님과 나의 정반대의 활동 내역 영화-->
     <div th:if="${#authentication.name != userDTO.userCommonDTO.email}">
         <div class="disSimilar-movie-box section-container">
-            <h3 th:text="${userDTO.userCommonDTO.nickname} + '님과 ' + ${currentUser} + '님의 정반대 취향의 영화'"></h3>
+            <h3>
+                <span class="current-user" th:text="${currentUser}"></span>님과
+                <span class="visited-user" th:text="${userDTO.userCommonDTO.nickname}"></span>님의 정반대 취향의 영화
+            </h3>
             <div class="disSimilar-movie-carousel">
                 <button class="arrow left">&lt;</button>
                 <div id="disSimilarMovies" class="disSimilar-movie">
@@ -225,7 +231,6 @@
         fetch(`/api/user/${userEmail}/preferences?fields=ratings`)
             .then(response => response.json())
             .then(data => {
-                console.log('data', data);
                 if (data.ratings && data.ratings.length > 0) {
                     renderRatingDistribution(data.ratings, container);
                 } else {
@@ -306,6 +311,7 @@
         fetch(`/api/user/${userEmail}/similarMovies?currentUserEmail=${currentUserEmail}`)
             .then(response => response.json())
             .then(data => {
+                console.log('sim data', data);
                 if (data.length === 0) {
                     hideSection(container);
                 } else {
@@ -323,6 +329,7 @@
         fetch(`/api/user/${userEmail}/disSimilarMovies?currentUserEmail=${currentUserEmail}`)
             .then(response => response.json())
             .then(data => {
+            console.log('dis data', data);
                 if (data.length === 0) {
                     hideSection(container);
                 } else {
@@ -595,14 +602,23 @@
         container.appendChild(otherGenresContainer);
     }
 
-    // 두 사용자의 유사한 선호 영화 보여주기
     function renderMovies(movies, container) {
         container.innerHTML = '';
         movies.forEach((movie, index) => {
             const movieElement = document.createElement('div');
             movieElement.className = 'sim-element';
             movieElement.innerHTML = `
-                <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" class="movie-poster">
+                <div class="poster-container">
+                    <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" class="movie-poster">
+                    <div class="poster-overlay">
+                        <div class="rating current-user">
+                            <span class="rating-value">${movie.myRating}</span>
+                        </div>
+                        <div class="rating visited-user">
+                            <span class="rating-value">${movie.oppositeRating}</span>
+                        </div>
+                    </div>
+                </div>
             `;
             movieElement.addEventListener('click', () => navigateToMovie(movie.tid));
             container.appendChild(movieElement);

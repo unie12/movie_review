@@ -201,8 +201,23 @@ public class UserActivityController {
         User currentUser = userService.getUserByEmail(currentUserEmail);
 
         List<MovieDetails> preferMovies = preferenceFunction.apply(user, currentUser);
+
         return preferMovies.stream()
-                .map(movie -> new LifeMovie(movie.getTId(), movie.getPoster_path()))
+                .map(movie ->  {
+                    Double oppositeRating = movie.getDbMovie().getDbRatings().stream()
+                            .filter(rating -> rating.getUser().equals(user))
+                            .map(DbRatings::getScore)
+                            .findFirst()
+                            .orElse(null);
+
+                    Double curUserRating = movie.getDbMovie().getDbRatings().stream()
+                            .filter(rating -> rating.getUser().equals(currentUser))
+                            .map(DbRatings::getScore)
+                            .findFirst()
+                            .orElse(null);
+
+                    return new LifeMovie(movie.getTId(), movie.getPoster_path(), curUserRating, oppositeRating);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -292,10 +307,14 @@ class DeleteAccountResponse {
 class LifeMovie {
     private String tid;
     private String poster_path;
+    private Double myRating;
+    private Double oppositeRating;
 
-    public LifeMovie(Integer tid, String poster_path) {
+    public LifeMovie(Integer tid, String poster_path, Double myRating, Double oppositeRating) {
         this.tid = String.valueOf(tid);
         this.poster_path = poster_path;
+        this.myRating = myRating;
+        this.oppositeRating = oppositeRating;
     }
 
     public LifeMovie(String tid, String poster_path) {
