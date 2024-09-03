@@ -35,8 +35,8 @@
         </div>
         <div class="user-info-right">
             <button th:if="${#authentication.name != userDTO.userCommonDTO.email}"
-                    id="subscription"
-                    th:class="${isSubscribed ? 'btn btn-danger' : 'btn btn-secondary'}"
+                    id="subscription" class="subscription-btn"
+                    th:class="${isSubscribed ? 'active' : ''}"
                     th:text="${isSubscribed ? '구독 취소' : '구독'}"></button>
             <button th:if="${#authentication.name == userDTO.userCommonDTO.email}" id="feedBack" class="btn btn-primary">피드백 작성</button>
             <button th:if="${#authentication.name == userDTO.userCommonDTO.email}" id="deleteAccount" class="btn btn-danger">회원 탈퇴</button>
@@ -357,8 +357,8 @@
     function updateButtonState(response) {
         const isSubscribed = response.subscribed;
         $('#subscription').text(isSubscribed ? '구독 취소' : '구독')
-            .removeClass(isSubscribed ? 'btn-secondary' : 'btn-danger')
-            .addClass(isSubscribed ? 'btn-danger' : 'btn-secondary');
+            .removeClass(isSubscribed ? 'subscription-btn' : 'subscription-btn active')
+            .addClass(isSubscribed ? 'subscription-btn  active' : 'subscription-btn');
     }
 
     // 회원 탈퇴

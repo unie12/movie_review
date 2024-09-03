@@ -33,14 +33,33 @@
 .subscription-info {
     display: flex;
     flex-direction: column;
+    margin-top: 10px;
 }
 
 .subscription-info a {
     margin-bottom: 5px;
     text-decoration: none;
     color: #007bff;
+    margin-right: 10px;
+}
+.subscription-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #A4AFB1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
+.subscription-btn:hover {
+    background-color: red;
+}
+
+.subscription-btn.active {
+    background-color: red;
+}
 .user-info-right {
     display: flex;
     flex-direction: column;
