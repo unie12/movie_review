@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,6 @@ public class MovieDetailController {
 
         return "movieDetail";
     }
-
     @GetMapping("/people/{personId}")
     public String actorDetail(
             @PathVariable Long personId,
@@ -73,54 +73,51 @@ public class MovieDetailController {
             }
             ActorDetails actorDetails = objectMapper.readValue(actorDetailsJson, ActorDetails.class);
 
+            List<?> items;
             // 배우 담당
             if("cast".equals(type)) {
-                List<ActorDetails.Cast> sortedCast = actorDetails.getCast().stream()
-                        .filter(cast -> "movie".equals(cast.getMedia_type()))
-                        .sorted((cast1, cast2) -> Double.compare(cast2.getPopularity(), cast1.getPopularity()))
+                items = actorDetails.getCast().stream()
+                        .filter(cast -> "movie".equals(cast.getMedia_type()) && !cast.getCharacter().contains("Self"))
+                        .sorted(Comparator.comparingDouble(ActorDetails.Cast::getPopularity).reversed())
                         .collect(Collectors.toList());
-
-                int start = (page - 1) * size;
-                int end = Math.min(start + size, sortedCast.size());
-                List<ActorDetails.Cast> pagedCast = sortedCast.subList(start, end);
-
-//                actorDetails.setCast(sortedCast);
-//                model.addAttribute("actorDetails", actorDetails);
-                model.addAttribute("pagedCast", pagedCast);
-                model.addAttribute("currentPage", page);
-                model.addAttribute("totalPages", (int) Math.ceil((double) sortedCast.size() / size));
-                return "actorDetail";
-            }
-            // 감독 담당
-            else if("crew".equals(type)){
+            } else if("crew".equals(type)){
                 Map<Integer, ActorDetails.Crew> crewMap = new HashMap<>();
                 for (ActorDetails.Crew crew : actorDetails.getCrew()) {
-                    if ("movie".equals(crew.getMedia_type()) && !crew.getJob().equals("Thanks")) {
-                        int movieId = crew.getId();
-                        if (crewMap.containsKey(movieId)) {
-                            ActorDetails.Crew existingCrew = crewMap.get(movieId);
-                            String combinedJobs = existingCrew.getJob() + "\n" + crew.getJob();
-                            existingCrew.setJob(combinedJobs);
-                        } else {
-                            crewMap.put(movieId, crew);
-                        }
+                    if ("movie".equals(crew.getMedia_type()) && !crew.getJob().equals("Thanks") && !crew.getJob().contains("Self")) {
+                        crewMap.merge(crew.getId(), crew, (existing, newCrew) -> {
+                            existing.setJob(existing.getJob() + "\n" + newCrew.getJob());
+                            return existing;
+                        });
                     }
                 }
-
-                List<ActorDetails.Crew> sortedCrew = crewMap.values().stream()
-                        .sorted((crew1, crew2) -> Double.compare(crew2.getPopularity(), crew1.getPopularity()))
-                        .collect(Collectors.toList());
-                int start = (page - 1) * size;
-                int end = Math.min(start + size, sortedCrew.size());
-                List<ActorDetails.Crew> pagedCrew = sortedCrew.subList(start, end);
-
-                model.addAttribute("pagedCrew", pagedCrew);
-                model.addAttribute("currentPage", page);
-                model.addAttribute("totalPages", (int) Math.ceil((double) sortedCrew.size() / size));
-
-                return "directorDetail";
+                    items = crewMap.values().stream()
+                            .sorted(Comparator.comparingDouble(ActorDetails.Crew::getPopularity).reversed())
+                            .collect(Collectors.toList());
+            } else{
+                    throw new IllegalArgumentException("Invalid type: " + type);
             }
 
+            int totalItems = items.size();
+            int totalPages = (int) Math.ceil((double) totalItems / size);
+            page = Math.max(1, Math.min(page, totalPages));  // Ensure page is within bounds
+
+            int start = (page - 1) * size;
+            int end = Math.min(start + size, totalItems);
+            List<?> pagedItems = items.subList(start, end);
+
+            model.addAttribute("pagedItems", pagedItems);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("type", type);
+            model.addAttribute("personId", personId);
+
+            int maxPages = 5;
+            int startPage = Math.max(1, page - maxPages / 2);
+            int endPage = Math.min(totalPages, startPage + maxPages - 1);
+
+            model.addAttribute("startPage", startPage);
+            model.addAttribute("endPage", endPage);
+            return "personDetail";
         } catch (Exception e) {
             e.printStackTrace();
         }

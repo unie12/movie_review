@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/bodyHeader.css">
+    <link rel="stylesheet" href="/css/personDetail.css">
+
+    <meta charset="UTF-8">
+    <title th:text="${type == 'cast'} ? '배우 검색 결과' : '감독 검색 결과'"></title>
+</head>
+<script th:src="@{'/js/search.js'}"></script>
+
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+    <div class="jumbotron">
+        <div class="personDetail">
+
+            <div class="movie-grid">
+                <div th:each="item : ${pagedItems}" class="movie-item">
+                    <div class="movie-poster-container" th:attr="onclick=|redirectToMovie(${item.id})|">
+                        <img th:src="'https://image.tmdb.org/t/p/w500' + ${item.poster_path}"
+                             th:alt="${item.title}" class="movie-poster">
+                        <div class="person-overlay">
+                            <p class="overlay-content" th:utext="${#strings.replace(type == 'cast' ? item.character : item.job, '\n', '<br>')}"></p>
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 th:text="${item.title}" class="movie-title"></h3>
+                        <p th:text="${item.release_date}" class="movie-release-date"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination" th:with="maxPages=5">
+                <a class="first" th:if="${currentPage > 1}" th:href="@{/people/{personId}(personId=${personId}, type=${type}, page=1)}" title="처음">&laquo;</a>
+                <a class="prev" th:if="${currentPage > 1}" th:href="@{/people/{personId}(personId=${personId}, type=${type}, page=${currentPage - 1})}" title="이전">&lsaquo;</a>
+
+                <th:block th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+                    <a th:href="@{/people/{personId}(personId=${personId}, type=${type}, page=${pageNum})}" th:text="${pageNum}" th:class="${pageNum == currentPage} ? 'active'"></a>
+                </th:block>
+
+                <a class="next" th:if="${currentPage < totalPages}" th:href="@{/people/{personId}(personId=${personId}, type=${type}, page=${currentPage + 1})}" title="다음">&rsaquo;</a>
+                <a class="last" th:if="${currentPage < totalPages}" th:href="@{/people/{personId}(personId=${personId}, type=${type}, page=${totalPages})}" title="마지막">&raquo;</a>
+            </div>
+        </div>
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+</div>
+
+<script>
+    function redirectToMovie(movieId) {
+        window.location.href = '/contents/' + movieId;
+    }
+</script>
+
+</body>
+</html>

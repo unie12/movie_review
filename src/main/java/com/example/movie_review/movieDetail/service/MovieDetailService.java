@@ -40,4 +40,6 @@ public class MovieDetailService {
         Collections.shuffle(shuffledPosters);
         return shuffledPosters.stream().limit(count).collect(Collectors.toList());
     }
+
+
 }
