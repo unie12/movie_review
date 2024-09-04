@@ -19,7 +19,7 @@ public class FavoriteService extends AbstractUserActivityService {
 
     @Override
     public UserActivityDTO getUserActivity(String authEmail, String userEmail, String sort, int page, int size) {
-        FavoriteMovieDTO dto = userDTOService.getUserFavoriteMoviesDTO(userEmail);
+        FavoriteMovieDTO dto = userDTOService.getUserFavoriteMoviesDTO(authEmail, userEmail);
         List<FavoriteMovieItem> movie = dto.getFavoriteMovies();
 
         int start = page * size;

@@ -3,6 +3,7 @@ package com.example.movie_review.user.service;
 import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.dbRating.DbRatingDTO;
 import com.example.movie_review.dbRating.DbRatingRepository;
+import com.example.movie_review.favoriteMovie.UserFavoriteMovieService;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.repository.ReviewRepository;
 import com.example.movie_review.review.service.ReviewService;
@@ -31,6 +32,7 @@ public class UserDTOService {
     private final UserService userService;
     private final ReviewService reviewService;
     private final SubscriptionService subscriptionService;
+    private final UserFavoriteMovieService userFavoriteMovieService;
 
     private final ReviewRepository reviewRepository;
     private final DbRatingRepository dbRatingRepository;
@@ -190,7 +192,7 @@ public class UserDTOService {
     }
 
 
-    public FavoriteMovieDTO getUserFavoriteMoviesDTO(String email) {
+    public FavoriteMovieDTO getUserFavoriteMoviesDTO(String authEmail, String email) {
         User user = userService.getUserByEmail(email);
         UserCommonDTO userCommonDTO = getUserCommonDTO(user);
 
@@ -207,6 +209,7 @@ public class UserDTOService {
                                 .ajou_rating_cnt(favorite.getDbMovie().getDbRatingCount())
                                 .build())
                         .favoriteDate(favorite.getFavoriteDate())
+                        .isFavorite(userFavoriteMovieService.isFavorite(authEmail, favorite.getDbMovie().getId()))
                         .build())
                 .collect(Collectors.toList());
 

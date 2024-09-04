@@ -34,7 +34,7 @@ window.activityHandlers.favorite = {
                 <img src="https://image.tmdb.org/t/p/w500${item.movieCommonDTO.poster_path}"
                      alt="${item.movieCommonDTO.title}">
                 <div class="fav-poster-overlay">
-                    <button class="favorite-button active" data-movie-id="${item.movieCommonDTO.id}">
+                    <button class="favorite-button ${item.favorite ? 'active' : ''}" data-movie-id="${item.movieCommonDTO.id}">
                         <i class="fas fa-heart"></i>
                     </button>
                 </div>
@@ -42,93 +42,49 @@ window.activityHandlers.favorite = {
             <div class="fav-movie-info">
                 <p class="fav-movie-title">${item.movieCommonDTO.title}</p>
             </div>
-            <div class="unfavorite-confirm" style="display:none;">
-                <p class="undo-text">좋아요 해제 중...</p>
-                <button class="undo-button">실행 취소</button>
-            </div>
         `);
 
         return element;
     },
 
     setFavoriteButtonListeners: function() {
-            $('.favorite-button').off('click').on('click', function(e) {
-                e.stopPropagation();
-                var $button = $(this);
-                var $activityItem = $button.closest('.activity-item');
-                var movieId = $button.data('movie-id');
+        $('.favorite-button').off('click').on('click', function(e) {
+            e.stopPropagation();
+            var $button = $(this);
+            var movieId = $button.data('movie-id');
+            var isFavorite = $button.hasClass('active');
 
-                if ($button.hasClass('active')) {
-                    $activityItem.find('.unfavorite-confirm').slideDown();
+            window.activityHandlers.favorite.toggleFavorite($button, movieId, !isFavorite);
+        });
+    },
 
-                    var timeoutId = setTimeout(function() {
-                        window.activityHandlers.favorite.removeFavorite($activityItem, movieId);
-                    }, 4000);
-
-                    $activityItem.data('timeoutId', timeoutId);
-
-                    $activityItem.find('.undo-button').on('click', function(e) {
-                        e.stopPropagation();
-                        clearTimeout($activityItem.data('timeoutId'));
-                        $activityItem.find('.unfavorite-confirm').slideUp();
-                    });
-                } else {
-                    window.activityHandlers.favorite.addFavorite($button, movieId);
-                }
-            });
-        },
-
-        removeFavorite: function($activityItem, movieId) {
-            $.ajax({
-                url: '/api/movie/favorite',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ movieId: movieId, favorite: false }),
-                success: function(response) {
-                    if (response.success) {
-                        $activityItem.fadeOut(function() {
-                            $(this).remove();
-                            if ($('.activity-item').length === 0) {
-                                $('#activity-container').hide();
-                                $('#empty-message').show();
-                            }
-                        });
-                    } else {
-                        console.error('Error:', response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    if(xhr.status === 401) {
-                        window.location.href = '/oauth2/authorization/google';
-                    } else {
-                        console.error('Error:', error);
-                    }
-                }
-            });
-        },
-
-        addFavorite: function($button, movieId) {
-            $.ajax({
-                url: '/api/movie/favorite',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ movieId: movieId, favorite: true }),
-                success: function(response) {
-                    if (response.success) {
+    toggleFavorite: function($button, movieId, setFavorite) {
+        $.ajax({
+            url: '/api/movie/favorite',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ movieId: movieId, favorite: setFavorite }),
+            success: function(response) {
+                if (response.success) {
+                    if (setFavorite) {
                         $button.addClass('active');
                     } else {
-                        console.error('Error:', response.message);
+                        $button.removeClass('active');
                     }
-                },
-                error: function(xhr, status, error) {
-                    if(xhr.status === 401) {
-                        window.location.href = '/oauth2/authorization/google';
-                    } else {
-                        console.error('Error:', error);
-                    }
+                } else {
+                    console.error('Error: ', response.message);
                 }
-            });
-        }
+            },
+            error: function(xhr, status, error) {
+                if(xhr.status === 401) {
+                    window.location.href = '/oauth2/authorization/google';
+                } else {
+                    console.error('Error:', error);
+                }
+            }
+        });
+    }
+
 }
 
 

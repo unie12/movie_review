@@ -11,4 +11,5 @@ import java.time.LocalDateTime;
 public class FavoriteMovieItem {
     private MovieCommonDTO movieCommonDTO;
     private LocalDateTime favoriteDate;
+    private boolean isFavorite;
 }
