@@ -1,5 +1,5 @@
 const LoadingManager = {
-    show: function(minTime = 500) { // 0.5초
+    show: function(minTime = 500) {
         const loadingScreen = document.createElement('div');
         loadingScreen.id = 'loading-screen';
         loadingScreen.className = 'loading-screen';
