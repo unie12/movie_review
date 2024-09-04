@@ -261,7 +261,9 @@ public class UserDTOService {
 
         return users.map(user -> {
             boolean isSubscribed = subscriptionService.isSubscribed(currentEmail, user.getEmail());
-            return new UserSearchDTO(getUserCommonDTO(user), isSubscribed);
+            int ratingCnt = user.getRatingCount();
+            int reviewCnt = user.getReviewCount();
+            return new UserSearchDTO(getUserCommonDTO(user), isSubscribed, ratingCnt, reviewCnt);
         });
     }
 

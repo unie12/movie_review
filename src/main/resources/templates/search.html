@@ -40,7 +40,9 @@
                     <img th:src="${result.user.picture}" th:alt="${result.user.nickname}" class="user-avatar">
                 </a>
                 <div class="user-info">
-                    <h3 th:text="${result.user.nickname}" class="user-nickname" th:style="'color: ' + ${result.user.role.color}"></h3>
+                    <div th:text="${result.user.nickname}" class="user-nickname" th:style="'color: ' + ${result.user.role.color}"></div>
+                    <div class="user-ratingCnt" th:text="'평가수 ' + ${result.ratingCnt} +'개'"></div>
+                    <div class="user-reviewCnt" th:text="'리뷰수 ' + ${result.reviewCnt} + '개'"></div>
                     <button th:if="${#authentication.name != result.user.email}"
                             class="subscription-btn"
                             th:classappend="${result.isSubscribed ? 'active' : ''}"
