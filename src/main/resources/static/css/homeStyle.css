@@ -85,7 +85,7 @@
     transition: transform 0.3s ease;
 }
 .movie-poster:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .data-header {
@@ -162,7 +162,7 @@
     transition: transform 0.3s ease;
 }
 .review-card:hover{
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .arrow {

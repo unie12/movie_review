@@ -463,12 +463,13 @@ user-list {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease;
-    width: 150px;  /* 카드의 너비 지정 */
-    margin: 10px;  /* 카드 간 간격 */
+    width: 150px;
+    margin: 10px;
 }
 
 .subs-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .subs-picture {

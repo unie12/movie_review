@@ -1,14 +1,10 @@
 package com.example.movie_review.auth;
 
-import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.dbMovie.DTO.MoviePopularityDTO;
-import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.movieDetail.DTO.MovieSearchDTO;
 import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
-import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.DTO.UserSearchDTO;
-import com.example.movie_review.user.DTO.WeeklyUserDTO;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.RealTimeDataService;
 import com.example.movie_review.user.service.UserDTOService;
@@ -20,7 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController

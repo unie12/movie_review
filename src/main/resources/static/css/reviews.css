@@ -107,7 +107,7 @@
     transition: transform 0.3s ease;
 }
 .movie-poster:hover{
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 .review-text-content{
     overflow: hidden;
