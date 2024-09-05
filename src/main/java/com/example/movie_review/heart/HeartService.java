@@ -8,6 +8,7 @@ import com.example.movie_review.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public class HeartService {
 
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public boolean toggleHeart(String email, Long reviewId, boolean isHeart) {
         User user = userService.getUserByEmail(email);
         Review review = reviewService.getReviewById(reviewId);

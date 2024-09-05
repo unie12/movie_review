@@ -8,6 +8,7 @@ import com.example.movie_review.user.repository.UserRepository;
 import com.example.movie_review.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -27,6 +28,7 @@ public class DbRatingService {
     private final DbMovieService dbMovieService;
 
 
+    @Transactional
     public DbRatings saveOrUpdateRating(Long movieId, String email, Double rating) {
         User user = userService.getUserByEmail(email);
         DbMovies dbMovies = dbMovieService.getDbMovieById(movieId);

@@ -72,6 +72,7 @@ public class UserService {
         return userRepository.getAllUserCount();
     }
 
+    @Transactional
     public void updateUserRole(User user) {
         UserRole newRole;
         if(user.getReviews().size() >= 100 && user.getDbRatings().size() >= 150 && user.getHearts().size() >= 100) {

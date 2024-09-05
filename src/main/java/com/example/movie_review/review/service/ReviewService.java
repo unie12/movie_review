@@ -11,6 +11,7 @@ import com.example.movie_review.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,6 +44,7 @@ public class ReviewService {
      * 1. 존재하지 않을 시 -> save
      * 2. 존재할 시 -> update
      */
+    @Transactional
     public Review saveOrUpdateReview(Long movieId, String email, String reviewContext, boolean isSpoiler) {
         User user = userService.getUserByEmail(email);
         DbMovies dbMovie = dbMovieService.getDbMovieById(movieId);
@@ -95,6 +97,7 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Review Id"));
     }
 
+    @Transactional
     public void saveReview(Review review) {
         reviewRepository.save(review);
     }

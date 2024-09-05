@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -35,6 +36,7 @@ public class TagController {
          * 회원가입한 유저가 tag 할 시 저장
          */
         @PostMapping("/add-user-tag")
+        @Transactional
         public ResponseEntity<?> addUsertag(@RequestBody TagRequest tagRequest) {
             User user = userRepository.findById(tagRequest.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
             Movies movie = movieRepository.findById(tagRequest.getMovieId()).orElseThrow(() -> new RuntimeException("Movie not found"));
