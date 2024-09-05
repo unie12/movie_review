@@ -5,7 +5,7 @@ import com.example.movie_review.review.DTO.ReviewMovieDTO;
 import com.example.movie_review.review.Review;
 import com.example.movie_review.review.service.ReviewMovieDTOService;
 import com.example.movie_review.review.service.ReviewService;
-import com.example.movie_review.user.DTO.UserCommonDTO;
+import com.example.movie_review.user.DTO.UserSearchDTO;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.service.UserDTOService;
 import com.example.movie_review.user.service.UserService;
@@ -111,12 +111,13 @@ public class ReviewController {
      * 해당 리뷰에 좋아요 누른 사람들 리스트
      */
     @GetMapping("/review/{reviewId}/likes")
-    public Page<UserCommonDTO> getReviewLikeUser(
+    public Page<UserSearchDTO> getReviewLikeUser(
             @PathVariable Long reviewId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            Authentication auth) {
         Pageable pageable = PageRequest.of(page, size);
-        return userDTOService.getUsersByReviewLike(reviewId, pageable);
+        return userDTOService.getUsersByReviewLike(reviewId, pageable, auth);
     }
 
 

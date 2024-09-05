@@ -256,6 +256,10 @@
     width: 150px;
     margin: 10px;
     text-align: center;
+    transition: transform 0.3s ease;
+}
+.person-element:hover {
+    transform: scale(1.1);
 }
 .person-image {
     width: calc(7vw - 10px);

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
@@ -249,11 +250,19 @@ public class UserDTOService {
         return ratingDTOBuilder.build();
     }
 
-    public Page<UserCommonDTO> getUsersByReviewLike(Long reviewId, Pageable pageable) {
+    public Page<UserSearchDTO> getUsersByReviewLike(Long reviewId, Pageable pageable, Authentication authentication) {
+        User curUser = userService.getUserByEmail(authentication.getName());
+
         Review review = reviewService.getReviewById(reviewId);
         Page<User> likedUsers = userRepository.findByLikedReviews(review, pageable);
 
-        return likedUsers.map(this::getUserCommonDTO);
+        return likedUsers.map(user -> {
+            UserCommonDTO dto = getUserCommonDTO(user);
+            boolean isSubscribed = subscriptionService.isSubscribed(curUser.getEmail(), user.getEmail());
+            int ratingCnt = user.getRatingCount();
+            int reviewCnt = user.getReviewCount();
+            return new UserSearchDTO(dto, isSubscribed, ratingCnt, reviewCnt);
+        });
     }
 
     public Page<UserSearchDTO> searchUsers(String query, int page, int size, String currentEmail) {

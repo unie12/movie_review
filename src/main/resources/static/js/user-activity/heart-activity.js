@@ -153,11 +153,18 @@ function openLikeModal(reviewId) {
             .then(data => {
                 data.content.forEach(user => {
                     userList.innerHTML += `
-                        <li>
-                            <a href="/info/${user.email}">
-                                <img src="${user.picture}" alt="${user.nickname}" class="user-picture">
+                        <li class="like-user-item">
+                            <a href="/info/${user.user.email}">
+                                <img src="${user.user.picture}" alt="${user.user.nickname}" class="user-picture">
                             </a>
-                            <span>${user.nickname}</span>
+                            <div class="like-user-info">
+                                <div class="user-nickname">${user.user.nickname}</div>
+                                <div class="like-user-stat">
+                                    <span className="ratingCnt">평가 ${user.ratingCnt}개</span>
+                                    <span className="reviewCnt">리뷰 ${user.reviewCnt}개</span>
+                                </div>
+                            </div>
+                            <button class="subscribe-button">구독</button>
                         </li>
                     `;
                 });
