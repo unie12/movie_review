@@ -156,6 +156,8 @@ function openLikeModal(reviewId) {
             .then(response => response.json())
             .then(data => {
                 data.content.forEach(user => {
+                    const isCurrentUser = user.user.email === currentUserEmail;
+
                     userList.innerHTML += `
                         <li class="like-user-item">
                             <a href="/info/${user.user.email}">
@@ -168,7 +170,12 @@ function openLikeModal(reviewId) {
                                     <span className="reviewCnt">리뷰 ${user.reviewCnt}개</span>
                                 </div>
                             </div>
-                            <button class="subscribe-button">구독</button>
+                            ${!isCurrentUser ? `
+                                <button class="subscription-btn ${user.subscribed ? 'active' : ''}"
+                                        data-email="${user.user.email}">
+                                    ${user.subscribed ? '구독 취소' : '구독'}
+                                </button>
+                            ` : ''}
                         </li>
                     `;
                 });

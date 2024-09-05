@@ -164,3 +164,31 @@ $(document).on('click', function(event) {
         $('#likeModal').hide();
     }
 });
+
+$(document).on('click', '.subscription-btn', function() {
+        const btn = $(this);
+        const userEmail = btn.data('email');
+        toggleSubscription(btn, userEmail);
+    });
+
+function toggleSubscription(btn, userEmail) {
+    $.ajax({
+        url: `/api/user/subscription/${userEmail}`,
+        type: 'PUT',
+        contentType: 'application/json',
+        success: function(response) {
+            updateButtonState(btn, response.subscribed);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error toggling subscription:', error);
+        }
+    });
+}
+
+function updateButtonState(btn, isSubscribed) {
+    if(isSubscribed) {
+        btn.text('구독 취소').addClass('active');
+    } else {
+        btn.text('구독').removeClass('active');
+    }
+}

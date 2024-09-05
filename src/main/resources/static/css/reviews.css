@@ -130,10 +130,7 @@
 .review-movie-title {
     margin-bottom: -5px;
 }
-.active {
-    font-weight: bold;
-    color: red;
-}
+
 .like-button {
     background: none;
     border: none;
@@ -320,7 +317,7 @@
     color: #666;
 }
 
-.subscribe-button {
+.subscription-btn {
     padding: 5px 10px;
     background-color: #A4AFB1;
     color: white;
@@ -330,6 +327,12 @@
     transition: background-color 0.3s;
 }
 
-.subscribe-button:hover {
+.subscription-btn.active {
     background-color: red;
+}
+.subscription-btn:hover {
+    background-color: red;
+}
+.subscription-btn.active:hover {
+    background-color: #A4AFB1;
 }

@@ -56,6 +56,35 @@
     let currentPage = 0;
     let currentSort = "heartCount,desc";
 
+    $(document).on('click', '.subscription-btn', function() {
+        const btn = $(this);
+        const userEmail = btn.data('email');
+        toggleSubscription(btn, userEmail);
+    });
+
+    function toggleSubscription(btn, userEmail) {
+        $.ajax({
+            url: `/api/user/subscription/${userEmail}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            success: function(response) {
+                updateButtonState(btn, response.subscribed);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error toggling subscription:', error);
+            }
+        });
+    }
+
+    function updateButtonState(btn, isSubscribed) {
+        if(isSubscribed) {
+            btn.text('구독 취소').addClass('active');
+        } else {
+            btn.text('구독').removeClass('active');
+        }
+    }
+
+
     function loadReviews() {
         const sorting = document.getElementById('sorting');
         currentSort = sorting.value;
@@ -195,6 +224,8 @@
                 .then(response => response.json())
                 .then(data => {
                     data.content.forEach(user => {
+                        const isCurrentUser = user.user.email === /*[[${#authentication.name}]]*/ 'currentUserEmail';
+
                         userList.innerHTML += `
                             <li class="like-user-item">
                                 <a href="/info/${user.user.email}">
@@ -207,7 +238,12 @@
                                         <span className="reviewCnt">리뷰 ${user.reviewCnt}개</span>
                                     </div>
                                 </div>
-                                <button class="subscribe-button">구독</button>
+                                ${!isCurrentUser ? `
+                                    <button class="subscription-btn ${user.subscribed ? 'active' : ''}"
+                                            data-email="${user.user.email}">
+                                        ${user.subscribed ? '구독 취소' : '구독'}
+                                    </button>
+                                ` : ''}
                             </li>
                         `;
                     });

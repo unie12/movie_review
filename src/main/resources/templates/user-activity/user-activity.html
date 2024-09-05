@@ -52,6 +52,8 @@
     var userEmail = /*[[${user.email}]]*/ '';
     var category = /*[[${category}]]*/ '';
     var defaultSort = /*[[${defaultSort}]]*/ '';
+    var currentUserEmail = /*[[${#authentication.name}]]*/ 'defaultEmail';
+
 </script>
 <script th:src="@{'/js/user-activity/' + ${category} + '-activity.js'}"></script>
 </body>
