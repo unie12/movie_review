@@ -27,12 +27,11 @@
 .user-nickname {
     font-weight: bold;
     font-size: 1.4em;
-    margin-top: 40%;
+    margin-left: -10px;
 }
 
 .subscription-info {
     display: flex;
-    flex-direction: column;
     margin-top: 10px;
 }
 
@@ -131,7 +130,7 @@
     text-decoration: underline;
 }
 
-/* 사용자 인생 영화 */
+/* ì‚¬ìš©ìž ì¸ìƒ ì˜í™” */
 .life-movies {
     display: flex;
     flex-wrap: wrap;
@@ -159,7 +158,7 @@
 }
 
 
-/* 사용자 평점 분포 css*/
+/* ì‚¬ìš©ìž í‰ì  ë¶„í¬ css*/
 .rating-distribution {
     display: flex;
     justify-content: center;
@@ -218,7 +217,7 @@
 }
 
 
-/* 선호 키워드 css*/
+/* ì„ í˜¸ í‚¤ì›Œë“œ css*/
 .keyword-cloud {
     width: 80%;
     height: 300px;
@@ -247,7 +246,7 @@
 }
 
 
-/* 선호 감독 css*/
+/* ì„ í˜¸ ê°ë… css*/
 .prefer-person {
     display: flex;
     justify-content: space-around;
@@ -284,7 +283,7 @@
 }
 
 
-/* 선호 장르 */
+/* ì„ í˜¸ ìž¥ë¥´ */
 .top-genres {
     display: flex;
     justify-content: space-between;
@@ -311,7 +310,7 @@
 }
 
 
-/* 두 사용자의 선호 영화*/
+/* ë‘ ì‚¬ìš©ìžì˜ ì„ í˜¸ ì˜í™”*/
 .similar-movie-carousel, .disSimilar-movie-carousel {
     position: relative;
     overflow: hidden;
@@ -322,7 +321,7 @@
     display: flex;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    /* 애네를 넣으니까 arrow가 작동하낟...*/
+    /* ì• ë„¤ë¥¼ ë„£ìœ¼ë‹ˆê¹Œ arrowê°€ ìž‘ë™í•˜ë‚Ÿ...*/
      overflow-x: scroll;
      overflow: auto;
      scrollbar-width: none; /* Firefox */
@@ -404,7 +403,7 @@
 }
 
 
-/* 피드백 */
+/* í”¼ë“œë°± */
 .modal {
     display: none;
     position: fixed;

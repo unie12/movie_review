@@ -400,6 +400,7 @@
     justify-content: center;
     align-items: center;
     z-index: 10;
+    transition: transform 0.3s ease;
 }
 .favorite-button:hover {
     transform: scale(1.1);
@@ -473,7 +474,7 @@
 
 .subs-picture {
     width: 100%;
-    height: 60%;
+    height: 140px;
     object-fit: cover;
 }
 
@@ -492,9 +493,6 @@
     font-size: 0.8em;
     color: #666;
     margin-top: 5px;
-}
-.subs-date {
-    margin-bottom: 30px;
 }
 
 .like-user-item {
@@ -522,7 +520,7 @@
 
 .subscribe-button {
     padding: 5px 10px;
-    background-color: #e0e0e0;
+    background-color: #A4AFB1;
     color: white;
     border: none;
     border-radius: 5px;
