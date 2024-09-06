@@ -16,7 +16,7 @@ public class Crew {
 
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credits_id")
     private Credits credits;
 

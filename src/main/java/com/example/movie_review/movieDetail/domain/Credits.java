@@ -18,12 +18,12 @@ public class Credits {
     @Column(name = "credits_id")
     private Long id;
 
-    @OneToOne(mappedBy = "credits", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "credits")
     private MovieDetails movieDetails;
 
-    @OneToMany(mappedBy = "credits", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "credits", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Crew> crew;
 
-    @OneToMany(mappedBy = "credits", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "credits", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cast> cast;
 }

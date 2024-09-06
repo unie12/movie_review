@@ -743,7 +743,18 @@
         window.location.href = `/reviews?filter=${filter}&highlight=${reviewId}#review-${reviewId}`;
     }
 
+    let isNavigating = false;
+
     function navigateToMovieDetails(movieId) {
+        if (isNavigating) return;
+        isNavigating = true;
+
+        window.location.href = '/contents/' + movieId;
+
+        // 일정 시간 후 플래그 리셋
+        setTimeout(() => {
+            isNavigating = false;
+        }, 1000); // 1초 후 리셋
         window.location.href = '/contents/' + movieId;
     }
 

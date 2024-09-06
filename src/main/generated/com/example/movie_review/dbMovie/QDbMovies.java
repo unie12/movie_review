@@ -34,6 +34,8 @@ public class QDbMovies extends EntityPathBase<DbMovies> {
 
     public final NumberPath<Long> tmdbId = createNumber("tmdbId", Long.class);
 
+    public final NumberPath<Long> version = createNumber("version", Long.class);
+
     public QDbMovies(String variable) {
         this(DbMovies.class, forVariable(variable), INITS);
     }

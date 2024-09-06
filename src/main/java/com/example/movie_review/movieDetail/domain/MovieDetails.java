@@ -25,7 +25,7 @@ public class MovieDetails {
     @Column(name = "movieDetails_id")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "credits_id")
     private Credits credits;
 

@@ -65,7 +65,7 @@ public class User {
     /**
      * 사용자 이용 현황
      */
-    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DbRatings> dbRatings = new ArrayList<>();
 
     @OneToMany(mappedBy = "subscriber", cascade = ALL, orphanRemoval = true)

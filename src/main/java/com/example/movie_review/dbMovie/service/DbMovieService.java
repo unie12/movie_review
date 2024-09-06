@@ -13,7 +13,9 @@ import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,22 +36,49 @@ public class DbMovieService {
 
     @Transactional
     public DbMovies findOrCreateMovie(Long movieId) {
-        return dbMovieRepository.findByTmdbIdWithLock(movieId)
-            .orElseGet(() -> {
-                // 더블 체킹
-                return dbMovieRepository.findByTmdbId(movieId)
+        try {
+            return dbMovieRepository.findByTmdbId(movieId)
                     .orElseGet(() -> createMovieFromTmdb(movieId));
-            });
+        } catch (OptimisticLockException e) {
+            // 버전 충돌 발생 시 재시도 로직
+            return retryFindOrCreateMovie(movieId);
+        }
+    }
+    private DbMovies retryFindOrCreateMovie(Long movieId) {
+        int maxRetries = 3;
+        int retryCount = 0;
+        while (retryCount < maxRetries) {
+            try {
+                return dbMovieRepository.findByTmdbId(movieId)
+                        .orElseGet(() -> createMovieFromTmdb(movieId));
+            } catch (OptimisticLockException e) {
+                retryCount++;
+                if (retryCount >= maxRetries) {
+                    throw e;
+                }
+                // 잠시 대기 후 재시도
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+        throw new RuntimeException("Failed to find or create movie after multiple attempts");
     }
 
-    @Transactional
     private DbMovies createMovieFromTmdb(Long movieId) {
-        String movieDetailsJson = tmdbService.getMovieDetails(movieId).block();
+        return dbMovieRepository.findByTmdbId(movieId).orElseGet(() -> {
+            String movieDetailsJson = tmdbService.getMovieDetails(movieId).block();
+            MovieDetails movieDetails = null;
 
-        try {
-            MovieDetails movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
+            try {
+                movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
             movieDetails.setTId(movieId.intValue());
-
             // 장르 매칭 로직
             if (movieDetails.getGenreDtos() != null) {
                 for (GenreDto genreDto : movieDetails.getGenreDtos()) {
@@ -57,7 +86,6 @@ public class DbMovieService {
                             .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
                     movieDetails.getGenres().add(genre);
                 }
-
             }
 
             Credits credits = movieDetails.getCredits();
@@ -75,6 +103,7 @@ public class DbMovieService {
                     crew.setCredits(credits);
                 }
                 credits.setMovieDetails(movieDetails);
+                movieDetails.setCredits(credits);
             }
 
             movieDetails = movieDetailRepository.save(movieDetails);
@@ -82,17 +111,14 @@ public class DbMovieService {
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieId);
             dbMovie.setMovieDetails(movieDetails);
-
-            // 양방향 관계 설정?..
             movieDetails.setDbMovie(dbMovie);
+
             dbMovie = dbMovieRepository.save(dbMovie);
 
             tmdbService.addMovieKeywords(movieId, movieDetails);
 
             return dbMovie;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error parsing movie details from TMDB", e);
-        }
+        });
     }
 
     public List<Crew> getDirectors(MovieDetails movieDetails) {

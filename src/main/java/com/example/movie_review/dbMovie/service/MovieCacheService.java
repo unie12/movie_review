@@ -78,11 +78,11 @@ public class MovieCacheService {
                 throw new IllegalArgumentException("Unsupported MovieType: " + movieType);
             }
 
-            JsonNode moviesNode = objectMapper.readTree(movieData);
-            for (JsonNode movieNode : moviesNode.path("results")) {
-                Long tmdbId = movieNode.path("id").asLong();
-                dbMovieService.findOrCreateMovie(tmdbId);
-            }
+//            JsonNode moviesNode = objectMapper.readTree(movieData);
+//            for (JsonNode movieNode : moviesNode.path("results")) {
+//                Long tmdbId = movieNode.path("id").asLong();
+//                dbMovieService.findOrCreateMovie(tmdbId);
+//            }
 
             MovieCache cache = movieCacheRepository.findByType(movieType)
                     .orElse(new MovieCache());

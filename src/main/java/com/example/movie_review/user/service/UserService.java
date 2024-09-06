@@ -105,16 +105,49 @@ public class UserService {
     }
 
     @Transactional
+    /**
+     * 모든 연관 엔티티에 대해 명시적으로 관계를 해제
+     * 양방향 관계에 대해 양쪽 모두에서 관계를 제거
+     */
     public void deleteUser(User user, HttpServletRequest request, HttpServletResponse response) {
-        // 연관된 데이터 처리
-        user.getReviews().clear();
-        user.getHearts().clear();
-        user.getDbRatings().clear();
-        // ... 다른 연관 데이터들도 비슷하게 처리 ...
+        // PreferredMovies와 PreferredGenres 처리
+        user.getPreferredMovies().clear();
+        user.getPreferredGenres().clear();
 
-        // 구독 관계 처리 (양방향이므로 주의 필요)
+        // DbRatings 처리
+        user.getDbRatings().forEach(rating -> rating.setUser(null));
+        user.getDbRatings().clear();
+
+        // Subscription 처리 (양방향)
+        user.getSubscriptions().forEach(subscription -> subscription.getSubscribed().getSubscribers().remove(subscription));
         user.getSubscriptions().clear();
+        user.getSubscribers().forEach(subscription -> subscription.getSubscriber().getSubscriptions().remove(subscription));
         user.getSubscribers().clear();
+
+        // Review 처리
+        user.getReviews().forEach(review -> {
+            review.getHearts().clear();
+            review.getComments().clear();
+            review.setUser(null);
+        });
+        user.getReviews().clear();
+
+        // Heart 처리
+        user.getHearts().forEach(heart -> {
+            if (heart.getReview() != null) {
+                heart.getReview().getHearts().remove(heart);
+            }
+            heart.setUser(null);
+        });
+        user.getHearts().clear();
+
+        // UserFavoriteMovie 처리
+        user.getUserFavoriteMovies().forEach(favorite -> favorite.setUser(null));
+        user.getUserFavoriteMovies().clear();
+
+        // Feedback 처리
+        user.getUserFeedbacks().forEach(feedback -> feedback.setUser(null));
+        user.getUserFeedbacks().clear();
 
         eventPublisher.publishEvent(new ReviewEvent(this, null, ReviewEvent.ReviewEventType.ACCOUNT));
         userRepository.delete(user);

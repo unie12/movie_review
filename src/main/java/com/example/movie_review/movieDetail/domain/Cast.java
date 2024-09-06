@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
 //@Data
 @Getter @Setter
@@ -18,7 +20,7 @@ public class Cast {
 
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credits_id")
     private Credits credits;
 
@@ -35,4 +37,17 @@ public class Cast {
     private String character_name;
     private String credit_id;
     private Integer order_number;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cast)) return false;
+        Cast cast = (Cast) o;
+        return Objects.equals(id, cast.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
