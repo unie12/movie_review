@@ -57,10 +57,5 @@ public class DbMovies {
                 .orElse(0.0);
     }
 
-    public void setMovieDetails(MovieDetails movieDetails) {
-        this.movieDetails = movieDetails;
-        movieDetails.setDbMovie(this);
-    }
-
 
 }
