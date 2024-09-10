@@ -56,6 +56,8 @@ public class UserActivityController {
             return ResponseEntity.badRequest().body("Invalid category");
         }
 
+		System.out.println("api call");
+
         UserActivityDTO activities = service.getUserActivity(auth.getName(), userEmail, sort, page, size);
 
         Map<String, Object> response = activities.toMap();

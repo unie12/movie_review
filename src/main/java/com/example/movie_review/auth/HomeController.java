@@ -31,6 +31,11 @@ public class HomeController {
     private final RealTimeDataService realTimeDataService;
 
 
+@GetMapping("/healthcheck")
+public ResponseEntity<String> healthCheck() {
+    return ResponseEntity.ok("OK");
+}
+
     /**
      * 아주대 인기 영화 리스트...
      */
