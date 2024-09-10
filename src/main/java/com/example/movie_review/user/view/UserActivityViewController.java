@@ -76,7 +76,7 @@ public class UserActivityViewController {
         model.addAttribute("emptyMessage", categoryService.getEmptyMessage(category));
         model.addAttribute("defaultSort", categoryService.getDefaultSort(category));
 
-        return "/user-activity/user-activity";
+        return "user-activity/user-activity";
 //        return "/user-activity/user-" + category;
     }
 }

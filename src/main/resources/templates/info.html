@@ -214,6 +214,7 @@
         fetch(`/api/user/${userEmail}/preferences?fields=lifeMovies`)
             .then(response => response.json())
             .then(data => {
+console.log('life data', data);
                 if (data.lifeMovies && data.lifeMovies.length > 0) {
                     renderLifeMovies(data.lifeMovies, container);
                 }

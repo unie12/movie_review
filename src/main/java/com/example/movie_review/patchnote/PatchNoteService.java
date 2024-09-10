@@ -8,12 +8,14 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -23,21 +25,20 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @Slf4j
 public class PatchNoteService {
-    private static final String PATCH_NOTES_DIR = "classpath:patch-notes/";
+    private static final String PATCH_NOTES_DIR = "patch-notes/";
 
     private final ResourceLoader resourceLoader;
-    private final Parser parser = com.vladsch.flexmark.parser.Parser.builder().build();
+    private final ResourcePatternResolver resourcePatternResolver;
+    private final Parser parser = Parser.builder().build();
     private final HtmlRenderer renderer = HtmlRenderer.builder().build();
 
     @Cacheable("patchNotes")
     public List<PatchNote> getAllPatchNotes() throws IOException {
-        Resource resource = resourceLoader.getResource(PATCH_NOTES_DIR);
-        File dir = resource.getFile();
-        File[] files = dir.listFiles((d, name) -> name.endsWith(".md"));
+        Resource[] resources = resourcePatternResolver.getResources("classpath*:" + PATCH_NOTES_DIR + "*.md");
 
         List<PatchNote> patchNotes = new ArrayList<>();
-        for (File file : files) {
-            PatchNote patchNote = parsePathNoteFile(file);
+        for (Resource resource : resources) {
+            PatchNote patchNote = parsePathNoteResource(resource);
             patchNotes.add(patchNote);
         }
 
@@ -52,6 +53,22 @@ public class PatchNoteService {
                 .filter(note -> note.getVersion().equals(version))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Patch note not found for version: " + version));
+    }
+
+    private PatchNote parsePathNoteResource(Resource resource) throws IOException {
+        String content = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        String[] parts = content.split("---", 3);
+        Map<String, String> metadata = parseMetadata(parts[1]);
+
+        List<PatchNoteSection> sections = parseSections(parts[2].trim());
+        return new PatchNote(
+                metadata.get("version"),
+                LocalDate.parse(metadata.get("date")),
+                LocalDate.parse(metadata.getOrDefault("modify", metadata.get("date"))),
+                metadata.get("title"),
+                metadata.get("thumbnail"),
+                sections
+        );
     }
 
 
