@@ -92,6 +92,8 @@ body {
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
+    line-height: 1.5;
+    color: #7b7d7d;
 }
 .movie_poster {
     width: 30%;
