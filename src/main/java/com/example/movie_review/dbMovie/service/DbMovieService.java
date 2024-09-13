@@ -68,10 +68,6 @@ public class DbMovieService {
 
     @Transactional
     private DbMovies createMovieFromTmdb(Long movieTId) {
-        if (dbMovieRepository.findByTmdbId(movieTId).isPresent()) {
-            throw new RuntimeException("Movie with tmdbId " + movieTId + " already exists.");
-        }
-
         return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
             String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
             MovieDetails movieDetails = null;
@@ -110,13 +106,13 @@ public class DbMovieService {
                 movieDetails.setCredits(credits);
             }
 
-            movieDetails = movieDetailRepository.save(movieDetails);
 
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
             movieDetails.setDbMovie(dbMovie);
 
+            movieDetails = movieDetailRepository.save(movieDetails);
             dbMovie = dbMovieRepository.save(dbMovie);
 
             tmdbService.addMovieKeywords(movieTId, movieDetails);
