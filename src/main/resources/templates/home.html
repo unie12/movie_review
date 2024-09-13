@@ -248,7 +248,7 @@
         fetch(`/api/home/ajouPopularMovies`)
             .then(response => response.json())
             .then(movies => {
-                if (movies.length > 0) {
+                if (movies.length > 4) {
                     createMovieList(movies, 'ajouPopularList', 'ajouPop');
                     document.querySelector('.movie-category').style.display = 'block'; // div를 보이게 함
                     initializeSmoothScroll('ajouPopularList', '.movie-item');
@@ -267,7 +267,7 @@
         fetch(`/api/home/mbtiMovies`)
             .then(response => response.json())
             .then(movies => {
-                if (movies.length > 0) {
+                if (movies.length > 4) {
                     createMovieList(movies, 'mbtiMovieList', 'mbtiPop');
                     initializeSmoothScroll('mbtiMovieList', '.movie-item');
                     mbtiMovieContainer.style.display = 'block'; // 영화가 있으면 보이게 함
@@ -290,7 +290,7 @@
         fetch(`/api/home/departmentMovies`)
             .then(response => response.json())
             .then(movies => {
-                if (movies.length > 0) {
+                if (movies.length > 4) {
                     createMovieList(movies, 'departmentMovieList', 'departmentPop');
                     initializeSmoothScroll('departmentMovieList', '.movie-item');
                     departmentMovieContainer.style.display = 'block'; // 영화가 있으면 보이게 함
