@@ -308,8 +308,12 @@
                 },
                 body: JSON.stringify({reviewId: reviewId, heart: !isActive}),
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
             .then(data => {
+               console.log('Response data:', data);
                 this.classList.toggle('active', data.heart);
                 element.querySelector('.heart-count').textContent = data.updateHeartCnt;
             })
