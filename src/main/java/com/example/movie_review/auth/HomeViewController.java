@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/home")
 public class HomeViewController {
 
     private final TmdbService tmdbService;
@@ -43,7 +42,7 @@ public class HomeViewController {
 
 
     @Timed(value = "home.request", description = "Time taken to return the home page")
-    @GetMapping({"", "/"})
+    @GetMapping({"/home", "/", ""})
     public String home(
             @CookieValue(name = "jwtToken", required = false) String token,
             Model model,
@@ -105,7 +104,7 @@ public class HomeViewController {
      * 서버에서 초기에 검색 결과에 대한 리스트 보내주고 이후
      * HomeController에서 api를 통해 추가 정보 업로드
      */
-    @GetMapping("/search")
+    @GetMapping("/home/search")
     public String searchMovies(
             @RequestParam String query,
             @RequestParam(defaultValue = "1") int page,

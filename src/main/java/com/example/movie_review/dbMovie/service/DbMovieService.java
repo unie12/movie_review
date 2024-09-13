@@ -34,23 +34,22 @@ public class DbMovieService {
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
 
-    @Transactional
-    public DbMovies findOrCreateMovie(Long movieId) {
+    public DbMovies findOrCreateMovie(Long movieTId) {
         try {
-            return dbMovieRepository.findByTmdbId(movieId)
-                    .orElseGet(() -> createMovieFromTmdb(movieId));
+            return dbMovieRepository.findByTmdbId(movieTId)
+                    .orElseGet(() -> createMovieFromTmdb(movieTId));
         } catch (OptimisticLockException e) {
             // 버전 충돌 발생 시 재시도 로직
-            return retryFindOrCreateMovie(movieId);
+            return retryFindOrCreateMovie(movieTId);
         }
     }
-    private DbMovies retryFindOrCreateMovie(Long movieId) {
+    private DbMovies retryFindOrCreateMovie(Long movieTId) {
         int maxRetries = 3;
         int retryCount = 0;
         while (retryCount < maxRetries) {
             try {
-                return dbMovieRepository.findByTmdbId(movieId)
-                        .orElseGet(() -> createMovieFromTmdb(movieId));
+                return dbMovieRepository.findByTmdbId(movieTId)
+                        .orElseGet(() -> createMovieFromTmdb(movieTId));
             } catch (OptimisticLockException e) {
                 retryCount++;
                 if (retryCount >= maxRetries) {
@@ -67,9 +66,14 @@ public class DbMovieService {
         throw new RuntimeException("Failed to find or create movie after multiple attempts");
     }
 
-    private DbMovies createMovieFromTmdb(Long movieId) {
-        return dbMovieRepository.findByTmdbId(movieId).orElseGet(() -> {
-            String movieDetailsJson = tmdbService.getMovieDetails(movieId).block();
+    @Transactional
+    private DbMovies createMovieFromTmdb(Long movieTId) {
+        if (dbMovieRepository.findByTmdbId(movieTId).isEmpty()) {
+            throw new RuntimeException("Movie with tmdbId " + movieTId + " already exists.");
+        }
+
+        return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
+            String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
             MovieDetails movieDetails = null;
 
             try {
@@ -78,7 +82,7 @@ public class DbMovieService {
                 throw new RuntimeException(e);
             }
 
-            movieDetails.setTId(movieId.intValue());
+            movieDetails.setTId(movieTId.intValue());
             // 장르 매칭 로직
             if (movieDetails.getGenreDtos() != null) {
                 for (GenreDto genreDto : movieDetails.getGenreDtos()) {
@@ -109,13 +113,13 @@ public class DbMovieService {
             movieDetails = movieDetailRepository.save(movieDetails);
 
             DbMovies dbMovie = new DbMovies();
-            dbMovie.setTmdbId(movieId);
+            dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
             movieDetails.setDbMovie(dbMovie);
 
             dbMovie = dbMovieRepository.save(dbMovie);
 
-            tmdbService.addMovieKeywords(movieId, movieDetails);
+            tmdbService.addMovieKeywords(movieTId, movieDetails);
 
             return dbMovie;
         });
