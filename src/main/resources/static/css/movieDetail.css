@@ -64,8 +64,8 @@ body {
 }
 .movie-content {
     display: flex;
-        margin-top: 5%;
-    margin-bottom: 10%;
+    margin-top: 5%;
+    margin-bottom: 5%;
 }
 .action-buttons {
     display: flex;
@@ -83,7 +83,9 @@ body {
 .review-section {
     margin-bottom: 10%;
 }
-
+.backdrops-images {
+    margin-bottom: 10%;
+}
 .movie_poster {
     width: 30%;
     height: auto;
@@ -100,10 +102,6 @@ body {
 .actor-container, .director {
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.actor-container:hover, .director:hover {
-    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .director img,
