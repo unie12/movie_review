@@ -52,7 +52,7 @@ public class OAuth2Controller {
         cookie.setSecure(true);
         response.addCookie(cookie);
 
-        return "redirect:/home";
+        return "redirect:https://ajoukino.co.kr/home";
     }
 
     @PostMapping("/api/logout")
