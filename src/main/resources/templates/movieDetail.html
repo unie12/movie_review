@@ -117,24 +117,29 @@
 
                 <div class="person-section">
                     <!-- 감독 정보 -->
-                    <p><strong>감독:</strong></p>
-                    <div class="director" th:each="director : ${movieDTO.basicInfo.directors}"
-                         th:attr="data-director-id=${director.id}, data-director-type='crew'">
-                        <img th:src="${director.profile_path != null ? 'https://image.tmdb.org/t/p/w500' + director.profile_path : '/images/defaultPerson.png'}" class="actor-img">
-                        <span th:text="${director.name}"></span>
+                    <h2>감독</h2>
+                    <div th:each="director : ${movieDTO.basicInfo.directors}" class="person-card">
+                        <div class="director" th:attr="data-director-id=${director.id}, data-director-type='crew'">
+                            <img th:src="${director.profile_path != null ? 'https://image.tmdb.org/t/p/w500' + director.profile_path : '/images/defaultPerson.png'}" class="actor-img">
+                            <div class="actor-info">
+                                <span class="actor-name" th:text="${director.name}"></span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- 배우 정보 -->
-                    <p><strong>주요 출연:</strong></p>
+                    <h2>주요 출연</h2>
                     <div class="slider-container" id="actorSlider">
                         <button class="slider-btn prev">&#9664;</button>
                         <button class="slider-btn next">&#9654;</button>
                         <div class="slider-content actor">
-                            <div class="slider-item actor" th:each="actor : ${movieDTO.basicInfo.actors}" th:attr="data-actor-id=${actor.id}, data-actor-type='cast'">
-                                <img th:src="${actor.profile_path != null ? 'https://image.tmdb.org/t/p/w500' + actor.profile_path : '/images/defaultPerson.png'}" class="actor-img">
-                                <div class="actor-info">
-                                    <span class="actor-name" th:text="${actor.name}"></span>
-                                    <p class="actor-role" th:text="${actor.character_name}"></p>
+                            <div th:each="actor : ${movieDTO.basicInfo.actors}" class="slider-item actor person-card">
+                                <div th:attr="data-actor-id=${actor.id}, data-actor-type='cast'">
+                                    <img th:src="${actor.profile_path != null ? 'https://image.tmdb.org/t/p/w500' + actor.profile_path : '/images/defaultPerson.png'}" class="actor-img">
+                                    <div class="actor-info">
+                                        <span class="actor-name" th:text="${actor.name}"></span>
+                                        <p class="actor-role" th:text="${actor.character_name}"></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

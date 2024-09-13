@@ -210,6 +210,23 @@ textarea {
 .person-section {
     margin-bottom: 10%;
 }
+.person-card {
+    background-color: rgba(245, 245, 245, 0.7);  /* 은은한 배경색 */
+    border-radius: 8px;  /* 둥근 모서리 */
+    padding: 15px;
+    margin-bottom: 15px;  /* 카드 사이 간격 */
+    transition: background-color 0.3s ease;  /* 부드러운 호버 효과 */
+}
+.person-card:hover {
+    background-color: rgba(240, 240, 240, 0.9);  /* 호버 시 약간 진한 배경 */
+}
+
+.person-card h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
 .review-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(250px, 1fr));
