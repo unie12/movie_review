@@ -117,6 +117,9 @@ body {
 .favorite.active {
     color: red;
 }
+.favorite.active:hover {
+    color: #ccc;
+}
 .actor-slider {
     position: relative;
     overflow: hidden;

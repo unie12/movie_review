@@ -38,6 +38,9 @@
 .like-button:hover{
     color: red;
 }
+.like-button.active:hover {
+    color: #777;
+}
 .heart-count {
     font-weight: bold;
     margin-left: 5px;
