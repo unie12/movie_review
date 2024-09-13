@@ -68,7 +68,7 @@ public class DbMovieService {
 
     @Transactional
     private DbMovies createMovieFromTmdb(Long movieTId) {
-        if (dbMovieRepository.findByTmdbId(movieTId).isEmpty()) {
+        if (dbMovieRepository.findByTmdbId(movieTId).isPresent()) {
             throw new RuntimeException("Movie with tmdbId " + movieTId + " already exists.");
         }
 
