@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 //@Transactional
+@Slf4j
 @RequiredArgsConstructor
 public class DbMovieService {
 
@@ -33,14 +35,16 @@ public class DbMovieService {
     private final GenresRepository genreRepository;
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
-
+    @Transactional
     public DbMovies findOrCreateMovie(Long movieTId) {
         try {
-            return dbMovieRepository.findByTmdbId(movieTId)
+            return dbMovieRepository.findByTmdbIdWithLock(movieTId)
                     .orElseGet(() -> createMovieFromTmdb(movieTId));
         } catch (OptimisticLockException e) {
-            // 버전 충돌 발생 시 재시도 로직
             return retryFindOrCreateMovie(movieTId);
+        } catch (Exception e) {
+            log.error("Error in findOrCreateMovie for movieTId: " + movieTId, e);
+            throw new RuntimeException("Failed to find or create movie", e);
         }
     }
     private DbMovies retryFindOrCreateMovie(Long movieTId) {
@@ -105,14 +109,14 @@ public class DbMovieService {
                 credits.setMovieDetails(movieDetails);
                 movieDetails.setCredits(credits);
             }
-
+            movieDetails = movieDetailRepository.save(movieDetails);
 
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
             movieDetails.setDbMovie(dbMovie);
 
-            movieDetails = movieDetailRepository.save(movieDetails);
+
             dbMovie = dbMovieRepository.save(dbMovie);
 
             tmdbService.addMovieKeywords(movieTId, movieDetails);
