@@ -301,8 +301,6 @@
             const reviewId = this.dataset.reviewId;
             const isActive = this.classList.contains('active');
 
-            heartCountElement.textContent = isActive ? currentCount - 1 : currentCount + 1;
-
             fetch(`/api/review/heart/${reviewId}`, {
                 method: 'POST',
                 headers: {
@@ -316,12 +314,8 @@
             .then(data => {
                 this.classList.toggle('active', data.heart);
                 element.querySelector('.heart-count').textContent = data.updateHeartCnt;
-               heartCountElement.textContent = data.updateHeartCnt;
             })
-            .catch(error => {
-                console.error('Error:', error);
-               heartCountElement.textContent = currentCount;
-            });
+            .catch(error => console.error('Error:', error));
         });
     }
 

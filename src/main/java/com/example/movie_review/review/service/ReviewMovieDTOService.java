@@ -79,7 +79,9 @@ public class ReviewMovieDTOService {
             case DELETED:
                 removeReviewFromCache(event.getReview().getId());
             case HEART:
-                updateSingleReviewInList(event.getReview());
+                Review updatedReview = reviewservice.getReviewById(event.getReview().getId());
+                updateSingleReviewInList(updatedReview);
+//                updateSingleReviewInList(event.getReview());
                 break;
             case ACCOUNT:
                 updateReviewCache();

@@ -1,5 +1,6 @@
 package com.example.movie_review.heart;
 
+import com.example.movie_review.review.Review;
 import com.example.movie_review.review.event.ReviewEvent;
 import com.example.movie_review.review.service.ReviewMovieDTOService;
 import com.example.movie_review.review.service.ReviewService;
@@ -33,7 +34,9 @@ public class HeartController {
         try {
             String email = principal.getName();
             boolean isHeart = heartService.toggleHeart(email, request.getReviewId(), request.isHeart());
-            int updateHeartCount = reviewService.getReviewById(request.getReviewId()).getHeartCount();
+
+            Review updatedReview = reviewService.getReviewById(request.getReviewId());
+            int updateHeartCount = updatedReview.getHeartCount();
 
             return ResponseEntity.ok(new HeartResponse("Heart toggled successfully", isHeart, updateHeartCount));
         } catch (Exception e) {

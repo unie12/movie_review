@@ -8,6 +8,7 @@ import com.example.movie_review.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -24,33 +25,35 @@ public class HeartService {
 
     private final ApplicationEventPublisher eventPublisher;
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean toggleHeart(String email, Long reviewId, boolean isHeart) {
         User user = userService.getUserByEmail(email);
         Review review = reviewService.getReviewById(reviewId);
         Optional<Heart> existingHeart = heartRepository.findByUserAndReview(user, review);
 
+        boolean result;
         // 좋아요 안눌린 상태
         if(isHeart && existingHeart.isEmpty()) {
             Heart heart = new Heart();
             heart.setUser(user);
             heart.setReview(review);
             heartRepository.save(heart);
-            reviewService.saveReview(review);
-            eventPublisher.publishEvent(new ReviewEvent(this, review, ReviewEvent.ReviewEventType.HEART));
-            return true;
-
+            result = true;
         }
         // 좋아요 눌려 있던 상태
         else if (!isHeart && existingHeart.isPresent()){
-//            review.decrementHeartCnt();
             heartRepository.delete(existingHeart.get());
-            reviewService.saveReview(review);
-            eventPublisher.publishEvent(new ReviewEvent(this, review, ReviewEvent.ReviewEventType.HEART));
-            return false;
+            result = false;
+        } else {
+            result = existingHeart.isPresent();
         }
 
-        return existingHeart.isPresent();
+        reviewService.saveReview(review);
+
+        Review updatedReview = reviewService.getReviewById(reviewId);
+        eventPublisher.publishEvent(new ReviewEvent(this, updatedReview, ReviewEvent.ReviewEventType.HEART));
+
+        return result;
     }
 
     public List<Long> getUserHearts(String email) {
