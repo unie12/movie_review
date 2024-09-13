@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
                     )
                     .failureHandler((request, response, exception) -> {
-                        response.sendRedirect("/home);
+                        response.sendRedirect("/home");
                     })
 
                 )
