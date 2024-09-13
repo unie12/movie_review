@@ -299,41 +299,25 @@
     function attachLikeEvents(element) {
         element.querySelector('.like-button').addEventListener('click', function() {
             const reviewId = this.dataset.reviewId;
-            const isCurrentlyLiked = this.classList.contains('active');
-            const heartCountElement = element.querySelector('.heart-count');
-            const currentHeartCount = parseInt(heartCountElement.textContent, 10);
-
-            // 낙관적 업데이트
-            this.classList.toggle('active');
-            heartCountElement.textContent = isCurrentlyLiked ? currentHeartCount - 1 : currentHeartCount + 1;
+            const isActive = this.classList.contains('active');
 
             fetch(`/api/review/heart/${reviewId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({reviewId: reviewId, heart: !isCurrentlyLiked}),
+                body: JSON.stringify({reviewId: reviewId, heart: !isActive}),
             })
             .then(response => {
                 console.log('Response status:', response.status);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
                 return response.json();
             })
             .then(data => {
-                console.log('Response data:', data);
-                // 서버 응답으로 최종 상태 업데이트
+               console.log('Response data:', data);
                 this.classList.toggle('active', data.heart);
-                heartCountElement.textContent = data.updateHeartCnt;
+                element.querySelector('.heart-count').textContent = data.updateHeartCnt;
             })
-            .catch(error => {
-                console.error('Error:', error);
-                // 오류 발생 시 원래 상태로 되돌림
-                this.classList.toggle('active');
-                heartCountElement.textContent = currentHeartCount;
-                alert('좋아요 업데이트에 실패했습니다. 다시 시도해 주세요.');
-            });
+            .catch(error => console.error('Error:', error));
         });
     }
 
