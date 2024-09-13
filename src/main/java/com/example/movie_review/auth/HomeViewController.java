@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/jwt-login")
+@RequestMapping("/home")
 public class HomeViewController {
 
     private final TmdbService tmdbService;

@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
                     )
                     .failureHandler((request, response, exception) -> {
-                        response.sendRedirect("/jwt-login");
+                        response.sendRedirect("/home);
                     })
 
                 )
@@ -52,7 +52,7 @@ public class SecurityConfig {
                             jwtCookie.setMaxAge(0);
                             jwtCookie.setPath("/");
                             response.addCookie(jwtCookie);
-                            response.sendRedirect("/jwt-login");
+                            response.sendRedirect("/home");
                         }))
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)

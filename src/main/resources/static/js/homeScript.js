@@ -62,7 +62,7 @@ function createMovieList(movies, containerId) {
 }
 
 function navigateToMovieDetails(movieId) {
-    window.location.href = '/jwt-login/contents/' + movieId;
+    window.location.href = '/home/contents/' + movieId;
 }
 
 function toggleMovieInfo(infoDiv) {

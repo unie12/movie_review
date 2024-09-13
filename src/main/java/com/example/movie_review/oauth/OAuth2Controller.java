@@ -52,7 +52,7 @@ public class OAuth2Controller {
         cookie.setSecure(true);
         response.addCookie(cookie);
 
-        return "redirect:/jwt-login";
+        return "redirect:/home";
     }
 
     @PostMapping("/api/logout")
@@ -71,7 +71,7 @@ public class OAuth2Controller {
         jsessionCookie.setHttpOnly(true);
         response.addCookie(jsessionCookie);
 
-        response.sendRedirect("/jwt-login");
+        response.sendRedirect("/home");
         return ResponseEntity.ok().body("Logged out successfully");
     }
 }

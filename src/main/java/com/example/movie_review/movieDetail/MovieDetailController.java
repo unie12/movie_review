@@ -121,6 +121,6 @@ public class MovieDetailController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "jwt-login";
+        return "/home";
     }
 }
