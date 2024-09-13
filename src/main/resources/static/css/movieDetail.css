@@ -96,7 +96,6 @@ body {
 .director, .actor {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
 }
 
 .actor-container, .director {
