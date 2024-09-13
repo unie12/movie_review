@@ -27,11 +27,7 @@ public class RedisConfig {
         redisConfig.setPort(6379);
         redisConfig.setPassword("wheogml12!");
 
-        // Redis 서버가 SSL/TLS를 사용하지 않는다면 이 부분을 제거하세요
-        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
-                .useSsl().build();
-
-        return new LettuceConnectionFactory(redisConfig, clientConfig);
+        return new LettuceConnectionFactory(redisConfig);
     }
 
     @Bean

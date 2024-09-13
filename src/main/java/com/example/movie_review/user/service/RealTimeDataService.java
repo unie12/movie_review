@@ -5,6 +5,7 @@ import com.example.movie_review.dbRating.DbRatingService;
 import com.example.movie_review.review.service.ReviewService;
 import com.example.movie_review.user.DTO.WeeklyUserDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class RealTimeDataService {
     private final RedisTemplate<String, RealTimeData> redisTemplate;
@@ -25,16 +27,22 @@ public class RealTimeDataService {
     private static final long CACHE_EXPIRATION = 60; // 60 seconds
 
     public RealTimeData getRealTimeData() {
-        RealTimeData cachedData = redisTemplate.opsForValue().get(REAL_TIME_DATA_KEY);
+        try {
+            RealTimeData cachedData = redisTemplate.opsForValue().get(REAL_TIME_DATA_KEY);
 
-        if (cachedData != null) {
-            return cachedData;
+            if (cachedData != null) {
+                return cachedData;
+            }
+
+            RealTimeData freshData = fetchFreshData();
+            redisTemplate.opsForValue().set(REAL_TIME_DATA_KEY, freshData, CACHE_EXPIRATION, TimeUnit.SECONDS);
+
+            return freshData;
+        } catch (Exception e) {
+            log.error("Error fetching real-time data from Redis", e);
+            // Fallback to fetching fresh data without caching
+            return fetchFreshData();
         }
-
-        RealTimeData freshData = fetchFreshData();
-        redisTemplate.opsForValue().set(REAL_TIME_DATA_KEY, freshData, CACHE_EXPIRATION, TimeUnit.SECONDS);
-
-        return freshData;
     }
 
     private RealTimeData fetchFreshData() {
