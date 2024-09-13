@@ -28,8 +28,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/patch-notes/refresh").hasRole("ADMIN")
                         .anyRequest().authenticated() // 나머지 요청들은 모두 인증 절차 수행해야 함
                 )
-                .requiresChannel(channel -> channel
-                        .anyRequest().requiresSecure())
+//                .requiresChannel(channel -> channel
+//                        .anyRequest().requiresSecure())
                 .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용
                     .successHandler(((request, response, authentication) -> {
                         response.sendRedirect("/oauth2-login");
