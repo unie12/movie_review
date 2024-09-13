@@ -134,7 +134,7 @@
                         <button class="slider-btn next">&#9654;</button>
                         <div class="slider-content actor">
                             <div th:each="actor : ${movieDTO.basicInfo.actors}" class="slider-item actor person-card">
-                                <div th:attr="data-actor-id=${actor.id}, data-actor-type='cast'">
+                                <div class="actor-container" th:attr="data-actor-id=${actor.id}, data-actor-type='cast'">
                                     <img th:src="${actor.profile_path != null ? 'https://image.tmdb.org/t/p/w500' + actor.profile_path : '/images/defaultPerson.png'}" class="actor-img">
                                     <div class="actor-info">
                                         <span class="actor-name" th:text="${actor.name}"></span>
@@ -358,7 +358,7 @@
             });
         });
 
-        const actorItems = document.querySelectorAll('.slider-item.actor');
+        const actorItems = document.querySelectorAll('.actor-container');
         actorItems.forEach(item => {
             item.addEventListener('click', function() {
                 const actorId = this.getAttribute('data-actor-id');
