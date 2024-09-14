@@ -64,10 +64,10 @@ public class DbMovieService {
                 throw new RuntimeException(e);
             }
 
-            System.out.println("movieDetails = " + movieDetails);
-            System.out.println("movieDetails.getId() = " + movieDetails.getId());
-            System.out.println("movieDetails.getTId() = " + movieDetails.getTId());
-            System.out.println("movieDetails.getCredits() = " + movieDetails.getCredits());
+//            System.out.println("movieDetails = " + movieDetails);
+//            System.out.println("movieDetails.getId() = " + movieDetails.getId());
+//            System.out.println("movieDetails.getTId() = " + movieDetails.getTId());
+//            System.out.println("movieDetails.getCredits() = " + movieDetails.getCredits());
 
             movieDetails.setTId(movieTId.intValue());
             // 장르 매칭 로직
