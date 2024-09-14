@@ -42,16 +42,7 @@ public class DbMovieService {
         log.info("Finding or creating movie with tmdbId: {}", movieTId);
         try {
             return dbMovieRepository.findByTmdbId(movieTId)
-                    .orElseGet(() -> {
-                        DbMovies newMovie = createMovieFromTmdb(movieTId);
-                        try {
-                            return dbMovieRepository.save(newMovie);
-                        } catch (OptimisticLockingFailureException e) {
-                            log.warn("Concurrent insert detected for movieTId: {}. Retrying...", movieTId);
-                            return dbMovieRepository.findByTmdbId(movieTId)
-                                    .orElseThrow(() -> new RuntimeException("Failed to find or create movie after concurrent insert", e));
-                        }
-                    });
+                    .orElseGet(() -> createMovieFromTmdb(movieTId));
         } catch (DataIntegrityViolationException e) {
             log.warn("Data integrity violation for movieTId: {}. Retrying...", movieTId);
             return dbMovieRepository.findByTmdbId(movieTId)
@@ -59,16 +50,19 @@ public class DbMovieService {
         }
     }
 
-    private DbMovies createMovieFromTmdb(Long movieTId) {
+    @Transactional
+    public DbMovies createMovieFromTmdb(Long movieTId) {
         log.info("Creating movie from TMDB with id: {}", movieTId);
-        // 먼저 다시 한번 확인
         return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
             MovieDetails movieDetails = createMovieDetails(movieTId);
+            movieDetails = movieDetailRepository.save(movieDetails);  // 먼저 MovieDetails를 저장
+
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
 //            movieDetails.setDbMovie(dbMovie);
-            return dbMovie;
+
+            return dbMovieRepository.save(dbMovie);
         });
     }
 
