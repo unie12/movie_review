@@ -12,9 +12,8 @@ public class Crew {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "crew_id")
-    private Long crew_id;
-
     private Long id;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credits_id")
@@ -22,7 +21,6 @@ public class Crew {
 
     private boolean adult;
     private Integer gender;
-    private Integer tId;
     private String known_for_department;
     private String name;
     private String original_name;
