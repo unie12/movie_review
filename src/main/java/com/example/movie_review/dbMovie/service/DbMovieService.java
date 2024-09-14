@@ -93,13 +93,16 @@ public class DbMovieService {
                     crew.setCredits(credits);
                 }
                 credits.setMovieDetails(movieDetails);
-                movieDetails.setCredits(credits);
             }
 
-            entityManager.flush();
-            entityManager.clear();
+//            entityManager.flush();
+//            entityManager.clear();
 
             movieDetails = movieDetailRepository.save(movieDetails);
+
+            if (credits != null) {
+                credits = creditsRepository.save(credits);
+            }
 
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
