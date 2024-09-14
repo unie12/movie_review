@@ -50,10 +50,6 @@ public class DbMovieService {
 
     @Transactional
     private DbMovies createMovieFromTmdb(Long movieTId) {
-        if (dbMovieRepository.findByTmdbId(movieTId).isEmpty()) {
-            throw new RuntimeException("Movie with tmdbId " + movieTId + " already exists.");
-        }
-
         return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
             String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
             MovieDetails movieDetails = null;
