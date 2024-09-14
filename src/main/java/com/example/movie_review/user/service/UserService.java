@@ -96,7 +96,7 @@ public class UserService {
         }
     }
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?", zone = "Asia/Seoul")
     public void updateUserRoles() {
         List<User> allUsers = userRepository.findAll();
         for (User user : allUsers) {

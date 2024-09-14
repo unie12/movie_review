@@ -91,7 +91,7 @@ public class PatchNoteService {
         );
     }
 
-    @Scheduled(cron = "0 0 9 * * MON")
+    @Scheduled(cron = "0 0 9 * * MON", zone = "Asia/Seoul")
     @CacheEvict(cacheNames = {"patchNotes", "patchNote"}, allEntries = true)
     public void refreshPatchNotes() {
         try {
