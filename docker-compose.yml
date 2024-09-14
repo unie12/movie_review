@@ -1,4 +1,4 @@
-GNU nano 7.2                                                               docker-compose.yml                                                                        version: '3'
+version: '3'
 
 services:
   app:
@@ -6,21 +6,34 @@ services:
     ports:
       - "8081:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/moviedb
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/moviedb_test
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=wheogml12!
+      - SPRING_DATASOURCE_PASSWORD=testpassword
+      - SPRING_PROFILES_ACTIVE=test
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=testpassword
     depends_on:
       - db
+      - redis
+    volumes:
+      - ./uploads:/app/uploads
 
   db:
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=wheogml12!
-      - MYSQL_DATABASE=moviedb
+      - MYSQL_ROOT_PASSWORD=testpassword
+      - MYSQL_DATABASE=moviedb_test
     volumes:
-      - ./mysql-data-docker:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
+
+  redis:
+    image: redis:6
+    command: redis-server --requirepass testpassword
+    ports:
+      - "6380:6379"
 
 volumes:
   mysql-data:
