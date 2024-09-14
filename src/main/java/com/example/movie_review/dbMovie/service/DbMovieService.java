@@ -53,61 +53,120 @@ public class DbMovieService {
 
     @Transactional
     private DbMovies createMovieFromTmdb(Long movieTId) {
-        return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
-            String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
-            MovieDetails movieDetails = null;
+        String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
+        MovieDetails movieDetails;
 
-            try {
-                movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+        try {
+            movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error parsing movie details", e);
+        }
+
+        movieDetails.setTId(movieTId.intValue());
+
+        // 장르 매칭 로직
+        if (movieDetails.getGenreDtos() != null) {
+            for (GenreDto genreDto : movieDetails.getGenreDtos()) {
+                Genres genre = genreRepository.findById(genreDto.getId())
+                        .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
+                movieDetails.getGenres().add(genre);
             }
+        }
 
-            System.out.println("movieDetails = " + movieDetails);
-            System.out.println("movieDetails.getId() = " + movieDetails.getId());
-            System.out.println("movieDetails.getTId() = " + movieDetails.getTId());
-            System.out.println("movieDetails.getCredits() = " + movieDetails.getCredits());
+        Credits credits = movieDetails.getCredits();
+        if (credits != null) {
+            Credits finalCredits = credits;
+            credits.setCast(credits.getCast().stream()
+                    .limit(30)
+                    .peek(cast -> cast.setCredits(finalCredits))
+                    .collect(Collectors.toList()));
 
-            movieDetails.setTId(movieTId.intValue());
-            // 장르 매칭 로직
-            if (movieDetails.getGenreDtos() != null) {
-                for (GenreDto genreDto : movieDetails.getGenreDtos()) {
-                    Genres genre = genreRepository.findById(genreDto.getId())
-                            .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
-                    movieDetails.getGenres().add(genre);
-                }
-            }
+            credits.setCrew(credits.getCrew().stream()
+                    .filter(c -> "Director".equals(c.getJob()))
+                    .peek(crew -> crew.setCredits(finalCredits))
+                    .collect(Collectors.toList()));
 
-            Credits credits = movieDetails.getCredits();
-            if (credits != null) {
-                credits.setCast(credits.getCast().stream()
-                        .limit(30)
-                        .peek(cast -> cast.setCredits(credits))
-                        .collect(Collectors.toList()));
+            credits.setMovieDetails(movieDetails);
+        }
 
-                credits.setCrew(credits.getCrew().stream()
-                        .filter(c -> "Director".equals(c.getJob()))
-                        .peek(crew -> crew.setCredits(credits))
-                        .collect(Collectors.toList()));
+        // 먼저 Credits를 저장
+        if (credits != null) {
+            credits = creditsRepository.save(credits);
+            movieDetails.setCredits(credits);
+        }
 
-                credits.setMovieDetails(movieDetails);
-                movieDetails.setCredits(credits);
-            }
+        // 그 다음 MovieDetails 저장
+        movieDetails = movieDetailRepository.save(movieDetails);
 
-            movieDetails = movieDetailRepository.save(movieDetails);
+        // DbMovies 생성 및 저장
+        DbMovies dbMovie = new DbMovies();
+        dbMovie.setTmdbId(movieTId);
+        dbMovie.setMovieDetails(movieDetails);
+        dbMovie = dbMovieRepository.save(dbMovie);
 
-            DbMovies dbMovie = new DbMovies();
-            dbMovie.setTmdbId(movieTId);
-            dbMovie.setMovieDetails(movieDetails);
-            movieDetails.setDbMovie(dbMovie);
+        // 키워드 추가
+        tmdbService.addMovieKeywords(movieTId, movieDetails);
 
-            dbMovie = dbMovieRepository.save(dbMovie);
-
-            tmdbService.addMovieKeywords(movieTId, movieDetails);
-
-            return dbMovie;
-        });
+        return dbMovie;
     }
+
+//    @Transactional
+//    private DbMovies createMovieFromTmdb(Long movieTId) {
+//        return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
+//            String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
+//            MovieDetails movieDetails = null;
+//
+//            try {
+//                movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
+//            } catch (JsonProcessingException e) {
+//                throw new RuntimeException(e);
+//            }
+//
+//            System.out.println("movieDetails = " + movieDetails);
+//            System.out.println("movieDetails.getId() = " + movieDetails.getId());
+//            System.out.println("movieDetails.getTId() = " + movieDetails.getTId());
+//            System.out.println("movieDetails.getCredits() = " + movieDetails.getCredits());
+//
+//            movieDetails.setTId(movieTId.intValue());
+//            // 장르 매칭 로직
+//            if (movieDetails.getGenreDtos() != null) {
+//                for (GenreDto genreDto : movieDetails.getGenreDtos()) {
+//                    Genres genre = genreRepository.findById(genreDto.getId())
+//                            .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
+//                    movieDetails.getGenres().add(genre);
+//                }
+//            }
+//
+//            Credits credits = movieDetails.getCredits();
+//            if (credits != null) {
+//                credits.setCast(credits.getCast().stream()
+//                        .limit(30)
+//                        .peek(cast -> cast.setCredits(credits))
+//                        .collect(Collectors.toList()));
+//
+//                credits.setCrew(credits.getCrew().stream()
+//                        .filter(c -> "Director".equals(c.getJob()))
+//                        .peek(crew -> crew.setCredits(credits))
+//                        .collect(Collectors.toList()));
+//
+//                credits.setMovieDetails(movieDetails);
+//                movieDetails.setCredits(credits);
+//            }
+//
+//            movieDetails = movieDetailRepository.save(movieDetails);
+//
+//            DbMovies dbMovie = new DbMovies();
+//            dbMovie.setTmdbId(movieTId);
+//            dbMovie.setMovieDetails(movieDetails);
+//            movieDetails.setDbMovie(dbMovie);
+//
+//            dbMovie = dbMovieRepository.save(dbMovie);
+//
+//            tmdbService.addMovieKeywords(movieTId, movieDetails);
+//
+//            return dbMovie;
+//        });
+//    }
 
 //    @Transactional(propagation = Propagation.REQUIRES_NEW)
 //    public DbMovies createMovieFromTmdb(Long movieTId) {
