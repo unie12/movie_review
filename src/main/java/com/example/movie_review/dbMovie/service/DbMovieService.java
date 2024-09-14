@@ -20,6 +20,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class DbMovieService {
 
@@ -37,31 +39,21 @@ public class DbMovieService {
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public DbMovies findOrCreateMovie(Long movieTId) {
         log.info("Finding or creating movie with tmdbId: {}", movieTId);
-        try {
-            return dbMovieRepository.findByTmdbId(movieTId)
-                    .orElseGet(() -> createMovieFromTmdb(movieTId));
-        } catch (DataIntegrityViolationException e) {
-            log.warn("Data integrity violation for movieTId: {}. Retrying...", movieTId);
-            return dbMovieRepository.findByTmdbId(movieTId)
-                    .orElseThrow(() -> new RuntimeException("Failed to find or create movie after data integrity violation", e));
-        }
+        return dbMovieRepository.findByTmdbId(movieTId)
+                .orElseGet(() -> createMovieFromTmdb(movieTId));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public DbMovies createMovieFromTmdb(Long movieTId) {
         log.info("Creating movie from TMDB with id: {}", movieTId);
         return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
             MovieDetails movieDetails = createMovieDetails(movieTId);
-            movieDetails = movieDetailRepository.save(movieDetails);  // 먼저 MovieDetails를 저장
-
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
-//            movieDetails.setDbMovie(dbMovie);
-
+            movieDetails.setDbMovie(dbMovie);
             return dbMovieRepository.save(dbMovie);
         });
     }

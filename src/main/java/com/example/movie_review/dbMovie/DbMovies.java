@@ -39,12 +39,6 @@ public class DbMovies {
     @OneToMany(mappedBy = "dbMovies", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
 
-    public void setMovieDetails(MovieDetails movieDetails) {
-        this.movieDetails = movieDetails;
-        if (movieDetails != null) {
-            movieDetails.setDbMovie(this);
-        }
-    }
 
     public int getReviewCount() {
 //        if(reviews == null)
