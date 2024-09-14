@@ -55,6 +55,7 @@ public class DbMovieService {
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
             movieDetails.setDbMovie(dbMovie);
+
             try {
                 return dbMovieRepository.saveAndFlush(dbMovie);
             } catch (DataIntegrityViolationException e) {
@@ -102,7 +103,8 @@ public class DbMovieService {
             credits.setMovieDetails(movieDetails);
             movieDetails.setCredits(credits);
         }
-        return movieDetails;
+        return movieDetailRepository.save(movieDetails);
+//        return movieDetails;
     }
 
 
