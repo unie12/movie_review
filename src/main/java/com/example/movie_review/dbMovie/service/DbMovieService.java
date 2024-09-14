@@ -40,8 +40,23 @@ public class DbMovieService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public DbMovies findOrCreateMovie(Long movieTId) {
         log.info("Finding or creating movie with tmdbId: {}", movieTId);
-        return dbMovieRepository.findByTmdbId(movieTId)
-                .orElseGet(() -> createMovieFromTmdb(movieTId));
+        try {
+            return dbMovieRepository.findByTmdbId(movieTId)
+                    .orElseGet(() -> {
+                        DbMovies newMovie = createMovieFromTmdb(movieTId);
+                        try {
+                            return dbMovieRepository.save(newMovie);
+                        } catch (OptimisticLockingFailureException e) {
+                            log.warn("Concurrent insert detected for movieTId: {}. Retrying...", movieTId);
+                            return dbMovieRepository.findByTmdbId(movieTId)
+                                    .orElseThrow(() -> new RuntimeException("Failed to find or create movie after concurrent insert", e));
+                        }
+                    });
+        } catch (DataIntegrityViolationException e) {
+            log.warn("Data integrity violation for movieTId: {}. Retrying...", movieTId);
+            return dbMovieRepository.findByTmdbId(movieTId)
+                    .orElseThrow(() -> new RuntimeException("Failed to find or create movie after data integrity violation", e));
+        }
     }
 
     @Transactional
@@ -53,7 +68,6 @@ public class DbMovieService {
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
-            movieDetailRepository.save(movieDetails);
 //            movieDetails.setDbMovie(dbMovie);
             return dbMovieRepository.save(dbMovie);
         });
