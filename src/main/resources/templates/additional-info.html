@@ -549,8 +549,17 @@
 
     function simulateLoading() {
         let progress = 0;
+        const minLoadingTime = 2000; // 최소 로딩 시간 (밀리초)
+        const startTime = Date.now();
+
         const interval = setInterval(() => {
             progress += Math.random() * 15;
+
+            // 최소 로딩 시간이 지나지 않았다면 progress를 0으로 유지
+            if (Date.now() - startTime < minLoadingTime) {
+                progress = Math.min(progress, 60); // 예를 들어 최소 10%까지는 보여주기
+            }
+
             if (progress > 90) {
                 clearInterval(interval);
                 return;
