@@ -39,12 +39,14 @@ public class DbMovieService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public DbMovies findOrCreateMovie(Long movieTId) {
+        log.info("Finding or creating movie with tmdbId: {}", movieTId);
         return dbMovieRepository.findByTmdbId(movieTId)
                 .orElseGet(() -> createMovieFromTmdb(movieTId));
     }
 
     @Transactional
     private DbMovies createMovieFromTmdb(Long movieTId) {
+        log.info("Creating movie from TMDB with id: {}", movieTId);
         // 먼저 다시 한번 확인
         return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
             MovieDetails movieDetails = createMovieDetails(movieTId);
