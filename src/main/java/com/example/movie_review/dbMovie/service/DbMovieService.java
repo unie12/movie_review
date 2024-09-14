@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -142,25 +143,39 @@ public class DbMovieService {
                 movieDetails.getGenres().add(genre);
             }
         }
-        movieDetails = movieDetailRepository.save(movieDetails);
+
         Credits credits = movieDetails.getCredits();
         if (credits != null) {
             credits.setCast(credits.getCast().stream()
                     .limit(30)
+                    .map(cast -> {
+                        Cast managedCast = new Cast();
+                        // ID를 null로 설정하여 새 엔티티로 인식하게 함
+                        managedCast.setId(null);
+                        // 다른 필드들을 복사
+                        BeanUtils.copyProperties(cast, managedCast, "id", "credits");
+                        managedCast.setCredits(credits);
+                        return managedCast;
+                    })
                     .collect(Collectors.toList()));
-            for (Cast cast : credits.getCast()) {
-                cast.setCredits(credits);
-            }
+
             credits.setCrew(credits.getCrew().stream()
                     .filter(c -> "Director".equals(c.getJob()))
+                    .map(crew -> {
+                        Crew managedCrew = new Crew();
+                        // ID를 null로 설정하여 새 엔티티로 인식하게 함
+                        managedCrew.setId(null);
+                        // 다른 필드들을 복사
+                        BeanUtils.copyProperties(crew, managedCrew, "id", "credits");
+                        managedCrew.setCredits(credits);
+                        return managedCrew;
+                    })
                     .collect(Collectors.toList()));
-            for (Crew crew : credits.getCrew()) {
-                crew.setCredits(credits);
-            }
+
             credits.setMovieDetails(movieDetails);
-            credits = creditsRepository.save(credits);
             movieDetails.setCredits(credits);
         }
+        movieDetails = movieDetailRepository.save(movieDetails);
 
         DbMovies dbMovie = new DbMovies();
         dbMovie.setTmdbId(movieTId);
