@@ -4,6 +4,7 @@ import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.movieDetail.DTO.GenreDto;
 import com.example.movie_review.movieDetail.domain.Credits;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +25,7 @@ public class MovieDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "movieDetails_id")
+    @JsonIgnore
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
