@@ -53,7 +53,7 @@ public class MovieDetails {
 
     private String backdrop_path;
     @Column
-    @JsonProperty("id")
+//    @JsonProperty("id")
     private Integer tId;
 
     private String title;
