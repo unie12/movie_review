@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +49,25 @@ public class DbMovieService {
             throw new RuntimeException("Failed to find or create movie", e);
         }
     }
+
+    @Transactional
+    public List<DbMovies> findOrCreateMovies(List<Long> movieTIds) {
+        return movieTIds.stream()
+                .map(this::findOrCreateMovieConcurrently)
+                .collect(Collectors.toList());
+    }
+
+    private DbMovies findOrCreateMovieConcurrently(Long movieTId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return findOrCreateMovie(movieTId);
+            } catch (Exception e) {
+                log.error("Error in findOrCreateMovieConcurrently for movieTId: " + movieTId, e);
+                throw new CompletionException(e);
+            }
+        }).join();
+    }
+
     private DbMovies retryFindOrCreateMovie(Long movieTId) {
         int maxRetries = 3;
         int retryCount = 0;
@@ -74,7 +95,7 @@ public class DbMovieService {
     private DbMovies createMovieFromTmdb(Long movieTId) {
         return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
             String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
-            MovieDetails movieDetails = null;
+            MovieDetails movieDetails;
 
             try {
                 movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
@@ -116,10 +137,12 @@ public class DbMovieService {
             dbMovie.setMovieDetails(movieDetails);
             movieDetails.setDbMovie(dbMovie);
 
-
             dbMovie = dbMovieRepository.save(dbMovie);
 
-            tmdbService.addMovieKeywords(movieTId, movieDetails);
+            MovieDetails finalMovieDetails = movieDetails;
+            CompletableFuture.runAsync(() -> tmdbService.addMovieKeywords(movieTId, finalMovieDetails));
+
+//            tmdbService.addMovieKeywords(movieTId, movieDetails);
 
             return dbMovie;
         });
