@@ -25,7 +25,7 @@ public class MovieDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "movieDetails_id")
-    @JsonIgnore
+//    @JsonIgnore
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
