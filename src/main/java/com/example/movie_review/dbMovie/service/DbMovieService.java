@@ -95,9 +95,8 @@ public class DbMovieService {
             credits.setMovieDetails(movieDetails);
             movieDetails.setCredits(credits);
         }
-        return movieDetails;
 
-//        return movieDetailRepository.save(movieDetails);
+        return movieDetailRepository.save(movieDetails);
     }
 
 
