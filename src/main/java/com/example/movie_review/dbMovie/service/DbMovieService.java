@@ -16,8 +16,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -25,7 +27,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-//@Transactional
 @Slf4j
 @RequiredArgsConstructor
 public class DbMovieService {
@@ -35,40 +36,20 @@ public class DbMovieService {
     private final GenresRepository genreRepository;
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public DbMovies findOrCreateMovie(Long movieTId) {
-        try {
-            return dbMovieRepository.findByTmdbIdWithLock(movieTId)
-                    .orElseGet(() -> createMovieFromTmdb(movieTId));
-        } catch (OptimisticLockException e) {
-            return retryFindOrCreateMovie(movieTId);
-        } catch (Exception e) {
-            log.error("Error in findOrCreateMovie for movieTId: " + movieTId, e);
-            throw new RuntimeException("Failed to find or create movie", e);
-        }
+        return dbMovieRepository.findByTmdbId(movieTId)
+                .orElseGet(() -> {
+                    try {
+                        return createMovieFromTmdb(movieTId);
+                    } catch (DataIntegrityViolationException e) {
+                        // 다시 한번 조회 시도
+                        return dbMovieRepository.findByTmdbId(movieTId)
+                                .orElseThrow(() -> new RuntimeException("Failed to create movie", e));
+                    }
+                });
     }
-    private DbMovies retryFindOrCreateMovie(Long movieTId) {
-        int maxRetries = 3;
-        int retryCount = 0;
-        while (retryCount < maxRetries) {
-            try {
-                return dbMovieRepository.findByTmdbId(movieTId)
-                        .orElseGet(() -> createMovieFromTmdb(movieTId));
-            } catch (OptimisticLockException e) {
-                retryCount++;
-                if (retryCount >= maxRetries) {
-                    throw e;
-                }
-                // 잠시 대기 후 재시도
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        }
-        throw new RuntimeException("Failed to find or create movie after multiple attempts");
-    }
+
 
     @Transactional
     private DbMovies createMovieFromTmdb(Long movieTId) {
@@ -126,6 +107,29 @@ public class DbMovieService {
         tmdbService.addMovieKeywords(movieTId, movieDetails);
 
         return dbMovie;
+    }
+
+    private DbMovies retryFindOrCreateMovie(Long movieTId) {
+        int maxRetries = 3;
+        int retryCount = 0;
+        while (retryCount < maxRetries) {
+            try {
+                return dbMovieRepository.findByTmdbId(movieTId)
+                        .orElseGet(() -> createMovieFromTmdb(movieTId));
+            } catch (OptimisticLockException e) {
+                retryCount++;
+                if (retryCount >= maxRetries) {
+                    throw e;
+                }
+                // 잠시 대기 후 재시도
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+        throw new RuntimeException("Failed to find or create movie after multiple attempts");
     }
 
     public List<Crew> getDirectors(MovieDetails movieDetails) {

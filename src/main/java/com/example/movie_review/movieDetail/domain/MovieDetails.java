@@ -29,9 +29,6 @@ public class MovieDetails {
     @JoinColumn(name = "credits_id")
     private Credits credits;
 
-//    @OneToMany(mappedBy = "movieDetails", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<MovieGenre> movieGenres;
-
     @ManyToMany
     @JoinTable(
             name = "movie_genre",
