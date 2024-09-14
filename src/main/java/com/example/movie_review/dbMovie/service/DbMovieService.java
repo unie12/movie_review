@@ -9,6 +9,7 @@ import com.example.movie_review.movieDetail.domain.Cast;
 import com.example.movie_review.movieDetail.domain.Credits;
 import com.example.movie_review.movieDetail.domain.Crew;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
+import com.example.movie_review.movieDetail.repository.CreditsRepository;
 import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,6 +36,7 @@ public class DbMovieService {
     private final DbMovieRepository dbMovieRepository;
     private final MovieDetailRepository movieDetailRepository;
     private final GenresRepository genreRepository;
+    private final CreditsRepository creditsRepository;
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
 
@@ -140,7 +142,7 @@ public class DbMovieService {
                 movieDetails.getGenres().add(genre);
             }
         }
-
+        movieDetails = movieDetailRepository.save(movieDetails);
         Credits credits = movieDetails.getCredits();
         if (credits != null) {
             credits.setCast(credits.getCast().stream()
@@ -156,9 +158,9 @@ public class DbMovieService {
                 crew.setCredits(credits);
             }
             credits.setMovieDetails(movieDetails);
+            credits = creditsRepository.save(credits);
             movieDetails.setCredits(credits);
         }
-        movieDetails = movieDetailRepository.save(movieDetails);
 
         DbMovies dbMovie = new DbMovies();
         dbMovie.setTmdbId(movieTId);
