@@ -139,6 +139,16 @@
             <button type="button" id="next-btn" class="button primary-button">다음 <i class="fas fa-chevron-right"></i></button>
             <button type="submit" id="submit-btn" class="button primary-button"><i class="fas fa-check"></i> 제출</button>
         </div>
+
+        <div class="loading-overlay">
+            <div class="loading-content">
+                <h2>프로필 업데이트 중...</h2>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+                <p id="loading-percentage">0%</p>
+            </div>
+        </div>
     </form>
 </div>
 
@@ -528,11 +538,41 @@
         }
     }
 
+    function showLoadingOverlay() {
+        $('.loading-overlay').show();
+        simulateLoading();
+    }
+
+    function hideLoadingOverlay() {
+        $('.loading-overlay').hide();
+    }
+
+    function simulateLoading() {
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) {
+                clearInterval(interval);
+                return;
+            }
+            updateLoadingBar(progress);
+        }, 200);
+    }
+
+    function updateLoadingBar(progress) {
+        const percentage = Math.min(Math.round(progress), 100);
+        $('.loading-progress').css('width', `${percentage}%`);
+        $('#loading-percentage').text(`${percentage}%`);
+    }
+
+
     function handleFormSubmit(e) {
         e.preventDefault();
         if (!checkFormValidity) {
             return;
         }
+
+        showLoadingOverlay();
 
         var formData = new FormData();
         formData.append('profilePicture', $('#profile-picture')[0].files[0]);
@@ -551,6 +591,10 @@
             type: "application/json"
         }));
 
+        submitWithRetry(formData, 3);
+    }
+
+    function submitWithRetry(formData, maxRetries) {
         $.ajax({
             url: '/api/user/additional-info/' + userEmail,
             type: 'PUT',
@@ -558,12 +602,22 @@
             processData: false,
             contentType: false,
             success: function(response) {
-                alert('프로필이 업데이트되었습니다');
-                location.reload();
-                window.location.href = '/home';
+                hideLoadingOverlay();
+                updateLoadingBar(100);
+                setTimeout(() => {
+                    alert('프로필이 업데이트되었습니다');
+                    location.reload();
+                    window.location.href = '/home';
+                }, 500);
             },
             error: function(xhr, status, error) {
-                alert('프로필 업데이트에 실패했습니다: ' + error);
+                if (maxRetries > 0) {
+                    setTimeout(() => {
+                        submitWithRetry(formData, maxRetries - 1);
+                    }, 1000);
+                } else {
+                    alert('프로필 업데이트에 실패했습니다: ' + error);
+                }
             }
         });
     }
