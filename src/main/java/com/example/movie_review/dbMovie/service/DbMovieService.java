@@ -72,55 +72,60 @@ public class DbMovieService {
 
     @Transactional
     private DbMovies createMovieFromTmdb(Long movieTId) {
-        return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
-            String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
-            MovieDetails movieDetails = null;
+        DbMovies existingMovie = dbMovieRepository.findByTmdbId(movieTId).orElse(null);
+        if (existingMovie != null) {
+            return existingMovie; // 이미 존재하면 즉시 반환
+        }
 
-            try {
-                movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+        // 영화 정보를 가져오는 로직
+        String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
+        MovieDetails movieDetails;
+        try {
+            movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        movieDetails.setTId(movieTId.intValue());
+        // 장르 매칭 로직
+        if (movieDetails.getGenreDtos() != null) {
+            for (GenreDto genreDto : movieDetails.getGenreDtos()) {
+                Genres genre = genreRepository.findById(genreDto.getId())
+                        .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
+                movieDetails.getGenres().add(genre);
             }
+        }
 
-            movieDetails.setTId(movieTId.intValue());
-            // 장르 매칭 로직
-            if (movieDetails.getGenreDtos() != null) {
-                for (GenreDto genreDto : movieDetails.getGenreDtos()) {
-                    Genres genre = genreRepository.findById(genreDto.getId())
-                            .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
-                    movieDetails.getGenres().add(genre);
-                }
+        Credits credits = movieDetails.getCredits();
+        if (credits != null) {
+            credits.setCast(credits.getCast().stream()
+                    .limit(30)
+                    .collect(Collectors.toList()));
+            for (Cast cast : credits.getCast()) {
+                cast.setCredits(credits);
             }
-
-            Credits credits = movieDetails.getCredits();
-            if (credits != null) {
-                credits.setCast(credits.getCast().stream()
-                        .limit(30)
-                        .collect(Collectors.toList()));
-                for (Cast cast : credits.getCast()) {
-                    cast.setCredits(credits);
-                }
-                credits.setCrew(credits.getCrew().stream()
-                        .filter(c -> "Director".equals(c.getJob()))
-                        .collect(Collectors.toList()));
-                for (Crew crew : credits.getCrew()) {
-                    crew.setCredits(credits);
-                }
-                credits.setMovieDetails(movieDetails);
-                movieDetails.setCredits(credits);
+            credits.setCrew(credits.getCrew().stream()
+                    .filter(c -> "Director".equals(c.getJob()))
+                    .collect(Collectors.toList()));
+            for (Crew crew : credits.getCrew()) {
+                crew.setCredits(credits);
             }
-            DbMovies dbMovie = new DbMovies();
-            dbMovie.setTmdbId(movieTId);
-            dbMovie.setMovieDetails(movieDetails);
-            movieDetails.setDbMovie(dbMovie);
-            movieDetails = movieDetailRepository.save(movieDetails);
+            credits.setMovieDetails(movieDetails);
+            movieDetails.setCredits(credits);
+        }
+        movieDetails = movieDetailRepository.save(movieDetails);
 
-            dbMovie = dbMovieRepository.save(dbMovie);
+        DbMovies dbMovie = new DbMovies();
+        dbMovie.setTmdbId(movieTId);
+        dbMovie.setMovieDetails(movieDetails);
+        movieDetails.setDbMovie(dbMovie);
 
-            tmdbService.addMovieKeywords(movieTId, movieDetails);
 
-            return dbMovie;
-        });
+        dbMovie = dbMovieRepository.save(dbMovie);
+
+        tmdbService.addMovieKeywords(movieTId, movieDetails);
+
+        return dbMovie;
     }
 
     public List<Crew> getDirectors(MovieDetails movieDetails) {
