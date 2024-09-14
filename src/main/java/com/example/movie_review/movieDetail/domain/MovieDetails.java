@@ -38,7 +38,7 @@ public class MovieDetails {
     private Set<Genres> genres = new HashSet<>();
 
 
-    @OneToOne(mappedBy = "movieDetails", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "movieDetails")
     private DbMovies dbMovie;
 
     @OneToMany(mappedBy = "movieDetails", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -27,7 +27,7 @@ public class DbMovies {
     private Long version;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "movieDetails_id")
+    @JoinColumn(name = "movieDetails_id", unique = true)
     private MovieDetails movieDetails;
 
     @OneToMany(mappedBy = "dbMovies", cascade = CascadeType.ALL)
@@ -55,6 +55,13 @@ public class DbMovies {
                 .mapToDouble(DbRatings::getScore)
                 .average()
                 .orElse(0.0);
+    }
+
+    public void setMovieDetails(MovieDetails movieDetails) {
+        this.movieDetails = movieDetails;
+        if (movieDetails != null) {
+            movieDetails.setDbMovie(this);
+        }
     }
 
 
