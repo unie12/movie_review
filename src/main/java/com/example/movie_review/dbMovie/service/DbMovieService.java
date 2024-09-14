@@ -45,36 +45,88 @@ public class DbMovieService {
                 .orElseGet(() -> createMovieFromTmdb(movieTId));
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public DbMovies createMovieFromTmdb(Long movieTId) {
-        log.info("Creating movie from TMDB with id: {}", movieTId);
-        return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
-            MovieDetails movieDetails = createMovieDetails(movieTId);
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    public DbMovies createMovieFromTmdb(Long movieTId) {
+//        log.info("Creating movie from TMDB with id: {}", movieTId);
+//        return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
+//            MovieDetails movieDetails = createMovieDetails(movieTId);
+//
+//            DbMovies dbMovie = new DbMovies();
+//            dbMovie.setTmdbId(movieTId);
+//            dbMovie.setMovieDetails(movieDetails);
+//            movieDetails.setDbMovie(dbMovie);
+//
+//            try {
+//                return dbMovieRepository.saveAndFlush(dbMovie);
+//            } catch (DataIntegrityViolationException e) {
+//                log.warn("Concurrent creation detected for movieTId: {}. Retrying...", movieTId);
+//                return dbMovieRepository.findByTmdbId(movieTId)
+//                        .orElseThrow(() -> new RuntimeException("Failed to find or create movie after concurrent creation", e));
+//            }
+//        });
+//    }
+//
+//    private MovieDetails createMovieDetails(Long movieTId) {
+//        // 영화 정보를 가져오는 로직
+//        String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
+//        MovieDetails movieDetails;
+//        try {
+//            movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//        System.out.println("movieDetails = " + movieDetails);
+//        System.out.println("movieDetails.getId() = " + movieDetails.getId());
+//        System.out.println("movieDetails.getTId() = " + movieDetails.getTId());
+//
+//        movieDetails.setTId(movieTId.intValue());
+//        // 장르 매칭 로직
+//        if (movieDetails.getGenreDtos() != null) {
+//            for (GenreDto genreDto : movieDetails.getGenreDtos()) {
+//                Genres genre = genreRepository.findById(genreDto.getId())
+//                        .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
+//                movieDetails.getGenres().add(genre);
+//            }
+//        }
+//
+//        Credits credits = movieDetails.getCredits();
+//        if (credits != null) {
+//            credits.setCast(credits.getCast().stream()
+//                    .limit(30)
+//                    .collect(Collectors.toList()));
+//            for (Cast cast : credits.getCast()) {
+//                cast.setCredits(credits);
+//            }
+//            credits.setCrew(credits.getCrew().stream()
+//                    .filter(c -> "Director".equals(c.getJob()))
+//                    .collect(Collectors.toList()));
+//            for (Crew crew : credits.getCrew()) {
+//                crew.setCredits(credits);
+//            }
+//            credits.setMovieDetails(movieDetails);
+//            movieDetails.setCredits(credits);
+//        }
+//        return movieDetailRepository.save(movieDetails);
+////        return movieDetails;
+//    }
 
-            DbMovies dbMovie = new DbMovies();
-            dbMovie.setTmdbId(movieTId);
-            dbMovie.setMovieDetails(movieDetails);
-            movieDetails.setDbMovie(dbMovie);
 
-            try {
-                return dbMovieRepository.saveAndFlush(dbMovie);
-            } catch (DataIntegrityViolationException e) {
-                log.warn("Concurrent creation detected for movieTId: {}. Retrying...", movieTId);
-                return dbMovieRepository.findByTmdbId(movieTId)
-                        .orElseThrow(() -> new RuntimeException("Failed to find or create movie after concurrent creation", e));
-            }
-        });
-    }
+    @Transactional
+    private DbMovies createMovieFromTmdb(Long movieTId) {
+        DbMovies existingMovie = dbMovieRepository.findByTmdbId(movieTId).orElse(null);
+        if (existingMovie != null) {
+            return existingMovie; // 이미 존재하면 즉시 반환
+        }
 
-    private MovieDetails createMovieDetails(Long movieTId) {
         // 영화 정보를 가져오는 로직
         String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
-        MovieDetails movieDetails = null;
+        MovieDetails movieDetails;
         try {
             movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
         System.out.println("movieDetails = " + movieDetails);
         System.out.println("movieDetails.getId() = " + movieDetails.getId());
         System.out.println("movieDetails.getTId() = " + movieDetails.getTId());
@@ -106,67 +158,19 @@ public class DbMovieService {
             credits.setMovieDetails(movieDetails);
             movieDetails.setCredits(credits);
         }
-        return movieDetailRepository.save(movieDetails);
-//        return movieDetails;
+        movieDetails = movieDetailRepository.save(movieDetails);
+
+        DbMovies dbMovie = new DbMovies();
+        dbMovie.setTmdbId(movieTId);
+        dbMovie.setMovieDetails(movieDetails);
+        movieDetails.setDbMovie(dbMovie);
+
+        dbMovie = dbMovieRepository.save(dbMovie);
+
+        tmdbService.addMovieKeywords(movieTId, movieDetails);
+
+        return dbMovie;
     }
-
-
-//    @Transactional
-//    private DbMovies createMovieFromTmdb(Long movieTId) {
-//        DbMovies existingMovie = dbMovieRepository.findByTmdbId(movieTId).orElse(null);
-//        if (existingMovie != null) {
-//            return existingMovie; // 이미 존재하면 즉시 반환
-//        }
-//
-//        // 영화 정보를 가져오는 로직
-//        String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
-//        MovieDetails movieDetails;
-//        try {
-//            movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        movieDetails.setTId(movieTId.intValue());
-//        // 장르 매칭 로직
-//        if (movieDetails.getGenreDtos() != null) {
-//            for (GenreDto genreDto : movieDetails.getGenreDtos()) {
-//                Genres genre = genreRepository.findById(genreDto.getId())
-//                        .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
-//                movieDetails.getGenres().add(genre);
-//            }
-//        }
-//
-//        Credits credits = movieDetails.getCredits();
-//        if (credits != null) {
-//            credits.setCast(credits.getCast().stream()
-//                    .limit(30)
-//                    .collect(Collectors.toList()));
-//            for (Cast cast : credits.getCast()) {
-//                cast.setCredits(credits);
-//            }
-//            credits.setCrew(credits.getCrew().stream()
-//                    .filter(c -> "Director".equals(c.getJob()))
-//                    .collect(Collectors.toList()));
-//            for (Crew crew : credits.getCrew()) {
-//                crew.setCredits(credits);
-//            }
-//            credits.setMovieDetails(movieDetails);
-//            movieDetails.setCredits(credits);
-//        }
-//        movieDetails = movieDetailRepository.save(movieDetails);
-//
-//        DbMovies dbMovie = new DbMovies();
-//        dbMovie.setTmdbId(movieTId);
-//        dbMovie.setMovieDetails(movieDetails);
-//        movieDetails.setDbMovie(dbMovie);
-//
-//        dbMovie = dbMovieRepository.save(dbMovie);
-//
-//        tmdbService.addMovieKeywords(movieTId, movieDetails);
-//
-//        return dbMovie;
-//    }
 
     private DbMovies retryFindOrCreateMovie(Long movieTId) {
         int maxRetries = 3;
