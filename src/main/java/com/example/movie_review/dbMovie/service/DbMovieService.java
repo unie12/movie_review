@@ -75,6 +75,9 @@ public class DbMovieService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("movieDetails = " + movieDetails);
+        System.out.println("movieDetails.getId() = " + movieDetails.getId());
+        System.out.println("movieDetails.getTId() = " + movieDetails.getTId());
 
         movieDetails.setTId(movieTId.intValue());
         // 장르 매칭 로직

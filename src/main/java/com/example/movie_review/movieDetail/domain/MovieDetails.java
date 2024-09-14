@@ -4,6 +4,7 @@ import com.example.movie_review.dbMovie.DbMovies;
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.movieDetail.DTO.GenreDto;
 import com.example.movie_review.movieDetail.domain.Credits;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,7 +51,9 @@ public class MovieDetails {
 
     private String backdrop_path;
     @Column
+    @JsonProperty("id")
     private Integer tId;
+
     private String title;
     private String original_title;
     private String name;
