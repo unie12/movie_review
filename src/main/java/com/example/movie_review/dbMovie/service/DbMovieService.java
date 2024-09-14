@@ -14,6 +14,7 @@ import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,8 @@ public class DbMovieService {
     private final CreditsRepository creditsRepository;
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
+    private final EntityManager entityManager;
+
 
     @Transactional
     public DbMovies findOrCreateMovie(Long movieTId) {
@@ -92,6 +95,9 @@ public class DbMovieService {
                 credits.setMovieDetails(movieDetails);
                 movieDetails.setCredits(credits);
             }
+
+            entityManager.flush();
+            entityManager.clear();
 
             movieDetails = movieDetailRepository.save(movieDetails);
 

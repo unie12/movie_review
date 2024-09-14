@@ -43,11 +43,11 @@ public class Cast {
         if (this == o) return true;
         if (!(o instanceof Cast)) return false;
         Cast cast = (Cast) o;
-        return Objects.equals(id, cast.id);
+        return Objects.equals(cast_id, cast.cast_id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(cast_id);
     }
 }
