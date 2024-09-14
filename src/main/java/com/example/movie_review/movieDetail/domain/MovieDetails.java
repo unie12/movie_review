@@ -49,7 +49,7 @@ public class MovieDetails {
 
 
     private String backdrop_path;
-    @Column(unique = true)
+    @Column
     private Integer tId;
     private String title;
     private String original_title;

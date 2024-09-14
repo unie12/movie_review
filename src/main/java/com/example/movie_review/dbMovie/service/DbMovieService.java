@@ -36,28 +36,27 @@ public class DbMovieService {
     private final GenresRepository genreRepository;
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
+
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public DbMovies findOrCreateMovie(Long movieTId) {
         return dbMovieRepository.findByTmdbId(movieTId)
-                .orElseGet(() -> {
-                    try {
-                        return createMovieFromTmdb(movieTId);
-                    } catch (DataIntegrityViolationException e) {
-                        // 다시 한번 조회 시도
-                        return dbMovieRepository.findByTmdbId(movieTId)
-                                .orElseThrow(() -> new RuntimeException("Failed to create movie", e));
-                    }
-                });
+                .orElseGet(() -> createMovieFromTmdb(movieTId));
     }
-
 
     @Transactional
     private DbMovies createMovieFromTmdb(Long movieTId) {
-        DbMovies existingMovie = dbMovieRepository.findByTmdbId(movieTId).orElse(null);
-        if (existingMovie != null) {
-            return existingMovie; // 이미 존재하면 즉시 반환
-        }
+        // 먼저 다시 한번 확인
+        return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
+            MovieDetails movieDetails = createMovieDetails(movieTId);
+            DbMovies dbMovie = new DbMovies();
+            dbMovie.setTmdbId(movieTId);
+            dbMovie.setMovieDetails(movieDetails);
+            movieDetails.setDbMovie(dbMovie);
+            return dbMovieRepository.save(dbMovie);
+        });
+    }
 
+    private MovieDetails createMovieDetails(Long movieTId) {
         // 영화 정보를 가져오는 로직
         String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
         MovieDetails movieDetails;
@@ -94,20 +93,68 @@ public class DbMovieService {
             credits.setMovieDetails(movieDetails);
             movieDetails.setCredits(credits);
         }
-        movieDetails = movieDetailRepository.save(movieDetails);
 
-        DbMovies dbMovie = new DbMovies();
-        dbMovie.setTmdbId(movieTId);
-        dbMovie.setMovieDetails(movieDetails);
-        movieDetails.setDbMovie(dbMovie);
-
-
-        dbMovie = dbMovieRepository.save(dbMovie);
-
-        tmdbService.addMovieKeywords(movieTId, movieDetails);
-
-        return dbMovie;
+        return movieDetailRepository.save(movieDetails);
     }
+
+
+//    @Transactional
+//    private DbMovies createMovieFromTmdb(Long movieTId) {
+//        DbMovies existingMovie = dbMovieRepository.findByTmdbId(movieTId).orElse(null);
+//        if (existingMovie != null) {
+//            return existingMovie; // 이미 존재하면 즉시 반환
+//        }
+//
+//        // 영화 정보를 가져오는 로직
+//        String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
+//        MovieDetails movieDetails;
+//        try {
+//            movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        movieDetails.setTId(movieTId.intValue());
+//        // 장르 매칭 로직
+//        if (movieDetails.getGenreDtos() != null) {
+//            for (GenreDto genreDto : movieDetails.getGenreDtos()) {
+//                Genres genre = genreRepository.findById(genreDto.getId())
+//                        .orElseThrow(() -> new RuntimeException("Genre not found: " + genreDto.getId()));
+//                movieDetails.getGenres().add(genre);
+//            }
+//        }
+//
+//        Credits credits = movieDetails.getCredits();
+//        if (credits != null) {
+//            credits.setCast(credits.getCast().stream()
+//                    .limit(30)
+//                    .collect(Collectors.toList()));
+//            for (Cast cast : credits.getCast()) {
+//                cast.setCredits(credits);
+//            }
+//            credits.setCrew(credits.getCrew().stream()
+//                    .filter(c -> "Director".equals(c.getJob()))
+//                    .collect(Collectors.toList()));
+//            for (Crew crew : credits.getCrew()) {
+//                crew.setCredits(credits);
+//            }
+//            credits.setMovieDetails(movieDetails);
+//            movieDetails.setCredits(credits);
+//        }
+//        movieDetails = movieDetailRepository.save(movieDetails);
+//
+//        DbMovies dbMovie = new DbMovies();
+//        dbMovie.setTmdbId(movieTId);
+//        dbMovie.setMovieDetails(movieDetails);
+//        movieDetails.setDbMovie(dbMovie);
+//
+//
+//        dbMovie = dbMovieRepository.save(dbMovie);
+//
+//        tmdbService.addMovieKeywords(movieTId, movieDetails);
+//
+//        return dbMovie;
+//    }
 
     private DbMovies retryFindOrCreateMovie(Long movieTId) {
         int maxRetries = 3;
