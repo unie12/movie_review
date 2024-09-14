@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@Transactional
 @RequiredArgsConstructor
 public class DbMovieService {
 
@@ -39,6 +38,7 @@ public class DbMovieService {
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
 
+    @Transactional
     public DbMovies findOrCreateMovie(Long movieTId) {
         log.info("Finding or creating movie with tmdbId: {}", movieTId);
         return dbMovieRepository.findByTmdbId(movieTId)
@@ -50,11 +50,18 @@ public class DbMovieService {
         log.info("Creating movie from TMDB with id: {}", movieTId);
         return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
             MovieDetails movieDetails = createMovieDetails(movieTId);
+
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
             movieDetails.setDbMovie(dbMovie);
-            return dbMovieRepository.save(dbMovie);
+            try {
+                return dbMovieRepository.saveAndFlush(dbMovie);
+            } catch (DataIntegrityViolationException e) {
+                log.warn("Concurrent creation detected for movieTId: {}. Retrying...", movieTId);
+                return dbMovieRepository.findByTmdbId(movieTId)
+                        .orElseThrow(() -> new RuntimeException("Failed to find or create movie after concurrent creation", e));
+            }
         });
     }
 
@@ -96,8 +103,6 @@ public class DbMovieService {
             movieDetails.setCredits(credits);
         }
         return movieDetails;
-
-//        return movieDetailRepository.save(movieDetails);
     }
 
 
@@ -150,7 +155,6 @@ public class DbMovieService {
 //        dbMovie.setTmdbId(movieTId);
 //        dbMovie.setMovieDetails(movieDetails);
 //        movieDetails.setDbMovie(dbMovie);
-//
 //
 //        dbMovie = dbMovieRepository.save(dbMovie);
 //
