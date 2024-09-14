@@ -59,7 +59,6 @@ public class DbMovieService {
         }
     }
 
-    @Transactional
     private DbMovies createMovieFromTmdb(Long movieTId) {
         log.info("Creating movie from TMDB with id: {}", movieTId);
         // 먼저 다시 한번 확인
@@ -69,7 +68,7 @@ public class DbMovieService {
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
 //            movieDetails.setDbMovie(dbMovie);
-            return dbMovieRepository.save(dbMovie);
+            return dbMovie;
         });
     }
 
