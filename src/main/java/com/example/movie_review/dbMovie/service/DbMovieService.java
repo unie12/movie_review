@@ -82,27 +82,19 @@ public class DbMovieService {
             if (credits != null) {
                 credits.setCast(credits.getCast().stream()
                         .limit(30)
+                        .peek(cast -> cast.setCredits(credits))
                         .collect(Collectors.toList()));
-                for (Cast cast : credits.getCast()) {
-                    cast.setCredits(credits);
-                }
+
                 credits.setCrew(credits.getCrew().stream()
                         .filter(c -> "Director".equals(c.getJob()))
+                        .peek(crew -> crew.setCredits(credits))
                         .collect(Collectors.toList()));
-                for (Crew crew : credits.getCrew()) {
-                    crew.setCredits(credits);
-                }
-                credits.setMovieDetails(movieDetails);
-            }
 
-//            entityManager.flush();
-//            entityManager.clear();
+                credits.setMovieDetails(movieDetails);
+                movieDetails.setCredits(credits);
+            }
 
             movieDetails = movieDetailRepository.save(movieDetails);
-
-            if (credits != null) {
-                credits = creditsRepository.save(credits);
-            }
 
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);

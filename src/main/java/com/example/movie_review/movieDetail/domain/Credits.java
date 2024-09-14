@@ -21,9 +21,9 @@ public class Credits {
     @OneToOne(mappedBy = "credits")
     private MovieDetails movieDetails;
 
-    @OneToMany(mappedBy = "credits", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "credits", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Crew> crew;
 
-    @OneToMany(mappedBy = "credits", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "credits", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cast> cast;
 }
