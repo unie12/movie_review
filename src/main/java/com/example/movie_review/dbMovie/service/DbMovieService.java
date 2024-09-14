@@ -109,13 +109,11 @@ public class DbMovieService {
                 credits.setMovieDetails(movieDetails);
                 movieDetails.setCredits(credits);
             }
-            movieDetails = movieDetailRepository.save(movieDetails);
-
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
             movieDetails.setDbMovie(dbMovie);
-
+            movieDetails = movieDetailRepository.save(movieDetails);
 
             dbMovie = dbMovieRepository.save(dbMovie);
 
