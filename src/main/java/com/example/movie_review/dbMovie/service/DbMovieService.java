@@ -69,7 +69,7 @@ public class DbMovieService {
     private MovieDetails createMovieDetails(Long movieTId) {
         // 영화 정보를 가져오는 로직
         String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
-        MovieDetails movieDetails;
+        MovieDetails movieDetails = null;
         try {
             movieDetails = objectMapper.readValue(movieDetailsJson, MovieDetails.class);
         } catch (JsonProcessingException e) {
