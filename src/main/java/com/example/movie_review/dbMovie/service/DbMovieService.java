@@ -53,7 +53,7 @@ public class DbMovieService {
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
-            movieDetails.setDbMovie(dbMovie);
+//            movieDetails.setDbMovie(dbMovie);
             return dbMovieRepository.save(dbMovie);
         });
     }
@@ -95,8 +95,9 @@ public class DbMovieService {
             credits.setMovieDetails(movieDetails);
             movieDetails.setCredits(credits);
         }
+        return movieDetails;
 
-        return movieDetailRepository.save(movieDetails);
+//        return movieDetailRepository.save(movieDetails);
     }
 
 
