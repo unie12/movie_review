@@ -25,7 +25,7 @@ public class MovieDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "movieDetails_id")
-//    @JsonIgnore
+    @JsonIgnore
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -52,7 +52,7 @@ public class MovieDetails {
 
 
     private String backdrop_path;
-//    @JsonProperty("id")
+    @JsonProperty("id")
     private Integer tId;
 
     private String title;

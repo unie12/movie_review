@@ -27,7 +27,7 @@ public class DbMovies {
     private Long version;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "movieDetails_id", unique = true)
+    @JoinColumn(name = "movieDetails_id")
     private MovieDetails movieDetails;
 
     @OneToMany(mappedBy = "dbMovies", cascade = CascadeType.ALL)
