@@ -47,12 +47,9 @@ public class UserProfileController {
             @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture,
             @RequestPart("updateRequest") UserProfileUpdateRequest updateRequest) {
         // 인생 영화에 추가하면 영화 db에도 저장하기
-        List<Long> movieIds = updateRequest.getFavoriteMovies().stream()
-                .map(movie -> Long.valueOf(movie.getId()))
+        List<DbMovies> collect = updateRequest.getFavoriteMovies().stream()
+                .map(movie -> dbMovieService.findOrCreateMovie(Long.valueOf(movie.getId())))
                 .collect(Collectors.toList());
-
-        List<DbMovies> movies = dbMovieService.findOrCreateMovies(movieIds);
-
         return ResponseEntity.ok(userProfileDTOService.updateUserProfile(userEmail, profilePicture, updateRequest));
     }
 
