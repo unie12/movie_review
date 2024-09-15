@@ -116,7 +116,6 @@ public class DbMovieService {
             dbMovie.setMovieDetails(movieDetails);
             movieDetails.setDbMovie(dbMovie);
 
-
             dbMovie = dbMovieRepository.save(dbMovie);
 
             tmdbService.addMovieKeywords(movieTId, movieDetails);

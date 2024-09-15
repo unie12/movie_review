@@ -20,12 +20,12 @@ public class CacheUpdateService {
     private final UserDTOService userDTOService;
     private final CacheManager cacheManager;
 
-    @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 30 12 * * *", zone = "Asia/Seoul")
     public void updateDailyCache() {
         movieCacheService.updateDailyMovieCache();
         evictCache("dailyHomePage");
     }
-    @Scheduled(cron = "0 0 9 * * MON", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 30 12 * * MON", zone = "Asia/Seoul")
     public void updateWeeklyCache() {
         movieCacheService.updateWeeklyMovieCache();
         evictCache("weeklyHomepage");
