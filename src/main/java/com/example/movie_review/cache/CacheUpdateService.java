@@ -25,7 +25,7 @@ public class CacheUpdateService {
         movieCacheService.updateDailyMovieCache();
         evictCache("dailyHomePage");
     }
-    @Scheduled(cron = "0 0 9 * * MON", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 21 * * *", zone = "Asia/Seoul")
     public void updateWeeklyCache() {
         movieCacheService.updateWeeklyMovieCache();
         evictCache("weeklyHomepage");
