@@ -552,20 +552,23 @@
         const minLoadingTime = 2000; // 최소 로딩 시간 (밀리초)
         const startTime = Date.now();
 
-        const interval = setInterval(() => {
-            progress += Math.random() * 15;
+        return new Promise((resolve) => {
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
 
-            // 최소 로딩 시간이 지나지 않았다면 progress를 0으로 유지
-            if (Date.now() - startTime < minLoadingTime) {
-                progress = Math.min(progress, 90); // 예를 들어 최소 10%까지는 보여주기
-            }
+                if (Date.now() - startTime < minLoadingTime) {
+                    progress = Math.min(progress, 90);
+                }
 
-            if (progress > 90) {
-                clearInterval(interval);
-                return;
-            }
-            updateLoadingBar(progress);
-        }, 200);
+                if (progress >= 100 || Date.now() - startTime >= minLoadingTime) {
+                    clearInterval(interval);
+                    updateLoadingBar(100);
+                    resolve();
+                    return;
+                }
+                updateLoadingBar(progress);
+            }, 200);
+        });
     }
 
     function updateLoadingBar(progress) {
@@ -604,29 +607,35 @@
     }
 
     function submitWithRetry(formData, maxRetries) {
-        $.ajax({
-            url: '/api/user/additional-info/' + userEmail,
-            type: 'PUT',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                hideLoadingOverlay();
-                updateLoadingBar(100);
+        const startTime = Date.now();
+
+        Promise.all([
+            simulateLoading(),
+            $.ajax({
+                url: '/api/user/additional-info/' + userEmail,
+                type: 'PUT',
+                data: formData,
+                processData: false,
+                contentType: false
+            })
+        ]).then(() => {
+            const elapsedTime = Date.now() - startTime;
+            if (elapsedTime < 2000) {
+                return new Promise(resolve => setTimeout(resolve, 2000 - elapsedTime));
+            }
+        }).then(() => {
+            hideLoadingOverlay();
+            alert('프로필이 업데이트되었습니다');
+            location.reload();
+            window.location.href = '/home';
+        }).catch((error) => {
+            if (maxRetries > 0) {
                 setTimeout(() => {
-                    alert('프로필이 업데이트되었습니다');
-                    location.reload();
-                    window.location.href = '/home';
-                }, 500);
-            },
-            error: function(xhr, status, error) {
-                if (maxRetries > 0) {
-                    setTimeout(() => {
-                        submitWithRetry(formData, maxRetries - 1);
-                    }, 1000);
-                } else {
-                    alert('프로필 업데이트에 실패했습니다: ' + error);
-                }
+                    submitWithRetry(formData, maxRetries - 1);
+                }, 1000);
+            } else {
+                hideLoadingOverlay();
+                alert('프로필 업데이트에 실패했습니다: ' + error);
             }
         });
     }
