@@ -79,7 +79,10 @@
 
         <div class="movie-category">
             <div class="category-header">
-                <p class="category-title">아주대의 인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="ajouPopular"></i></p>
+                <p class="category-title">
+                    <span class="movie-category-title">아주대</span>의 인기 영화
+                    <i class="fas fa-question-circle info-icon" data-info-key="ajouPopular"></i>
+                </p>
                 <span class="section-info" id="ajouPopularListInfo">1 / 1</span>
             </div>
             <div class="movie-list-container">
@@ -95,7 +98,7 @@
             <div class="movie-category">
                 <div class="category-header">
                     <p class="category-title">
-                        <span th:text="${currentUser.mbti}" class="mbtiText"></span> 사용자들의 선호 영화
+                        <span th:text="${currentUser.mbti}" class="movie-category-title"></span> 사용자들의 선호 영화
                         <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i>
                     </p>
                     <span class="section-info" id="mbtiMovieListInfo">1 / 1</span>
@@ -114,7 +117,7 @@
             <div class="movie-category">
                 <div class="category-header">
                     <p class="category-title">
-                        <span th:text="${currentUser.department}"></span> 사용자들의 선호 영화
+                        <span th:text="${currentUser.department}" class="movie-category-title"></span> 사용자들의 선호 영화
                         <i class="fas fa-question-circle info-icon" data-info-key="departmentMovie"></i>
                     </p>
                     <span class="section-info" id="departmentMovieListInfo">1 / 1</span>
@@ -132,7 +135,10 @@
 
         <div class="movie-category" th:if="${dailyHome.dailyBoxOffice}">
             <div class="category-header">
-                <p class="category-title">일별 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i></p>
+                <p class="category-title">
+                    <span class="movie-category-title">일별</span> 박스오피스
+                    <i class="fas fa-question-circle info-icon" data-info-key="dailyBoxOffice"></i>
+                </p>
                 <span class="section-info" id="dBOMListInfo">1 / 1</span>
             </div>
             <div class="movie-list-container">
@@ -146,7 +152,10 @@
 
         <div class="movie-category" th:if="${weeklyHome.weeklyBoxOffice}">
             <div class="category-header">
-                <p class="category-title">주간 박스오피스 <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i></p>
+                <p class="category-title">
+                    <span class="movie-category-title">주간</span> 박스오피스
+                    <i class="fas fa-question-circle info-icon" data-info-key="weeklyBoxOffice"></i>
+                </p>
                 <span class="section-info" id="wBOMListInfo">1 / 1</span>
             </div>
             <div class="movie-list-container">
@@ -160,7 +169,10 @@
 
         <div class="movie-category" th:if="${dailyHome.tmdbPopular}">
             <div class="category-header">
-                <p class="category-title">인기 영화 <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i></p>
+                <p class="category-title">
+                    <span class="movie-category-title">인기</span> 영화
+                    <i class="fas fa-question-circle info-icon" data-info-key="popularMovies"></i>
+                </p>
                 <span class="section-info" id="popularMovieListInfo">1 / 1</span>
             </div>
             <div class="movie-list-container">
@@ -174,7 +186,10 @@
 
         <div class="movie-category" th:if="${dailyHome.tmdbTrend}">
             <div class="category-header">
-                <p class="category-title">트렌딩 영화 <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i></p>
+                <p class="category-title">
+                    <span class="movie-category-title">트렌딩</span> 영화
+                    <i class="fas fa-question-circle info-icon" data-info-key="trendingMovies"></i>
+                </p>
                 <span class="section-info" id="trendingMovieListInfo">1 / 1</span>
             </div>
             <div class="movie-list-container">

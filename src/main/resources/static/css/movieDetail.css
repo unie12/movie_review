@@ -263,7 +263,7 @@ textarea {
     -webkit-box-orient: vertical;
     word-wrap: break-word;
     font-size: 1.0em;
-    line-height: 1.2;
+    line-height: 1.4;
     color: #7b7d7d;
     flex: 1;
 }
@@ -590,7 +590,7 @@ textarea {
     display: none;
     position: fixed;
     z-index: 1000;
-    padding-top: 100px;
+    padding-top: 150px;
     left: 0;
     top: 0;
     width: 100%;
@@ -604,18 +604,17 @@ textarea {
     display: block;
     width: 80%;
     max-width: 1400px;
+    position: relative;
 }
 
 .image-close {
-    position: absolute;
-    top: 50px;
-    right: 100px;
     color: #f1f1f1;
     font-size: 40px;
     font-weight: bold;
     transition: 0.3s;
+    position: absolute;
+    right: 5%;
 }
-
 .image-close:hover,
 .image-close:focus {
     color: #bbb;
