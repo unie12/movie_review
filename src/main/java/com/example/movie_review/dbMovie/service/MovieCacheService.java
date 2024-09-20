@@ -117,7 +117,14 @@ public class MovieCacheService {
             String openDt = movie.path("openDt").asText();
 
             // TMDB에서 영화 검색
-            JsonNode tmdbMovie = tmdbService.searchJsonMovieWithSim(title, openDt).block();
+            JsonNode tmdbMovie = tmdbService.searchJsonMovieWithSim(title, openDt)
+                    .doOnNext(result -> {
+                        if (result.isNull()) {
+                            System.out.println("No matching movie found for: " + title);
+                        }
+                    })
+                    .block();
+
             String posterPath = null;
             String tmdbId = null;
             if (tmdbMovie != null) {
@@ -137,23 +144,6 @@ public class MovieCacheService {
 
         return moviesWithPosters;
     }
-
-//    public String getPopularMovies() {
-//        return getMovieCache(MovieType.POPULAR);
-//    }
-//
-//    public String getTrendingMovies() {
-//        return getMovieCache(MovieType.TRENDING);
-//    }
-//
-//    public String getDailyBoxOffice() {
-//        return getMovieCache(MovieType.DBOM);
-//    }
-//
-//    public String getWeeklyBoxOffice() {
-//        return getMovieCache(MovieType.WBOM);
-//    }
-//
     private String getMovieCache(MovieType movieType) {
         return movieCacheRepository.findByType(movieType)
                 .map(MovieCache::getMovieData)

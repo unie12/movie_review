@@ -125,48 +125,38 @@ public class TmdbService {
      * @return : Mono<JsonNode>
      */
     public Mono<JsonNode> searchJsonMovieWithSim(String query, String openDt) {
-        String processingQuery = preprocessTitle(query);
-        return searchWithFullTitle(processingQuery, openDt)
-                .flatMap(result -> !result.path("results").isEmpty() ? Mono.just(result) : searchWithPartialTitles(query, openDt))
-                .map(jsonNode -> findMostSimilarMovie(jsonNode, processingQuery, openDt))
+        List<String> searchQueries = generateSearchQueries(query);
+        return Flux.fromIterable(searchQueries)
+                .flatMap(searchQuery -> performSearch(searchQuery, openDt))
+                .filter(result -> !result.path("results").isEmpty())
+                .next()
+                .flatMap(result -> Mono.just(findMostSimilarMovie(result, query, openDt)))
+                .switchIfEmpty(Mono.just(JsonNodeFactory.instance.nullNode()))
                 .onErrorResume(e -> {
-                    System.err.println("Error searching for movie: " + processingQuery + ". Error: " + e.getMessage());
+                    System.err.println("Error searching for movie: " + query + ". Error: " + e.getMessage());
                     return Mono.just(JsonNodeFactory.instance.nullNode());
                 });
     }
 
-    private String preprocessTitle(String title) {
-        // 특수 문자 제거, 공백 정규화, 소문자 변환
-        return title.replaceAll("[^a-zA-Z0-9가-힣\\s]", "")
-                .replaceAll("\\s+", " ")
-                .trim()
-                .toLowerCase();
-    }
+    private List<String> generateSearchQueries(String query) {
+        List<String> queries = new ArrayList<>();
+        queries.add(query); // 원본 쿼리
 
-    private Mono<JsonNode> searchWithFullTitle(String query, String openDt) {
-        return performSearch(query, openDt);
-    }
+        // 숫자 제거 및 공백 정규화
+        String baseQuery = query.replaceAll("\\d+", "").trim().replaceAll("\\s+", " ");
+        queries.add(baseQuery);
 
-    private Mono<JsonNode> searchWithPartialTitles(String query, String openDt) {
-        List<String> partialQueries = generatePartialQueries(query);
-        return Flux.fromIterable(partialQueries)
-                .flatMap(partialQuery -> performSearch(partialQuery, openDt))
-                .filter(result -> !result.path("results").isEmpty())
-                .next()
-                .defaultIfEmpty(JsonNodeFactory.instance.objectNode());
-    }
+        // 숫자만 추출
+        String numbers = query.replaceAll("\\D+", "");
 
-    private List<String> generatePartialQueries(String query) {
-        List<String> partialQueries = new ArrayList<>();
-        String[] words = query.split("\\s+");
-        StringBuilder sb = new StringBuilder();
-        for (String word : words) {
-            sb.append(word).append(" ");
-            partialQueries.add(sb.toString().trim());
+        if (!baseQuery.isEmpty() && !numbers.isEmpty()) {
+            queries.add(baseQuery + " " + numbers);
+            for (int i = 0; i < numbers.length(); i++) {
+                queries.add(baseQuery + " " + numbers.charAt(i));
+            }
         }
-        // 특수 문자 제거한 쿼리 추가
-        partialQueries.add(query.replaceAll("[:\\-]", "").trim());
-        return partialQueries;
+
+        return queries;
     }
 
     private Mono<JsonNode> performSearch(String query, String openDt) {
@@ -194,19 +184,19 @@ public class TmdbService {
      * titleSim + dateSim 계산 -> overallSIm
      * 가장 높은 highestSim을 가진 영화 반환
      */
-    private JsonNode findMostSimilarMovie(JsonNode jsonNode, String title, String openDt) {
+    private JsonNode findMostSimilarMovie(JsonNode jsonNode, String originalQuery, String openDt) {
         if (jsonNode.has("results")) {
             JsonNode results = jsonNode.get("results");
             JsonNode mostSimilar = null;
             double highestSim = 0;
 
             for (JsonNode movie : results) {
-                String movieTitle = preprocessTitle(movie.path("title").asText());
-                double titleSim = calculateTitleSim(title, movieTitle);
+                String movieTitle = movie.path("title").asText();
+                double titleSim = calculateTitleSim(originalQuery, movieTitle);
                 double dateSim = calculateDateSim(openDt, movie.path("release_date").asText());
-                
+
                 double overallSim = (titleSim * 0.7) + (dateSim * 0.3);
-                
+
                 if (overallSim > highestSim) {
                     highestSim = overallSim;
                     mostSimilar = movie;
@@ -221,24 +211,28 @@ public class TmdbService {
      * 제목 유사도 계산
      * Levenshtein Distance로 문자열 계산
      */
-    private double calculateTitleSim(String s1, String s2) {
-        int maxLen = Math.max(s1.length(), s2.length());
-        if(maxLen > 0) {
-            int distance = calculateLevenshteinDistance(s1, s2);
-            double simRatio = (maxLen - distance) / (double) maxLen;
+    private double calculateTitleSim(String originalQuery, String movieTitle) {
+        // 원본 쿼리에서 숫자 제거
+        String queryWithoutNumbers = originalQuery.replaceAll("\\d+", "").trim();
 
-            // 완전 일치하는 경우 가중치 부여
-            if (s1.equals(s2)) {
-                simRatio = 1.0;
-            }
-            // 부분 일치하는 경우 가중치 부여
-            else if (s1.contains(s2) || s2.contains(s1)) {
-                simRatio = Math.max(simRatio, 0.9);
-            }
+        // 영화 제목에서 숫자 제거
+        String titleWithoutNumbers = movieTitle.replaceAll("\\d+", "").trim();
 
-            return simRatio;
+        // Levenshtein 거리 계산
+        int distance = calculateLevenshteinDistance(queryWithoutNumbers.toLowerCase(), titleWithoutNumbers.toLowerCase());
+        int maxLen = Math.max(queryWithoutNumbers.length(), titleWithoutNumbers.length());
+
+        double simRatio = (maxLen - distance) / (double) maxLen;
+
+        // 숫자 포함 여부 확인
+        boolean originalHasNumber = originalQuery.matches(".*\\d+.*");
+        boolean titleHasNumber = movieTitle.matches(".*\\d+.*");
+
+        if (originalHasNumber == titleHasNumber) {
+            simRatio += 0.2; // 숫자 포함 여부가 일치하면 유사도 증가
         }
-        return 1.0;
+
+        return Math.min(simRatio, 1.0); // 최대값을 1로 제한
     }
 
     /**
@@ -250,7 +244,7 @@ public class TmdbService {
         LocalDate d2 = LocalDate.parse(date2);
 
         long dayBetween = Math.abs(ChronoUnit.DAYS.between(d1, d2));
-        return Math.max(0, 1 - (dayBetween/30.0));
+        return Math.max(0, 1 - (dayBetween/365.0)); // 1년 이내의 차이는 높은 유사도 유지
     }
 
     /**
