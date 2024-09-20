@@ -125,13 +125,22 @@ public class TmdbService {
      * @return : Mono<JsonNode>
      */
     public Mono<JsonNode> searchJsonMovieWithSim(String query, String openDt) {
-        return searchWithFullTitle(query, openDt)
-                .flatMap(result -> result.path("results").size() > 0 ? Mono.just(result) : searchWithPartialTitles(query, openDt))
-                .map(jsonNode -> findMostSimilarMovie(jsonNode, query, openDt))
+        String processingQuery = preprocessTitle(query);
+        return searchWithFullTitle(processingQuery, openDt)
+                .flatMap(result -> !result.path("results").isEmpty() ? Mono.just(result) : searchWithPartialTitles(query, openDt))
+                .map(jsonNode -> findMostSimilarMovie(jsonNode, processingQuery, openDt))
                 .onErrorResume(e -> {
-                    System.err.println("Error searching for movie: " + query + ". Error: " + e.getMessage());
+                    System.err.println("Error searching for movie: " + processingQuery + ". Error: " + e.getMessage());
                     return Mono.just(JsonNodeFactory.instance.nullNode());
                 });
+    }
+
+    private String preprocessTitle(String title) {
+        // 특수 문자 제거, 공백 정규화, 소문자 변환
+        return title.replaceAll("[^a-zA-Z0-9가-힣\\s]", "")
+                .replaceAll("\\s+", " ")
+                .trim()
+                .toLowerCase();
     }
 
     private Mono<JsonNode> searchWithFullTitle(String query, String openDt) {
@@ -142,7 +151,7 @@ public class TmdbService {
         List<String> partialQueries = generatePartialQueries(query);
         return Flux.fromIterable(partialQueries)
                 .flatMap(partialQuery -> performSearch(partialQuery, openDt))
-                .filter(result -> result.path("results").size() > 0)
+                .filter(result -> !result.path("results").isEmpty())
                 .next()
                 .defaultIfEmpty(JsonNodeFactory.instance.objectNode());
     }
@@ -192,10 +201,11 @@ public class TmdbService {
             double highestSim = 0;
 
             for (JsonNode movie : results) {
-                double titleSim = calculateTitleSim(title, movie.path("title").asText());
+                String movieTitle = preprocessTitle(movie.path("title").asText());
+                double titleSim = calculateTitleSim(title, movieTitle);
                 double dateSim = calculateDateSim(openDt, movie.path("release_date").asText());
                 
-                double overallSim = (titleSim * 0.6) + (dateSim * 0.4);
+                double overallSim = (titleSim * 0.7) + (dateSim * 0.3);
                 
                 if (overallSim > highestSim) {
                     highestSim = overallSim;
@@ -214,7 +224,19 @@ public class TmdbService {
     private double calculateTitleSim(String s1, String s2) {
         int maxLen = Math.max(s1.length(), s2.length());
         if(maxLen > 0) {
-            return (maxLen - calculateLevenshteinDistance(s1, s2)) / (double) maxLen;
+            int distance = calculateLevenshteinDistance(s1, s2);
+            double simRatio = (maxLen - distance) / (double) maxLen;
+
+            // 완전 일치하는 경우 가중치 부여
+            if (s1.equals(s2)) {
+                simRatio = 1.0;
+            }
+            // 부분 일치하는 경우 가중치 부여
+            else if (s1.contains(s2) || s2.contains(s1)) {
+                simRatio = Math.max(simRatio, 0.9);
+            }
+
+            return simRatio;
         }
         return 1.0;
     }
