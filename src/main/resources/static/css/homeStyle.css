@@ -299,6 +299,7 @@
     -ms-overflow-style: none;
 }
 
+
 .movie-list::-webkit-scrollbar, .popular-reviews::-webkit-scrollbar {
     display: none;  /* WebKit */
 }
