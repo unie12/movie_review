@@ -549,19 +549,25 @@
 
         $('#deleteReviewBtn').click(function() {
             if (confirm('정말로 리뷰를 삭제하시겠습니까?')) {
+                // 옵티미스틱 업데이트
+                $('#reviewDisplay').hide();
+                $('#writeReviewBtn').show();
+
                 $.ajax({
                     url: '/api/movie/' + movieId + '/review',
                     type: 'DELETE',
                     success: function() {
-                        loadReview(movieId);
+                        console.log('Review successfully deleted');
                     },
                     error: function(xhr, status, error) {
                         if (xhr.status === 404) {
                             console.log('Review already deleted or not found');
-                            loadReview(movieId);
                         } else {
                             console.error('Error:', error);
                             alert('리뷰 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.');
+                            // 실패 시 UI 원상복구
+                            $('#reviewDisplay').show();
+                            $('#writeReviewBtn').hide();
                         }
                     }
                 });

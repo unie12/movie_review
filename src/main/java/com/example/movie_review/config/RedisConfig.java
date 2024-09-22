@@ -23,7 +23,7 @@ public class RedisConfig {
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
-        redisConfig.setHostName("3.36.121.52");
+        redisConfig.setHostName("43.200.40.13");
         redisConfig.setPort(6379);
         redisConfig.setPassword("wheogml12!");
 

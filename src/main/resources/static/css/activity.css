@@ -408,7 +408,7 @@
 .rat-user-rating {
     cursor: default;
 }
-.favorite {
+.favorite-button {
     background: none;
     border: none;
     font-size: 24px;
@@ -416,14 +416,14 @@
     cursor: pointer;
     transition: transform 0.3s ease, color 0.3s ease;
 }
-.favorite:hover {
+.favorite-button:hover {
     color: #ff6b6b;
     transform: scale(1.1);
 }
-.favorite.active {
+.favorite-button.active {
     color: #ff6b6b;
 }
-.favorite.active i {
+.favorite-button.active i {
     animation: heartBeat 0.3s ease-in-out;
 }
 

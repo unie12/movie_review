@@ -31,8 +31,8 @@ public class HomeController {
     private final RealTimeDataService realTimeDataService;
 
 
-@GetMapping("/healthcheck")
-public ResponseEntity<String> healthCheck() {
+    @GetMapping("/healthcheck")
+    public ResponseEntity<String> healthCheck() {
     return ResponseEntity.ok("OK");
 }
 
