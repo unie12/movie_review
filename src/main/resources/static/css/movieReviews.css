@@ -64,7 +64,15 @@
     font-weight: bold;
     margin-left: 5px;
 }
-
+.like-count {
+    font-size: 16px;
+    text-decoration: none;
+    color: #777;
+}
+.like-count:hover {
+    font-weight: bold;
+    color: black;
+}
 .user-rating, .user-heart {
     display: inline-block;
     padding: 2px 8px;
