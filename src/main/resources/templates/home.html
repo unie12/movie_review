@@ -270,6 +270,7 @@
 
     function loadAjouPopularMovies() {
         const ajouPopularContainer = document.querySelector('.movie-category:has(#ajouPopularList)');
+
         if (!document.getElementById('ajouPopularList')) return;
 
         fetch(`/api/home/ajouPopularMovies`)
@@ -280,7 +281,10 @@
                 if (movies.length > 4) {
                     createMovieList(movies, 'ajouPopularList', 'ajouPop');
                     initializeSmoothScroll('ajouPopularList', '.movie-item');
-                    ajouPopularContainer.style.display = 'block';
+                    setTimeout(() => {
+                        ajouPopularContainer.style.display = 'block';
+                        console.log('Display set to block');
+                    }, 0);
                     updateSectionInfo('ajouPopularList');
                 } else {
                     console.log("영화가 없어 컨테이너를 숨김");
