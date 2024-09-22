@@ -546,19 +546,24 @@
         $('.loading-overlay').hide();
     }
 
-    function simulateLoading(duration) {
+    function simulateLoading(duration, ajaxPromise) {
         return new Promise((resolve) => {
             let progress = 0;
             const interval = setInterval(() => {
                 progress += 5;
-                if (progress >= 100) {
+                if (progress >= 95) {
                     clearInterval(interval);
-                    updateLoadingBar(100);
-                    resolve();
+                    updateLoadingBar(95);
+
+                    // AJAX 요청이 완료될 때까지 대기
+                    ajaxPromise.then(() => {
+                        updateLoadingBar(100);
+                        resolve();
+                    });
                 } else {
                     updateLoadingBar(progress);
                 }
-            }, duration / 20);
+            }, duration / 19); // 95%까지만 채우도록 수정
         });
     }
 
@@ -601,39 +606,39 @@
         const minLoadingTime = 2000; // 최소 2초 동안 로딩 표시
         const startTime = Date.now();
 
-        Promise.all([
-            simulateLoading(minLoadingTime),
-            $.ajax({
-                url: '/api/user/additional-info/' + userEmail,
-                type: 'PUT',
-                data: formData,
-                processData: false,
-                contentType: false
-            })
-        ]).then(([_, response]) => {
-            const elapsedTime = Date.now() - startTime;
-            if (elapsedTime < minLoadingTime) {
-                return new Promise(resolve => setTimeout(() => resolve(response), minLoadingTime - elapsedTime));
-            }
-            return response;
-        }).then(() => {
-            updateLoadingBar(100);
-            setTimeout(() => {
-                hideLoadingOverlay();
-                alert('프로필이 업데이트되었습니다');
-                location.reload();
-                window.location.href = '/home';
-            }, 500); // 100% 표시를 잠시 보여준 후 다음 단계로 진행
-        }).catch((error) => {
-            if (maxRetries > 0) {
-                setTimeout(() => {
-                    submitWithRetry(formData, maxRetries - 1);
-                }, 1000);
-            } else {
-                hideLoadingOverlay();
-                alert('프로필 업데이트에 실패했습니다: ' + error);
-            }
+        const ajaxPromise = $.ajax({
+            url: '/api/user/additional-info/' + userEmail,
+            type: 'PUT',
+            data: formData,
+            processData: false,
+            contentType: false
         });
+
+        simulateLoading(minLoadingTime, ajaxPromise)
+            .then(() => {
+                const elapsedTime = Date.now() - startTime;
+                if (elapsedTime < minLoadingTime) {
+                    return new Promise(resolve => setTimeout(resolve, minLoadingTime - elapsedTime));
+                }
+            })
+            .then(() => {
+                setTimeout(() => {
+                    hideLoadingOverlay();
+                    alert('프로필이 업데이트되었습니다');
+                    location.reload();
+                    window.location.href = '/home';
+                }, 500); // 100% 표시를 잠시 보여준 후 다음 단계로 진행
+            })
+            .catch((error) => {
+                if (maxRetries > 0) {
+                    setTimeout(() => {
+                        submitWithRetry(formData, maxRetries - 1);
+                    }, 1000);
+                } else {
+                    hideLoadingOverlay();
+                    alert('프로필 업데이트에 실패했습니다: ' + error);
+                }
+            });
     }
 
     function handleSearchKeypress(e) {
