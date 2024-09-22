@@ -787,12 +787,9 @@
         if (isNavigating) return;
         isNavigating = true;
 
-        window.location.href = '/contents/' + movieId;
+        LoadingManager.show();
+        localStorage.setItem('isLoading', 'true');
 
-        // 일정 시간 후 플래그 리셋
-        setTimeout(() => {
-            isNavigating = false;
-        }, 1000); // 1초 후 리셋
         window.location.href = '/contents/' + movieId;
     }
 

@@ -17,13 +17,22 @@
 <body>
     <script src="/js/loading.js"></script>
     <script>
-    LoadingManager.show();
 
-    window.addEventListener('load', function() {
-        LoadingManager.waitForImages().then(() => {
-            LoadingManager.hide();
-            document.getElementById('movie-content').style.display = 'block';
-            initializePageContent();
+    document.addEventListener('DOMContentLoaded', function() {
+        const isLoading = localStorage.getItem('isLoading') === 'true';
+
+        if (isLoading) {
+            localStorage.removeItem('isLoading');
+        }
+
+        LoadingManager.show();
+
+        window.addEventListener('load', function() {
+            LoadingManager.waitForImages().then(() => {
+                LoadingManager.hide();
+                document.getElementById('movie-content').style.display = 'block';
+                initializePageContent();
+            });
         });
     });
     </script>
@@ -240,6 +249,10 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    if (localStorage.getItem('isLoading') === 'true') {
+        LoadingManager.show();
+    }
+
     function initializePageContent() {
         const favoriteButton = document.getElementById('favoriteButton');
         if (favoriteButton) {
