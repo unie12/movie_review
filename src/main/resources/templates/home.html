@@ -269,19 +269,25 @@
     }
 
     function loadAjouPopularMovies() {
+        const ajouPopularContainer = document.querySelector('.movie-category:has(#ajouPopularList)');
+        if (!document.getElementById('ajouPopularList')) return;
+
         fetch(`/api/home/ajouPopularMovies`)
             .then(response => response.json())
             .then(movies => {
                 if (movies.length > 4) {
                     createMovieList(movies, 'ajouPopularList', 'ajouPop');
-                    document.querySelector('.movie-category').style.display = 'block'; // div를 보이게 함
+                    ajouPopularContainer.style.display = 'block';
                     initializeSmoothScroll('ajouPopularList', '.movie-item');
                     updateSectionInfo('ajouPopularList');
                 } else {
-                    document.querySelector('.movie-category').style.display = 'none'; // div를 보이게 함
+                    ajouPopularContainer.style.display = 'none';
                 }
             })
-            .catch(error => console.error('Error fetching user preferences:', error));
+            .catch(error => {
+                console.error('Error fetching Ajou popular movies:', error);
+                ajouPopularContainer.style.display = 'none';
+            });
     }
 
     function loadMbtiPreferMovies() {
@@ -329,6 +335,7 @@
                 departmentMovieContainer.style.display = 'none'; // 에러 발생 시 숨김
             });
     }
+
     function initializeInfoIcons() {
         const infoIcons = document.querySelectorAll('.info-icon');
 
