@@ -540,34 +540,25 @@
 
     function showLoadingOverlay() {
         $('.loading-overlay').show();
-        simulateLoading();
     }
 
     function hideLoadingOverlay() {
         $('.loading-overlay').hide();
     }
 
-    function simulateLoading() {
-        let progress = 0;
-        const minLoadingTime = 2000; // 최소 로딩 시간 (밀리초)
-        const startTime = Date.now();
-
+    function simulateLoading(duration) {
         return new Promise((resolve) => {
+            let progress = 0;
             const interval = setInterval(() => {
-                progress += Math.random() * 15;
-
-                if (Date.now() - startTime < minLoadingTime) {
-                    progress = Math.min(progress, 90);
-                }
-
-                if (progress >= 100 || Date.now() - startTime >= minLoadingTime) {
+                progress += 5;
+                if (progress >= 100) {
                     clearInterval(interval);
                     updateLoadingBar(100);
                     resolve();
-                    return;
+                } else {
+                    updateLoadingBar(progress);
                 }
-                updateLoadingBar(progress);
-            }, 200);
+            }, duration / 20);
         });
     }
 
@@ -607,10 +598,11 @@
     }
 
     function submitWithRetry(formData, maxRetries) {
+        const minLoadingTime = 2000; // 최소 2초 동안 로딩 표시
         const startTime = Date.now();
 
         Promise.all([
-            simulateLoading(),
+            simulateLoading(minLoadingTime),
             $.ajax({
                 url: '/api/user/additional-info/' + userEmail,
                 type: 'PUT',
@@ -618,16 +610,20 @@
                 processData: false,
                 contentType: false
             })
-        ]).then(() => {
+        ]).then(([_, response]) => {
             const elapsedTime = Date.now() - startTime;
-            if (elapsedTime < 2000) {
-                return new Promise(resolve => setTimeout(resolve, 2000 - elapsedTime));
+            if (elapsedTime < minLoadingTime) {
+                return new Promise(resolve => setTimeout(() => resolve(response), minLoadingTime - elapsedTime));
             }
+            return response;
         }).then(() => {
-            hideLoadingOverlay();
-            alert('프로필이 업데이트되었습니다');
-            location.reload();
-            window.location.href = '/home';
+            updateLoadingBar(100);
+            setTimeout(() => {
+                hideLoadingOverlay();
+                alert('프로필이 업데이트되었습니다');
+                location.reload();
+                window.location.href = '/home';
+            }, 500); // 100% 표시를 잠시 보여준 후 다음 단계로 진행
         }).catch((error) => {
             if (maxRetries > 0) {
                 setTimeout(() => {
@@ -638,7 +634,6 @@
                 alert('프로필 업데이트에 실패했습니다: ' + error);
             }
         });
-    }
 
     function handleSearchKeypress(e) {
         if (e.which === 13) {
