@@ -127,7 +127,7 @@ body {
     color: #ff6b6b;
 }
 .favorite.active i {
-    animation: heartBeat 0.3s ease-in-out;
+    animation: heartBeat 0.4s ease-in-out;
 }
 
 @keyframes heartBeat {
@@ -364,7 +364,7 @@ textarea {
 
 .like-button.active {
     color: red;
-    animation: heartBeat 0.3s ease-in-out;
+    animation: heartBeat 0.4s ease-in-out;
 }
 .like-button:hover {
     color: red;

@@ -47,7 +47,7 @@
     color: #ff6b6b;
 }
 .like-button.active i {
-    animation: heartBeat 0.3s ease-in-out;
+    animation: heartBeat 0.4s ease-in-out;
 }
 @keyframes heartBeat {
     0% {
@@ -60,11 +60,11 @@
         transform: scale(1);
     }
 }
-
 .heart-count {
     font-weight: bold;
     margin-left: 5px;
 }
+
 .user-rating, .user-heart {
     display: inline-block;
     padding: 2px 8px;

@@ -190,7 +190,7 @@
     color: #ff6b6b;
 }
 .like-button.active i {
-    animation: heartBeat 0.3s ease-in-out;
+    animation: heartBeat 0.4s ease-in-out;
 }
 @keyframes heartBeat {
     0% {
@@ -435,7 +435,7 @@
     color: #ff6b6b;
 }
 .favorite-button.active i {
-    animation: heartBeat 0.3s ease-in-out;
+    animation: heartBeat 0.4s ease-in-out;
 }
 
 @keyframes heartBeat {
@@ -563,15 +563,15 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
+}
+
+.subscription-btn:hover {
+    background-color: red;
 }
 
 .subscription-btn.active {
     background-color: red;
-}
-.subscription-btn:hover {
-    background-color: red;
-}
-.subscription-btn.active:hover {
-    background-color: #A4AFB1;
+    animation: heartBeat 0.4s ease-in-out;
+
 }
