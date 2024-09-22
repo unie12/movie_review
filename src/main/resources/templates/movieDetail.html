@@ -80,15 +80,8 @@
                                     <span>★★★★★</span>
                                 </div>
                             </div>
-<!--                            <div id="starRating" class="star-rating">-->
-<!--                                <span class="star" data-rating="0.5">☆</span><span class="star" data-rating="1">☆</span>-->
-<!--                                <span class="star" data-rating="1.5">☆</span><span class="star" data-rating="2">☆</span>-->
-<!--                                <span class="star" data-rating="2.5">☆</span><span class="star" data-rating="3">☆</span>-->
-<!--                                <span class="star" data-rating="3.5">☆</span><span class="star" data-rating="4">☆</span>-->
-<!--                                <span class="star" data-rating="4.5">☆</span><span class="star" data-rating="5">☆</span>-->
-<!--                            </div>-->
                             <p id="selectedRating">나의 평점: <span>0</span></p>
-                            <p><strong>아주대 평점:</strong> <span th:text="${movieDTO.ajou_ratingAvg} + ' (' + ${movieDTO.ajou_ratingCnt} + '표)'"></span></p>
+                            <p>아주대 평점: <span th:text="${movieDTO.ajou_ratingAvg} + ' (' + ${movieDTO.ajou_ratingCnt} + '표)'"></span></p>
                         </div>
 
                         <div id="reviewSection" class="user-review-section">
