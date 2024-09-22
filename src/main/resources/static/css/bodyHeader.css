@@ -67,7 +67,7 @@ body {
     cursor: pointer;
 }
 .navbar-content .btn:hover {
-    background-color: #e0e0e0;
+    background-color: #007bff;
 }
 .btn-primary {
     background-color: #A4AFB1;
