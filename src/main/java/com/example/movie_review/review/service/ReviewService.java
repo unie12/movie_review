@@ -79,11 +79,11 @@ public class ReviewService {
     public void deleteReview(Long movieId, String email) {
         User user = userService.getUserByEmail(email);
         DbMovies dbMovie = dbMovieService.getDbMovieById(movieId);
-        Review existReview = getReviewByMovieAndUser(dbMovie, user);
+        Review existReview = reviewRepository.findByDbMoviesAndUser(dbMovie, user)
+                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
 
         reviewRepository.delete(existReview);
         eventPublisher.publishEvent(new ReviewEvent(this, existReview, ReviewEvent.ReviewEventType.DELETED));
-
     }
 
 

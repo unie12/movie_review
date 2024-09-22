@@ -88,8 +88,11 @@ public class ReviewController {
             String email = principal.getName();
             reviewService.deleteReview(movieId, email);
             return ResponseEntity.ok(new DeleteResponse(movieId, "Review successfully deleted"));
+        } catch (IllegalArgumentException e) {
+            // 리뷰가 존재하지 않는 경우
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
