@@ -141,6 +141,7 @@ body {
         transform: scale(1);
     }
 }
+
 .actor-slider {
     position: relative;
     overflow: hidden;
@@ -354,20 +355,22 @@ textarea {
     display: block;
 }
 
-.like-button, .comment-button {
+.like-button {
     background: none;
     border: none;
     cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.like-button {
-    background-color: white;
-    color: black;
-    cursor: pointer;
-}
 .like-button.active {
     color: red;
+    animation: heartBeat 0.3s ease-in-out;
 }
+.like-button:hover {
+    color: red;
+    transform: scale(1.1);
+}
+
 .movie-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

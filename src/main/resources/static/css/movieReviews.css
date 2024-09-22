@@ -29,37 +29,41 @@
 .star-rating {
     color: gold;
 }
+
 .like-button {
+    margin-right: -10px;
+    font-size: 18px;
     background: none;
     border: none;
-    color: #777;
+    color: #ccc;
     cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
-.like-button:hover{
-    color: red;
+.like-button:hover {
+    color: #ff6b6b;
+    transform: scale(1.1);
 }
-.like-button.active:hover {
-    color: #777;
+.like-button.active {
+    color: #ff6b6b;
 }
+.like-button.active i {
+    animation: heartBeat 0.3s ease-in-out;
+}
+@keyframes heartBeat {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 .heart-count {
     font-weight: bold;
     margin-left: 5px;
-}
-.like-button.active {
-    color: #e74c3c;
-}
-.like-button.active .heart-value {
-    background-color: white;
-    color: #e74c3c;
-}
-.like-count {
-    font-size: 16px;
-    text-decoration: none;
-    color: #777;
-}
-.like-count:hover {
-    font-weight: bold;
-    color: black;
 }
 .user-rating, .user-heart {
     display: inline-block;
