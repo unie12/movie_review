@@ -557,7 +557,7 @@
 .section-info {
     font-size: 0.8em;
     color: #666;
-    background-color: #f0f0f0;
+    background-color: rgba(0, 123, 255, 0.3);
     padding: 2px 8px;
     border-radius: 10px;
 }
@@ -571,7 +571,7 @@
     color: white;
 }
 .btn:hover {
-    background-color: #e0e0e0;
+    background-color: #007bff;
 }
 
 .movie-category-title {

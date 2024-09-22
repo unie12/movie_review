@@ -34,23 +34,29 @@
 
             <div class="section">
                 <div class="data-section">
-                    <p class="week-title">이번 주 평가왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyRatingKing"></i></p>
+                    <p class="week-title">
+                        이번 주 <span class="movie-category-title">평가왕</span>
+                        <i class="fas fa-question-circle info-icon" data-info-key="weeklyRatingKing"></i>
+                    </p>
                     <div id="ratingKingChart" class="king-chart"></div>
                 </div>
             </div>
 
             <div class="section">
                 <div class="data-section">
-                    <p class="week-title">이번 주 리뷰왕 <i class="fas fa-question-circle info-icon" data-info-key="weeklyReviewKing"></i></p>
+                    <p class="week-title">
+                        이번 주 <span class="movie-category-title">리뷰왕</span>
+                        <i class="fas fa-question-circle info-icon" data-info-key="weeklyReviewKing"></i>
+                    </p>
                     <div id="reviewKingChart" class="king-chart"></div>
                 </div>
             </div>
 
             <div class="section">
                 <div class="data-header">
-                    <p>전체 유저: <span id="userCount">0</span>명</p>
-                    <p>전체 리뷰: <span id="totalReviews">0</span>개</p>
-                    <p>전체 평점: <span id="totalRatings">0</span>개</p>
+                    <p>전체 유저: <span class="movie-category-title" id="userCount">0</span>명</p>
+                    <p>전체 리뷰: <span class="movie-category-title" id="totalReviews">0</span>개</p>
+                    <p>전체 평점: <span class="movie-category-title" id="totalRatings">0</span>개</p>
                 </div>
                 <div id="ratingDistribution" class="rating-distribution">
                     <!-- 전체 사용자들의 평가 분포 보여주기-->
@@ -60,7 +66,10 @@
 
         <div class="popular-container">
             <div class="reviews-header">
-                <p class="category-title">인기 리뷰 <i class="fas fa-question-circle info-icon" data-info-key="popularReviews"></i></p>
+                <p class="category-title">
+                    <span class="movie-category-title">인기</span> 리뷰
+                    <i class="fas fa-question-circle info-icon" data-info-key="popularReviews"></i>
+                </p>
                 <div>
                     <button class="btn btn-secondary" id="refreshReviewsBtn">새로고침</button>
                     <button class="btn btn-primary" id="viewAllBtn">전체 보기</button>
