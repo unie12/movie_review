@@ -277,10 +277,11 @@
             .then(movies => {
                 if (movies.length > 4) {
                     createMovieList(movies, 'ajouPopularList', 'ajouPop');
-                    ajouPopularContainer.style.display = 'block';
                     initializeSmoothScroll('ajouPopularList', '.movie-item');
+                    ajouPopularContainer.style.display = 'block';
                     updateSectionInfo('ajouPopularList');
                 } else {
+                    document.querySelector('.movie-category').style.display = 'none'; // div를 보이게 함
                     ajouPopularContainer.style.display = 'none';
                 }
             })
