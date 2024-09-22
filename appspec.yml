@@ -9,11 +9,6 @@ permissions:
     owner: ubuntu
     group: ubuntu
     mode: 755
-  - object: /home/ubuntu/movie_review/scripts
-    pattern: "**"
-    owner: ubuntu
-    group: ubuntu
-    mode: 755
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
@@ -30,4 +25,4 @@ hooks:
   ApplicationStop:
     - location: scripts/stop_application.sh
       timeout: 300
-      runas: ubuntu
+      runas: root
