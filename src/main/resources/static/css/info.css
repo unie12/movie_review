@@ -484,7 +484,7 @@ textarea {
     color: white;
 }
 .btn:hover {
-    background-color: #e0e0e0;
+    background-color: #007bff;
 }
 @media (max-width: 768px) {
     .modal-content {
