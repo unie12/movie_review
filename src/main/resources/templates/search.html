@@ -26,7 +26,7 @@
             <div th:each="result : ${searchResults.content}" class="movie-item">
                 <img th:src="'https://image.tmdb.org/t/p/w500' + ${result.poster_path}"
                      th:alt="${result.title}" class="movie-poster"
-                     th:attr="onclick=|redirectToMovie(${result.id})|">
+                     th:attr="onclick=|navigateToMovieDetails(${result.id})|">
                 <div class="movie-info">
                     <h3 th:text="${result.title}" class="movie-title"></h3>
                     <p th:text="${result.release_date}" class="movie-release-date"></p>
@@ -182,7 +182,14 @@
         window.removeEventListener('scroll', handleScroll);
     }
 
-    function redirectToMovie(movieId) {
+    let isNavigating = false;
+
+    function navigateToMovieDetails(movieId) {
+        if (isNavigating) return;
+        isNavigating = true;
+
+        LoadingManager.show();
+
         window.location.href = '/contents/' + movieId;
     }
 

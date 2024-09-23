@@ -413,8 +413,15 @@
         }
     }
 
+    let isNavigating = false;
+
     function navigateToMovieDetails(movieId) {
-       window.location.href = '/contents/' + movieId;
+        if (isNavigating) return;
+        isNavigating = true;
+
+        LoadingManager.show();
+
+        window.location.href = '/contents/' + movieId;
     }
 
     function navigateToUser(email) {

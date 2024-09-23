@@ -1,6 +1,7 @@
 let currentPage = 0;
 let isLoading = false;
 let hasMoreData = true;
+let isNavigating = false;
 
 function loadActivities(append = true) {
     if (isLoading || !hasMoreData) return;
@@ -110,6 +111,12 @@ function loadSortOptions() {
 }
 
 function navigateToMovieDetails(movieId) {
+    if (isNavigating) return;
+    isNavigating = true;
+
+    LoadingManager.show();
+    sessionStorage.setItem('isNavigatingFromHome', 'true');
+
     window.location.href = '/contents/' + movieId;
 }
 

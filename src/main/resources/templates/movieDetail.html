@@ -17,25 +17,17 @@
 <body>
     <script src="/js/loading.js"></script>
     <script>
-
     document.addEventListener('DOMContentLoaded', function() {
-        const isLoading = localStorage.getItem('isLoading') === 'true';
+        const isNavigatingFromHome = sessionStorage.getItem('isNavigatingFromHome') === 't>
 
-        if (isLoading) {
-            localStorage.removeItem('isLoading');
-            window.scrollTo(0, parseInt(localStorage.getItem('scrollPosition') || '0'));
-            localStorage.removeItem('scrollPosition');
-        } else {
-            LoadingManager.show();
-        }
+        sessionStorage.removeItem('isNavigatingFromHome');
+        document.getElementById('movie-content').style.display = 'block';
 
-        window.addEventListener('load', function() {
-            LoadingManager.waitForImages(2000).then(() => {
-                LoadingManager.hide();
-                document.getElementById('movie-content').style.display = 'block';
-                initializePageContent();
-            });
+        LoadingManager.waitForImages(2000).then(() => {
+            LoadingManager.hide();
         });
+        document.getElementById('movie-content').style.display = 'block';
+        initializePageContent();
     });
     </script>
 
@@ -233,7 +225,7 @@
                     <h2>추천 영화</h2>
                     <div class="movie-grid">
                         <div th:each="movie : ${movieDTO.basicInfo.recommendMovies}" class="movie-card">
-                            <a th:href="@{'/contents/' + ${movie.id}}">
+                            <a th:href="@{'/contents/' + ${movie.id}}" th:attr="onclick=|navigateToMovieDetails(${item.id})|">
                                 <div class="poster-container">
                                     <img th:src="@{'https://image.tmdb.org/t/p/w200' + ${movie.poster_path}}" alt="Movie Poster" class="movie-poster">
                                 </div>
@@ -251,10 +243,6 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    if (localStorage.getItem('isLoading') === 'true') {
-        LoadingManager.show();
-    }
-
     function initializePageContent() {
         const favoriteButton = document.getElementById('favoriteButton');
         if (favoriteButton) {
@@ -647,6 +635,17 @@
 
     function redirectToPerson(personId, type) {
         window.location.href = `/people/${personId}?type=${type}`;
+    }
+
+    let isNavigating = false;
+
+    function navigateToMovieDetails(movieId) {
+        if (isNavigating) return;
+        isNavigating = true;
+
+        LoadingManager.show();
+
+        window.location.href = '/contents/' + movieId;
     }
 
     class Slider {

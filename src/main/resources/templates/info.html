@@ -11,6 +11,7 @@
 <script th:src="@{'/js/search.js'}"></script>
 
 <body>
+<script src="/js/loading.js"></script>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 
@@ -676,6 +677,17 @@ console.log('life data', data);
 
     function navigateToMovie(movieId) {
        window.location.href = '/contents/' + movieId;
+    }
+
+    let isNavigating = false;
+
+    function navigateToMovieDetails(movieId) {
+        if (isNavigating) return;
+        isNavigating = true;
+
+        LoadingManager.show();
+
+        window.location.href = '/contents/' + movieId;
     }
 
     function navigateToPerson(personId, type) {

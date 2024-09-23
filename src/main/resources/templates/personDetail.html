@@ -18,7 +18,7 @@
 
             <div class="movie-grid">
                 <div th:each="item : ${pagedItems}" class="movie-item">
-                    <div class="movie-poster-container" th:attr="onclick=|redirectToMovie(${item.id})|">
+                    <div class="movie-poster-container" th:attr="onclick=|navigateToMovieDetails(${item.id})|">
                         <img th:src="'https://image.tmdb.org/t/p/w500' + ${item.poster_path}"
                              th:alt="${item.title}" class="movie-poster">
                         <div class="person-overlay">
@@ -48,7 +48,14 @@
 </div>
 
 <script>
-    function redirectToMovie(movieId) {
+    let isNavigating = false;
+
+    function navigateToMovieDetails(movieId) {
+        if (isNavigating) return;
+        isNavigating = true;
+
+        LoadingManager.show();
+
         window.location.href = '/contents/' + movieId;
     }
 </script>

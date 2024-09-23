@@ -41,22 +41,24 @@ public class MovieBasicService {
         DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
         MovieDetails movieDetails = dbMovie.getMovieDetails();
 
-        // 병렬로 API 호출
-        Mono<String> providerMono = tmdbService.getMovieProvider(movieTId);
-        Mono<String> videoMono = tmdbService.getYoutubeLink(movieTId);
-        Mono<List<String>> imagesMono = tmdbService.getMovieImages(movieTId);
+
+        Mono<String> providerMono = tmdbService.getMovieProvider(movieTId).onErrorResume(e -> Mono.just(""));
+        Mono<String> videoMono = tmdbService.getYoutubeLink(movieTId).onErrorResume(e -> Mono.just(""));
+        Mono<List<String>> imagesMono = tmdbService.getMovieImages(movieTId).onErrorResume(e -> Mono.just(Collections.emptyList()));
         Mono<List<MovieCommonDTO>> recommendationsMono = tmdbService.getMovieRecommendation(movieTId)
-                .map(this::getRecommendMovies);
+                .map(this::getRecommendMovies)
+                .onErrorResume(e -> Mono.just(Collections.emptyList()));
 
         Tuple4<String, String, List<String>, List<MovieCommonDTO>> results = Mono.zip(
                 providerMono, videoMono, imagesMono, recommendationsMono
         ).block();
 
-
-        String watchProviderUrl = extractWatchProviderUrl(results.getT1());
-        String youtubeLink = results.getT2() != null ? "https://www.youtube.com/watch?v=" + results.getT2() : null;
-        List<String> images = results.getT3();
-        List<MovieCommonDTO> recommendedMovies = results.getT4();
+        String watchProviderUrl = extractWatchProviderUrl(results != null ? results.getT1() : null);
+        String youtubeLink = (results != null && results.getT2() != null && !results.getT2().isEmpty())
+                ? "https://www.youtube.com/watch?v=" + results.getT2()
+                : null;
+        List<String> images = results != null ? results.getT3() : Collections.emptyList();
+        List<MovieCommonDTO> recommendedMovies = results != null ? results.getT4() : Collections.emptyList();
 
         List<Crew> directors = dbMovieService.getDirectors(movieDetails);
 
