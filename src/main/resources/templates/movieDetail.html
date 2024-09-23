@@ -31,10 +31,9 @@
             LoadingManager.waitForImages().then(() => {
                 LoadingManager.hide();
                 document.getElementById('movie-content').style.display = 'block';
+                initializePageContent();
             });
         });
-        initializePageContent();
-
     });
     </script>
 
@@ -269,8 +268,6 @@
             initializeLikeButtons();
             initializePersonRedirect();
             initializeStarRatings();
-
-            loadReviews();
         } else {
             console.error('Favorite button not found');
         }
