@@ -1,5 +1,5 @@
 const LoadingManager = {
-    show: function(minTime = 500) {
+    show: function(minTime = 1000) {
         if (!document.getElementById('loading-screen')) {
 
             const loadingScreen = document.createElement('div');

@@ -114,7 +114,7 @@ function navigateToMovieDetails(movieId) {
     if (isNavigating) return;
     isNavigating = true;
 
-    LoadingManager.show();
+    LoadingManager.show(1000);
     sessionStorage.setItem('isNavigatingFromHome', 'true');
 
     window.location.href = '/contents/' + movieId;

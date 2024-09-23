@@ -55,7 +55,7 @@
         if (isNavigating) return;
         isNavigating = true;
 
-        LoadingManager.show();
+        LoadingManager.show(1000);
 
         window.location.href = '/contents/' + movieId;
     }

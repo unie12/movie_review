@@ -12,7 +12,6 @@
 <script th:src="@{'/js/loading.js'}"></script>
 
 <body>
-<script src="/js/loading.js"></script>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 
@@ -438,7 +437,7 @@ console.log('life data', data);
 
             movieElement.addEventListener('click', function() {
                 const movieTid = this.getAttribute('data-movie-tid');
-                navigateToMovie(movieTid);
+                navigateToMovieDetails(movieTid);
             });
 
             container.appendChild(movieElement);
@@ -623,7 +622,7 @@ console.log('life data', data);
                     </div>
                 </div>
             `;
-            movieElement.addEventListener('click', () => navigateToMovie(movie.tid));
+            movieElement.addEventListener('click', () => navigateToMovieDetails(movie.tid));
             container.appendChild(movieElement);
         });
     }
@@ -675,18 +674,13 @@ console.log('life data', data);
         });
     }
 
-
-    function navigateToMovie(movieId) {
-       window.location.href = '/contents/' + movieId;
-    }
-
     let isNavigating = false;
 
     function navigateToMovieDetails(movieId) {
         if (isNavigating) return;
         isNavigating = true;
 
-        LoadingManager.show();
+        LoadingManager.show(1000);
 
         window.location.href = '/contents/' + movieId;
     }
