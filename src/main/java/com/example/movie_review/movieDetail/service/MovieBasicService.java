@@ -83,7 +83,7 @@ public class MovieBasicService {
                 .recommendMovies(recommendedMovies)
                 .youtubeLink(youtubeLink)
                 .images(images)
-                .keywords(movieDetails.getMovieKeywords().stream().map(keyword -> keyword.getKeyword().getName()).limit(20).collect(Collectors.toList()))
+                .keywords(movieDetails.getMovieKeywords().stream().map(keyword -> keyword.getKeyword().getName()).limit(15).collect(Collectors.toList()))
                 .build();
     }
 

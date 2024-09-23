@@ -95,7 +95,7 @@ public class DbMovieService {
             Credits credits = movieDetails.getCredits();
             if (credits != null) {
                 credits.setCast(credits.getCast().stream()
-                        .limit(30)
+                        .limit(24)
                         .collect(Collectors.toList()));
                 for (Cast cast : credits.getCast()) {
                     cast.setCredits(credits);
