@@ -1,5 +1,5 @@
 const LoadingManager = {
-    show: function(minTime = 1000) {
+    show: function(minTime = 1200) {
         if (!document.getElementById('loading-screen')) {
 
             const loadingScreen = document.createElement('div');
@@ -31,7 +31,7 @@ const LoadingManager = {
         }
     },
 
-    waitForImages: function(maxWaitTime = 2000) {
+    waitForImages: function(maxWaitTime = 2500) {
         const images = document.querySelectorAll('img');
         let loadedImages = 0;
 
