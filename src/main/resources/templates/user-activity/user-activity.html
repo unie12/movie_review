@@ -8,9 +8,9 @@
     <title th:text="${user.nickname} + '님' + ${pageTitle}">사용자 활동</title>
 </head>
 <script th:src="@{'/js/search.js'}"></script>
+<script th:src="@{'/js/loading.js'}"></script>
 
 <body>
-<script src="/js/loading.js"></script>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 <!--    <a th:href="@{'/info/' + ${user.email}}" class="back-link">-->
