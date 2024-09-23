@@ -23,13 +23,14 @@
 
         if (isLoading) {
             localStorage.removeItem('isLoading');
+            window.scrollTo(0, parseInt(localStorage.getItem('scrollPosition') || '0'));
+            localStorage.removeItem('scrollPosition');
         } else {
             LoadingManager.show();
         }
 
-
         window.addEventListener('load', function() {
-            LoadingManager.waitForImages().then(() => {
+            LoadingManager.waitForImages(2000).then(() => {
                 LoadingManager.hide();
                 document.getElementById('movie-content').style.display = 'block';
                 initializePageContent();

@@ -790,6 +790,7 @@
         LoadingManager.show();
         localStorage.setItem('isLoading', 'true');
 
+        localStorage.setItem('scrollPosition', window.scrollY);
         window.location.href = '/contents/' + movieId;
     }
 
