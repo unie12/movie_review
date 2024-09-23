@@ -23,7 +23,6 @@
         LoadingManager.waitForImages(2000).then(() => {
             LoadingManager.hide();
         });
-        document.getElementById('movie-content').style.display = 'block';
         initializePageContent();
     });
     </script>
@@ -222,7 +221,7 @@
                     <h2>추천 영화</h2>
                     <div class="movie-grid">
                         <div th:each="movie : ${movieDTO.basicInfo.recommendMovies}" class="movie-card">
-                            <a th:href="@{'/contents/' + ${movie.id}}" th:attr="onclick=|navigateToMovieDetails(${item.id})|">
+                            <a th:href="@{'/contents/' + ${movie.id}}" th:attr="onclick=|navigateToMovieDetails(${movie.id})|">
                                 <div class="poster-container">
                                     <img th:src="@{'https://image.tmdb.org/t/p/w200' + ${movie.poster_path}}" alt="Movie Poster" class="movie-poster">
                                 </div>

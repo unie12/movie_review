@@ -20,7 +20,7 @@
     LoadingManager.show();
 
     window.addEventListener('load', function() {
-        LoadingManager.waitForImages().then(() => {
+        LoadingManager.waitForImages(1000).then(() => {
             LoadingManager.hide();
         });
     });
