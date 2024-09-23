@@ -16,15 +16,15 @@
 <script th:src="@{'/js/loading.js'}"></script>
 
 <body>
-<script>
-    LoadingManager.show();
-
-    window.addEventListener('load', function() {
-        LoadingManager.waitForImages(1000).then(() => {
-            LoadingManager.hide();
-        });
-    });
-</script>
+<!--<script>-->
+<!--    LoadingManager.show();-->
+<!---->
+<!--    window.addEventListener('load', function() {-->
+<!--        LoadingManager.waitForImages(1000).then(() => {-->
+<!--            LoadingManager.hide();-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
 
 <div th:replace="fragments/bodyHeader :: bodyHeader" />
 <div class="container">

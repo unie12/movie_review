@@ -44,9 +44,8 @@
             <hr class="divider">
             <div class="review-content">
                 <div class="poster-container">
-                    <a th:href="@{'/contents/' + ${review.movieCommonDTO.tId}}">
-                        <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster">
-                    </a>
+                    <img th:src="'https://image.tmdb.org/t/p/w500' + ${review.movieCommonDTO.poster_path}" th:alt="${review.movieCommonDTO.title}" class="movie-poster"
+                         th:attr="onclick=|navigateToMovieDetails(${review.movieCommonDTO.tId})|">
                 </div>
                 <div class="review-text-content">
                     <h4  th:text="${review.movieCommonDTO.title}" class="review-movie-title"></h4>
@@ -421,7 +420,7 @@
         if (isNavigating) return;
         isNavigating = true;
 
-        LoadingManager.show(1000);
+        LoadingManager.show(1500);
 
         window.location.href = '/contents/' + movieId;
     }
