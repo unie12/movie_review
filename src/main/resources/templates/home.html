@@ -276,18 +276,15 @@
         fetch(`/api/home/ajouPopularMovies`)
             .then(response => response.json())
             .then(movies => {
-                console.log('ajou pop movies', movies.length);
 
                 if (movies.length > 4) {
                     createMovieList(movies, 'ajouPopularList', 'ajouPop');
                     initializeSmoothScroll('ajouPopularList', '.movie-item');
                     setTimeout(() => {
                         ajouPopularContainer.style.display = 'block';
-                        console.log('Display set to block', ajouPopularContainer.style.display);
-                    }, 0);
+                    }, 100);
                     updateSectionInfo('ajouPopularList');
                 } else {
-                    console.log("영화가 없어 컨테이너를 숨김");
                     ajouPopularContainer.style.display = 'none';
                 }
             })
