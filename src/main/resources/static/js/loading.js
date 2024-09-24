@@ -31,7 +31,7 @@ const LoadingManager = {
         }
     },
 
-    waitForImages: function(maxWaitTime = 2800) {
+    waitForImages: function(maxWaitTime = 2500) {
         const images = document.querySelectorAll('img');
         let loadedImages = 0;
 

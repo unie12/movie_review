@@ -20,7 +20,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('movie-content').style.display = 'block';
 
-        LoadingManager.waitForImages(2300).then(() => {
+        LoadingManager.waitForImages(2000).then(() => {
             LoadingManager.hide();
         });
         initializePageContent();
