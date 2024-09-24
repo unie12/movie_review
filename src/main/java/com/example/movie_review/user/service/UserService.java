@@ -173,7 +173,7 @@ public class UserService {
 
     // 사용자가 좋게 평가한 영화들 중에서 키워드 뽑아내는 걸로
     public List<KeywordDTO> getTopKeywords(User user) {
-        List<MovieDetails> movieDetails = getPreferMovies(user, 0.0);
+        List<MovieDetails> movieDetails = getPreferMovies(user, 3.5);
 
         Map<String, Long> keywordCount = movieDetails.stream()
                 .flatMap(movie -> movie.getMovieKeywords().stream())
@@ -202,7 +202,7 @@ public class UserService {
      * 사용자 선호 영화에 대한 선호 감독
      */
     public List<PreferPerson> getPreferDirectors(User user) {
-        List<MovieDetails> preferMovies = getPreferMovies(user, 0.0);
+        List<MovieDetails> preferMovies = getPreferMovies(user, 3.5);
         Map<String, Crew> directorMap = new HashMap<>(); // 감독 이름, crew 정보 맵
         Map<String ,Integer> directorFrequency = new HashMap<>(); // 감독 이름, count
 
@@ -235,7 +235,7 @@ public class UserService {
      * 사용자 선호 영화에 대한 선호 배우
      */
     public List<PreferPerson> getPreferActors(User user) {
-        List<MovieDetails> preferMovies = getPreferMovies(user, 0.0);
+        List<MovieDetails> preferMovies = getPreferMovies(user, 3.5);
         Map<String, Integer> actorFrequency = new HashMap<>();
         Map<String, Cast> actorMap = new HashMap<>();
 
@@ -264,8 +264,9 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+
     public List<KeywordDTO> getPreferGenre(User user) {
-        List<MovieDetails> preferMovies = getPreferMovies(user, 0.0);
+        List<MovieDetails> preferMovies = getPreferMovies(user, 3.5);
 
         Map<String, Long> genreCount = preferMovies.stream()
                 .flatMap(movie -> movie.getGenres().stream())
