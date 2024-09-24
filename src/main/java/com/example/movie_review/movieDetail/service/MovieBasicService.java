@@ -36,7 +36,7 @@ public class MovieBasicService {
     private final MovieCommonDTOService movieCommonDTOService;
     private final ObjectMapper objectMapper;
 
-    @Cacheable(value = "movieBasicInfo", key = "#movieTId")
+    @Cacheable(value = "movieBasicInfo", key = "#dbMovie.id")
     public MovieBasicInfo getMovieBasicInfo(DbMovies dbMovie) throws JsonProcessingException {
         MovieDetails movieDetails = dbMovie.getMovieDetails();
         Long movieTId = dbMovie.getTmdbId();
