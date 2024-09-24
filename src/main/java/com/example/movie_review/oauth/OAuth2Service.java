@@ -73,8 +73,6 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
     }
 
     private User updateUser(User user, OAuthAttributes attributes) {
-//        long l = System.currentTimeMillis();
-//        String nickname = "" + l;
 
         user.setName(attributes.getName());
         user.setPicture(attributes.getPicture());
@@ -85,10 +83,6 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
             user.setAge(attributes.getAge() != null ? attributes.getAge() : user.getAge());
             user.setMbti(attributes.getMbti() != null ? attributes.getMbti() : user.getMbti());
         }
-//        user.setNickname(attributes.getNickname() != null ? attributes.getNickname() : nickname);
-//        user.setGender(attributes.getGender() != null ? attributes.getGender() : "미정");
-//        user.setAge(attributes.getAge() != null ? attributes.getAge() : 0L);
-//        user.setMbti(attributes.getMbti() != null ? attributes.getMbti() : "Pretty");
 
         return user;
     }

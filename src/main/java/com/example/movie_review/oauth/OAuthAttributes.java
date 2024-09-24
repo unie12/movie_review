@@ -45,11 +45,7 @@ public class OAuthAttributes {
         return OAuthAttributes.builder()
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
-                .picture((String) attributes.get("picture"))
-//                .nickname((String) attributes.get("nickname")) // 닉네임 필드 추가
-//                .gender((String) attributes.get("gender")) // 성별 필드 추가
-//                .age(attributes.get("age") != null ? Long.valueOf(attributes.get("age").toString()) : null) // 나이 필드 추가
-//                .mbti((String) attributes.get("mbti")) // MBTI 필드 추가
+                .picture("/images/defaultPerson.png") // 여기를 수정
                 .attributes(attributes)
                 .nameAttributeKey(usernameAttributeName)
                 .build();

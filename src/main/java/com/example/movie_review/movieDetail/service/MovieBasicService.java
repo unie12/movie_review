@@ -37,10 +37,9 @@ public class MovieBasicService {
     private final ObjectMapper objectMapper;
 
     @Cacheable(value = "movieBasicInfo", key = "#movieTId")
-    public MovieBasicInfo getMovieBasicInfo(Long movieTId) throws JsonProcessingException {
-        DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
+    public MovieBasicInfo getMovieBasicInfo(DbMovies dbMovie) throws JsonProcessingException {
         MovieDetails movieDetails = dbMovie.getMovieDetails();
-
+        Long movieTId = dbMovie.getTmdbId();
 
         Mono<String> providerMono = tmdbService.getMovieProvider(movieTId).onErrorResume(e -> Mono.just(""));
         Mono<String> videoMono = tmdbService.getYoutubeLink(movieTId).onErrorResume(e -> Mono.just(""));

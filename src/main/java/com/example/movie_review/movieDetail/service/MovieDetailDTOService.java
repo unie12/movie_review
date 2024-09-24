@@ -37,8 +37,8 @@ public class MovieDetailDTOService {
     private final MovieBasicService movieBasicService;
 
     public MovieDetailDTO getMovieDetailDTO(Long movieTId, Authentication principal) throws JsonProcessingException {
-        MovieBasicInfo basicInfo = movieBasicService.getMovieBasicInfo(movieTId);
         DbMovies dbMovie = dbMovieService.findOrCreateMovie(movieTId);
+        MovieBasicInfo basicInfo = movieBasicService.getMovieBasicInfo(dbMovie);
 
         List<Review> reviews = reviewService.findReviewByDbMovies(dbMovie);
         List<ReviewDTO> reviewDTOS = reviews.stream()

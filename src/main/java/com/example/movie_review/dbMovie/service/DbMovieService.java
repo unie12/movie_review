@@ -13,11 +13,13 @@ import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
 import com.example.movie_review.tmdb.TmdbService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class DbMovieService {
     private final GenresRepository genreRepository;
     private final TmdbService tmdbService;
     private final ObjectMapper objectMapper;
+    private final EntityManager entityManager;
     @Transactional
     public DbMovies findOrCreateMovie(Long movieTId) {
         try {
@@ -70,9 +73,11 @@ public class DbMovieService {
         throw new RuntimeException("Failed to find or create movie after multiple attempts");
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     private DbMovies createMovieFromTmdb(Long movieTId) {
         return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
+            entityManager.clear();
+
             String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
             MovieDetails movieDetails = null;
 
