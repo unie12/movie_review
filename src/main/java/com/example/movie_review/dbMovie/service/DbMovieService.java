@@ -51,7 +51,7 @@ public class DbMovieService {
         }
     }
     private DbMovies retryFindOrCreateMovie(Long movieTId) {
-        int maxRetries = 3;
+        int maxRetries = 5;
         int retryCount = 0;
         while (retryCount < maxRetries) {
             try {
@@ -99,18 +99,32 @@ public class DbMovieService {
 
             Credits credits = movieDetails.getCredits();
             if (credits != null) {
-                credits.setCast(credits.getCast().stream()
-                        .limit(24)
-                        .collect(Collectors.toList()));
+                List<Cast> castList = new ArrayList<>();
                 for (Cast cast : credits.getCast()) {
-                    cast.setCredits(credits);
+                    Cast existingCast = entityManager.find(Cast.class, cast.getId());
+                    if (existingCast != null) {
+                        castList.add(existingCast); // 이미 존재하는 경우
+                    } else {
+                        cast.setCredits(credits); // 새로운 경우
+                        castList.add(cast);
+                        entityManager.persist(cast); // 새로운 엔티티를 세션에 추가
+                    }
                 }
-                credits.setCrew(credits.getCrew().stream()
-                        .filter(c -> "Director".equals(c.getJob()))
-                        .collect(Collectors.toList()));
+                credits.setCast(castList.stream().limit(24).collect(Collectors.toList()));
+
+                // Crew 처리
+                List<Crew> crewList = new ArrayList<>();
                 for (Crew crew : credits.getCrew()) {
-                    crew.setCredits(credits);
+                    Crew existingCrew = entityManager.find(Crew.class, crew.getId());
+                    if (existingCrew != null) {
+                        crewList.add(existingCrew); // 이미 존재하는 경우
+                    } else {
+                        crew.setCredits(credits); // 새로운 경우
+                        crewList.add(crew);
+                        entityManager.persist(crew); // 새로운 엔티티를 세션에 추가
+                    }
                 }
+                credits.setCrew(crewList.stream().filter(c -> "Director".equals(c.getJob())).collect(Collectors.toList()));
                 credits.setMovieDetails(movieDetails);
                 movieDetails.setCredits(credits);
             }
