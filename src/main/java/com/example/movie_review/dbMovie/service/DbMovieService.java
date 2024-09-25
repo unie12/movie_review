@@ -76,8 +76,6 @@ public class DbMovieService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     private DbMovies createMovieFromTmdb(Long movieTId) {
         return dbMovieRepository.findByTmdbId(movieTId).orElseGet(() -> {
-            entityManager.clear();
-
             String movieDetailsJson = tmdbService.getMovieDetails(movieTId).block();
             MovieDetails movieDetails = null;
 
@@ -107,7 +105,6 @@ public class DbMovieService {
                     } else {
                         cast.setCredits(credits); // 새로운 경우
                         castList.add(cast);
-                        entityManager.persist(cast); // 새로운 엔티티를 세션에 추가
                     }
                 }
                 credits.setCast(castList.stream().limit(24).collect(Collectors.toList()));
@@ -121,15 +118,12 @@ public class DbMovieService {
                     } else {
                         crew.setCredits(credits); // 새로운 경우
                         crewList.add(crew);
-                        entityManager.persist(crew); // 새로운 엔티티를 세션에 추가
                     }
                 }
                 credits.setCrew(crewList.stream().filter(c -> "Director".equals(c.getJob())).collect(Collectors.toList()));
                 credits.setMovieDetails(movieDetails);
                 movieDetails.setCredits(credits);
             }
-            movieDetails = movieDetailRepository.save(movieDetails);
-
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
