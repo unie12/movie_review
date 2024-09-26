@@ -89,7 +89,7 @@
         <div class="movie-category">
             <div class="category-header">
                 <p class="category-title">
-                    <span class="movie-category-title">아주대</span>의 인기 영화
+                    <span class="movie-category-title">아주대</span>의 <span class="prefer-or-not">인기</span> 영화
                     <i class="fas fa-question-circle info-icon" data-info-key="ajouPopular"></i>
                 </p>
                 <span class="section-info" id="ajouPopularListInfo">1 / 1</span>
@@ -103,11 +103,29 @@
             </div>
         </div>
 
+        <div class="movie-category">
+            <div class="category-header">
+                <p class="category-title">
+                    <span class="movie-category-title">아주대</span>의 <span class="prefer-or-not">비인기</span> 영화
+                    <i class="fas fa-question-circle info-icon" data-info-key="ajouNotPopular"></i>
+                </p>
+                <span class="section-info" id="ajouNotPopularListInfo">1 / 1</span>
+            </div>
+            <div class="movie-list-container">
+                <button class="arrow left">&#9664;</button>
+                <ul class="movie-list" id="ajouNotPopularList">
+                    <!-- 오늘 아주대의 인기 영화 동적으로 보여주기 -->
+                </ul>
+                <button class="arrow right">&#9654;</button>
+            </div>
+        </div>
+
         <div th:if="${#authentication.name != 'anonymousUser'}">
             <div class="movie-category">
                 <div class="category-header">
                     <p class="category-title">
-                        <span th:text="${currentUser.mbti}" class="movie-category-title"></span> 사용자들의 선호 영화
+                        <span th:text="${currentUser.mbti}" class="movie-category-title"></span>
+                        <span class="prefer-or-not">선호</span> 영화
                         <i class="fas fa-question-circle info-icon" data-info-key="mbtiMovie"></i>
                     </p>
                     <span class="section-info" id="mbtiMovieListInfo">1 / 1</span>
@@ -126,7 +144,8 @@
             <div class="movie-category">
                 <div class="category-header">
                     <p class="category-title">
-                        <span th:text="${currentUser.department}" class="movie-category-title"></span> 사용자들의 선호 영화
+                        <span th:text="${currentUser.department}" class="movie-category-title"></span>
+                        <span class="prefer-or-not">선호</span> 영화
                         <i class="fas fa-question-circle info-icon" data-info-key="departmentMovie"></i>
                     </p>
                     <span class="section-info" id="departmentMovieListInfo">1 / 1</span>
@@ -229,6 +248,7 @@
         popularMovies: "TMDB api를 통해 가져온 인기 영화들입니다. 평점, 리뷰 수, 조회수 등을 종합적으로 고려하여 선정됩니다.",
         trendingMovies: "TMDB api를 통해 가져온 최근 급상승하고 있는 영화들입니다. 최근 평점과 리뷰의 증가율, 조회수 변화 등을 바탕으로 선정됩니다.",
         ajouPopular: "아주대 학생들의 찜, 평가, 리뷰 작성 등의 활동 내역을 바탕으로 선정됩니다.",
+        ajouNotPopular: "아주대 학생들의 찜, 평가, 리뷰 작성 등의 활동 내역을 바탕으로 선정됩니다.",
         mbtiMovie: "사용자와 동일한 mbti를 가진 사용자의 선호 영화들입니다. 매일 오전 9시경 전일자 업데이트됩니다.",
         departmentMovie: "사용자와 동일한 학과 사용자의 선호 영화들입니다. 매일 오전 9시경 전일자 업데이트됩니다."
     };
@@ -246,6 +266,7 @@
 
         loadHomeReviews();
         loadAjouPopularMovies();
+        loadAjouNotPopularMovies();
         loadMbtiPreferMovies();
         loadDepartmentPopularMovies();
         initializeMovieLists(dailyHome, weeklyHome);
@@ -258,7 +279,7 @@
     }
 
     function initializeMovieSmoothScrolls() {
-        const movieLists = ['dBOMList', 'wBOMList', 'popularMovieList', 'trendingMovieList', 'ajouPopularList', 'mbtiMovieList', 'departmentMovieList'];
+        const movieLists = ['dBOMList', 'wBOMList', 'popularMovieList', 'trendingMovieList', 'ajouPopularList', 'ajouNotPopularList', 'mbtiMovieList', 'departmentMovieList'];
         movieLists.forEach(listId => {
             initializeSmoothScroll(listId, '.movie-item');
         });
@@ -291,6 +312,32 @@
             .catch(error => {
                 console.error('Error fetching Ajou popular movies:', error);
                 ajouPopularContainer.style.display = 'none';
+            });
+    }
+
+    function loadAjouNotPopularMovies() {
+        const ajouPopularContainer = document.querySelector('.movie-category:has(#ajouNotPopularList)');
+
+        if (!document.getElementById('ajouNotPopularList')) return;
+
+        fetch(`/api/home/ajouNotPopularMovies`)
+            .then(response => response.json())
+            .then(movies => {
+
+                if (movies.length > 4) {
+                    createMovieList(movies, 'ajouNotPopularList', 'ajouPop');
+                    initializeSmoothScroll('ajouNotPopularList', '.movie-item');
+                    setTimeout(() => {
+                        ajouNotPopularContainer.style.display = 'block';
+                    }, 100);
+                    updateSectionInfo('ajouNotPopularList');
+                } else {
+                    ajouNotPopularContainer.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching Ajou popular movies:', error);
+                ajouNotPopularContainer.style.display = 'none';
             });
     }
 

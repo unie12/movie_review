@@ -99,6 +99,18 @@ public class MovieCommonDTOService {
         return dbMovieRepositoryCustom.findPopularMoviesByUserGroup(userIds, startDate, minRating);
     }
 
+    @Cacheable(value = "ajouNotPopularMovies", key = "'ajou_' + T(java.time.LocalDateTime).now().format(T(java.time.format.DateTimeFormatter).ofPattern('yyyyMMddHH'))", unless = "#result.isEmpty()")
+    public List<MoviePopularityDTO> getAjouNotPopularMovies() {
+        List<Long> userIds = userRepository.findAll().stream()
+                .map(User::getId)
+                .toList();
+
+        LocalDateTime startDate = LocalDateTime.now().minusHours(48);
+        double maxRating = 3.0;
+
+        return dbMovieRepositoryCustom.findNotPopularMoviesByUserGroup(userIds, startDate, maxRating);
+    }
+
     /**
      * 동일한 mbti 사용자의 선호 영화
      * 현재 rating만 가지고 판단
