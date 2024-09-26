@@ -66,4 +66,42 @@ public class DbMovieRepositoryImpl implements DbMovieRepositoryCustom {
                 .limit(20)
                 .fetch();
     }
+
+    @Override
+    public List<MoviePopularityDTO> findNotPopularMoviesByUserGroup(List<Long> userIds, LocalDateTime startDate, double maxRating) {
+        QDbMovies m = QDbMovies.dbMovies;
+        QMovieDetails md = QMovieDetails.movieDetails;
+        QUserFavoriteMovie f = QUserFavoriteMovie.userFavoriteMovie;
+        QDbRatings r = QDbRatings.dbRatings;
+        QReview rev = QReview.review;
+
+        NumberExpression<Double> avgRating = r.score.avg().coalesce(0.0);
+        NumberExpression<Long> ratingCount = r.count();
+
+        return queryFactory
+                .select(Projections.constructor(MoviePopularityDTO.class,
+                        md.tId,
+                        md.poster_path,
+                        md.title,
+                        f.favoriteDate.goe(startDate).count(),
+                        r.uploadRating.goe(startDate).count(),
+                        rev.uploadDate.goe(startDate).count(),
+                        avgRating,
+                        ratingCount))
+                .from(m)
+                .join(m.movieDetails, md)
+                .leftJoin(m.favoritedByUsers, f).on(f.favoriteDate.goe(startDate), f.user.id.in(userIds))
+                .leftJoin(m.dbRatings, r).on(r.uploadRating.goe(startDate), r.user.id.in(userIds))
+                .leftJoin(m.reviews, rev).on(rev.uploadDate.goe(startDate), rev.user.id.in(userIds))
+                .groupBy(m.id, md.poster_path, md.title)
+                .having(avgRating.lt(maxRating)
+                        .and(f.favoriteDate.goe(startDate).count()
+                                .add(r.count())
+                                .add(rev.uploadDate.goe(startDate).count()).gt(0)))
+                .orderBy(f.favoriteDate.goe(startDate).count()
+                        .add(r.count())
+                        .add(rev.uploadDate.goe(startDate).count()).asc())
+                .limit(20)
+                .fetch();
+    }
 }

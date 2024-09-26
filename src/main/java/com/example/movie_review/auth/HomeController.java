@@ -47,6 +47,16 @@ public class HomeController {
     }
 
     /**
+     * 아주대 비인기 영화 리스트...
+     */
+    @GetMapping("/home/ajouNotPopularMovies")
+    public ResponseEntity<List<MoviePopularityDTO>> getAjouNotPopularMovies() {
+        List<MoviePopularityDTO> movies = movieCommonDTOService.getAjouNotPopularMovies();
+        Collections.shuffle(movies);
+        return ResponseEntity.ok(movies.stream().limit(20).collect(Collectors.toList()));
+    }
+
+    /**
      * 현재 사용자와 동일한 mbti를 가진 다른 사용자의 선호 영화
      */
     @GetMapping("/home/mbtiMovies")

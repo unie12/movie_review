@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface DbMovieRepositoryCustom {
     List<MoviePopularityDTO> findPopularMoviesByUserGroup(List<Long> userIds, LocalDateTime startDate, double minRating);
+    List<MoviePopularityDTO> findNotPopularMoviesByUserGroup(List<Long> userIds, LocalDateTime startDate, double minRating);
 }
