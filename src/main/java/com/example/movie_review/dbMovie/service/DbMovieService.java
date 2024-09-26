@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,22 +99,27 @@ public class DbMovieService {
 
             Credits credits = movieDetails.getCredits();
             if (credits != null) {
+                Set<Long> processedCastIds = new HashSet<>();
                 List<Cast> castList = new ArrayList<>();
                 for (Cast cast : credits.getCast()) {
-                    Cast existingCast = entityManager.find(Cast.class, cast.getId());
-                    if (existingCast != null) {
-                        castList.add(existingCast); // 이미 존재하는 경우
-                    } else {
-                        cast.setCredits(credits); // 새로운 경우
-                        castList.add(cast);
+                    if (!processedCastIds.contains(cast.getId())) {
+                        Cast existingCast = entityManager.find(Cast.class, cast.getId());
+                        if (existingCast != null) {
+                            castList.add(existingCast);
+                        } else {
+                            cast.setCredits(credits);
+                            castList.add(cast);
+                        }
+                        processedCastIds.add(cast.getId());
                     }
                 }
                 credits.setCast(castList.stream().limit(24).collect(Collectors.toList()));
 
                 // Crew 처리
                 List<Crew> crewList = new ArrayList<>();
+
                 for (Crew crew : credits.getCrew()) {
-                    Crew existingCrew = entityManager.find(Crew.class, crew.getId());
+                    Crew existingCrew = entityManager.find(Crew.class, crew .getId());
                     if (existingCrew != null) {
                         crewList.add(existingCrew); // 이미 존재하는 경우
                     } else {
