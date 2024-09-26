@@ -30,12 +30,9 @@ public class MovieDetailService {
         return posters.stream().limit(CACHE_SIZE).collect(Collectors.toList());
     }
 
-    @Cacheable(value = "randomMoviePosters", key = "#count")
-    public List<String> getRandomMoviePoster(int count) {
-        List<String> allPosters = getAllMoviePosters();
-        List<String> shuffledPosters = new ArrayList<>(allPosters);
-        Collections.shuffle(shuffledPosters);
-        return shuffledPosters.stream().limit(count).collect(Collectors.toList());
+    @Cacheable(value = "randomMoviePosters")
+    public List<String> getRandomMoviePoster() {
+        return getAllMoviePosters();
     }
 
     @Scheduled(fixedRate = 60 * 60 * 1000 * 2) // 120분
