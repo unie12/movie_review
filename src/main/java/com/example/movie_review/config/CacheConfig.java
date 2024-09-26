@@ -26,6 +26,7 @@ public class CacheConfig {
                 "patchNotes",
                 "patchNote",
                 "ajouPopularMovies",
+                "ajouNotPopularMovies",
                 "mbtiPopularMovies",
                 "departmentPopularMovies"
         );
@@ -36,9 +37,9 @@ public class CacheConfig {
 
     Caffeine<Object, Object> caffeineCacheBuilder() {
         return Caffeine.newBuilder()
-                .initialCapacity(100) // 초기 용량 100개 항목
-                .maximumSize(1000) // 최대 1000개 항목 저장
-//                .expireAfterWrite(23, TimeUnit.HOURS) // 작성 후 23시간 후 만료
+                .initialCapacity(1000) // 초기 용량 1000개 항목
+                .maximumSize(10000) // 최대 10000개 항목 저장
+//                .expireAfterWrite(7, TimeUnit.DAYS) // 작성 후 23시간 후 만료
                 .recordStats(); // 캐시 통계 기록
     }
 }

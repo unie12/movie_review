@@ -31,10 +31,15 @@ public class CacheUpdateService {
         evictCache("weeklyHomePage");
     }
 
-    @Scheduled(cron ="0 0 0 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron ="0 0 0 * * MON,THU", zone = "Asia/Seoul")
     public void movieInfoCache() {
         evictCache("movieBasicInfo");
         evictCache("movieProvider");
+        evictCache("personDetails");
+    }
+
+    @Scheduled(cron ="0 0 0 * * *", zone = "Asia/Seoul")
+    public void personInfoCache() {
         evictCache("personDetails");
     }
 
