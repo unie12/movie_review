@@ -316,8 +316,7 @@
     }
 
     function loadAjouNotPopularMovies() {
-        const ajouPopularContainer = document.querySelector('.movie-category:has(#ajouNotPopularList)');
-
+        const ajouNotPopularContainer = document.querySelector('.movie-category:has(#ajouNotPopularList)');
         if (!document.getElementById('ajouNotPopularList')) return;
 
         fetch(`/api/home/ajouNotPopularMovies`)
