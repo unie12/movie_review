@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,7 @@ public class HomeViewController {
             return "home";
         } else {
             List<String> allPosters = movieDetailService.getRandomMoviePoster(); // 72개 가져옴
+            Collections.shuffle(allPosters);
             List<String> limitedPosters = allPosters.stream().limit(24).collect(Collectors.toList()); // 24개로 제한
             model.addAttribute("backgroundMovies", limitedPosters);
             return "login";
