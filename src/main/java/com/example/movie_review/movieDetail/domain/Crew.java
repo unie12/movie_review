@@ -10,8 +10,10 @@ import lombok.*;
 @Table(name = "crew")
 public class Crew {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "crew_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "crew_id")
+    private Long crewId;
+
     private Long id;
 
 

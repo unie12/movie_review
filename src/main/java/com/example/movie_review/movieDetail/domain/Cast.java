@@ -14,9 +14,10 @@ import java.util.Objects;
 @Table(name = "cast")
 public class Cast {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "castId")
-//    private Long castId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "castId")
+    private Long castId;
+
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

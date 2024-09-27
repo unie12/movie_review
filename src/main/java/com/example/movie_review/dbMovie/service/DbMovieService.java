@@ -99,38 +99,22 @@ public class DbMovieService {
 
             Credits credits = movieDetails.getCredits();
             if (credits != null) {
-                Set<Long> processedCastIds = new HashSet<>();
-                List<Cast> castList = new ArrayList<>();
+                credits.setCast(credits.getCast().stream()
+                        .limit(30)
+                        .collect(Collectors.toList()));
                 for (Cast cast : credits.getCast()) {
-                    if (!processedCastIds.contains(cast.getId())) {
-                        Cast existingCast = entityManager.find(Cast.class, cast.getId());
-                        if (existingCast != null) {
-                            castList.add(existingCast);
-                        } else {
-                            cast.setCredits(credits);
-                            castList.add(cast);
-                        }
-                        processedCastIds.add(cast.getId());
-                    }
+                    cast.setCredits(credits);
                 }
-                credits.setCast(castList.stream().limit(24).collect(Collectors.toList()));
-
-                // Crew 처리
-                List<Crew> crewList = new ArrayList<>();
-
+                credits.setCrew(credits.getCrew().stream()
+                        .filter(c -> "Director".equals(c.getJob()))
+                        .collect(Collectors.toList()));
                 for (Crew crew : credits.getCrew()) {
-                    Crew existingCrew = entityManager.find(Crew.class, crew .getId());
-                    if (existingCrew != null) {
-                        crewList.add(existingCrew); // 이미 존재하는 경우
-                    } else {
-                        crew.setCredits(credits); // 새로운 경우
-                        crewList.add(crew);
-                    }
+                    crew.setCredits(credits);
                 }
-                credits.setCrew(crewList.stream().filter(c -> "Director".equals(c.getJob())).collect(Collectors.toList()));
                 credits.setMovieDetails(movieDetails);
                 movieDetails.setCredits(credits);
             }
+
             DbMovies dbMovie = new DbMovies();
             dbMovie.setTmdbId(movieTId);
             dbMovie.setMovieDetails(movieDetails);
