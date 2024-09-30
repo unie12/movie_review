@@ -27,7 +27,7 @@ public class OAuth2Controller {
     @GetMapping("/oauth2-login")
     public String oauth2LoginSuccess(Authentication auth, HttpServletRequest request, HttpServletResponse response, Model model) {
         OAuth2User oAuth2User = (OAuth2User) auth.getPrincipal();
-        String email = oAuth2User.getAttribute("email"); // 구글의 기본 식별자는 이메일입니다.
+        String email = oAuth2User.getAttribute("email");
 
         User user = userService.getUserByEmail(email);
         // 새 사용자

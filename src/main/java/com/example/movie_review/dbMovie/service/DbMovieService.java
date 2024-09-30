@@ -1,7 +1,7 @@
 package com.example.movie_review.dbMovie.service;
 
-import com.example.movie_review.dbMovie.repository.DbMovieRepository;
 import com.example.movie_review.dbMovie.DbMovies;
+import com.example.movie_review.dbMovie.repository.DbMovieRepository;
 import com.example.movie_review.genre.Genres;
 import com.example.movie_review.genre.GenresRepository;
 import com.example.movie_review.movieDetail.DTO.GenreDto;
@@ -17,15 +17,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
