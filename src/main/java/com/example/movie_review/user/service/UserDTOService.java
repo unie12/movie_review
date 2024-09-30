@@ -12,6 +12,7 @@ import com.example.movie_review.user.DTO.*;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,14 +21,14 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
 import java.text.DecimalFormat;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserDTOService {
     private final UserService userService;
@@ -39,16 +40,53 @@ public class UserDTOService {
     private final DbRatingRepository dbRatingRepository;
     private final UserRepository userRepository;
 
+    private static final ZoneId SEOUL_ZONE_ID = ZoneId.of("Asia/Seoul");
+    private static final ZoneOffset UTC_OFFSET = ZoneOffset.UTC;
+
     public List<WeeklyUserDTO> getWeeklyRatingUsers() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDate = getLastMondayNineAM(now);
-        return dbRatingRepository.findTopRaters(startDate, now).stream().limit(5).collect(Collectors.toList());
+        LocalDateTime now = LocalDateTime.now(UTC_OFFSET);
+        LocalDateTime startDate = getCurrentWeekStartDate(now);
+
+        log.info("Fetching weekly rating users from {} to {} (UTC)", startDate, now);
+
+        List<WeeklyUserDTO> result = dbRatingRepository.findTopRaters(startDate, now);
+
+        log.info("Found {} weekly rating users", result.size());
+
+        return result.stream().limit(5).collect(Collectors.toList());
     }
 
     public List<WeeklyUserDTO> getWeeklyReviewUsers() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDate = getLastMondayNineAM(now);
-        return reviewRepository.findTopReviewers(startDate, now).stream().limit(5).collect(Collectors.toList());
+        LocalDateTime now = LocalDateTime.now(UTC_OFFSET);
+        LocalDateTime startDate = getCurrentWeekStartDate(now);
+
+        log.info("Fetching weekly rating users from {} to {} (UTC)", startDate, now);
+
+        List<WeeklyUserDTO> result = reviewRepository.findTopReviewers(startDate, now);
+
+        log.info("Found {} weekly rating users", result.size());
+
+        return result.stream().limit(5).collect(Collectors.toList());
+    }
+
+    private LocalDateTime getCurrentWeekStartDate(LocalDateTime dateTime) {
+        // UTC 기준 월요일 00:00:00로 설정
+        LocalDateTime currentMondayUtc = dateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+
+        // UTC 기준 월요일 00:00을 KST로 변환하면 월요일 09:00
+        ZonedDateTime currentMondayKst = currentMondayUtc.atZone(UTC_OFFSET).withZoneSameInstant(SEOUL_ZONE_ID);
+
+        // 현재 시간이 월요일 09:00 (KST) 이후라면 현재 주의 월요일을,
+        // 그렇지 않다면 지난 주의 월요일을 반환
+        if (dateTime.atZone(UTC_OFFSET).withZoneSameInstant(SEOUL_ZONE_ID).isAfter(currentMondayKst)) {
+            return currentMondayUtc;
+        } else {
+            return currentMondayUtc.minusWeeks(1);
+        }
     }
 
     private LocalDateTime getLastMondayNineAM(LocalDateTime dateTime) {
