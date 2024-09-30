@@ -133,7 +133,7 @@
             movieItem.innerHTML = `
                 <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
                      alt="${movie.title}" class="movie-poster"
-                     onclick="redirectToMovie(${movie.id})">
+                     onclick="navigateToMovieDetails(${movie.id})">
                 <div class="movie-info">
                     <h3 class="movie-title">${movie.title}</h3>
                     <p class="movie-release-date">${movie.release_date}</p>
