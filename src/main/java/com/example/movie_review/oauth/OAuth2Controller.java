@@ -25,7 +25,7 @@ public class OAuth2Controller {
     private final UserService userService;
 
     @GetMapping("/oauth2-login")
-    public String oauth2LoginSuccess(Authentication auth, HttpServletRequest request, HttpServletResponse response, Model model) {
+    public String oauth2LoginSuccess(Authentication auth, HttpServletResponse response, Model model) {
         OAuth2User oAuth2User = (OAuth2User) auth.getPrincipal();
         String email = oAuth2User.getAttribute("email");
 
@@ -38,9 +38,8 @@ public class OAuth2Controller {
 
         // 로그인 성공 -> Jwt 토큰 발급
         String secretKey = "my-secret-key-123123";
-        String keepLoggedIn = request.getParameter("keepLoggedIn");
-        long expireTimeMs = "true".equals(keepLoggedIn) ? 1000 * 60 * 60 * 24 * 30 : 1000 * 60 * 60 * 4; // 30일 또는 4시간
-//        long expireTimeMs = 1000 * 60 * 60;
+//        String keepLoggedIn = request.getParameter("keepLoggedIn");
+        long expireTimeMs = 1000 * 60 * 60 * 8; // 8시간
 
         String jwtToken = JwtTokenUtil.createToken(user.getEmail(), secretKey, expireTimeMs);
 

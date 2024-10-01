@@ -45,7 +45,7 @@ public class OAuthAttributes {
         return OAuthAttributes.builder()
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
-                .picture("/images/defaultPerson.png") // 여기를 수정
+                .picture("/images/defaultPerson.png")
                 .attributes(attributes)
                 .nameAttributeKey(usernameAttributeName)
                 .build();

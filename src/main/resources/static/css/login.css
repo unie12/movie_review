@@ -102,7 +102,7 @@ html {
     box-shadow: 0 0 20px rgba(255,255,255,0.1);
     text-align: center;
     z-index: 10;
-    width: 300px;  /* 고정 너비 설정 */
+    width: calc(12vw + 100px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -123,7 +123,7 @@ html {
     transition: all 0.3s ease;
     margin-top: 1.5rem;  /* 버튼 위 여백 추가 */
     width: 80%;  /* 버튼 너비 설정 */
-    font-size: 1rem;  /* 글자 크기 조정 */
+    font-size: 100%;  /* 글자 크기 조정 */
 }
 
 .btn:hover {
