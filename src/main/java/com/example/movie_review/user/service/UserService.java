@@ -375,6 +375,7 @@ public class UserService {
         return UserMovieInfoDTO.builder()
                 .mbti(user.getMbti())
                 .department(user.getDepartment())
+                .email(user.getEmail())
                 .build();
     }
 }

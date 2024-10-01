@@ -237,6 +237,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
     let currentIndex;
+    var userEmail = /*[[${currentUser.email}]]*/ 'default@email.com';
 
     /*<![CDATA[*/
     const infoTexts = {
@@ -269,6 +270,7 @@
         loadAjouNotPopularMovies();
         loadMbtiPreferMovies();
         loadDepartmentPopularMovies();
+        loadContentsBasedMovies();
         initializeMovieLists(dailyHome, weeklyHome);
 
         initializeMovieSmoothScrolls();
@@ -384,6 +386,15 @@
                 console.error('Error fetching user preferences:', error);
                 departmentMovieContainer.style.display = 'none'; // 에러 발생 시 숨김
             });
+    }
+
+    function loadContentsBasedMovies() {
+        fetch(`/api/recommend/content/${userEmail})
+            .then(response => response.json())
+            .then(movies => {
+                console.log('movies', movies);
+            })
+            .catch(error => console.log('Error:', error);
     }
 
     function initializeInfoIcons() {

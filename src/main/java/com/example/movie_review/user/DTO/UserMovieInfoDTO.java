@@ -1,17 +1,14 @@
 package com.example.movie_review.user.DTO;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserMovieInfoDTO {
     private String mbti;
     private String department;
+    private String email;
 
-    public UserMovieInfoDTO(String mbti, String department) {
-        this.mbti = mbti;
-        this.department = department;
-    }
 }
