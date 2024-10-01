@@ -1,7 +1,5 @@
 package com.example.movie_review.recommend;
 
-import com.example.movie_review.dbMovie.DTO.MoviePopularityDTO;
-import com.example.movie_review.movieLens.RecommendationDto;
 import com.example.movie_review.user.domain.PreferredMovies;
 import com.example.movie_review.user.domain.User;
 import lombok.RequiredArgsConstructor;
