@@ -270,7 +270,6 @@
         loadAjouNotPopularMovies();
         loadMbtiPreferMovies();
         loadDepartmentPopularMovies();
-        loadContentsBasedMovies();
         initializeMovieLists(dailyHome, weeklyHome);
 
         initializeMovieSmoothScrolls();
@@ -388,14 +387,7 @@
             });
     }
 
-    function loadContentsBasedMovies() {
-        fetch(`/api/recommend/content/${userEmail})
-            .then(response => response.json())
-            .then(movies => {
-                console.log('movies', movies);
-            })
-            .catch(error => console.log('Error:', error);
-    }
+
 
     function initializeInfoIcons() {
         const infoIcons = document.querySelectorAll('.info-icon');
