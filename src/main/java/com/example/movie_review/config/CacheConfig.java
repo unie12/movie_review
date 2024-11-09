@@ -28,7 +28,9 @@ public class CacheConfig {
                 "ajouPopularMovies",
                 "ajouNotPopularMovies",
                 "mbtiPopularMovies",
-                "departmentPopularMovies"
+                "departmentPopularMovies",
+                "randomMoviesCache"
+
         );
         cacheManager.setAsyncCacheMode(true); // 비동기 처리
         cacheManager.setCaffeine(caffeineCacheBuilder());

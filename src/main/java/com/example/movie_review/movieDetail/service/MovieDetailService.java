@@ -1,16 +1,20 @@
 package com.example.movie_review.movieDetail.service;
 
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
 import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +24,58 @@ public class MovieDetailService {
 
     private final MovieDetailRepository movieDetailRepository;
     private final CacheManager cacheManager;
+    private final MovieCommonDTOService movieCommonDTOService;
+
+    private static final String RANDOM_MOVIES_CACHE = "randomMoviesCache";
+    private static final int PAGE_SIZE = 20;
+
+
+    @PostConstruct
+    public void initializeMovieCache() {
+        updateRandomMoviesCache();
+    }
+
+    @CacheEvict(value = "randomMoviesCache", allEntries = true)
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 캐시 갱신
+    public void refreshMovieCache() {
+        updateRandomMoviesCache();
+    }
+
+    private void updateRandomMoviesCache() {
+        List<MovieCommonDTO> allMovies = fetchAllQualifiedMovies();
+        Collections.shuffle(allMovies);
+        Cache cache = cacheManager.getCache(RANDOM_MOVIES_CACHE);
+        if (cache != null) {
+            cache.put("movies", allMovies);
+        }
+    }
+
+    private List<MovieCommonDTO> fetchAllQualifiedMovies() {
+        Long minVoteCount = 1000L;
+        Set<MovieCommonDTO> uniqueMovies = new LinkedHashSet<>();
+
+        List<Long> mainGenreIds = Arrays.asList(12L, 14L, 16L, 18L, 27L, 28L, 35L, 36L,
+                37L, 53L, 80L, 99L, 878L, 9648L, 10402L, 10749L, 10751L, 10752L, 10770L);
+
+        for (Long genreId : mainGenreIds) {
+            List<MovieDetails> genreMovies = movieDetailRepository.findByGenreId(
+                    genreId,
+                    minVoteCount,
+                    Pageable.unpaged() // 모든 결과를 가져옴
+            );
+
+            genreMovies.forEach(movie -> {
+                if (movie.getDbMovie() != null) {
+                    uniqueMovies.add(movieCommonDTOService.getMovieCommonDTO(
+                            movie.getDbMovie(),
+                            movie.getDbMovie().getMovieDetails()
+                    ));
+                }
+            });
+        }
+
+        return new ArrayList<>(uniqueMovies);
+    }
 
     public List<String> getAllMoviePosters() {
         List<MovieDetails> all = movieDetailRepository.findAll();
@@ -29,7 +85,34 @@ public class MovieDetailService {
         Collections.shuffle(posters);
         return posters.stream().limit(CACHE_SIZE).collect(Collectors.toList());
     }
+    public List<MovieCommonDTO> getRandomMovies(int page) {
+        Cache cache = cacheManager.getCache(RANDOM_MOVIES_CACHE);
+        if (cache != null) {
+            @SuppressWarnings("unchecked")
+            List<MovieCommonDTO> cachedMovies = cache.get("movies", List.class);
+            if (cachedMovies != null) {
+                int start = page * PAGE_SIZE;
+                int end = Math.min(start + PAGE_SIZE, cachedMovies.size());
 
+                if (start < cachedMovies.size()) {
+                    return cachedMovies.subList(start, end);
+                }
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    public boolean hasMoreMovies(int page) {
+        Cache cache = cacheManager.getCache(RANDOM_MOVIES_CACHE);
+        if (cache != null) {
+            @SuppressWarnings("unchecked")
+            List<MovieCommonDTO> cachedMovies = cache.get("movies", List.class);
+            if (cachedMovies != null) {
+                return (page + 1) * PAGE_SIZE < cachedMovies.size();
+            }
+        }
+        return false;
+    }
     @Cacheable(value = "randomMoviePosters")
     public List<String> getRandomMoviePoster() {
         return getAllMoviePosters();
@@ -39,33 +122,9 @@ public class MovieDetailService {
     public void refreshCachedPosters() {
         evictCache();
     }
+
     private void evictCache() {
         cacheManager.getCache("randomMoviePosters").clear();
     }
-
-
-
-//    @Scheduled(fixedRate = 60 * 60 * 1000) // 60분
-//    public void refreshCachedPosters() {
-//        List<MovieDetails> all = movieDetailRepository.findAll();
-//        cachedPosters = all.stream()
-//                .map(MovieDetails::getPoster_path)
-//                .collect(Collectors.toList());
-//        Collections.shuffle(cachedPosters);
-//        cachedPosters = cachedPosters.stream().limit(CACHE_SIZE).collect(Collectors.toList());
-//    }
-//
-//    public List<String> getRandomMoviePoster(int count) {
-//        if(cachedPosters == null || cachedPosters.isEmpty()) {
-//            refreshCachedPosters();
-//        }
-//        List<String> shuffledPosters = new ArrayList<>(cachedPosters);
-//        Collections.shuffle(shuffledPosters);
-//        return shuffledPosters.stream().limit(count).collect(Collectors.toList());
-//    }
-
-//    @Cacheable(value = "randomMoviePosters", key = "'allPosters'")
-
-
 
 }

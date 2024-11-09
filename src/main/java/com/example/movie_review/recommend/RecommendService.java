@@ -8,20 +8,22 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RecommendService {
     private final RestTemplate restTemplate;
-    private final String RECOMMENDATION_API_URL = "http://43.200.40.13:8000/recommend";
+    private final String RECOMMENDATION_API_URL = "http://3.36.54.11:8000/recommend";
 
     public List<MovieRecommendDTO> getContentBasedRecommendation(User user) {
         List<PreferredMovies> preferredMovies = user.getPreferredMovies();
@@ -42,8 +44,22 @@ public class RecommendService {
                 new ParameterizedTypeReference<List<MovieRecommendDTO>>() {}
         );
 
-        log.info("컨텐츠 기반 사용자 추천 영화 리스트 {}", response.getBody());
+        List<MovieRecommendDTO> recommendations = response.getBody();
 
-        return response.getBody();
+        // 상세 로깅 추가
+        if (recommendations != null) {
+            recommendations.forEach(movie ->
+                    log.info("추천 영화: tmdbId={}, title={}, posterPath={}, popularity={}",
+                            movie.getTmdbId(),
+                            movie.getTitle(),
+                            movie.getPoster_path(),
+                            movie.getPopularity()
+                    )
+            );
+        }
+
+        return recommendations;
     }
+
+
 }
