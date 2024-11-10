@@ -99,40 +99,79 @@
 }
 
  .loading-spinner {
-        display: none;
-        text-align: center;
-        padding: 20px;
-    }
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
 
-    .loading-spinner.visible {
-        display: block;
-    }
+.loading-spinner.visible {
+    display: block;
+}
 
-    /* 스켈레톤 로딩 스타일 */
-    .movie-card.skeleton {
-        animation: pulse 1.5s infinite;
-    }
+/* 스켈레톤 로딩 스타일 */
+.movie-card.skeleton {
+    animation: pulse 1.5s infinite;
+}
 
-    .skeleton .movie-poster {
-        background: #eee;
-    }
+.skeleton .movie-poster {
+    background: #eee;
+}
 
-    .skeleton .movie-title {
-        background: #eee;
-        height: 20px;
-        width: 80%;
-        margin: 10px auto;
-    }
+.skeleton .movie-title {
+    background: #eee;
+    height: 20px;
+    width: 80%;
+    margin: 10px auto;
+}
 
-    .skeleton .rating-container {
-        background: #eee;
-        height: 30px;
-        width: 60%;
-        margin: 10px auto;
-    }
+.skeleton .rating-container {
+    background: #eee;
+    height: 30px;
+    width: 60%;
+    margin: 10px auto;
+}
 
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.modal-lg {
+    max-width: 900px;
+}
+
+.card {
+    transition: transform 0.2s;
+    margin-bottom: 1rem;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+    height: 300px;
+    object-fit: cover;
+}
+
+#recommendationList {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.text-muted {
+    font-size: 0.9rem;
+}

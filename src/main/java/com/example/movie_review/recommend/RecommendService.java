@@ -1,5 +1,10 @@
 package com.example.movie_review.recommend;
 
+import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
+import com.example.movie_review.dbMovie.DbMovies;
+import com.example.movie_review.dbMovie.service.DbMovieService;
+import com.example.movie_review.movieDetail.service.MovieCommonDTOService;
+import com.example.movie_review.movieDetail.service.MovieDetailService;
 import com.example.movie_review.user.domain.PreferredMovies;
 import com.example.movie_review.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +30,10 @@ import java.util.stream.Collectors;
 public class RecommendService {
     private final RestTemplate restTemplate;
     private final String RECOMMENDATION_API_URL = "http://3.36.54.11:8000/recommend";
+    private static final double MINIMUM_RATING = 4.0;
+    private final MovieCommonDTOService movieCommonDTOService;
+    private final DbMovieService dbMovieService;
+    private final MovieDetailService movieDetailService;
 
     public List<MovieRecommendDTO> getContentBasedRecommendation(User user) {
         List<PreferredMovies> preferredMovies = user.getPreferredMovies();
@@ -61,32 +71,53 @@ public class RecommendService {
         return recommendations;
     }
 
-    public List<MovieRecommendDTO> getContentRecommendation(Map<String, Double> ratingsMap) {
-        Map<String, Object> request = new HashMap<>();
-        request.put("ratings", ratingsMap);
+
+    public List<MovieCommonDTO> getContentRecommendation(Map<String, Double> ratingsMap) {
+        List<String> movieIds = ratingsMap.entrySet().stream()
+                .filter(entry -> entry.getValue() >= MINIMUM_RATING)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        if (movieIds.isEmpty()) {
+            log.warn("No movies rated above {} found", MINIMUM_RATING);
+            return Collections.emptyList();
+        }
+
+        Map<String, List<String>> request = new HashMap<>();
+        request.put("tmdb_ids", movieIds);
+
+        log.info("Sending recommendation request with filtered movie IDs: {}", movieIds);
 
         ResponseEntity<List<MovieRecommendDTO>> response = restTemplate.exchange(
                 RECOMMENDATION_API_URL,
                 HttpMethod.POST,
                 new HttpEntity<>(request),
-                new ParameterizedTypeReference<List<MovieRecommendDTO>>() {}
+                new ParameterizedTypeReference<List<MovieRecommendDTO>>() {
+                }
         );
 
-        List<MovieRecommendDTO> recommendations = response.getBody();
-
-        if (recommendations != null) {
-            recommendations.forEach(movie ->
-                    log.info("추천 영화: tmdbId={}, title={}, posterPath={}, popularity={}",
-                            movie.getTmdbId(),
-                            movie.getTitle(),
-                            movie.getPoster_path(),
-                            movie.getPopularity()
-                    )
-            );
+        List<MovieRecommendDTO> results = response.getBody();
+        if (results != null) {
+            List<MovieCommonDTO> recommendations = results.stream()
+                    .map(m -> {
+                        DbMovies dbMovie = dbMovieService.findOrCreateMovie(Long.valueOf(m.getTmdbId()));
+                        return movieCommonDTOService.getMovieCommonDTO(dbMovie, dbMovie.getMovieDetails());
+                    }).toList();
+            return recommendations;
         }
-
-        return recommendations;
+        return null;
     }
+
+//        if (recommendations != null) {
+//            recommendations.forEach(movie ->
+//                    log.info("추천 영화: tmdbId={}, title={}, posterPath={}, popularity={}",
+//                            movie.getTmdbId(),
+//                            movie.getTitle(),
+//                            movie.getPoster_path(),
+//                            movie.getPopularity()
+//                    )
+//            );
+//        }
 
 
 }

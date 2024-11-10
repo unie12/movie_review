@@ -83,7 +83,7 @@ public class MovieBasicService {
                 .tmdb_ratingCnt(movieDetails.getVote_count())
                 .recommendMovies(recommendedMovies)
                 .youtubeLink(youtubeLink)
-                .images(images)
+                .images(images.stream().limit(12).toList())
                 .keywords(movieDetails.getMovieKeywords().stream().map(keyword -> keyword.getKeyword().getName()).limit(15).collect(Collectors.toList()))
                 .build();
     }

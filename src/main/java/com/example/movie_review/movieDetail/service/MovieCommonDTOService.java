@@ -12,6 +12,7 @@ import com.example.movie_review.dbMovie.service.DbMovieService;
 import com.example.movie_review.movieDetail.DTO.RecommendMovies;
 import com.example.movie_review.movieDetail.domain.MovieDetails;
 import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
+import com.example.movie_review.recommend.RecommendedMovie;
 import com.example.movie_review.tmdb.TmdbService;
 import com.example.movie_review.user.domain.User;
 import com.example.movie_review.user.repository.UserRepository;
@@ -143,4 +144,5 @@ public class MovieCommonDTOService {
 
         return dbMovieRepositoryCustom.findPopularMoviesByUserGroup(userIds, startDate, minRating);
     }
+
 }

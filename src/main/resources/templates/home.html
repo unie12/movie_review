@@ -114,7 +114,7 @@
             <div class="movie-list-container">
                 <button class="arrow left">&#9664;</button>
                 <ul class="movie-list" id="ajouNotPopularList">
-                    <!-- 오늘 아주대의 인기 영화 동적으로 보여주기 -->
+                    <!-- 오늘 아주대의 인기 없는 영화 동적으로 보여주기 -->
                 </ul>
                 <button class="arrow right">&#9654;</button>
             </div>
@@ -157,6 +157,23 @@
                     </ul>
                     <button class="arrow right">&#9654;</button>
                 </div>
+            </div>
+        </div>
+
+        <div class="movie-category">
+            <div class="category-header">
+                <p class="category-title">
+                    <span class="movie-category-title">인생 영화</span>와 <span class="prefer-or-not">유사한</span> 영화
+                    <i class="fas fa-question-circle info-icon" data-info-key="contentBased"></i>
+                </p>
+                <span class="section-info" id="contentBasedMovieListInfo">1 / 1</span>
+            </div>
+            <div class="movie-list-container">
+                <button class="arrow left">&#9664;</button>
+                <ul class="movie-list" id="contentBasedMovieList">
+                    <!-- 해당 유저의 인생 영화 컨텐츠 기반 추천 영화 동적으로 보여주기 -->
+                </ul>
+                <button class="arrow right">&#9654;</button>
             </div>
         </div>
 
@@ -252,6 +269,7 @@
         ajouNotPopular: "아주대 학생들의 찜, 평가, 리뷰 작성 등의 활동 내역을 바탕으로 선정됩니다.",
         mbtiMovie: "사용자와 동일한 mbti를 가진 사용자의 선호 영화들입니다. 매일 오전 9시경 전일자 업데이트됩니다.",
         departmentMovie: "사용자와 동일한 학과 사용자의 선호 영화들입니다. 매일 오전 9시경 전일자 업데이트됩니다."
+        contentBased: "컨텐츠 기반 추천 모델로 생성한 사용자 인생 영화와 유사한 영화들입니다."
     };
 
     var dailyHome = /*[[${dailyHome}]]*/ null;
@@ -281,7 +299,7 @@
     }
 
     function initializeMovieSmoothScrolls() {
-        const movieLists = ['dBOMList', 'wBOMList', 'popularMovieList', 'trendingMovieList', 'ajouPopularList', 'ajouNotPopularList', 'mbtiMovieList', 'departmentMovieList'];
+        const movieLists = ['dBOMList', 'wBOMList', 'popularMovieList', 'trendingMovieList', 'ajouPopularList', 'ajouNotPopularList', 'mbtiMovieList', 'departmentMovieList', 'contentBasedMovieList'];
         movieLists.forEach(listId => {
             initializeSmoothScroll(listId, '.movie-item');
         });
@@ -389,13 +407,31 @@
     }
 
     function loadContentsBasedMovies() {
-        fetch(`/api/recommend/content/${userEmail})
+        const contentBasedMovieContainer = document.querySelector('.movie-category:has(#contentBasedMovieList)');
+        if (!document.getElementById('contentBasedMovieList')) return;
+
+        fetch(`/api/home/contentBasedMovies`)
             .then(response => response.json())
             .then(movies => {
-                console.log('movies', movies);
+
+                if (movies.length > 4) {
+                    createMovieList(movies, 'contentBasedMovieList', 'contentBased');
+                    initializeSmoothScroll('contentBasedMovieList', '.movie-item');
+                    setTimeout(() => {
+                        contentBasedMovieContainer.style.display = 'block';
+                    }, 100);
+                    updateSectionInfo('contentBasedMovieList');
+                } else {
+                    contentBasedMovieContainer.style.display = 'none';
+                }
             })
-            .catch(error => console.log('Error:', error);
+            .catch(error => {
+                console.error('Error fetching content Based movies:', error);
+                contentBasedMovieContainer.style.display = 'none';
+            });
     }
+
+    
 
     function initializeInfoIcons() {
         const infoIcons = document.querySelectorAll('.info-icon');

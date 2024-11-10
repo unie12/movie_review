@@ -1,31 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Movie Rating</title>
+    <title>Movie Rating</title>
     <link rel="stylesheet" href="/css/bodyHeader.css">
     <link rel="stylesheet" href="/css/recommend.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
 <div class="container">
-  <h1 class="section-title">영화 평가하기</h1>
-  <div class="randomMovies" id="movieContainer">
-
-  </div>
-
-  <div class="loading-spinner" id="loadingSpinner">
+    <h1 class="section-title">영화 평가하기</h1>
+    <div class="randomMovies" id="movieContainer">
+    
+    </div>
+    
+    <div class="loading-spinner" id="loadingSpinner">
     <i class="fas fa-spinner fa-spin fa-2x"></i>
-  </div>
-
-  <button class="submit-ratings" onclick="submitRatings()">평가 제출하기</button>
+    </div>
+    
+    <button class="submit-ratings" onclick="submitRatings()">평가 제출하기</button>
+    
+    <div class="modal fade" id="recommendationModal" tabindex="-1" aria-labelledby="recommendationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="recommendationModalLabel">추천 영화</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="recommendationList" class="row g-4">
+                        <!-- 추천 영화들이 여기에 동적으로 추가됩니다 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </div>
 
 <script th:inline="javascript">
 let currentPage = 0;
 let loading = false;
 let hasMore = true;
+let recommendationModal;
 const ratings = new Map();
 
 // 스크롤이 바닥에 도달했는지 확인하는 함수
@@ -40,13 +63,11 @@ function handleScroll() {
   }
 }
 
-// 페이지 로드 시 초기 설정
 document.addEventListener('DOMContentLoaded', function() {
-  // 초기 영화 로드
   loadMoreMovies();
-
-  // 스크롤 이벤트 리스너 추가
   window.addEventListener('scroll', handleScroll);
+  
+  recommendationModal = new bootstrap.Modal(document.getElementById('recommendationModal'));
 });
 
 function loadMoreMovies() {
@@ -87,7 +108,7 @@ function appendMovies(movies) {
 function createMovieCard(movie) {
   const card = document.createElement('div');
   card.className = 'movie-card';
-  card.dataset.movieId = movie.id;
+  card.dataset.movieId = movie.tid;
 
   card.innerHTML = `
       <div class="movie-poster">
@@ -97,7 +118,7 @@ function createMovieCard(movie) {
       </div>
       <div class="movie-info">
           <h3 class="movie-title">${movie.title}</h3>
-          <div class="rating-container" data-movie-id="${movie.id}">
+          <div class="rating-container" data-movie-id="${movie.tid}">
               <i class="rating-star fas fa-star" data-rating="1"></i>
               <i class="rating-star fas fa-star" data-rating="2"></i>
               <i class="rating-star fas fa-star" data-rating="3"></i>
@@ -151,10 +172,8 @@ function updateStarsUI(stars, rating) {
 }
 
 
-// 평가 제출 함수
 async function submitRatings() {
-    // ratings Map을 객체로 변환
-    const ratingsData = Object.fromEntries(
+    const ratingsMap = Object.fromEntries(
         Array.from(ratings.entries()).map(([movieId, rating]) => [
             movieId,
             parseFloat(rating)
@@ -162,12 +181,13 @@ async function submitRatings() {
     );
     
     try {
-        // URL에 ratings 데이터를 쿼리 파라미터로 전송
-        const queryString = new URLSearchParams({
-            ratings: JSON.stringify(ratingsData)
-        }).toString();
-        
-        const response = await fetch(`/api/recommend/content/results?${queryString}`);
+        const response = await fetch('/api/recommend/content/results', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ratingsMap)
+        });
 
         if (!response.ok) {
             throw new Error('Failed to get recommendations');
@@ -178,13 +198,46 @@ async function submitRatings() {
 
     } catch (error) {
         console.error('Error getting recommendations:', error);
+        alert('추천 영화를 가져오는데 실패했습니다.');
     }
 }
 
 function displayRecommendations(recommendations) {
-    // 추천 영화들을 화면에 표시하는 로직 구현
-    // 예: 새로운 div에 결과를 렌더링
-    console.log("recommendations = ", recommendations);
+    const recommendationList = document.getElementById('recommendationList');
+    recommendationList.innerHTML = ''; // 기존 내용 초기화
+
+    if (!recommendations || recommendations.length === 0) {
+        recommendationList.innerHTML = '<div class="col-12"><p class="text-center">추천할 영화가 없습니다.</p></div>';
+        recommendationModal.show();
+        return;
+    }
+
+    recommendations.forEach(movie => {
+        const movieElement = document.createElement('div');
+        movieElement.className = 'col-md-4 col-sm-6';
+        
+        const posterUrl = movie.poster_path
+            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+            : '/images/defaultMovie.png'; // 기본 포스터 이미지 경로
+
+        movieElement.innerHTML = `
+            <div class="card h-100">
+                <img src="${posterUrl}" class="card-img-top" alt="${movie.title}"
+                     style="height: 300px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">${movie.title}</h5>
+                    <p class="card-text">
+                        <small class="text-muted">개봉일: ${movie.release_date || '정보 없음'}</small><br>
+                        <small class="text-muted">평점: ${movie.ajou_rating || '0'} (${movie.ajou_rating_cnt}명)</small>
+                    </p>
+                </div>
+            </div>
+        `;
+
+        recommendationList.appendChild(movieElement);
+    });
+
+    recommendationModal.show();
 }
 
   <!--  function loadContentBasedMovies() {-->

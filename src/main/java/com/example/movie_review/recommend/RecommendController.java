@@ -31,19 +31,10 @@ public class RecommendController {
         return ResponseEntity.ok(recommendations);
     }
 
-    @GetMapping("/content/results")
-    public ResponseEntity<List<MovieRecommendDTO>> getContentRecommendations(
-            @RequestParam String ratings) {
-        // JSON 문자열을 Map으로 변환
-        Map<String, Double> ratingsMap;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            ratingsMap = mapper.readValue(ratings, new TypeReference<Map<String, Double>>() {});
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Invalid ratings format", e);
-        }
-
-        List<MovieRecommendDTO> recommendations = recommendService.getContentRecommendation(ratingsMap);
+    @PostMapping("/content/results")
+    public ResponseEntity<List<MovieCommonDTO>> getContentRecommendations(
+            @RequestBody Map<String, Double> ratingsMap) {
+        List<MovieCommonDTO> recommendations = recommendService.getContentRecommendation(ratingsMap);
         return ResponseEntity.ok(recommendations);
     }
 

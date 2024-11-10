@@ -50,7 +50,7 @@ public class MovieDetailService {
     }
 
     @CacheEvict(value = "randomMoviesCache", allEntries = true)
-    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 캐시 갱신
+    @Scheduled(cron = "30 * * * * *") // 매일 자정에 캐시 갱신
     public void refreshMovieCache() {
         updateRandomMoviesCache();
     }
@@ -88,7 +88,7 @@ public class MovieDetailService {
                         );
                         if (dto != null) {
                             // 영화 ID를 키로 사용하여 중복 제거
-                            uniqueMoviesMap.put(movie.getDbMovie().getId(), dto);
+                            uniqueMoviesMap.put(movie.getDbMovie().getTmdbId(), dto);
                         }
                     }
                 }
