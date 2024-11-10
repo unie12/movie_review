@@ -5,6 +5,7 @@ import com.example.movie_review.movieDetail.domain.MovieDetails;
 import com.example.movie_review.movieDetail.repository.MovieDetailRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MovieDetailService {
     private static final int CACHE_SIZE = 72;
 
@@ -32,7 +34,19 @@ public class MovieDetailService {
 
     @PostConstruct
     public void initializeMovieCache() {
-        updateRandomMoviesCache();
+        try {
+            List<MovieCommonDTO> allMovies = fetchAllQualifiedMovies();
+            if (!allMovies.isEmpty()) {
+                Collections.shuffle(allMovies);
+                Cache cache = cacheManager.getCache(RANDOM_MOVIES_CACHE);
+                if (cache != null) {
+                    cache.put("movies", allMovies);
+                }
+            }
+        } catch (Exception e) {
+            // 초기화 실패 시 로그만 남기고 계속 진행
+            log.error("Failed to initialize movie cache: ", e);
+        }
     }
 
     @CacheEvict(value = "randomMoviesCache", allEntries = true)
@@ -52,29 +66,38 @@ public class MovieDetailService {
 
     private List<MovieCommonDTO> fetchAllQualifiedMovies() {
         Long minVoteCount = 1000L;
-        Set<MovieCommonDTO> uniqueMovies = new LinkedHashSet<>();
+        // HashMap을 사용하여 영화 ID 기반으로 중복 제거
+        Map<Long, MovieCommonDTO> uniqueMoviesMap = new HashMap<>();
 
         List<Long> mainGenreIds = Arrays.asList(12L, 14L, 16L, 18L, 27L, 28L, 35L, 36L,
                 37L, 53L, 80L, 99L, 878L, 9648L, 10402L, 10749L, 10751L, 10752L, 10770L);
 
         for (Long genreId : mainGenreIds) {
-            List<MovieDetails> genreMovies = movieDetailRepository.findByGenreId(
-                    genreId,
-                    minVoteCount,
-                    Pageable.unpaged() // 모든 결과를 가져옴
-            );
+            try {
+                List<MovieDetails> genreMovies = movieDetailRepository.findByGenreId(
+                        genreId,
+                        minVoteCount,
+                        Pageable.unpaged()
+                );
 
-            genreMovies.forEach(movie -> {
-                if (movie.getDbMovie() != null) {
-                    uniqueMovies.add(movieCommonDTOService.getMovieCommonDTO(
-                            movie.getDbMovie(),
-                            movie.getDbMovie().getMovieDetails()
-                    ));
+                for (MovieDetails movie : genreMovies) {
+                    if (movie.getDbMovie() != null) {
+                        MovieCommonDTO dto = movieCommonDTOService.getMovieCommonDTO(
+                                movie.getDbMovie(),
+                                movie.getDbMovie().getMovieDetails()
+                        );
+                        if (dto != null) {
+                            // 영화 ID를 키로 사용하여 중복 제거
+                            uniqueMoviesMap.put(movie.getDbMovie().getId(), dto);
+                        }
+                    }
                 }
-            });
+            } catch (Exception e) {
+                log.error("Error fetching movies for genre {}: ", genreId, e);
+            }
         }
 
-        return new ArrayList<>(uniqueMovies);
+        return new ArrayList<>(uniqueMoviesMap.values());
     }
 
     public List<String> getAllMoviePosters() {
@@ -87,18 +110,32 @@ public class MovieDetailService {
     }
     public List<MovieCommonDTO> getRandomMovies(int page) {
         Cache cache = cacheManager.getCache(RANDOM_MOVIES_CACHE);
+        List<MovieCommonDTO> cachedMovies = null;
+
         if (cache != null) {
             @SuppressWarnings("unchecked")
-            List<MovieCommonDTO> cachedMovies = cache.get("movies", List.class);
-            if (cachedMovies != null) {
-                int start = page * PAGE_SIZE;
-                int end = Math.min(start + PAGE_SIZE, cachedMovies.size());
+            List<MovieCommonDTO> movies = cache.get("movies", List.class);
+            cachedMovies = movies;
+        }
 
-                if (start < cachedMovies.size()) {
-                    return cachedMovies.subList(start, end);
-                }
+        // 캐시가 없으면 새로 생성
+        if (cachedMovies == null) {
+            cachedMovies = fetchAllQualifiedMovies();
+            if (!cachedMovies.isEmpty() && cache != null) {
+                Collections.shuffle(cachedMovies);
+                cache.put("movies", cachedMovies);
             }
         }
+
+        if (cachedMovies != null && !cachedMovies.isEmpty()) {
+            int start = page * PAGE_SIZE;
+            int end = Math.min(start + PAGE_SIZE, cachedMovies.size());
+
+            if (start < cachedMovies.size()) {
+                return cachedMovies.subList(start, end);
+            }
+        }
+
         return Collections.emptyList();
     }
 

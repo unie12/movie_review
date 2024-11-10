@@ -21,8 +21,8 @@ public class RecommendViewController {
 
     @GetMapping
     public String listRecommend(Model model) {
-        List<MovieCommonDTO> initialMovies = movieDetailService.getRandomMovies(0);
-        model.addAttribute("movies", initialMovies);
+//        List<MovieCommonDTO> initialMovies = movieDetailService.getRandomMovies(0);
+//        model.addAttribute("movies", initialMovies);
         return "recommend";
     }
 

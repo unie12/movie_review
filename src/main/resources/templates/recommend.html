@@ -2,156 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Movie Rating</title>
-  <link rel="stylesheet" href="/css/bodyHeader.css">
+    <link rel="stylesheet" href="/css/bodyHeader.css">
+    <link rel="stylesheet" href="/css/recommend.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <style>
-    .container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
-
-    .section-title {
-        font-size: 1.8rem;
-        color: #2c3e50;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-
-    .randomMovies {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 2rem;
-        margin-bottom: 3rem;
-    }
-
-    .movie-card {
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s;
-    }
-
-    .movie-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .movie-poster {
-        position: relative;
-        padding-top: 150%;
-        overflow: hidden;
-    }
-
-    .movie-poster img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .movie-info {
-        padding: 1rem;
-    }
-
-    .movie-title {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: #2c3e50;
-    }
-
-    .rating-container {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-
-    .rating-star {
-        color: #ddd;
-        cursor: pointer;
-        font-size: 1.5rem;
-        transition: color 0.2s;
-    }
-
-    .rating-star:hover,
-    .rating-star.active {
-        color: #ffd700;
-    }
-
-    .movie-genres {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-
-    .genre-tag {
-        background: #e9ecef;
-        padding: 0.2rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        color: #495057;
-    }
-
-    .submit-ratings {
-        display: block;
-        width: 200px;
-        margin: 2rem auto;
-        padding: 1rem;
-        background: #3498db;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-
-    .submit-ratings:hover {
-        background: #2980b9;
-    }
-     .loading-spinner {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .loading-spinner.visible {
-            display: block;
-        }
-
-        /* 스켈레톤 로딩 스타일 */
-        .movie-card.skeleton {
-            animation: pulse 1.5s infinite;
-        }
-
-        .skeleton .movie-poster {
-            background: #eee;
-        }
-
-        .skeleton .movie-title {
-            background: #eee;
-            height: 20px;
-            width: 80%;
-            margin: 10px auto;
-        }
-
-        .skeleton .rating-container {
-            background: #eee;
-            height: 30px;
-            width: 60%;
-            margin: 10px auto;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-  </style>
 </head>
 <body>
 <div th:replace="fragments/bodyHeader :: bodyHeader" />
@@ -159,10 +12,7 @@
 <div class="container">
   <h1 class="section-title">영화 평가하기</h1>
   <div class="randomMovies" id="movieContainer">
-    <!-- 기존 영화 카드들 -->
-    <div th:each="movie : ${movies}" class="movie-card" th:data-movie-id="${movie.id}">
-      <!-- 기존 영화 카드 내용 -->
-    </div>
+
   </div>
 
   <div class="loading-spinner" id="loadingSpinner">
@@ -173,147 +23,189 @@
 </div>
 
 <script th:inline="javascript">
-  <script th:inline="javascript">
-        let currentPage = 0;
-        let loading = false;
-        let hasMore = true;
-        const userEmail = [[${#authentication.principal.attributes.email}]];
-        const ratings = new Map();
+let currentPage = 0;
+let loading = false;
+let hasMore = true;
+const ratings = new Map();
 
-        // Intersection Observer 설정
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !loading && hasMore) {
-                    loadMoreMovies();
-                }
-            });
-        }, {
-            root: null,
-            rootMargin: '100px',
-            threshold: 0.1
+// 스크롤이 바닥에 도달했는지 확인하는 함수
+function isBottom() {
+  return (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100;
+}
+
+// 스크롤 이벤트 핸들러
+function handleScroll() {
+  if (isBottom() && !loading && hasMore) {
+      loadMoreMovies();
+  }
+}
+
+// 페이지 로드 시 초기 설정
+document.addEventListener('DOMContentLoaded', function() {
+  // 초기 영화 로드
+  loadMoreMovies();
+
+  // 스크롤 이벤트 리스너 추가
+  window.addEventListener('scroll', handleScroll);
+});
+
+function loadMoreMovies() {
+  if (loading || !hasMore) return;
+
+  loading = true;
+  document.getElementById('loadingSpinner').classList.add('visible');
+
+  fetch(`/api/recommend/movies?page=${currentPage + 1}`)
+      .then(response => response.json())
+      .then(data => {
+          if (data.movies && data.movies.length > 0) {
+              appendMovies(data.movies);
+              currentPage++;
+              hasMore = data.hasMore;
+          } else {
+              hasMore = false;
+              window.removeEventListener('scroll', handleScroll);
+          }
+      })
+      .catch(error => console.error('Error:', error))
+      .finally(() => {
+          loading = false;
+          document.getElementById('loadingSpinner').classList.remove('visible');
+      });
+}
+
+function appendMovies(movies) {
+  const container = document.getElementById('movieContainer');
+
+  movies.forEach(movie => {
+      const movieCard = createMovieCard(movie);
+      container.appendChild(movieCard);
+      initializeRating(movieCard);
+  });
+}
+
+function createMovieCard(movie) {
+  const card = document.createElement('div');
+  card.className = 'movie-card';
+  card.dataset.movieId = movie.id;
+
+  card.innerHTML = `
+      <div class="movie-poster">
+          <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
+               alt="${movie.title} Poster"
+               loading="lazy">
+      </div>
+      <div class="movie-info">
+          <h3 class="movie-title">${movie.title}</h3>
+          <div class="rating-container" data-movie-id="${movie.id}">
+              <i class="rating-star fas fa-star" data-rating="1"></i>
+              <i class="rating-star fas fa-star" data-rating="2"></i>
+              <i class="rating-star fas fa-star" data-rating="3"></i>
+              <i class="rating-star fas fa-star" data-rating="4"></i>
+              <i class="rating-star fas fa-star" data-rating="5"></i>
+          </div>
+      </div>
+  `;
+
+  return card;
+}
+
+function initializeRating(movieCard) {
+    const container = movieCard.querySelector('.rating-container');
+    const stars = container.querySelectorAll('.rating-star');
+    const movieId = container.dataset.movieId;
+
+    stars.forEach(star => {
+        // 클릭 이벤트
+        star.addEventListener('click', () => {
+            const rating = star.dataset.rating;
+            ratings.set(movieId, rating);
+            updateStarsUI(stars, rating);
         });
 
-        // 로딩 스피너 관찰 시작
-        observer.observe(document.getElementById('loadingSpinner'));
+        // 마우스오버 이벤트
+        star.addEventListener('mouseover', () => {
+            const rating = star.dataset.rating;
+            updateStarsUI(stars, rating);
+        });
+    });
 
-        function loadMoreMovies() {
-            if (loading || !hasMore) return;
+    // 컨테이너 mouseleave 이벤트
+    container.addEventListener('mouseleave', () => {
+        const currentRating = ratings.get(movieId);
+        // 저장된 rating이 있을 때만 별점 표시, 없으면 모든 별점 비활성화
+        updateStarsUI(stars, currentRating || 0);
+    });
+}
 
-            loading = true;
-            document.getElementById('loadingSpinner').classList.add('visible');
+// 별점 UI 업데이트를 위한 헬퍼 함수
+function updateStarsUI(stars, rating) {
+    stars.forEach(s => {
+        // rating이 0이면 모든 별점 비활성화
+        if (rating === 0) {
+            s.classList.remove('active');
+        } else {
+            s.classList.toggle('active', s.dataset.rating <= rating);
+        }
+    });
+}
 
-            fetch(`/api/recommend/movies?page=${currentPage + 1}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.movies && data.movies.length > 0) {
-                        appendMovies(data.movies);
-                        currentPage++;
-                        hasMore = data.hasMore;
-                    } else {
-                        hasMore = false;
-                    }
-                })
-                .catch(error => console.error('Error:', error))
-                .finally(() => {
-                    loading = false;
-                    document.getElementById('loadingSpinner').classList.remove('visible');
-                });
+
+// 평가 제출 함수
+async function submitRatings() {
+    // ratings Map을 객체로 변환
+    const ratingsData = Object.fromEntries(
+        Array.from(ratings.entries()).map(([movieId, rating]) => [
+            movieId,
+            parseFloat(rating)
+        ])
+    );
+    
+    try {
+        // URL에 ratings 데이터를 쿼리 파라미터로 전송
+        const queryString = new URLSearchParams({
+            ratings: JSON.stringify(ratingsData)
+        }).toString();
+        
+        const response = await fetch(`/api/recommend/content/results?${queryString}`);
+
+        if (!response.ok) {
+            throw new Error('Failed to get recommendations');
         }
 
-        function appendMovies(movies) {
-            const container = document.getElementById('movieContainer');
+        const recommendations = await response.json();
+        displayRecommendations(recommendations);
 
-            movies.forEach(movie => {
-                const movieCard = createMovieCard(movie);
-                container.appendChild(movieCard);
-                initializeRating(movieCard);
-            });
-        }
+    } catch (error) {
+        console.error('Error getting recommendations:', error);
+    }
+}
 
-        function createMovieCard(movie) {
-            const card = document.createElement('div');
-            card.className = 'movie-card';
-            card.dataset.movieId = movie.id;
+function displayRecommendations(recommendations) {
+    // 추천 영화들을 화면에 표시하는 로직 구현
+    // 예: 새로운 div에 결과를 렌더링
+    console.log("recommendations = ", recommendations);
+}
 
-            card.innerHTML = `
-                <div class="movie-poster">
-                    <img src="https://image.tmdb.org/t/p/w500${movie.posterPath}"
-                         alt="${movie.title} Poster">
-                </div>
-                <div class="movie-info">
-                    <h3 class="movie-title">${movie.title}</h3>
-                    <div class="rating-container" data-movie-id="${movie.id}">
-                        <i class="rating-star fas fa-star" data-rating="1"></i>
-                        <i class="rating-star fas fa-star" data-rating="2"></i>
-                        <i class="rating-star fas fa-star" data-rating="3"></i>
-                        <i class="rating-star fas fa-star" data-rating="4"></i>
-                        <i class="rating-star fas fa-star" data-rating="5"></i>
-                    </div>
-                    <div class="movie-genres">
-                        ${movie.genres.map(genre =>
-                            `<span class="genre-tag">${genre.name}</span>`
-                        ).join('')}
-                    </div>
-                </div>
-            `;
-
-            return card;
-        }
-
-        // 기존의 별점 관련 코드는 유지하되, 새로운 카드에도 적용되도록 함수화
-        function initializeRating(movieCard) {
-            const container = movieCard.querySelector('.rating-container');
-            const stars = container.querySelectorAll('.rating-star');
-            const movieId = container.dataset.movieId;
-
-            stars.forEach(star => {
-                star.addEventListener('click', () => {
-                    const rating = star.dataset.rating;
-                    ratings.set(movieId, rating);
-
-                    stars.forEach(s => {
-                        s.classList.toggle('active', s.dataset.rating <= rating);
-                    });
-                });
-
-                star.addEventListener('mouseover', () => {
-                    const rating = star.dataset.rating;
-                    stars.forEach(s => {
-                        s.classList.toggle('active', s.dataset.rating <= rating);
-                    });
-                });
-
-                container.addEventListener('mouseleave', () => {
-                    const currentRating = ratings.get(movieId);
-                    stars.forEach(s => {
-                        s.classList.toggle('active', currentRating && s.dataset.rating <= currentRating);
-                    });
-                });
-            });
-        }
-
-        // 초기 카드들에 대한 별점 기능 초기화
-        document.querySelectorAll('.movie-card').forEach(initializeRating);
-
-  function loadContentBasedMovies() {
-            fetch(`/api/recommend/content/${userEmail}`)
-                .then(response => response.json())
-                .then(movies => {
-                    const movieList = document.getElementById('movieList');
-                    movieList.innerHTML = '<ul class="movie-list">' +
-                        movies.map(movie => `
-                            <li class="movie-item">
-                                <h3>${movie.title}</h3>
-                            </li>
-                        `).join('') +
-                        '</ul>';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('movieList').innerHTML =
-                        '<p>추천 영화를 불러오는 중 오류가 발생했습니다.</p>';
-                });
-        }
+  <!--  function loadContentBasedMovies() {-->
+  <!--            fetch(`/api/recommend/content/${userEmail}`)-->
+  <!--                .then(response => response.json())-->
+  <!--                .then(movies => {-->
+  <!--                    const movieList = document.getElementById('movieList');-->
+  <!--                    movieList.innerHTML = '<ul class="movie-list">' +-->
+  <!--                        movies.map(movie => `-->
+  <!--                            <li class="movie-item">-->
+  <!--                                <h3>${movie.title}</h3>-->
+  <!--                            </li>-->
+  <!--                        `).join('') +-->
+  <!--                        '</ul>';-->
+  <!--                })-->
+  <!--                .catch(error => {-->
+  <!--                    console.error('Error:', error);-->
+  <!--                    document.getElementById('movieList').innerHTML =-->
+  <!--                        '<p>추천 영화를 불러오는 중 오류가 발생했습니다.</p>';-->
+  <!--                });-->
+  <!--        }-->
 </script>
 </body>
 </html>

@@ -61,5 +61,32 @@ public class RecommendService {
         return recommendations;
     }
 
+    public List<MovieRecommendDTO> getContentRecommendation(Map<String, Double> ratingsMap) {
+        Map<String, Object> request = new HashMap<>();
+        request.put("ratings", ratingsMap);
+
+        ResponseEntity<List<MovieRecommendDTO>> response = restTemplate.exchange(
+                RECOMMENDATION_API_URL,
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<List<MovieRecommendDTO>>() {}
+        );
+
+        List<MovieRecommendDTO> recommendations = response.getBody();
+
+        if (recommendations != null) {
+            recommendations.forEach(movie ->
+                    log.info("추천 영화: tmdbId={}, title={}, posterPath={}, popularity={}",
+                            movie.getTmdbId(),
+                            movie.getTitle(),
+                            movie.getPoster_path(),
+                            movie.getPopularity()
+                    )
+            );
+        }
+
+        return recommendations;
+    }
+
 
 }
