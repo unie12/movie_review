@@ -135,13 +135,21 @@ function initializeRating(movieCard) {
     const container = movieCard.querySelector('.rating-container');
     const stars = container.querySelectorAll('.rating-star');
     const movieId = container.dataset.movieId;
-
+    
     stars.forEach(star => {
-        // 클릭 이벤트
         star.addEventListener('click', () => {
             const rating = star.dataset.rating;
-            ratings.set(movieId, rating);
-            updateStarsUI(stars, rating);
+            const currentRating = ratings.get(movieId);
+            
+            // 같은 평점을 다시 클릭하면 평점 제거
+            if (currentRating === rating) {
+                ratings.delete(movieId);
+                updateStarsUI(stars, 0);
+            } else {
+                // 새로운 평점 설정
+                ratings.set(movieId, rating);
+                updateStarsUI(stars, rating);
+            }
         });
 
         // 마우스오버 이벤트
@@ -151,10 +159,9 @@ function initializeRating(movieCard) {
         });
     });
 
-    // 컨테이너 mouseleave 이벤트
+    // 마우스가 벗어날 때 이벤트
     container.addEventListener('mouseleave', () => {
         const currentRating = ratings.get(movieId);
-        // 저장된 rating이 있을 때만 별점 표시, 없으면 모든 별점 비활성화
         updateStarsUI(stars, currentRating || 0);
     });
 }
@@ -228,7 +235,6 @@ function displayRecommendations(recommendations) {
                     <h5 class="card-title">${movie.title}</h5>
                     <p class="card-text">
                         <small class="text-muted">개봉일: ${movie.release_date || '정보 없음'}</small><br>
-                        <small class="text-muted">평점: ${movie.ajou_rating || '0'} (${movie.ajou_rating_cnt}명)</small>
                     </p>
                 </div>
             </div>

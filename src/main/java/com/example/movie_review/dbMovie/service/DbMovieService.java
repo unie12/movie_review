@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -138,5 +139,9 @@ public class DbMovieService {
     public DbMovies getDbMovieById(Long movieId) {
         return dbMovieRepository.findById(movieId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Movie ID"));
+    }
+
+    public Optional<DbMovies> findByTmdbId(Long tmdbId) {
+        return dbMovieRepository.findByTmdbId(tmdbId);
     }
 }
