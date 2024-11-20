@@ -175,3 +175,38 @@
 .text-muted {
     font-size: 0.9rem;
 }
+.btn-group {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.btn-group .btn {
+    width: 50%;
+    flex: 1;
+}
+
+.btn-group .btn.active {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+
+.view-recommendations-btn {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    z-index: 1000;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+}
+
+.view-recommendations-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
