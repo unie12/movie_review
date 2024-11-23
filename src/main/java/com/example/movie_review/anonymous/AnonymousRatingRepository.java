@@ -11,13 +11,13 @@ import java.util.Map;
 
 @Repository
 public interface AnonymousRatingRepository extends JpaRepository<AnonymousRating, Long> {
-    @Query("SELECT new com.example.dto.MovieStatsDTO(ar.ratedMovieId, COUNT(ar), AVG(ar.rating)) " +
+    @Query("SELECT new com.example.movie_review.anonymous.MovieStatsDTO(ar.ratedMovieId, COUNT(ar), AVG(ar.rating)) " +
             "FROM AnonymousRating ar " +
             "GROUP BY ar.ratedMovieId " +
             "ORDER BY COUNT(ar) DESC")
     List<MovieStatsDTO> findMostRatedMovies(Limit limit);
 
-    @Query(value = "SELECT new com.example.dto.MovieStatsDTO(ar.ratedMovieId, COUNT(ar), AVG(ar.rating)) " +
+    @Query(value = "SELECT new com.example.movie_review.anonymous.MovieStatsDTO(ar.ratedMovieId, COUNT(ar), AVG(ar.rating)) " +
             "FROM AnonymousRating ar " +
             "GROUP BY ar.ratedMovieId " +
             "HAVING COUNT(ar) >= 3 " +
