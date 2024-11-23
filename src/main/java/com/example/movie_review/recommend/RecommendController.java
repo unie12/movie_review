@@ -1,5 +1,6 @@
 package com.example.movie_review.recommend;
 
+import com.example.movie_review.anonymous.AnonymousRatingService;
 import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
 import com.example.movie_review.movieDetail.service.MovieDetailService;
 import com.example.movie_review.user.service.UserService;
@@ -18,13 +19,13 @@ public class RecommendController {
     private final RecommendService recommendService;
     private final UserService userService;
     private final MovieDetailService movieDetailService;
-//    private final AnonymousRatingService anonymousRatingService;
+    private final AnonymousRatingService anonymousRatingService;
 
     @PostMapping("/content/results")
     public ResponseEntity<List<MovieRecommendDTO>> getContentRecommendations(
             @RequestBody RecommendRequest request) {
         List<MovieRecommendDTO> recommendations = recommendService.getContentRecommendation(request.getRatings());
-//        anonymousRatingService.saveRatingsAndRecommendations(request.getRatings(), recommendations);
+        anonymousRatingService.saveRatingsAndRecommendations(request.getRatings(), recommendations, RecommendType.CONTENT_BASED);
         return ResponseEntity.ok(recommendations);
     }
 
@@ -32,7 +33,7 @@ public class RecommendController {
     public ResponseEntity<List<MovieRecommendDTO>> getHybridRecommendations(
             @RequestBody RecommendRequest request) {
         List<MovieRecommendDTO> recommendations = recommendService.getHybridRecommendation(request.getRatings());
-//        anonymousRatingService.saveRatingsAndRecommendations(request.getRatings(), recommendations);
+        anonymousRatingService.saveRatingsAndRecommendations(request.getRatings(), recommendations, RecommendType.COLLABORATIVE_FILTERING);
         return ResponseEntity.ok(recommendations);
     }
 
@@ -82,19 +83,6 @@ public class RecommendController {
         response.put("hasMore", hasMore);
 
         return response;
-    }
-
-    /**
-     * 현재 평가하기 데이터 통계 값 반환
-     * 1. 어떤 영화 많이 평가했는지
-     * 2. 평점 높은 영화
-     * 3. 어떤 영화들이 추천이 많이 됐는지
-     */
-    @GetMapping("/analytics")
-    public Map<String, Object> getAnalytics() {
-        Map<String, Object> analytics = new HashMap<>();
-
-        return analytics;
     }
 
 }

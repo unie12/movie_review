@@ -1,5 +1,6 @@
 package com.example.movie_review.recommend;
 
+import com.example.movie_review.anonymous.AnonymousUser;
 import com.example.movie_review.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,18 +20,18 @@ public class RecommendedMovie {
     @Column(name = "recommend_movies_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(nullable = false)
+    private Long recommendedMovieId;
 
-    @Column(name = "tmdb_id")
-    private Long tmdbId;
+    @Column(nullable = false)
+    private LocalDateTime recommendedAt = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "anonymous_user_id")
+    private AnonymousUser anonymousUser;
 
     @Enumerated(EnumType.STRING)
     private RecommendType recommendType;
 
-    private Double score; // 사용자 만족도 점수
-
-    private LocalDateTime createdAt;
-
+    private Double similarity;
 }
