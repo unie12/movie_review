@@ -24,7 +24,24 @@ public class SecurityConfig {
                 .formLogin().disable() // 폼 로그인 사용 안 함
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/home", "/oauth2/**", "/healthcheck", "/api/healthcheck", "/api/**", "/css/**", "/js/**", "/images/**", "/uploads/**", "/oauth2-login", "/public/**", "/recommend", "/recommend/**").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/home",
+                                "/recommend",
+                                "/recommend/**",
+                                "/api/recommend/**",
+                                "/api/anonymous/**",
+                                "/oauth2/**",
+                                "/healthcheck",
+                                "/api/healthcheck",
+                                "/api/**",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/uploads/**",
+                                "/oauth2-login",
+                                "/public/**"
+                        ).permitAll()
                         .requestMatchers("/api/patch-notes/refresh").hasRole("ADMIN")
                         .anyRequest().authenticated() // 나머지 요청들은 모두 인증 절차 수행해야 함
                 )
