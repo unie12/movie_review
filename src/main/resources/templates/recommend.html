@@ -58,6 +58,28 @@
         </div>
     </div>
     
+    <div class="modal fade" id="statsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">추천 시스템 통계</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="btn-group w-100 mb-3">
+                        <button type="button" class="btn btn-primary active" onclick="showStats('ratings')">
+                            평가 통계
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="showStats('recommendations')">
+                            추천 통계
+                        </button>
+                    </div>
+                    <div id="statsContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </div>
 
 <script th:inline="javascript">
@@ -226,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadMoreMovies();
     window.addEventListener('scroll', handleScroll);
     recommendationModal = new bootstrap.Modal(document.getElementById('recommendationModal'));
+    statsModal = new bootstrap.Modal(document.getElementById('statsModal'));
     
     document.getElementById('recommendationModal').addEventListener('hidden.bs.modal', function () {
         if (hasRecommendations) {
@@ -347,211 +370,54 @@ function showRecommendations(type) {
     });
 }
 
+
+async function showStats(type) {
+    const statsContent = document.getElementById('statsContent');
+    try {
+        const response = await fetch(`/api/anonymous/stats/${type}`);
+        const data = await response.json();
+        
+        if (type === 'ratings') {
+            displayRatingStats(data);
+        } else {
+            displayRecommendationStats(data);
+        }
+    } catch (error) {
+        console.error('Error loading stats:', error);
+        statsContent.innerHTML = '<p class="text-center">통계를 불러오는데 실패했습니다.</p>';
+    }
+}
+
+function displayRatingStats(data) {
+    const statsContent = document.getElementById('statsContent');
+    statsContent.innerHTML = `
+        <div class="stats-section">
+            <h3>가장 많이 평가된 영화 Top 10</h3>
+            <div class="stats-grid">
+                ${data.mostRatedMovies.map(movie => `
+                    <div class="stats-card">
+                        <img src="https://image.tmdb.org/t/p/w200${movie.posterPath}">
+                        <h4>${movie.title}</h4>
+                        <p>평가 수: ${movie.ratingCount}</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        <div class="stats-section">
+            <h3>평균 평점이 가장 높은 영화</h3>
+            <div class="stats-grid">
+                ${data.highestRatedMovies.map(movie => `
+                    <div class="stats-card">
+                        <img src="https://image.tmdb.org/t/p/w200${movie.posterPath}">
+                        <h4>${movie.title}</h4>
+                        <p>평균 평점: ${movie.averageRating.toFixed(1)}</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
 </script>
 </body>
 </html>
-
-
-
-
-
-<!--// JavaScript 수정-->
-<!--let contentRecommendations = [];-->
-<!--let hybridRecommendations = [];-->
-<!--let currentRecommendationType = 'content';-->
-
-<!--async function submitRatings() {-->
-<!--    const ratingsMap = Object.fromEntries(-->
-<!--        Array.from(ratings.entries()).map(([movieId, rating]) => [-->
-<!--            movieId,-->
-<!--            parseFloat(rating)-->
-<!--        ])-->
-<!--    );-->
-
-<!--    const requestData = {-->
-<!--        tmdb_ids: Array.from(ratings.keys()),-->
-<!--        ratings: ratingsMap-->
-<!--    };-->
-
-<!--    try {-->
-<!--        // 컨텐츠 기반과 하이브리드 추천 동시에 요청-->
-<!--        const [contentResponse, hybridResponse] = await Promise.all([-->
-<!--            fetch('/api/recommend/content/results', {-->
-<!--                method: 'POST',-->
-<!--                headers: {-->
-<!--                    'Content-Type': 'application/json',-->
-<!--                },-->
-<!--                body: JSON.stringify(requestData)-->
-<!--            }),-->
-<!--            fetch('/api/recommend/hybrid/results', {-->
-<!--                method: 'POST',-->
-<!--                headers: {-->
-<!--                    'Content-Type': 'application/json',-->
-<!--                },-->
-<!--                body: JSON.stringify(requestData)-->
-<!--            })-->
-<!--        ]);-->
-
-<!--        if (!contentResponse.ok || !hybridResponse.ok) {-->
-<!--            throw new Error('Failed to get recommendations');-->
-<!--        }-->
-
-<!--        const [contentRecommendations, hybridRecommendations] = await Promise.all([-->
-<!--            contentResponse.json(),-->
-<!--            hybridResponse.json()-->
-<!--        ]);-->
-
-<!--        displayRecommendations({-->
-<!--            content: contentRecommendations,-->
-<!--            hybrid: hybridRecommendations-->
-<!--        });-->
-
-<!--    } catch (error) {-->
-<!--        console.error('Error getting recommendations:', error);-->
-<!--        alert('추천 영화를 가져오는데 실패했습니다.');-->
-<!--    }-->
-<!--}-->
-
-<!--function displayRecommendations(recommendations) {-->
-<!--    const recommendationList = document.getElementById('recommendationList');-->
-<!--    recommendationList.innerHTML = '';-->
-
-<!--    // 추천 타입 선택 버튼 추가-->
-<!--    const buttonGroup = document.createElement('div');-->
-<!--    buttonGroup.className = 'btn-group w-100 mb-3';-->
-<!--    buttonGroup.innerHTML = `-->
-<!--        <button type="button" class="btn btn-primary active" onclick="showRecommendations('content')">컨텐츠 기반 추천</button>-->
-<!--        <button type="button" class="btn btn-primary" onclick="showRecommendations('hybrid')">하이브리드 추천</button>-->
-<!--    `;-->
-<!--    recommendationList.appendChild(buttonGroup);-->
-
-<!--    // 추천 결과를 저장-->
-<!--    window.currentRecommendations = recommendations;-->
-<!--    -->
-<!--    // 초기에 컨텐츠 기반 추천 표시-->
-<!--    showRecommendations('content');-->
-<!--    -->
-<!--    recommendationModal.show();-->
-<!--}-->
-
-
-<!--function showRecommendations(type) {-->
-<!--    const recommendations = window.currentRecommendations[type];-->
-<!--    const recommendationList = document.getElementById('recommendationList');-->
-<!--    -->
-<!--    // 버튼 상태 업데이트-->
-<!--    const buttons = recommendationList.querySelectorAll('.btn');-->
-<!--    buttons.forEach(btn => {-->
-<!--        btn.classList.toggle('active',-->
-<!--            (type === 'content' && btn.textContent.includes('컨텐츠')) ||-->
-<!--            (type === 'hybrid' && btn.textContent.includes('하이브리드'))-->
-<!--        );-->
-<!--    });-->
-
-<!--    // 기존 영화 카드 제거-->
-<!--    const existingCards = recommendationList.querySelectorAll('.col-md-4');-->
-<!--    existingCards.forEach(card => card.remove());-->
-
-<!--    if (!recommendations || recommendations.length === 0) {-->
-<!--        recommendationList.insertAdjacentHTML('beforeend',-->
-<!--            `<div class="col-12"><p class="text-center">${type === 'content' ? '컨텐츠 기반' : '하이브리드'} 추천 결과가 없습니다.</p></div>`-->
-<!--        );-->
-<!--        return;-->
-<!--    }-->
-
-<!--    recommendations.forEach(movie => {-->
-<!--        const movieElement = document.createElement('div');-->
-<!--        movieElement.className = 'col-md-4 col-sm-6';-->
-<!--        const posterUrl = movie.poster_path ?-->
-<!--            `https://image.tmdb.org/t/p/w500${movie.poster_path}` :-->
-<!--            '/images/defaultMovie.png';-->
-
-<!--        movieElement.innerHTML = `-->
-<!--            <div class="card h-100">-->
-<!--                <img src="${posterUrl}" class="card-img-top"-->
-<!--                     alt="${movie.title}"-->
-<!--                     style="height: 300px; object-fit: cover;">-->
-<!--                <div class="card-body">-->
-<!--                    <h5 class="card-title">${movie.title}</h5>-->
-<!--                    <p class="card-text">-->
-<!--                        <small class="text-muted">개봉일: ${movie.release_date || '정보 없음'}</small><br>-->
-<!--                        <small class="text-muted">추천 타입: ${type === 'content' ? '컨텐츠 기반' : '하이브리드'}</small>-->
-<!--                    </p>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        `;-->
-<!--        recommendationList.appendChild(movieElement);-->
-<!--    });-->
-<!--}-->
-
-<!--// 모달 초기화 및 이벤트 리스너 설정-->
-<!--document.addEventListener('DOMContentLoaded', function() {-->
-<!--    loadMoreMovies();-->
-<!--    window.addEventListener('scroll', handleScroll);-->
-<!--    -->
-<!--    const contentBtn = document.getElementById('contentBtn');-->
-<!--    const hybridBtn = document.getElementById('hybridBtn');-->
-
-<!--    contentBtn.addEventListener('click', function() {-->
-<!--        contentBtn.classList.add('active');-->
-<!--        hybridBtn.classList.remove('active');-->
-<!--        currentRecommendationType = 'content';-->
-<!--        displayRecommendations(contentRecommendations);-->
-<!--    });-->
-
-<!--    hybridBtn.addEventListener('click', function() {-->
-<!--        hybridBtn.classList.add('active');-->
-<!--        contentBtn.classList.remove('active');-->
-<!--        currentRecommendationType = 'hybrid';-->
-<!--        displayRecommendations(hybridRecommendations);-->
-<!--    });-->
-<!--});-->
-
-<!--function displayRecommendations(recommendations) {-->
-<!--    const recommendationList = document.getElementById('recommendationList');-->
-<!--    recommendationList.innerHTML = '';-->
-
-<!--    if (!recommendations || recommendations.length === 0) {-->
-<!--        recommendationList.innerHTML = `-->
-<!--            <div class="col-12">-->
-<!--                <p class="text-center">-->
-<!--                    ${currentRecommendationType === 'content' ?-->
-<!--                      '컨텐츠 기반 추천 결과가 없습니다.' :-->
-<!--                      '하이브리드 추천 결과가 없습니다.'}-->
-<!--                </p>-->
-<!--            </div>`;-->
-<!--        recommendationModal.show();-->
-<!--        return;-->
-<!--    }-->
-
-<!--    recommendations.forEach(movie => {-->
-<!--        const movieElement = document.createElement('div');-->
-<!--        movieElement.className = 'col-md-4 col-sm-6';-->
-<!--        const posterUrl = movie.poster_path ?-->
-<!--            `https://image.tmdb.org/t/p/w500${movie.poster_path}` :-->
-<!--            '/images/defaultMovie.png';-->
-
-<!--        movieElement.innerHTML = `-->
-<!--            <div class="card h-100">-->
-<!--                <img src="${posterUrl}" class="card-img-top"-->
-<!--                     alt="${movie.title}"-->
-<!--                     style="height: 300px; object-fit: cover;">-->
-<!--                <div class="card-body">-->
-<!--                    <h5 class="card-title">${movie.title}</h5>-->
-<!--                    <p class="card-text">-->
-<!--                        <small class="text-muted">-->
-<!--                            개봉일: ${movie.release_date || '정보 없음'}-->
-<!--                        </small><br>-->
-<!--                        <small class="text-muted">-->
-<!--                            추천 타입: ${currentRecommendationType === 'content' ?-->
-<!--                                      '컨텐츠 기반' : '하이브리드'}-->
-<!--                        </small>-->
-<!--                    </p>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        `;-->
-<!--        recommendationList.appendChild(movieElement);-->
-<!--    });-->
-
-<!--    recommendationModal.show();-->
-<!--}-->
