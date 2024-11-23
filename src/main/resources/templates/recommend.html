@@ -21,7 +21,12 @@
         <i class="fas fa-spinner fa-spin fa-2x"></i>
     </div>
     
-    <button class="submit-ratings" onclick="submitRatings()">평가 제출하기</button>
+    <button class="submit-ratings" onclick="submitRatings()">
+        <span class="button-text">평가 제출하기</span>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+    </button>
     
     <button id="viewRecommendationsBtn" class="view-recommendations-btn" onclick="openRecommendationModal()">
         추천 결과 보기 <i class="fas fa-film"></i>
@@ -209,6 +214,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 평점 제출 및 추천 받기
 async function submitRatings() {
+    const button = document.querySelector('.submit-ratings');
+    button.classList.add('loading');
+  
     const ratingsMap = Object.fromEntries(
         Array.from(ratings.entries()).map(([movieId, rating]) => [
             movieId,
@@ -243,6 +251,8 @@ async function submitRatings() {
         if (!contentResponse.ok || !hybridResponse.ok) {
             throw new Error('Failed to get recommendations');
         }
+        
+        button.classList.remove('loading');
 
         currentRecommendations = {
             content: await contentResponse.json(),
@@ -254,6 +264,7 @@ async function submitRatings() {
         recommendationModal.show();
 
     } catch (error) {
+        button.classList.remove('loading');
         console.error('Error getting recommendations:', error);
         alert('추천 영화를 가져오는데 실패했습니다.');
     }
