@@ -14,11 +14,7 @@ import java.util.Map;
 
 @Repository
 public interface RecommendRepository extends JpaRepository<RecommendedMovie, Long> {
-    void deleteByUser(User user);
-
-    List<RecommendedMovie> findByUserAndRecommendType(User user, RecommendType recommendType);
-
-    @Query("SELECT new com.example.dto.MovieStatsDTO(r.recommendedMovieId, COUNT(r)) " +
+    @Query("SELECT new com.example.movie_review.anonymous.MovieStatsDTO(r.recommendedMovieId, COUNT(r)) " +
             "FROM RecommendedMovie r " +
             "GROUP BY r.recommendedMovieId " +
             "ORDER BY COUNT(r) DESC")
