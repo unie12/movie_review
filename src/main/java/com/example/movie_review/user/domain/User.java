@@ -90,8 +90,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private List<Feedback> userFeedbacks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
-    private List<RecommendedMovie> recommendedMovies = new ArrayList<>();
+//    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+//    private List<RecommendedMovie> recommendedMovies = new ArrayList<>();
 
 
 
