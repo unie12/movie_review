@@ -22,7 +22,7 @@ public interface AnonymousRatingRepository extends JpaRepository<AnonymousRating
             "FROM AnonymousRating ar " +
             "LEFT JOIN MovieDetails md ON ar.ratedMovieId = md.tId " +
             "GROUP BY ar.ratedMovieId, md.poster_path " +
-            "HAVING COUNT(ar) >= 3 " +
+//            "HAVING COUNT(ar) >= 3 " +
             "ORDER BY AVG(ar.rating) DESC")
     List<MovieStatsDTO> findHighestRatedMovies(Limit limit);
 
