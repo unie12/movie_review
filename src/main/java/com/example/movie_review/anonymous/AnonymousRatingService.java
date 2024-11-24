@@ -1,11 +1,8 @@
 package com.example.movie_review.anonymous;
 
-import com.example.movie_review.dbMovie.DTO.MovieCommonDTO;
-import com.example.movie_review.recommend.MovieRecommendDTO;
-import com.example.movie_review.recommend.RecommendRepository;
-import com.example.movie_review.recommend.RecommendType;
-import com.example.movie_review.recommend.RecommendedMovie;
+import com.example.movie_review.recommend.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,39 +13,13 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AnonymousRatingService {
 
     private final AnonymousRatingRepository anonymousRatingRepository;
     private final RecommendRepository recommendRepository;
     private final AnonymousUserRepository anonymousUserRepository;
-
-    /**
-     * 평가하기 데이터 저장
-     */
-    @Transactional
-    public void saveRatingsAndRecommendations(Map<String, Double> ratings, List<MovieRecommendDTO> recommendations, RecommendType type) {
-        AnonymousUser anonymousUser = new AnonymousUser();
-
-        ratings.forEach((movieId, rating) -> {
-            AnonymousRating anonymousRating = new AnonymousRating();
-            anonymousRating.setAnonymousUser(anonymousUser);
-            anonymousRating.setRatedMovieId(Long.valueOf(movieId));
-            anonymousRating.setRating(rating);
-            anonymousUser.getRatings().add(anonymousRating);
-        });
-
-        recommendations.forEach(rec -> {
-            RecommendedMovie recommendedMovie = new RecommendedMovie();
-            recommendedMovie.setAnonymousUser(anonymousUser);
-            recommendedMovie.setRecommendedMovieId(Long.valueOf(rec.getTmdbId()));
-            recommendedMovie.setRecommendType(type);
-            recommendedMovie.setSimilarity(rec.getSimilarity());
-            recommendedMovie.setPoster_path(rec.getPoster_path());
-            anonymousUser.getRecommendedMovies().add(recommendedMovie);
-        });
-
-        anonymousUserRepository.save(anonymousUser);
-    }
+    private final RecommendService recommendService;
 
     public Map<String, Object> getRatingStats() {
         Map<String, Object> stats = new HashMap<>();
@@ -64,8 +35,73 @@ public class AnonymousRatingService {
         Map<String, Object> stats = new HashMap<>();
 
         stats.put("mostRecommendedMovies", recommendRepository.findMostRecommendedMovies(Limit.of(20)));
-        stats.put("recommendationsByType", recommendRepository.countByRecommendType());
+//        stats.put("recommendationsByType", recommendRepository.countByRecommendType());
 
         return stats;
+    }
+
+    @Transactional
+    public AnonymousUser saveUserAndRatings(Map<String, Double> ratings) {
+        AnonymousUser anonymousUser = new AnonymousUser();
+
+        ratings.forEach((movieId, rating) -> {
+            AnonymousRating anonymousRating = new AnonymousRating();
+            anonymousRating.setAnonymousUser(anonymousUser);
+            anonymousRating.setRatedMovieId(Long.valueOf(movieId));
+            anonymousRating.setRating(rating);
+            anonymousUser.getRatings().add(anonymousRating);
+        });
+
+        return anonymousUserRepository.save(anonymousUser);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, List<MovieRecommendDTO>> getRecommendations(Map<String, Double> ratings) {
+        List<MovieRecommendDTO> contentRecommendations = recommendService.getContentRecommendation(ratings);
+        List<MovieRecommendDTO> hybridRecommendations = recommendService.getHybridRecommendation(ratings);
+
+        Map<String, List<MovieRecommendDTO>> result = new HashMap<>();
+        result.put("content", contentRecommendations);
+        result.put("hybrid", hybridRecommendations);
+
+        return result;
+    }
+
+    @Transactional
+    public void saveRecommendationsForUser(AnonymousUser user, Map<String, List<MovieRecommendDTO>> recommendations) {
+        processRecommendations(user, recommendations.get("content"), RecommendType.CONTENT_BASED);
+        processRecommendations(user, recommendations.get("hybrid"), RecommendType.COLLABORATIVE_FILTERING);
+
+        anonymousUserRepository.save(user);
+    }
+
+    private void processRecommendations(AnonymousUser user, List<MovieRecommendDTO> recommendations, RecommendType type) {
+        recommendations.forEach(rec -> {
+            RecommendedMovie recommendedMovie = new RecommendedMovie();
+            recommendedMovie.setAnonymousUser(user);
+            recommendedMovie.setRecommendedMovieId(Long.valueOf(rec.getTmdbId()));
+            recommendedMovie.setRecommendType(type);
+            recommendedMovie.setSimilarity(rec.getSimilarity());
+            recommendedMovie.setPoster_path(rec.getPoster_path());
+            user.getRecommendedMovies().add(recommendedMovie);
+        });
+    }
+
+    public Map<String, List<MovieRecommendDTO>> saveRatingsAndGetRecommendations(Map<String, Double> ratings) {
+        try {
+            // 1. 사용자와 평가 저장
+            AnonymousUser user = saveUserAndRatings(ratings);
+
+            // 2. 추천 받기
+            Map<String, List<MovieRecommendDTO>> recommendations = getRecommendations(ratings);
+
+            // 3. 추천 결과 저장
+            saveRecommendationsForUser(user, recommendations);
+
+            return recommendations;
+        } catch (Exception e) {
+            log.error("Error in recommendation process", e);
+            throw new RuntimeException("Failed to process recommendations", e);
+        }
     }
 }

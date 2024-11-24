@@ -11,7 +11,11 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "anonymous_ratings")
+@Table(name = "anonymous_ratings",
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {"anonymous_user_id", "rated_movie_id"}
+        ))
+
 public class AnonymousRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
