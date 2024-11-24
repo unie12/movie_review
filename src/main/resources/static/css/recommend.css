@@ -264,3 +264,105 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
+
+.stats-btn {
+    position: fixed;
+    bottom: 150px;  /* view-recommendations-btn 위에 위치 */
+    right: 30px;
+    z-index: 1000;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.stats-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 통계 섹션 스타일링 */
+.stats-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 15px;
+}
+
+.stats-section h3 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+}
+
+/* 통계 카드 그리드 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+/* 통계 카드 디자인 */
+.stats-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* 포스터 이미지 컨테이너 */
+.stats-card img {
+    width: 100%;
+    height: 80%;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+}
+
+/* 통계 정보 컨테이너 */
+.stats-info {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* 통계 수치 스타일 */
+.stats-card p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stats-card .count {
+    font-weight: 600;
+    color: #3498db;
+}
+
+.stats-card .rating {
+    font-weight: 600;
+    color: #f1c40f;
+}
+
+/* 반응형 미디어 쿼리 */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .stats-card img {
+        height: 250px;
+    }
+}

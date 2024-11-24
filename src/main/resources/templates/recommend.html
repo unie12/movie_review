@@ -58,6 +58,10 @@
         </div>
     </div>
     
+    <button class="stats-btn" onclick="statsModal.show()">
+        통계 보기 <i class="fas fa-chart-bar"></i>
+    </button>
+    
     <div class="modal fade" id="statsModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -181,7 +185,6 @@ function initializeRating(movieCard) {
     const container = movieCard.querySelector('.rating-container');
     const starRating = container.querySelector('.star-rating');
     const fillStars = starRating.querySelector('.fill-stars');
-    const ratingValue = container.querySelector('.rating-value');
     const movieId = container.dataset.movieId;
 
     function updateRating(event) {
@@ -195,7 +198,6 @@ function initializeRating(movieCard) {
         rating = Math.max(0, Math.min(5, rating));
         
         fillStars.style.width = `${(rating / 5) * 100}%`;
-        ratingValue.textContent = rating.toFixed(1);
         
         return rating;
     }
@@ -211,7 +213,6 @@ function initializeRating(movieCard) {
         if (currentRating === rating) {
             ratings.delete(movieId);
             fillStars.style.width = '0%';
-            ratingValue.textContent = '0.0';
         } else {
             ratings.set(movieId, rating);
         }
@@ -220,7 +221,6 @@ function initializeRating(movieCard) {
     starRating.addEventListener('mouseleave', () => {
         const currentRating = ratings.get(movieId) || 0;
         fillStars.style.width = `${(currentRating / 5) * 100}%`;
-        ratingValue.textContent = currentRating.toFixed(1);
     });
 }
 
@@ -275,33 +275,24 @@ async function submitRatings() {
     };
 
     try {
-        // 컨텐츠 기반과 하이브리드 추천 동시에 요청
-        const [contentResponse, hybridResponse] = await Promise.all([
-            fetch('/api/recommend/content/results', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            }),
-            fetch('/api/recommend/hybrid/results', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            })
-        ]);
+        const response = await fetch('/api/recommend/recommendations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
 
-        if (!contentResponse.ok || !hybridResponse.ok) {
+        if (!response.ok) {
             throw new Error('Failed to get recommendations');
         }
         
         button.classList.remove('loading');
-
+        
+        const recommendations = await response.json();
         currentRecommendations = {
-            content: await contentResponse.json(),
-            hybrid: await hybridResponse.json()
+            content: recommendations.content,
+            hybrid: recommendations.hybrid
         };
         
         hasRecommendations = true;
@@ -376,6 +367,7 @@ async function showStats(type) {
     try {
         const response = await fetch(`/api/anonymous/stats/${type}`);
         const data = await response.json();
+        console.log('data', data);
         
         if (type === 'ratings') {
             displayRatingStats(data);
@@ -392,25 +384,48 @@ function displayRatingStats(data) {
     const statsContent = document.getElementById('statsContent');
     statsContent.innerHTML = `
         <div class="stats-section">
-            <h3>가장 많이 평가된 영화 Top 10</h3>
+            <h3>가장 많이 평가된 영화 Top 20</h3>
             <div class="stats-grid">
                 ${data.mostRatedMovies.map(movie => `
                     <div class="stats-card">
-                        <img src="https://image.tmdb.org/t/p/w200${movie.posterPath}">
-                        <h4>${movie.title}</h4>
-                        <p>평가 수: ${movie.ratingCount}</p>
+                        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="Movie poster">
+                        <div class="stats-info">
+                            <p>평가 수 <span class="count">${movie.count}회</span></p>
+                            <p>평균 평점 <span class="rating">⭐ ${movie.averageRating.toFixed(1)}</span></p>
+                        </div>
                     </div>
                 `).join('')}
             </div>
         </div>
         <div class="stats-section">
-            <h3>평균 평점이 가장 높은 영화</h3>
+            <h3>평균 평점이 가장 높은 영화 TOP 20</h3>
             <div class="stats-grid">
                 ${data.highestRatedMovies.map(movie => `
                     <div class="stats-card">
-                        <img src="https://image.tmdb.org/t/p/w200${movie.posterPath}">
-                        <h4>${movie.title}</h4>
-                        <p>평균 평점: ${movie.averageRating.toFixed(1)}</p>
+                        <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}">
+                        <div class="stats-info">
+                            <p>평가 수 <span class="count">${movie.count}회</span></p>
+                            <p>평균 평점 <span class="rating">⭐ ${movie.averageRating.toFixed(1)}</span></p>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function displayRecommendationStats(data) {
+    const statsContent = document.getElementById('statsContent');
+    statsContent.innerHTML = `
+        <div class="stats-section">
+            <h3>가장 많이 추천된 영화 Top 20</h3>
+            <div class="stats-grid">
+                ${data.mostRecommendedMovies.map(movie => `
+                    <div class="stats-card">
+                        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="Movie poster">
+                        <div class="stats-info">
+                            <p>추천 횟수 <span class="count">${movie.count}회</span></p>
+                        </div>
                     </div>
                 `).join('')}
             </div>
