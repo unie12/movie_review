@@ -43,6 +43,7 @@ public class AnonymousRatingService {
             recommendedMovie.setRecommendedMovieId(Long.valueOf(rec.getTmdbId()));
             recommendedMovie.setRecommendType(type);
             recommendedMovie.setSimilarity(rec.getSimilarity());
+            recommendedMovie.setPoster_path(rec.getPoster_path());
             anonymousUser.getRecommendedMovies().add(recommendedMovie);
         });
 

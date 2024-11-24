@@ -34,4 +34,5 @@ public class RecommendedMovie {
     private RecommendType recommendType;
 
     private Double similarity;
+    private String poster_path;
 }

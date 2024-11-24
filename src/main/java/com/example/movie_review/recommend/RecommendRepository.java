@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Repository
 public interface RecommendRepository extends JpaRepository<RecommendedMovie, Long> {
-    @Query("SELECT new com.example.movie_review.anonymous.MovieStatsDTO(r.recommendedMovieId, COUNT(r)) " +
+    @Query("SELECT new com.example.movie_review.anonymous.MovieStatsDTO(r.recommendedMovieId, COUNT(r), r.poster_path) " +
             "FROM RecommendedMovie r " +
             "GROUP BY r.recommendedMovieId " +
             "ORDER BY COUNT(r) DESC")
