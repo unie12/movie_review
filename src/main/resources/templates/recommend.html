@@ -402,7 +402,7 @@ function displayRatingStats(data) {
             <div class="stats-grid">
                 ${data.highestRatedMovies.map(movie => `
                     <div class="stats-card">
-                        <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}">
+                        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}">
                         <div class="stats-info">
                             <p>평가 수 <span class="count">${movie.count}회</span></p>
                             <p>평균 평점 <span class="rating">⭐ ${movie.averageRating.toFixed(1)}</span></p>
